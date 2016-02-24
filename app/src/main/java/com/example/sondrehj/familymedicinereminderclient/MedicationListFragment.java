@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent.DummyItem;
@@ -21,7 +24,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MedicationListFragment extends android.app.Fragment{
+public class MedicationListFragment extends ListFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -71,6 +74,7 @@ public class MedicationListFragment extends android.app.Fragment{
             }
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
+        
         return view;
     }
 
@@ -106,4 +110,6 @@ public class MedicationListFragment extends android.app.Fragment{
         // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
     }
+
+
 }
