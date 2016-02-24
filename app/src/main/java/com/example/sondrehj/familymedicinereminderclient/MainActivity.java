@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onFragmentInteraction(Uri uri){
+        //you can leave it empty
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
