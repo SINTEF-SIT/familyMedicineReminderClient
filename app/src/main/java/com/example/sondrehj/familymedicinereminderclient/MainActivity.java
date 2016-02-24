@@ -13,8 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.sondrehj.familymedicinereminderclient.Models.Reminder;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
+        AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
+        ReminderFragment.OnFragmentInteractionListener
+{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
