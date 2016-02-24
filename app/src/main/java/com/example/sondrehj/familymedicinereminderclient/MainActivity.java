@@ -22,22 +22,16 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        //fab.setOnClickListener(new View.OnClickListener() {
-        //    @Override
-        //    public void onClick(View view) {
-        //        Fragment newFragment = new MedicationCabinetFragment();
-        //        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//
-        //        // Replace whatever is in the fragment_container view with this fragment,
-        //        // and add the transaction to the back stack if needed
-        //        transaction.replace(R.id.fragment_container, newFragment);
-        //        transaction.addToBackStack(null);
-//
-        //        // Commit the transaction
-        //        transaction.commit();
-        //    }
-        //});
+        Fragment newFragment = new MedicationCabinetFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack if needed
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,15 +81,35 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_reminders) {
 
-        } else if (id == R.id.nav_slideshow) {
+            Fragment newFragment = new ReminderFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-        } else if (id == R.id.nav_manage) {
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack if needed
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
 
-        } else if (id == R.id.nav_share) {
+            // Commit the transaction
+            transaction.commit();
+
+        } else if (id == R.id.nav_medication) {
+
+            Fragment newFragment = new MedicationCabinetFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack if needed
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
+
+        } else if (id == R.id.nav_symptoms) {
+
+        } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_send) {
 

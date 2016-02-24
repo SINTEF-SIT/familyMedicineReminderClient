@@ -16,11 +16,12 @@
         android:tint="#ffff"
         android:src="@android:drawable/ic_input_add" />
 
-
-
-    <ListView
+    <fragment
         android:layout_width="wrap_content"
-        android:layout_height="412dp"
-        android:id="@+id/medicationListView"
-        android:layout_gravity="center_horizontal|bottom" />
+        android:layout_height="wrap_content"
+        android:name="com.example.sondrehj.familymedicinereminderclient.MedicationListFragment"
+        android:id="@+id/fragment"
+        android:layout_gravity="center" />
+
+
 </FrameLayout>
