@@ -2,15 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.MedicationStorageFragment">
+    tools:context="com.example.sondrehj.familymedicinereminderclient.MedicationListFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <TextView
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="test&quot;"
-        android:id="@+id/textView2"
-        android:layout_gravity="center_horizontal|top" />
+        android:id="@+id/listView"
+        android:layout_gravity="center" />
+
 </FrameLayout>
