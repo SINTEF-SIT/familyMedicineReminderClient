@@ -15,11 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.sondrehj.familymedicinereminderclient.Models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
-        ReminderFragment.OnFragmentInteractionListener
+        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener
 {
 
     @Override
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -128,5 +130,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
