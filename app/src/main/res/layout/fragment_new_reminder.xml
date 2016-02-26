@@ -5,9 +5,25 @@
     tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_gravity="center_horizontal|top"
+        android:weightSum="1"
+        android:orientation="vertical">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Reminder"
+            android:id="@+id/reminderSwitch"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:checked="true"
+            android:textSize="20sp"
+            android:padding="10dp" />
+
+    </LinearLayout>
 
 </FrameLayout>
