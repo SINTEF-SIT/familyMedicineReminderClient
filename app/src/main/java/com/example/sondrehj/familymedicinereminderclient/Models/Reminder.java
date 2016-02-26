@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.Models;
+package com.example.sondrehj.familymedicinereminderclient.models;
 
 /**
  * Created by nikolai on 24/02/16.
@@ -7,7 +7,7 @@ public class Reminder {
     String ownerId;
     String name;
     String time;
-    MedicationStorage medicine;
+    Medication medicine;
     String units;
 
     public String getOwnerId() {
@@ -34,11 +34,11 @@ public class Reminder {
         this.time = time;
     }
 
-    public MedicationStorage getMedicine() {
+    public Medication getMedicine() {
         return medicine;
     }
 
-    public void setMedicine(MedicationStorage medicine) {
+    public void setMedicine(Medication medicine) {
         this.medicine = medicine;
     }
 
