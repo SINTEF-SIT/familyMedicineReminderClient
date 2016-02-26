@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,11 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.sondrehj.familymedicinereminderclient.Models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
-        ReminderFragment.OnFragmentInteractionListener
+        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener
 {
 
     @Override
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //Initial view
         Fragment newFragment = new MedicationCabinetFragment();
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         // Replace whatever is in the fragment_container view with this fragment,
@@ -36,8 +39,6 @@ public class MainActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri){
         //you can leave it empty
     }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -141,5 +143,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }
