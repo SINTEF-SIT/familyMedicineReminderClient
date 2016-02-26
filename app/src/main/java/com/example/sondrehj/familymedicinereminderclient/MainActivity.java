@@ -86,6 +86,19 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
+    public void changeFragment(Fragment fragment) {
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack if needed
+        transaction.replace(R.id.fragment_container, fragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -95,29 +108,11 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_reminders) {
 
-            Fragment newFragment = new ReminderFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack if needed
-            transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
+            changeFragment(new ReminderFragment());
 
         } else if (id == R.id.nav_medication) {
 
-            Fragment newFragment = new MedicationCabinetFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack if needed
-            transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
+            changeFragment(new MedicationCabinetFragment());
 
         } else if (id == R.id.nav_symptoms) {
 

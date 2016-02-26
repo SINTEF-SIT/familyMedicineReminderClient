@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
 
 
 /**
@@ -64,7 +67,19 @@ public class MedicationStorageFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_medication_storage, container, false);
+        View view = inflater.inflate(R.layout.fragment_medication_storage, container, false);
+
+        Button saveMedicationBtn = (Button) view.findViewById(R.id.saveMedicationBtn);
+        saveMedicationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("Hello");
+                ((MainActivity) getActivity()).changeFragment(new MedicationCabinetFragment());
+            }
+        });
+
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

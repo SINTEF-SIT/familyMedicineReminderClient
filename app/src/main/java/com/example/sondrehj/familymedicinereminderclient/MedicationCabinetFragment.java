@@ -72,9 +72,7 @@ public class MedicationCabinetFragment extends android.app.Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                System.out.println("Hello");
-
+                ((MainActivity)getActivity()).changeFragment(new MedicationStorageFragment());
             }
         });
 
