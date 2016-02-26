@@ -1,12 +1,17 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Switch;
 
 
 /**
@@ -64,8 +69,25 @@ public class NewReminderFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_reminder, container, false);
+        View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
+
+        Switch reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
+        Button timePickerButton = (Button) view.findViewById(R.id.timePickerButton);
+
+        timePickerButton.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        DialogFragment timePickerFragment = new TimePickerFragment();
+                        timePickerFragment.show(getFragmentManager(), "time picker");
+                    }
+                }
+        );
+
+
+
+        return view;
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
