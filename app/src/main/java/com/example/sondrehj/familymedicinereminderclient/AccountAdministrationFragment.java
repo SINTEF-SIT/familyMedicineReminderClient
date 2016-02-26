@@ -70,7 +70,7 @@ public class AccountAdministrationFragment extends android.app.Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onAccountAdminFragmentInteraction(uri);
         }
     }
 
@@ -103,6 +103,6 @@ public class AccountAdministrationFragment extends android.app.Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onAccountAdminFragmentInteraction(Uri uri);
     }
 }

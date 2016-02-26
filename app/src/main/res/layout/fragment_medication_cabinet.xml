@@ -16,11 +16,11 @@
         android:tint="#ffff"
         android:src="@android:drawable/ic_input_add" />
 
-    <fragment
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:name="com.example.sondrehj.familymedicinereminderclient.MedicationListFragment"
-        android:id="@+id/fragment"
+        android:id="@+id/fragment_list_container"
         android:layout_gravity="center" />
 
 

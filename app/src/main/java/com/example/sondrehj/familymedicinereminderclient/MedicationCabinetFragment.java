@@ -76,15 +76,17 @@ public class MedicationCabinetFragment extends android.app.Fragment {
             }
         });
 
+        MedicationListFragment fragment = new MedicationListFragment();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragment_list_container, fragment).commit();
+
         return view;
-
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onMedicationCabinetFragmentInteraction(uri);
         }
     }
 
@@ -120,6 +122,6 @@ public class MedicationCabinetFragment extends android.app.Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onMedicationCabinetFragmentInteraction(Uri uri);
     }
 }

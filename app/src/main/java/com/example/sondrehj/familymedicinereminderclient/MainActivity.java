@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,13 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.sondrehj.familymedicinereminderclient.Models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
-        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener
+        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
+        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener
 {
 
     @Override
@@ -30,15 +29,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //Initial view
-        Fragment newFragment = new MedicationCabinetFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        // Commit the transaction
-        transaction.commit();
+        changeFragment(new MedicationCabinetFragment());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -142,6 +133,36 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
+    }
+
+    @Override
+    public void onAccountAdminFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onReminderFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onNewReminderFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onMedicationCabinetFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onWelcomeFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onMedicationStorageFragmentInteraction(Uri uri) {
 
     }
 }
