@@ -1,7 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +28,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final Context context;
 
-    public MyItemRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public MyItemRecyclerViewAdapter(Context context, List<DummyItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
+        this.context = context;
     }
 
     @Override
@@ -42,16 +48,12 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
-        LayoutInflater inflater = (LayoutInflater)holder.context.getSystemService
-                (Context.LAYOUT_INFLATER_SERVICE);
-
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-
-                
+                goToMedicationStorageView(holder);
 
                 if (null != mListener) {
                     mListener.onListFragmentInteraction(holder.mItem);
@@ -65,18 +67,22 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return mValues.size();
     }
 
+
+    public void goToMedicationStorageView(ViewHolder holder){
+        ((MainActivity)context).changeFragment(new MedicationStorageFragment());
+    }
+
+
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
         public DummyItem mItem;
-        private final Context context;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            context = mView.getContext();
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
         }

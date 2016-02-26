@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="unit_items">
+        <item>ml</item>
+        <item>pill</item>
+        <item>inhalation</item>
+        <item>mg</item>
+        <item>mcg</item>
+        <item>gram</item>
+        <item>unit</item>
+    </string-array>
+</resources>
