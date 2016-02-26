@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import com.example.sondrehj.familymedicinereminderclient.MedicationListFragment.
 import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent.DummyItem;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -39,13 +42,18 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).id);
         holder.mContentView.setText(mValues.get(position).content);
+        LayoutInflater inflater = (LayoutInflater)holder.context.getSystemService
+                (Context.LAYOUT_INFLATER_SERVICE);
+
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
+                
+
                 if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
             }
@@ -57,18 +65,22 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder{
+
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
         public DummyItem mItem;
+        private final Context context;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
+            context = mView.getContext();
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
+
 
         @Override
         public String toString() {

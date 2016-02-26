@@ -74,7 +74,7 @@ public class MedicationListFragment extends android.app.Fragment{
             }
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
         }
-        
+
         return view;
     }
 
