@@ -1,9 +1,9 @@
-package com.example.sondrehj.familymedicinereminderclient.Models;
+package com.example.sondrehj.familymedicinereminderclient.models;
 
 /**
  * Created by nikolai on 24/02/16.
  */
-public class MedicationStorage {
+public class Medication {
     String ownerId;
     String name;
     Double count;
