@@ -1,23 +1,17 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.MedicationListFragment.OnListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent.DummyItem;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the

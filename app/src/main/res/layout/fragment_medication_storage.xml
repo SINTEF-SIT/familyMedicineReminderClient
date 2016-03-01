@@ -15,8 +15,8 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:inputType="textAutoComplete" />
+            android:id="@+id/medicationName"
+            android:inputType="textAutoComplete"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -29,12 +29,12 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editText2" />
+                android:id="@+id/medicationAmount" />
 
             <Spinner
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/unit_spinner"
+                android:id="@+id/medicationUnit"
                 android:entries="@array/unit_items"/>
         </LinearLayout>
 

@@ -96,7 +96,6 @@ public class MedicationListFragment extends android.app.Fragment{
         mListener = null;
     }
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -107,7 +106,6 @@ public class MedicationListFragment extends android.app.Fragment{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-
 
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name

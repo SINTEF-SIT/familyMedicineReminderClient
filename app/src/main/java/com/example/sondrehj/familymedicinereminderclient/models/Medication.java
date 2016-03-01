@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import java.sql.SQLOutput;
+
 /**
  * Created by nikolai on 24/02/16.
  */
@@ -7,6 +9,14 @@ public class Medication {
     String ownerId;
     String name;
     Double count;
+    String unit;
+
+    public Medication(String ownerId, String name, Double count, String unit) {
+        this.ownerId = ownerId;
+        this.name = name;
+        this.count = count;
+        this.unit = unit;
+    }
 
     public String getOwnerId() {
         return ownerId;
@@ -30,5 +40,9 @@ public class Medication {
 
     public void setCount(Double count) {
         this.count = count;
+    }
+
+    public String toString(){
+        return "Name: " + this.name + "\n" + "Count: " + this.count + "\n" + "Unit: " + this.unit;
     }
 }
