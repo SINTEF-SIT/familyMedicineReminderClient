@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
-import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent.DummyItem;
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class MedicationListFragment extends android.app.Fragment{
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(getActivity(), DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
         }
 
         return view;
@@ -96,7 +96,6 @@ public class MedicationListFragment extends android.app.Fragment{
         mListener = null;
     }
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -108,9 +107,8 @@ public class MedicationListFragment extends android.app.Fragment{
      * >Communicating with Other Fragments</a> for more information.
      */
 
-
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(Medication item);
         }
     }

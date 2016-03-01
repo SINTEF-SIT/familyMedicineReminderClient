@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,7 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
+
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 
 /**
@@ -67,28 +72,51 @@ public class MedicationStorageFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_medication_storage, container, false);
+        return inflater.inflate(R.layout.fragment_medication_storage, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
 
         Button saveMedicationBtn = (Button) view.findViewById(R.id.saveMedicationBtn);
         saveMedicationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("Hello");
+
+                //MedicationStorage input-fields
+                EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
+                EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
+                Spinner medicationUnit = (Spinner) getActivity().findViewById(R.id.medicationUnit);
+
+                //Creates a new Medication object with the values of the input-fields
+                Medication medication = new Medication(
+                        "786#13%",
+                        medicationName.getText().toString(),
+                        Double.parseDouble(medicationAmount.getText().toString()),
+                        medicationUnit.getSelectedItem().toString()
+                );
+
+                //Adds the new medicine to MedicationListContent
+                MedicationListContent.ITEMS.add(0, medication);
+
+                // TODO: Add medicine to database
+
+                //Return to MedicationCabinet
                 ((MainActivity) getActivity()).changeFragment(new MedicationCabinetFragment());
             }
         });
-
-
-        return view;
     }
 
+
     // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onMedicationStorageFragmentInteraction(uri);
         }
     }
 
+    //API >= 23
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -99,6 +127,19 @@ public class MedicationStorageFragment extends android.app.Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    //API < 23
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
 
     @Override
     public void onDetach() {
@@ -118,6 +159,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onMedicationStorageFragmentInteraction(Uri uri);
+        public void onMedicationStorageFragmentInteraction(Uri uri);
+        public void addMedicationToMedicationList(Medication medication);
     }
 }
