@@ -35,9 +35,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
@@ -108,9 +105,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_settings) {
 
-        } else if (id == R.id.nav_send) {
-
-        } else if (id == R.id.nav_newReminder) {
+        } /*else if (id == R.id.nav_newReminder) {
 
             Fragment newFragment = new NewReminderFragment();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -122,8 +117,8 @@ public class MainActivity extends AppCompatActivity
 
             // Commit the transaction
             transaction.commit();
-
         }
+        */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

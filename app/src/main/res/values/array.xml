@@ -9,4 +9,12 @@
         <item>gram</item>
         <item>unit</item>
     </string-array>
+    <string-array name="dummy_users">
+        <item>Sondre Hjetland</item>
+        <item>Hanna Sollie Storaker</item>
+        <item>Sondre Widmark</item>
+        <item>Martin Dørum</item>
+        <item>Nikolai Hegelstad</item>
+        <item>Eirik Vikanes</item>
+    </string-array>
 </resources>
