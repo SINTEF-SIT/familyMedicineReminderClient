@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity
 
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
+        //Animation
+        transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, 0, 0);
+
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack if needed
         transaction.replace(R.id.fragment_container, fragment);
@@ -112,17 +115,8 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_newReminder) {
 
-            Fragment newFragment = new NewReminderFragment();
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack if needed
-            transaction.replace(R.id.fragment_container, newFragment);
-            transaction.addToBackStack(null);
-
-            // Commit the transaction
-            transaction.commit();
-
+            changeFragment(new NewReminderFragment());
+            
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
