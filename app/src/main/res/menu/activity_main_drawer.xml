@@ -4,37 +4,20 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_reminders"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_sidebar_alarm"
             android:title="Reminders" />
         <item
             android:id="@+id/nav_medication"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_sidebar_pill"
             android:title="Medication" />
         <item
             android:id="@+id/nav_symptoms"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_sidebar_heartbeat"
             android:title="Symptoms" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
             android:title="Settings" />
-        <item
-            android:id="@+id/nav_newReminder"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="New Reminder" />
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
-        </menu>
-    </item>
 
 </menu>
