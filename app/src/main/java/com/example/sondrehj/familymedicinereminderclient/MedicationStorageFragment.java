@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 
@@ -87,7 +88,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
                 EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
                 Spinner medicationUnit = (Spinner) getActivity().findViewById(R.id.medicationUnit);
 
-                //Create a new Medication object with the values of the input-fields
+                //Creates a new Medication object with the values of the input-fields
                 Medication medication = new Medication(
                         "786#13%",
                         medicationName.getText().toString(),
@@ -95,13 +96,13 @@ public class MedicationStorageFragment extends android.app.Fragment {
                         medicationUnit.getSelectedItem().toString()
                 );
 
-                // TODO: Update MedicationListFragment with the new medication
+                //Adds the new medicine to MedicationListContent
+                MedicationListContent.ITEMS.add(0, medication);
 
-                if(mListener != null) {
-                    mListener.addMedicationToMedicationList(medication);
-                }
+                // TODO: Add medicine to database
+
                 //Return to MedicationCabinet
-                //((MainActivity) getActivity()).changeFragment(new MedicationCabinetFragment());
+                ((MainActivity) getActivity()).changeFragment(new MedicationCabinetFragment());
             }
         });
     }

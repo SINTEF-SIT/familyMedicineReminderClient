@@ -12,8 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 public class MainActivity extends AppCompatActivity
@@ -133,9 +131,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-
-
+    public void onListFragmentInteraction(Medication item) {
 
     }
 
