@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     //@Override
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right,
         //        R.animator.slide_out_right, R.animator.slide_in_left);
 
-        transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
+        //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack if needed
@@ -111,22 +114,19 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        System.out.print(id);
 
         if (id == R.id.nav_reminders) {
-
+            System.out.print("nav_reminders");
             changeFragment(new ReminderFragment());
 
         } else if (id == R.id.nav_medication) {
-
+            System.out.print("nav_medication");
             changeFragment(new MedicationCabinetFragment());
 
         } else if (id == R.id.nav_symptoms) {
 
         } else if (id == R.id.nav_settings) {
-
-        } else if (id == R.id.nav_newReminder) {
-
-            changeFragment(new NewReminderFragment());
 
         }
  
