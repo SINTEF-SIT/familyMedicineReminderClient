@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right,
         //        R.animator.slide_out_right, R.animator.slide_in_left);
 
-        //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
+        transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack if needed
