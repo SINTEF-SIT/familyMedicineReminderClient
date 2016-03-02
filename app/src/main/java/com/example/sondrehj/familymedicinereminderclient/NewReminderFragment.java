@@ -24,7 +24,7 @@ import android.widget.TimePicker;
  * Use the {@link NewReminderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewReminderFragment extends android.app.Fragment /*implements TimePickerDialog.OnTimeSetListener*/ {
+public class NewReminderFragment extends android.app.Fragment {
 
     private int minute;
     private int hour;
@@ -93,7 +93,7 @@ public class NewReminderFragment extends android.app.Fragment /*implements TimeP
                 new Button.OnClickListener() {
                     public void onClick(View v) {
                         DialogFragment timePickerFragment = new TimePickerFragment();
-                        timePickerFragment.show(getFragmentManager(), "time picker");
+                        timePickerFragment.show(getFragmentManager(), "timePicker");
                     }
                 }
         );
@@ -112,30 +112,11 @@ public class NewReminderFragment extends android.app.Fragment /*implements TimeP
         return view;
     }
 
-    public void setTimerTextOnButton(String hour, String minute) {
+    public void setTimeOnButton(int hour, int minute) {
         String timeSet = hour + ":" + minute;
-        getTimePickerButton().setText(timeSet);
-    }
-
-    public Button getTimePickerButton() {
-        return timePickerButton;
-    }
-
-    public void setTimePickerButton(Button timePickerButton) {
-        this.timePickerButton = timePickerButton;
-    }
-
-
-/*
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        this.minute = minute;
-        this.hour = hourOfDay;
-
-        String timeSet = hour + ":" + this.minute;
         timePickerButton.setText(timeSet);
     }
-*/
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

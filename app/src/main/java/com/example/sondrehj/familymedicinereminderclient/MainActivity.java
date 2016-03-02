@@ -20,7 +20,7 @@ import com.example.sondrehj.familymedicinereminderclient.dummy.DummyContent;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
-        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener
+        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener, TimePickerFragment.TimePickerListener
 {
 
     @Override
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack if needed
-            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.replace(R.id.fragment_container, newFragment, "hh");
             transaction.addToBackStack(null);
 
             // Commit the transaction
@@ -148,5 +148,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(DummyContent.DummyItem item) {
 
+    }
+
+    @Override
+    public void setTime(int hourOfDay, int minute) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("hh");
+        newReminderFragment.setTimeOnButton(hourOfDay, minute);
     }
 }
