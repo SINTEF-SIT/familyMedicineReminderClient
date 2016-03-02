@@ -10,6 +10,10 @@ public class Reminder {
     Medication medicine;
     String units;
 
+    public Reminder() {
+
+    }
+
     public String getOwnerId() {
         return ownerId;
     }
