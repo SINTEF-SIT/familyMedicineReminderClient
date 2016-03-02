@@ -40,7 +40,18 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getOwnerId());
+
+        //Check if the amount got decimals.
+        if (mValues.get(position).getCount() % 1 == 0){
+            int i = mValues.get(position).getCount().intValue();
+            String amount = Integer.toString(i) + " " + mValues.get(position).getUnit();
+            holder.mIdView.setText(amount);
+        } else {
+            String amount = Double.toString(mValues.get(position).getCount())
+                    + " " + mValues.get(position).getUnit();
+            holder.mIdView.setText(amount);
+        }
+
         holder.mContentView.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {

@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;

@@ -12,14 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
         ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener
-{
+        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +40,24 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    //@Override
+    //public void onBackPressed() {
+    //    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    //    if (drawer.isDrawerOpen(GravityCompat.START)) {
+    //        drawer.closeDrawer(GravityCompat.START);
+    //    } else {
+    //        super.onBackPressed();
+    //    }
+    //}
+
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();
         }
@@ -72,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    public void onFragmentInteraction(Uri uri){
+    public void onFragmentInteraction(Uri uri) {
         //you can leave it empty
     }
 
@@ -81,7 +94,10 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
         //Animation
-        transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right, 0, 0);
+        //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right,
+        //        R.animator.slide_out_right, R.animator.slide_in_left);
+
+        transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack if needed
