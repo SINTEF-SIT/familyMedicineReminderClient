@@ -6,6 +6,7 @@
     android:name="com.example.sondrehj.familymedicinereminderclient.MedicationListFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffcccccc"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.sondrehj.familymedicinereminderclient.MedicationListFragment"
     tools:listitem="@layout/medication_list_item" />

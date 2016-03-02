@@ -42,6 +42,11 @@ public class Medication {
         this.count = count;
     }
 
+    public String getUnit(){
+        return unit;
+    }
+
+
     public String toString(){
         return "Name: " + this.name + "\n" + "Count: " + this.count + "\n" + "Unit: " + this.unit;
     }

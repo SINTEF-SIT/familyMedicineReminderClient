@@ -2,11 +2,11 @@
 <resources>
     <string-array name="unit_items">
         <item>ml</item>
-        <item>pill</item>
+        <item>pill(s)</item>
         <item>inhalation</item>
         <item>mg</item>
         <item>mcg</item>
-        <item>gram</item>
+        <item>g</item>
         <item>unit</item>
     </string-array>
     <string-array name="dummy_users">
