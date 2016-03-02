@@ -19,7 +19,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
         ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener {
+        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener
+        ,TimePickerFragment.TimePickerListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,5 +178,11 @@ public class MainActivity extends AppCompatActivity
 
         System.out.println(medication);
 
+    }
+
+    @Override
+    public void setTime(int hourOfDay, int minute) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("hh");
+        newReminderFragment.setTimeOnButton(hourOfDay, minute);
     }
 }

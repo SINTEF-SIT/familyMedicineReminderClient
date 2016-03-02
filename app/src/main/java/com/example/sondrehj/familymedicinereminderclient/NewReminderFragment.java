@@ -1,12 +1,19 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Switch;
+import android.widget.TimePicker;
 
 
 /**
@@ -18,6 +25,18 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class NewReminderFragment extends android.app.Fragment {
+
+    private int minute;
+    private int hour;
+
+    private Switch reminderSwitch;
+
+
+
+    private Button timePickerButton;
+    private Button datePickerButton;
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -64,8 +83,40 @@ public class NewReminderFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_reminder, container, false);
+        View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
+
+        reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
+        timePickerButton = (Button) view.findViewById(R.id.timePickerButton);
+        datePickerButton = (Button) view.findViewById(R.id.datePickerButton);
+
+        timePickerButton.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        DialogFragment timePickerFragment = new TimePickerFragment();
+                        timePickerFragment.show(getFragmentManager(), "timePicker");
+                    }
+                }
+        );
+
+        datePickerButton.setOnClickListener(
+                new Button.OnClickListener() {
+                    public void onClick(View v) {
+                        DialogFragment datePickerFragment = new DatePickerFragment();
+                        datePickerFragment.show(getFragmentManager(), "date picker");
+                    }
+                }
+        );
+
+
+
+        return view;
     }
+
+    public void setTimeOnButton(int hour, int minute) {
+        String timeSet = hour + ":" + minute;
+        timePickerButton.setText(timeSet);
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -74,6 +125,7 @@ public class NewReminderFragment extends android.app.Fragment {
         }
     }
 
+    //pass in the fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -90,6 +142,8 @@ public class NewReminderFragment extends android.app.Fragment {
         super.onDetach();
         mListener = null;
     }
+
+
 
     /**
      * This interface must be implemented by activities that contain this
