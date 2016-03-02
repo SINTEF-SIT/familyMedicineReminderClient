@@ -10,8 +10,10 @@ public class Reminder {
     Medication medicine;
     String units;
 
-    public Reminder() {
-
+    public Reminder(String ownerId, String name, String time) {
+        setOwnerId(ownerId);
+        setName(name);
+        setTime(time);
     }
 
     public String getOwnerId() {
@@ -52,5 +54,9 @@ public class Reminder {
 
     public void setUnits(String units) {
         this.units = units;
+    }
+
+    public String toString() {
+        return ownerId + ", " + name;
     }
 }

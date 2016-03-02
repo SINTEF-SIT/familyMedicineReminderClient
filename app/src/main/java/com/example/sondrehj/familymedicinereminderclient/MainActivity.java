@@ -169,8 +169,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onReminderListFragmentInteraction(Reminder item) {
-
+    public void onReminderListFragmentInteraction(Reminder reminder) {
+        System.out.print(reminder + "was clicked");
     }
 
     @Override

@@ -66,7 +66,7 @@ public class ReminderFragment extends android.app.Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ReminderRecyclerViewAdapter(ReminderListContent.ITEMS, mListener));
+            recyclerView.setAdapter(new ReminderRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
         return view;
     }

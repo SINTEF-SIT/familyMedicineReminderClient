@@ -19,8 +19,7 @@
             android:layout_height="match_parent"
             android:layout_margin="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textSize="20sp"
-            android:text="Paracetamol" />
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,7 +36,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:text="count:"
             android:textSize="20sp"
             android:textColor="#7b7b7b" />
 
