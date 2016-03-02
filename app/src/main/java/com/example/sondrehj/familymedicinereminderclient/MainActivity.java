@@ -15,14 +15,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
-        ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener
-        ,TimePickerFragment.TimePickerListener {
-
+        ReminderFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
+        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
+        TimePickerFragment.TimePickerListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_reminders) {
             System.out.print("nav_reminders");
-            changeFragment(new ReminderFragment());
+            changeFragment(ReminderFragment.newInstance(1));
 
         } else if (id == R.id.nav_medication) {
             System.out.print("nav_medication");
@@ -151,10 +151,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void onReminderFragmentInteraction(Uri uri) {
-
-    }
 
     @Override
     public void onNewReminderFragmentInteraction(Uri uri) {
@@ -177,10 +173,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onReminderListFragmentInteraction(Reminder reminder) {
+        System.out.print(reminder + "was clicked");
+    }
+
+    @Override
     public void addMedicationToMedicationList(Medication medication) {
 
         System.out.println(medication);
-
     }
 
     @Override
