@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_newReminder) {
 
             changeFragment(new NewReminderFragment());
-            
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

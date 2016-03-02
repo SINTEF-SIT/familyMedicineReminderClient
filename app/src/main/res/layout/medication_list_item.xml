@@ -3,20 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="#FFF"
+    android:layout_marginBottom="1dp">
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5">
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8">
 
         <TextView
             android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
             android:layout_margin="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="20sp"
             android:text="Paracetamol" />
     </LinearLayout>
 
@@ -25,33 +28,38 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:weightSum="1"
-        android:layout_weight="0.3">
+        android:paddingRight="-25dp"
+        android:layout_weight="0">
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem"
             android:text="count:"
+            android:textSize="20sp"
             android:textColor="#7b7b7b" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="-12dp"
+        >
 
         <TextView
             android:id="@+id/id"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:text="count:"
-            android:textColor="#7b7b7b"
-            android:layout_weight="0.1" />
+            android:text="10"
+            android:textSize="20sp"
+            android:textColor="#7b7b7b" />
     </LinearLayout>
-
-    <Button
-        android:layout_width="74dp"
-        android:layout_height="wrap_content"
-        android:text="Edit"
-        android:id="@+id/button" />
 
 
 </LinearLayout>
