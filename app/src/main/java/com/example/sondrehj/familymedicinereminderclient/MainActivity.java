@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity
 
     public void changeFragment (Fragment fragment){
         String backStateName = fragment.getClass().getName();
+        System.out.println(fragment.getClass().getSimpleName());
         boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped){ //fragment not in back stack, create it.
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack if needed
-            transaction.replace(R.id.fragment_container, fragment);
+            transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
             transaction.addToBackStack(backStateName);
 
             //Commit the transaction
