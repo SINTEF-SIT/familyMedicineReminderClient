@@ -1,22 +1,16 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
-import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -72,7 +66,7 @@ public class MedicationListFragment extends android.app.Fragment{
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
         }
 
         return view;

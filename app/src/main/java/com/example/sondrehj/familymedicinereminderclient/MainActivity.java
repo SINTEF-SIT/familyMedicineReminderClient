@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,7 +21,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
         ReminderFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener {
+        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
+        TimePickerFragment.TimePickerListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,23 +92,25 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
-    public void changeFragment(Fragment fragment) {
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+    public void changeFragment (Fragment fragment){
+        String backStateName = fragment.getClass().getName();
+        System.out.println(fragment.getClass().getSimpleName());
+        boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
 
-        //Animation
-        //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right,
-        //        R.animator.slide_out_right, R.animator.slide_in_left);
+        if (!fragmentPopped){ //fragment not in back stack, create it.
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            //Animation
+            transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
 
-        //transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack if needed
+            transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            transaction.addToBackStack(backStateName);
 
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.fragment_container, fragment);
-        transaction.addToBackStack(null);
-
-        // Commit the transaction
-        transaction.commit();
+            //Commit the transaction
+            transaction.commit();
+        }
     }
 
 
@@ -179,4 +183,9 @@ public class MainActivity extends AppCompatActivity
         System.out.println(medication);
     }
 
+    @Override
+    public void setTime(int hourOfDay, int minute) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("hh");
+        newReminderFragment.setTimeOnButton(hourOfDay, minute);
+    }
 }
