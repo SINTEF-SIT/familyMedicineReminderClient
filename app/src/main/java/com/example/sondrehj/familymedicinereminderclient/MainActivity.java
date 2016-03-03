@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity
 
     //called by datepicker in NewReminder
     @Override
-    public void setDate(int day, int month, int year) {
+    public void setDate(int year, int month, int day) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
-        newReminderFragment.setDateOnButton(day, month, year);
+        newReminderFragment.setDateOnButton(year, month, day);
     }
 }

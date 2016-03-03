@@ -12,8 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
+
+import org.w3c.dom.Text;
 
 
 /**
@@ -26,15 +30,11 @@ import android.widget.TimePicker;
  */
 public class NewReminderFragment extends android.app.Fragment {
 
-    private int minute;
-    private int hour;
-
     private Switch reminderSwitch;
-
-
-
     private Button timePickerButton;
     private Button datePickerButton;
+    private TextView nameText;
+    private EditText nameEditText;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -88,6 +88,8 @@ public class NewReminderFragment extends android.app.Fragment {
         reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
         timePickerButton = (Button) view.findViewById(R.id.timePickerButton);
         datePickerButton = (Button) view.findViewById(R.id.datePickerButton);
+        nameText = (TextView) view.findViewById(R.id.nameText);
+        nameEditText = (EditText) view.findViewById(R.id.nameEditText);
 
         timePickerButton.setOnClickListener(
                 new Button.OnClickListener() {
@@ -117,7 +119,7 @@ public class NewReminderFragment extends android.app.Fragment {
         timePickerButton.setText(timeSet);
     }
 
-    public void setDateOnButton(int day, int month, int year) {
+    public void setDateOnButton(int year, int month, int day) {
         String dateSet = day + "." + month + "." + year;
         datePickerButton.setText(dateSet);
     }
@@ -163,5 +165,29 @@ public class NewReminderFragment extends android.app.Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onNewReminderFragmentInteraction(Uri uri);
+    }
+
+    public Switch getReminderSwitch() {
+        return reminderSwitch;
+    }
+
+    public void setReminderSwitch(Switch reminderSwitch) {
+        this.reminderSwitch = reminderSwitch;
+    }
+
+    public Button getTimePickerButton() {
+        return timePickerButton;
+    }
+
+    public void setTimePickerButton(Button timePickerButton) {
+        this.timePickerButton = timePickerButton;
+    }
+
+    public Button getDatePickerButton() {
+        return datePickerButton;
+    }
+
+    public void setDatePickerButton(Button datePickerButton) {
+        this.datePickerButton = datePickerButton;
     }
 }
