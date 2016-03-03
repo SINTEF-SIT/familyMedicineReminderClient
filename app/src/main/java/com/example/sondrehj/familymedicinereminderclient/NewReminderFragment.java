@@ -117,6 +117,11 @@ public class NewReminderFragment extends android.app.Fragment {
         timePickerButton.setText(timeSet);
     }
 
+    public void setDateOnButton(int day, int month, int year) {
+        String dateSet = day + "." + month + "." + year;
+        datePickerButton.setText(dateSet);
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

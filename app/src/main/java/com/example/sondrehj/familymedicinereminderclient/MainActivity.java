@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
         ReminderFragment.OnFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener
-        ,TimePickerFragment.TimePickerListener {
+        ,TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener {
 
 
     @Override
@@ -183,9 +183,17 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    //called by timepicker in NewReminder
     @Override
     public void setTime(int hourOfDay, int minute) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("hh");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setTimeOnButton(hourOfDay, minute);
+    }
+
+    //called by datepicker in NewReminder
+    @Override
+    public void setDate(int day, int month, int year) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        newReminderFragment.setDateOnButton(day, month, year);
     }
 }
