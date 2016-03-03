@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+    private DatePickerListener mListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -24,5 +27,18 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
+        mListener.setDate(year, month, day);
     }
+
+    public interface DatePickerListener {
+        public void setDate(int day, int month, int year);
+    }
+
+    //onAttach get called when the fragment gets attached to the activity
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mListener = (DatePickerListener) activity;
+    }
+
 }
