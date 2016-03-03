@@ -2,7 +2,6 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +12,15 @@ import android.view.ViewGroup;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
+import java.util.List;
+
 /**
  * A fragment representing a list of Items.
- * <p/>
+ * <p>
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.
  */
-public class ReminderFragment extends android.app.Fragment {
+public class ReminderListFragment extends android.app.Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -31,13 +32,13 @@ public class ReminderFragment extends android.app.Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ReminderFragment() {
+    public ReminderListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ReminderFragment newInstance(int columnCount) {
-        ReminderFragment fragment = new ReminderFragment();
+    public static ReminderListFragment newInstance(int columnCount) {
+        ReminderListFragment fragment = new ReminderListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -54,7 +55,8 @@ public class ReminderFragment extends android.app.Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
 
         // Set the adapter
@@ -66,7 +68,7 @@ public class ReminderFragment extends android.app.Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ReminderRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
+            recyclerView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
         return view;
     }
@@ -94,7 +96,7 @@ public class ReminderFragment extends android.app.Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

@@ -20,7 +20,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
-        ReminderFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener {
 
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_reminders) {
             System.out.print("nav_reminders");
-            changeFragment(ReminderFragment.newInstance(1));
+            changeFragment(ReminderListFragment.newInstance(1));
 
         } else if (id == R.id.nav_medication) {
             System.out.print("nav_medication");
