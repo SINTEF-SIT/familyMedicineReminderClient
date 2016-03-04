@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     //@Override
