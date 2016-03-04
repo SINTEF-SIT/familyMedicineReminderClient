@@ -25,7 +25,7 @@ public class MedicationListContent {
      */
     public static final Map<String, Medication> ITEM_MAP = new HashMap<String, Medication>();
 
-    private static final int COUNT = 25;
+    private static final int COUNT = 5;
 
     static {
         // Add some sample items.

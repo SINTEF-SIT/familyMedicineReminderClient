@@ -16,6 +16,8 @@ import android.widget.Spinner;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
+import java.io.Serializable;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,12 +30,10 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 public class MedicationStorageFragment extends android.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_MEDICATION = "medication";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Medication mMedicaiton;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,16 +45,14 @@ public class MedicationStorageFragment extends android.app.Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param medication Parameter 1.
      * @return A new instance of fragment MedicationStorageFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MedicationStorageFragment newInstance(String param1, String param2) {
+    public static MedicationStorageFragment newInstance(Medication medication) {
         MedicationStorageFragment fragment = new MedicationStorageFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_MEDICATION, medication);
         fragment.setArguments(args);
         return fragment;
     }
@@ -63,8 +61,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mMedicaiton = (Medication) getArguments().getSerializable(ARG_MEDICATION);
         }
     }
 
@@ -78,38 +75,76 @@ public class MedicationStorageFragment extends android.app.Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
+        if (mMedicaiton != null){
+            fillTextFields();
+        }
+
         Button saveMedicationBtn = (Button) view.findViewById(R.id.saveMedicationBtn);
         saveMedicationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                //MedicationStorage input-fields
-                EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
-                EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
-                Spinner medicationUnit = (Spinner) getActivity().findViewById(R.id.medicationUnit);
-
-                //Creates a new Medication object with the values of the input-fields
-                Medication medication = new Medication(
-                        "786#13%",
-                        medicationName.getText().toString(),
-                        Double.parseDouble(medicationAmount.getText().toString()),
-                        medicationUnit.getSelectedItem().toString()
-                );
-
-                //Adds the new medicine to MedicationListContent
-                MedicationListContent.ITEMS.add(0, medication);
-
-                // TODO: Add medicine to database
-
+                if(mMedicaiton == null) {
+                   createNewMedication();
+                } else {
+                    updateMedication();
+                }
                 //Return to MedicationCabinet
                 ((MainActivity) getActivity()).changeFragment(new MedicationCabinetFragment());
             }
         });
     }
 
+    public void fillTextFields(){
+
+        //Fills the TextFields with data from the given medicine object
+        EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
+        EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
+        Spinner medicationUnit = (Spinner) getActivity().findViewById(R.id.medicationUnit);
+
+        medicationName.setText(mMedicaiton.getName());
+        medicationAmount.setText(Double.toString(mMedicaiton.getCount()));
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.unit_items, android.R.layout.simple_spinner_item);
+        int spinnerPosition = adapter.getPosition(mMedicaiton.getUnit());
+        medicationUnit.setSelection(spinnerPosition);
+    }
+
+    public void createNewMedication(){
+
+        //MedicationStorage input-fields
+        EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
+        EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
+        Spinner medicationUnit = (Spinner) getActivity().findViewById(R.id.medicationUnit);
+
+        //Creates a new Medication object with the values of the input-fields
+        Medication medication = new Medication(
+                "786#13%",
+                medicationName.getText().toString(),
+                Double.parseDouble(medicationAmount.getText().toString()),
+                medicationUnit.getSelectedItem().toString()
+        );
+
+        //Adds the new medicine to MedicationListContent
+        MedicationListContent.ITEMS.add(0, medication);
+        // TODO: Add new medicine to database
+    }
+
+    public void updateMedication(){
+
+        EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
+        EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
+        Spinner medicationUnit = (Spinner) getActivity().findViewById(R.id.medicationUnit);
+
+        //Updates an existing Medication object
+        mMedicaiton.setName(medicationName.getText().toString());
+        mMedicaiton.setCount(Double.parseDouble(medicationAmount.getText().toString()));
+        mMedicaiton.setUnit(medicationUnit.getSelectedItem().toString());
+        // TODO: Update existing medicine in database
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
-
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onMedicationStorageFragmentInteraction(uri);

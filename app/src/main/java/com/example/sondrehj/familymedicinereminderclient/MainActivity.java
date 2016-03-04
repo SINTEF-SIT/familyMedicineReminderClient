@@ -143,8 +143,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Medication item) {
-
+    public void onMedicationListFragmentInteraction(Medication medication) {
+        Fragment fragment = MedicationStorageFragment.newInstance(medication);
+        changeFragment(fragment);
     }
 
     @Override
