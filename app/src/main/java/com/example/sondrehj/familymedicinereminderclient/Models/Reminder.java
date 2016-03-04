@@ -12,6 +12,10 @@ public class Reminder implements Serializable {
     Medication medicine;
     String units;
 
+    public Reminder() {
+
+    }
+
     public Reminder(String ownerId, String name, String time) {
         setOwnerId(ownerId);
         setName(name);

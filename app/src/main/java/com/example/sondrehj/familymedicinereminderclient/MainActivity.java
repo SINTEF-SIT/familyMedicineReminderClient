@@ -20,7 +20,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
-        AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
+        AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener {
@@ -157,8 +157,8 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onNewReminderFragmentInteraction(Uri uri) {
-
+    public void onSaveNewReminder() {
+        changeFragment(ReminderListFragment.newInstance(1));
     }
 
     @Override
