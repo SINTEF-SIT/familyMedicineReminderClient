@@ -175,8 +175,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onReminderListItemClicked(Reminder reminder) {
-        System.out.print(reminder + "was clicked");
-        changeFragment(NewReminderFragment.newInstance(reminder, "", ""));
+        System.out.print("Reminder was clicked");
+        changeFragment(NewReminderFragment.newInstance(reminder));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,8 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("reminder", holder.mReminder);
                     mListener.onReminderListItemClicked(holder.mReminder);
                 }
             }

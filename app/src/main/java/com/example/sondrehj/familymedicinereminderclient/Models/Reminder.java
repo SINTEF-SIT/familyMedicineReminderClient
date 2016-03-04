@@ -1,9 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import java.io.Serializable;
+
 /**
  * Created by nikolai on 24/02/16.
  */
-public class Reminder {
+public class Reminder implements Serializable {
     String ownerId;
     String name;
     String time;
