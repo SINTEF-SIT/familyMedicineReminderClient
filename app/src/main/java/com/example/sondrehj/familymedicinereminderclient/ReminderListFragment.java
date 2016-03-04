@@ -55,21 +55,23 @@ public class ReminderListFragment extends android.app.Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
-
+        RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        if (recView instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
+            recView.setLayoutManager(new LinearLayoutManager(context));
+            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
+
+        view.findViewById(R.id.reminder_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null, "", ""));
+            }
+        });
         return view;
     }
 
@@ -103,6 +105,7 @@ public class ReminderListFragment extends android.app.Fragment {
      */
     public interface OnReminderListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onReminderListFragmentInteraction(Reminder item);
+        void onReminderListItemClicked(Reminder item);
+        void onNewReminderButtonClicked();
     }
 }

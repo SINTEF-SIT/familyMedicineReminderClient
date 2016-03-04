@@ -46,12 +46,10 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             @Override
             public void onClick(View v) {
 
-                ((MainActivity)context).changeFragment(NewReminderFragment.newInstance("", ""));
-
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onReminderListFragmentInteraction(holder.mReminder);
+                    mListener.onReminderListItemClicked(holder.mReminder);
                 }
             }
         });

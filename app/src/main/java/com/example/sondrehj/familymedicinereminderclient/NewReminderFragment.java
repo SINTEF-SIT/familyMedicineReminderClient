@@ -17,6 +17,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+
 import org.w3c.dom.Text;
 
 
@@ -45,6 +47,7 @@ public class NewReminderFragment extends android.app.Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Reminder reminder;
 
     private OnFragmentInteractionListener mListener;
 
@@ -61,12 +64,9 @@ public class NewReminderFragment extends android.app.Fragment {
      * @return A new instance of fragment NewReminderFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewReminderFragment newInstance(String param1, String param2) {
+    public static NewReminderFragment newInstance(Reminder reminder, String param1, String param2) {
         NewReminderFragment fragment = new NewReminderFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        fragment.setReminder(reminder);
         return fragment;
     }
 
@@ -80,8 +80,7 @@ public class NewReminderFragment extends android.app.Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
 
@@ -108,10 +107,12 @@ public class NewReminderFragment extends android.app.Fragment {
                     }
                 }
         );
-
-
-
         return view;
+    }
+
+    public void setReminder(Reminder reminder){
+        System.out.println(reminder);
+        this.reminder = reminder;
     }
 
     public void setTimeOnButton(int hour, int minute) {
