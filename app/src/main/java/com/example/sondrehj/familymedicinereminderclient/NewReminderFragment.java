@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
@@ -17,7 +18,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import org.w3c.dom.Text;
+import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 import java.util.Calendar;
 
@@ -25,7 +28,7 @@ import java.util.Calendar;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewReminderFragment.OnFragmentInteractionListener} interface
+ * {@link NewReminderFragment.OnNewReminderInteractionListener} interface
  * to handle interaction events.
  * Use the {@link NewReminderFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -37,19 +40,17 @@ public class NewReminderFragment extends android.app.Fragment {
     private Button datePickerButton;
     private TextView nameText;
     private EditText nameEditText;
+    private Reminder reminder;
     private Button saveButton;
 
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String REMINDER_ARGS = "reminder";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    private OnNewReminderInteractionListener mListener;
 
     public NewReminderFragment() {
         // Required empty public constructor
@@ -59,17 +60,16 @@ public class NewReminderFragment extends android.app.Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param reminder The reminder object of the new reminder
      * @return A new instance of fragment NewReminderFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewReminderFragment newInstance(String param1, String param2) {
+    public static NewReminderFragment newInstance(Reminder reminder) {
         NewReminderFragment fragment = new NewReminderFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(REMINDER_ARGS, reminder);
+        fragment.setArguments(bundle);
+        fragment.setReminder(reminder);
         return fragment;
     }
 
@@ -77,14 +77,13 @@ public class NewReminderFragment extends android.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            reminder = (Reminder) getArguments().getSerializable(REMINDER_ARGS);
+            setReminder(reminder);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
 
@@ -109,8 +108,7 @@ public class NewReminderFragment extends android.app.Fragment {
         datePickerButton.setText(todaysDate);
 
         timePickerButton.setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
+                new Button.OnClickListener() {public void onClick(View v) {
                         DialogFragment timePickerFragment = new TimePickerFragment();
                         timePickerFragment.show(getFragmentManager(), "timePicker");
                     }
@@ -126,11 +124,18 @@ public class NewReminderFragment extends android.app.Fragment {
                 }
         );
 
-
-
-
+        saveButton.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View v) {
+                createReminder();
+            }
+        });
 
         return view;
+    }
+
+    public void setReminder(Reminder reminder){
+        System.out.println(reminder);
+        this.reminder = reminder;
     }
 
     public void setTimeOnButton(int hour, int minute) {
@@ -143,22 +148,26 @@ public class NewReminderFragment extends android.app.Fragment {
         datePickerButton.setText(dateSet);
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onNewReminderFragmentInteraction(uri);
-        }
-    }
-
-    //pass in the fragment
+    //API Level >= 23
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnNewReminderInteractionListener) {
+            mListener = (OnNewReminderInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    //API Level < 23
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnNewReminderInteractionListener) {
+            mListener = (OnNewReminderInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -169,7 +178,16 @@ public class NewReminderFragment extends android.app.Fragment {
         mListener = null;
     }
 
+    public void createReminder() {
+        Reminder reminder = new Reminder();
+        reminder.setName(nameEditText.getEditableText().toString());
+        reminder.setTime(timePickerButton.getText().toString());
+        reminder.setMedicine(new Medication("1", "Paracetamol", 2.0, "ml"));
+        reminder.setUnits("1");
+        ReminderListContent.ITEMS.add(0, reminder);
 
+        mListener.onSaveNewReminder();
+    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -181,33 +199,9 @@ public class NewReminderFragment extends android.app.Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface OnNewReminderInteractionListener {
         // TODO: Update argument type and name
-        void onNewReminderFragmentInteraction(Uri uri);
-    }
-
-    public Switch getReminderSwitch() {
-        return reminderSwitch;
-    }
-
-    public void setReminderSwitch(Switch reminderSwitch) {
-        this.reminderSwitch = reminderSwitch;
-    }
-
-    public Button getTimePickerButton() {
-        return timePickerButton;
-    }
-
-    public void setTimePickerButton(Button timePickerButton) {
-        this.timePickerButton = timePickerButton;
-    }
-
-    public Button getDatePickerButton() {
-        return datePickerButton;
-    }
-
-    public void setDatePickerButton(Button datePickerButton) {
-        this.datePickerButton = datePickerButton;
+        void onSaveNewReminder();
     }
 
     public Button getSaveButton() {

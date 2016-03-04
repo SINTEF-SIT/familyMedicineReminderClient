@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
-    android:fillViewport="true"
-    >
+    android:fillViewport="true">
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -104,9 +103,9 @@
         android:padding="10dp"
         android:layout_below="@+id/timePickerButton"
         android:layout_toStartOf="@+id/saveButton"
+        android:layout_toLeftOf="@+id/saveButton"
         android:layout_marginTop="40dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
-</RelativeLayout>
+    </RelativeLayout>
 </ScrollView>
