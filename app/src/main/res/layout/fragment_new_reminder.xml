@@ -1,3 +1,11 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
+    android:fillViewport="true"
+    >
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -57,4 +65,48 @@
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/textName" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Date"
+        android:id="@+id/dateText"
+        android:layout_alignTop="@+id/datePickerButton"
+        android:layout_alignEnd="@+id/timeText"
+        android:layout_below="@+id/datePickerButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Time"
+        android:id="@+id/timeText"
+        android:layout_centerVertical="true"
+        android:layout_alignLeft="@+id/nameText"
+        android:layout_alignStart="@+id/nameText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/saveButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="33dp" />
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Repeat"
+        android:id="@+id/repeatSwitch"
+        android:checked="false"
+        android:textSize="20sp"
+        android:padding="10dp"
+        android:layout_below="@+id/timePickerButton"
+        android:layout_toStartOf="@+id/saveButton"
+        android:layout_marginTop="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
+</ScrollView>

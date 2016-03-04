@@ -19,6 +19,8 @@ import android.widget.TimePicker;
 
 import org.w3c.dom.Text;
 
+import java.util.Calendar;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +37,7 @@ public class NewReminderFragment extends android.app.Fragment {
     private Button datePickerButton;
     private TextView nameText;
     private EditText nameEditText;
+    private Button saveButton;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -90,6 +93,20 @@ public class NewReminderFragment extends android.app.Fragment {
         datePickerButton = (Button) view.findViewById(R.id.datePickerButton);
         nameText = (TextView) view.findViewById(R.id.nameText);
         nameEditText = (EditText) view.findViewById(R.id.nameEditText);
+        saveButton = (Button) view.findViewById(R.id.saveButton);
+
+        final Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        //String currentTime = hour + ":" + minute;
+        String currentTime = String.format("%02d:%02d", hour, minute);
+        timePickerButton.setText(currentTime);
+        //String todaysDate = day + "." + month + "." + year;
+        String todaysDate = String.format("%02d.%02d.%4d", day, month, year);
+        datePickerButton.setText(todaysDate);
 
         timePickerButton.setOnClickListener(
                 new Button.OnClickListener() {
@@ -108,6 +125,8 @@ public class NewReminderFragment extends android.app.Fragment {
                     }
                 }
         );
+
+
 
 
 
@@ -189,5 +208,13 @@ public class NewReminderFragment extends android.app.Fragment {
 
     public void setDatePickerButton(Button datePickerButton) {
         this.datePickerButton = datePickerButton;
+    }
+
+    public Button getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(Button saveButton) {
+        this.saveButton = saveButton;
     }
 }
