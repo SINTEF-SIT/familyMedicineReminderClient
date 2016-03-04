@@ -22,6 +22,8 @@ import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListConte
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
+import java.util.Calendar;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +41,8 @@ public class NewReminderFragment extends android.app.Fragment {
     private TextView nameText;
     private EditText nameEditText;
     private Reminder reminder;
-    private Button saveBtn;
+    private Button saveButton;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -89,7 +92,20 @@ public class NewReminderFragment extends android.app.Fragment {
         datePickerButton = (Button) view.findViewById(R.id.datePickerButton);
         nameText = (TextView) view.findViewById(R.id.nameText);
         nameEditText = (EditText) view.findViewById(R.id.nameEditText);
-        saveBtn = (Button) view.findViewById(R.id.new_reminder_save);
+        saveButton = (Button) view.findViewById(R.id.saveButton);
+
+        final Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        //String currentTime = hour + ":" + minute;
+        String currentTime = String.format("%02d:%02d", hour, minute);
+        timePickerButton.setText(currentTime);
+        //String todaysDate = day + "." + month + "." + year;
+        String todaysDate = String.format("%02d.%02d.%4d", day, month, year);
+        datePickerButton.setText(todaysDate);
 
         timePickerButton.setOnClickListener(
                 new Button.OnClickListener() {public void onClick(View v) {
@@ -108,11 +124,12 @@ public class NewReminderFragment extends android.app.Fragment {
                 }
         );
 
-        saveBtn.setOnClickListener(new Button.OnClickListener() {
+        saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 createReminder();
             }
         });
+
         return view;
     }
 
@@ -185,5 +202,13 @@ public class NewReminderFragment extends android.app.Fragment {
     public interface OnNewReminderInteractionListener {
         // TODO: Update argument type and name
         void onSaveNewReminder();
+    }
+
+    public Button getSaveButton() {
+        return saveButton;
+    }
+
+    public void setSaveButton(Button saveButton) {
+        this.saveButton = saveButton;
     }
 }
