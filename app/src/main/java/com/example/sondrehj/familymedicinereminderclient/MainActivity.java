@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onNewReminderButtonClicked() {
-        changeFragment(new NewReminderFragment());
+        changeFragment(NewReminderFragment.newInstance(null));
     }
 
     @Override

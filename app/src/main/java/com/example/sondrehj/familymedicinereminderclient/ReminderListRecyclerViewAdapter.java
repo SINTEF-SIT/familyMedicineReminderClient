@@ -21,7 +21,7 @@ import java.util.List;
 public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<ReminderListRecyclerViewAdapter.ViewHolder> {
 
     private final List<Reminder> mValues;
-    private final ReminderListFragment.OnReminderListFragmentInteractionListener mListener;
+    private final OnReminderListFragmentInteractionListener mListener;
     private final Context context;
 
     public ReminderListRecyclerViewAdapter(Context context, List<Reminder> items, OnReminderListFragmentInteractionListener listener) {
@@ -32,8 +32,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_reminder_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_reminder_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,11 +46,11 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             @Override
             public void onClick(View v) {
 
+                System.out.println("Clicked");
+
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("reminder", holder.mReminder);
                     mListener.onReminderListItemClicked(holder.mReminder);
                 }
             }

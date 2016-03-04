@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -74,14 +75,26 @@ public class ReminderListFragment extends android.app.Fragment {
         return view;
     }
 
-
+    //API Level >= 23
     @Override
-    public void onAttach(Context context) {
+     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    //API Level < 23
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnReminderListFragmentInteractionListener) {
+            mListener = (OnReminderListFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
     }
