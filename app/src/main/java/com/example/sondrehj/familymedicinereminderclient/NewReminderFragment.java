@@ -90,9 +90,14 @@ public class NewReminderFragment extends android.app.Fragment {
         reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
         timePickerButton = (Button) view.findViewById(R.id.timePickerButton);
         datePickerButton = (Button) view.findViewById(R.id.datePickerButton);
-        nameText = (TextView) view.findViewById(R.id.nameText);
         nameEditText = (EditText) view.findViewById(R.id.nameEditText);
         saveButton = (Button) view.findViewById(R.id.saveButton);
+
+        if (getArguments() != null) {
+            Reminder tempReminder = (Reminder) getArguments().get(REMINDER_ARGS);
+            nameEditText.setText(tempReminder.getName());
+        }
+
 
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);

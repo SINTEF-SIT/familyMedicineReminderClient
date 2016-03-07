@@ -25,18 +25,18 @@ public class ReminderListContent {
      */
     public static final Map<String, Reminder> ITEM_MAP = new HashMap<>();
 
-    private static final int COUNT = 25;
-
     static {
         // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
+        //for (int i = 1; i <= COUNT; i++) {
             addItem(createReminder());
-        }
+        //}
     }
 
     private static void addItem(Reminder reminder) {
-        ITEMS.add(reminder);
-        ITEM_MAP.put(reminder.getOwnerId(), reminder);
+
+        ITEMS.add(new Reminder("0", "Morning pill", "08:00"));
+        ITEMS.add(new Reminder("1", "Afternoon pill", "15:00"));
+        ITEMS.add(new Reminder("2", "Evening pill", "20:00"));
     }
 
     private static Reminder createReminder() {
