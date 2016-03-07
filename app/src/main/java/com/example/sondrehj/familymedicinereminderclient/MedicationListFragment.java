@@ -68,6 +68,7 @@ public class MedicationListFragment extends android.app.Fragment{
             } else {
                 recView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
         }
 
@@ -78,7 +79,7 @@ public class MedicationListFragment extends android.app.Fragment{
                 ((MainActivity)getActivity()).changeFragment(new MedicationStorageFragment());
             }
         });
-        
+
         return view;
     }
 
