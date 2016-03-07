@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -19,7 +20,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
-        AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnFragmentInteractionListener,
+        AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener {
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        changeFragment(new MedicationCabinetFragment());
+        changeFragment(new MedicationListFragment());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     //@Override
@@ -128,7 +131,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_medication) {
             System.out.print("nav_medication");
-            changeFragment(new MedicationCabinetFragment());
+            changeFragment(new MedicationListFragment());
 
         } else if (id == R.id.nav_symptoms) {
 
@@ -143,8 +146,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Medication item) {
-
+    public void onMedicationListFragmentInteraction(Medication medication) {
+        Fragment fragment = MedicationStorageFragment.newInstance(medication);
+        changeFragment(fragment);
     }
 
     @Override
@@ -154,8 +158,8 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
-    public void onNewReminderFragmentInteraction(Uri uri) {
-
+    public void onSaveNewReminder() {
+        changeFragment(ReminderListFragment.newInstance(1));
     }
 
     @Override
@@ -174,8 +178,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onReminderListFragmentInteraction(Reminder reminder) {
-        System.out.print(reminder + "was clicked");
+    public void onReminderListItemClicked(Reminder reminder) {
+        System.out.print("Reminder was clicked");
+        changeFragment(NewReminderFragment.newInstance(reminder));
+    }
+
+    @Override
+    public void onNewReminderButtonClicked() {
+        changeFragment(NewReminderFragment.newInstance(null));
     }
 
     @Override

@@ -60,10 +60,11 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
 
 
                 if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onMedicationListFragmentInteraction(holder.mItem);
                 }
+
                 //Changes view to MedicationStorage
-                ((MainActivity)context).changeFragment(new MedicationStorageFragment());
+                //((MainActivity)context).changeFragment(new MedicationStorageFragment());
             }
         });
     }

@@ -1,7 +1,9 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -56,18 +58,27 @@ public class MedicationListFragment extends android.app.Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.medication_item_list, container, false);
+        RecyclerView recView = (RecyclerView) view.findViewById(R.id.medication_list);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        if (recView != null) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recView.setLayoutManager(new LinearLayoutManager(context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                recView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
+            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
         }
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.new_medication_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).changeFragment(new MedicationStorageFragment());
+            }
+        });
 
         return view;
     }
@@ -80,6 +91,17 @@ public class MedicationListFragment extends android.app.Fragment{
             mListener = (OnListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
     }
@@ -103,6 +125,6 @@ public class MedicationListFragment extends android.app.Fragment{
 
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Medication item);
+        void onMedicationListFragmentInteraction(Medication medication);
         }
     }

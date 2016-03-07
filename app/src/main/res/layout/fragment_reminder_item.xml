@@ -2,12 +2,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
 
     <LinearLayout
         android:id="@+id/upper_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <TextView
             android:id="@+id/name_text"
@@ -15,7 +19,8 @@
             android:layout_height="match_parent"
             android:textAppearance="?attr/textAppearanceListItem"
             android:layout_weight="0.7"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:textSize="22sp" />
 
         <Switch
             android:layout_width="0dp"
@@ -31,6 +36,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_below="@+id/upper_layout" />
+        android:layout_below="@+id/upper_layout"
+        android:textSize="22sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" />
 
 </RelativeLayout>

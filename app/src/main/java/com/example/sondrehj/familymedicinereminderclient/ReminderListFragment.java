@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -55,32 +56,46 @@ public class ReminderListFragment extends android.app.Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
-
+        RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        if (recView != null) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
+            recView.setLayoutManager(new LinearLayoutManager(context));
+            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
+
+        view.findViewById(R.id.reminder_fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null));
+            }
+        });
         return view;
     }
 
-
+    //API Level >= 23
     @Override
-    public void onAttach(Context context) {
+     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    //API Level < 23
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnReminderListFragmentInteractionListener) {
+            mListener = (OnReminderListFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
     }
@@ -103,6 +118,7 @@ public class ReminderListFragment extends android.app.Fragment {
      */
     public interface OnReminderListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onReminderListFragmentInteraction(Reminder item);
+        void onReminderListItemClicked(Reminder reminder);
+        void onNewReminderButtonClicked();
     }
 }

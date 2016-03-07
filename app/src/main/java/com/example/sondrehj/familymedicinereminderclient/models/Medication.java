@@ -1,11 +1,12 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import java.io.Serializable;
 import java.sql.SQLOutput;
 
 /**
  * Created by nikolai on 24/02/16.
  */
-public class Medication {
+public class Medication implements Serializable {
     String ownerId;
     String name;
     Double count;
@@ -32,6 +33,10 @@ public class Medication {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setUnit(String unit){
+        this.unit = unit;
     }
 
     public Double getCount() {
