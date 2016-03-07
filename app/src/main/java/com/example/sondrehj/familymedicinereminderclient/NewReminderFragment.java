@@ -66,10 +66,12 @@ public class NewReminderFragment extends android.app.Fragment {
     // TODO: Rename and change types and number of parameters
     public static NewReminderFragment newInstance(Reminder reminder) {
         NewReminderFragment fragment = new NewReminderFragment();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(REMINDER_ARGS, reminder);
-        fragment.setArguments(bundle);
-        fragment.setReminder(reminder);
+        if (reminder != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(REMINDER_ARGS, reminder);
+            fragment.setArguments(bundle);
+            fragment.setReminder(reminder);
+        }
         return fragment;
     }
 
@@ -97,7 +99,6 @@ public class NewReminderFragment extends android.app.Fragment {
             Reminder tempReminder = (Reminder) getArguments().get(REMINDER_ARGS);
             nameEditText.setText(tempReminder.getName());
         }
-
 
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
