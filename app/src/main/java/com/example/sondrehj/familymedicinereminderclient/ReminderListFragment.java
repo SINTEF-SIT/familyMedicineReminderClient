@@ -60,9 +60,10 @@ public class ReminderListFragment extends android.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
         // Set the adapter
-        if (recView instanceof RecyclerView) {
+        if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
+            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
 
