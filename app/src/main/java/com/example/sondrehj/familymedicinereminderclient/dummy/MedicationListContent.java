@@ -25,21 +25,27 @@ public class MedicationListContent {
      */
     public static final Map<String, Medication> ITEM_MAP = new HashMap<String, Medication>();
 
-    private static final int COUNT = 25;
+    private static final int COUNT = 5;
 
     static {
         // Add some sample items.
-        for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(i));
-        }
+        //for (int i = 1; i <= COUNT; i++) {
+            addItem(createDummyItem(1));
+        //}
     }
 
     private static void addItem(Medication medication) {
-        ITEMS.add(medication);
+
+        ITEMS.add(new Medication("141", "Hydrocodone", 0.5, "g"));
+        ITEMS.add(new Medication("s", "Azithromycin", 2.0, "ml"));
+        ITEMS.add(new Medication("a", "Amoxicillin", 5.0, "mg"));
+        ITEMS.add(new Medication("c", "Hydrochlorot", 2.0, "pill(s)"));
+
         ITEM_MAP.put(medication.getOwnerId(), medication);
     }
 
     private static Medication createDummyItem(int position) {
+
         return new Medication("$€%%", "MDMA", 0.5, "mg");
     }
 
