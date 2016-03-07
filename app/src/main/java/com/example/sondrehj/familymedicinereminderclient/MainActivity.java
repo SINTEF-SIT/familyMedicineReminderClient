@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        changeFragment(new MedicationCabinetFragment());
+        changeFragment(new MedicationListFragment());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_medication) {
             System.out.print("nav_medication");
-            changeFragment(new MedicationCabinetFragment());
+            changeFragment(new MedicationListFragment());
 
         } else if (id == R.id.nav_symptoms) {
 

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<android.support.v7.widget.RecyclerView
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/medication_list"
@@ -10,3 +16,17 @@
     app:layoutManager="LinearLayoutManager"
     tools:context="com.example.sondrehj.familymedicinereminderclient.MedicationListFragment"
     tools:listitem="@layout/medication_list_item" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/new_medication_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        app:backgroundTint="#10b318"
+        android:tint="#ffff"
+        android:src="@android:drawable/ic_input_add" />
+
+
+</FrameLayout>

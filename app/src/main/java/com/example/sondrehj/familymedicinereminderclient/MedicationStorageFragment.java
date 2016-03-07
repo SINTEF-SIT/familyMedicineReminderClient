@@ -90,7 +90,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
                     updateMedication();
                 }
                 //Return to MedicationCabinet
-                ((MainActivity) getActivity()).changeFragment(new MedicationCabinetFragment());
+                ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
             }
         });
     }
