@@ -188,13 +188,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void setTime(int hourOfDay, int minute) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
-        newReminderFragment.setTimeOnButton(hourOfDay, minute);
+        newReminderFragment.setTimeOnLayout(hourOfDay, minute);
     }
 
     //called by datepicker in NewReminder
     @Override
     public void setDate(int year, int month, int day) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
-        newReminderFragment.setDateOnButton(year, month, day);
+        newReminderFragment.setDateOnLayout(year, month, day);
     }
 }

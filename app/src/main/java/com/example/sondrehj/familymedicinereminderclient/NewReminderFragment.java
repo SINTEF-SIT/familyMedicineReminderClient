@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -33,10 +34,11 @@ import java.util.Calendar;
 public class NewReminderFragment extends android.app.Fragment {
 
     private Switch reminderSwitch;
-    private Button timePickerButton;
-    private Button datePickerButton;
-    private TextView nameText;
     private EditText nameEditText;
+    private LinearLayout datePickerLayout;
+    private TextView dateSetText;
+    private LinearLayout timePickerLayout;
+    private TextView timeSetText;
     private Button saveButton;
 
 
@@ -89,58 +91,55 @@ public class NewReminderFragment extends android.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
 
         reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
-        timePickerButton = (Button) view.findViewById(R.id.timePickerButton);
-        datePickerButton = (Button) view.findViewById(R.id.datePickerButton);
-        nameText = (TextView) view.findViewById(R.id.nameText);
+        datePickerLayout = (LinearLayout) view.findViewById(R.id.datePickerLayout);
+        dateSetText = (TextView) view.findViewById(R.id.dateSetText);
+        timePickerLayout = (LinearLayout) view.findViewById(R.id.timePickerLayout);
+        timeSetText = (TextView) view.findViewById(R.id.timeSetText);
         nameEditText = (EditText) view.findViewById(R.id.nameEditText);
         saveButton = (Button) view.findViewById(R.id.saveButton);
 
+        //sets todays date and time as default
         final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
         int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
+        int month = c.get(Calendar.MONTH) + 1; //month is 0-indexed
         int day = c.get(Calendar.DAY_OF_MONTH);
-        //String currentTime = hour + ":" + minute;
         String currentTime = String.format("%02d:%02d", hour, minute);
-        timePickerButton.setText(currentTime);
-        //String todaysDate = day + "." + month + "." + year;
+        timeSetText.setText(currentTime);
         String todaysDate = String.format("%02d.%02d.%4d", day, month, year);
-        datePickerButton.setText(todaysDate);
+        dateSetText.setText(todaysDate);
 
-        timePickerButton.setOnClickListener(
-                new Button.OnClickListener() {
+        datePickerLayout.setOnClickListener(
+                new LinearLayout.OnClickListener() {
+                    public void onClick(View v) {
+                        DialogFragment datePickerFragment = new DatePickerFragment();
+                        datePickerFragment.show(getFragmentManager(), "datePicker");
+                    }
+        });
+
+        timePickerLayout.setOnClickListener(
+                new LinearLayout.OnClickListener() {
                     public void onClick(View v) {
                         DialogFragment timePickerFragment = new TimePickerFragment();
                         timePickerFragment.show(getFragmentManager(), "timePicker");
                     }
-                }
-        );
-
-        datePickerButton.setOnClickListener(
-                new Button.OnClickListener() {
-                    public void onClick(View v) {
-                        DialogFragment datePickerFragment = new DatePickerFragment();
-                        datePickerFragment.show(getFragmentManager(), "date picker");
-                    }
-                }
-        );
-
-
+                });
 
 
 
         return view;
     }
 
-    public void setTimeOnButton(int hour, int minute) {
-        String timeSet = hour + ":" + minute;
-        timePickerButton.setText(timeSet);
+    public void setDateOnLayout(int year, int month, int day) {
+        month = month + 1;  //month is 0-indexed
+        String dateSet = String.format("%02d.%02d.%4d", day, month, year);
+        dateSetText.setText(dateSet);
     }
 
-    public void setDateOnButton(int year, int month, int day) {
-        String dateSet = day + "." + month + "." + year;
-        datePickerButton.setText(dateSet);
+    public void setTimeOnLayout(int hour, int minute) {
+        String timeSet = String.format("%02d:%02d", hour, minute);
+        timeSetText.setText(timeSet);
     }
 
 
@@ -190,31 +189,20 @@ public class NewReminderFragment extends android.app.Fragment {
         return reminderSwitch;
     }
 
-    public void setReminderSwitch(Switch reminderSwitch) {
-        this.reminderSwitch = reminderSwitch;
+    public EditText getNameEditText() {
+        return nameEditText;
     }
 
-    public Button getTimePickerButton() {
-        return timePickerButton;
+    public TextView getDateSetText() {
+        return dateSetText;
     }
 
-    public void setTimePickerButton(Button timePickerButton) {
-        this.timePickerButton = timePickerButton;
-    }
-
-    public Button getDatePickerButton() {
-        return datePickerButton;
-    }
-
-    public void setDatePickerButton(Button datePickerButton) {
-        this.datePickerButton = datePickerButton;
+    public TextView getTimeSetText() {
+        return timeSetText;
     }
 
     public Button getSaveButton() {
         return saveButton;
     }
 
-    public void setSaveButton(Button saveButton) {
-        this.saveButton = saveButton;
-    }
 }
