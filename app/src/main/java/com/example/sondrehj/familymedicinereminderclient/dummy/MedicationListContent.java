@@ -27,12 +27,12 @@ public class MedicationListContent {
 
     private static final int COUNT = 5;
 
-    static {
-        // Add some sample items.
-        //for (int i = 1; i <= COUNT; i++) {
-            addItem(createDummyItem(1));
-        //}
-    }
+    //static {
+    //    // Add some sample items.
+    //    //for (int i = 1; i <= COUNT; i++) {
+    //        addItem(createDummyItem(1));
+    //    //}
+    //}
 
     private static void addItem(Medication medication) {
 
