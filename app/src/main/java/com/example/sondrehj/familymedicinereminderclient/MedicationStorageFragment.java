@@ -122,7 +122,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
 
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
-                1,
+                0,
                 "786#13%",
                 medicationName.getText().toString(),
                 Double.parseDouble(medicationAmount.getText().toString()),
@@ -135,12 +135,11 @@ public class MedicationStorageFragment extends android.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
 
-        ArrayList<Medication> meds = db.getMedications();
-
-        for (Medication m : meds
-             ) {
-            System.out.println(m.toString());
-        }
+       //ArrayList<Medication> meds = db.getMedications();
+       //for (Medication m : meds
+       //     ) {
+       //    System.out.println(m.toString());
+       //}
 
     }
 
@@ -155,6 +154,8 @@ public class MedicationStorageFragment extends android.app.Fragment {
         mMedicaiton.setCount(Double.parseDouble(medicationAmount.getText().toString()));
         mMedicaiton.setUnit(medicationUnit.getSelectedItem().toString());
         // TODO: Update existing medicine in database
+        MySQLiteHelper db = new MySQLiteHelper(getActivity());
+        db.updateMedication(mMedicaiton);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

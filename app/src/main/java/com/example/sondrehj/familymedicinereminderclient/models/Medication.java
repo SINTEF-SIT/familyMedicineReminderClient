@@ -21,6 +21,14 @@ public class Medication implements Serializable {
         this.unit = unit;
     }
 
+    public int getMedId() {
+        return medId;
+    }
+
+    public void setmedId(int medId){
+        this.medId = medId;
+    }
+
     public String getOwnerId() {
         return ownerId;
     }
@@ -37,6 +45,10 @@ public class Medication implements Serializable {
         this.name = name;
     }
 
+    public String getUnit(){
+        return unit;
+    }
+
     public void setUnit(String unit){
         this.unit = unit;
     }
@@ -49,9 +61,6 @@ public class Medication implements Serializable {
         this.count = count;
     }
 
-    public String getUnit(){
-        return unit;
-    }
 
 
     public String toString(){

@@ -20,6 +20,8 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
+import java.util.Collections;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
