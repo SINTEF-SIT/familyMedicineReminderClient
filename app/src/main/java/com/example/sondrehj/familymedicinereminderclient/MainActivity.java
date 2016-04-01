@@ -25,7 +25,18 @@ public class MainActivity extends AppCompatActivity
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener {
 
-
+    /**+
+     * Main entry point of the application. When onCreate is run, view is filled with the
+     * layout activity_main in res. The fragment container which resides in the contentView is
+     * changed to "MediciationListFragment()" with the changeFragment() function call.
+     *
+     * In addition, the Sidebar/Drawer is instantiated.
+     *
+     * Portrait mode is enforced because if the screen is rotated you loose a lot of references
+     * when the instance is redrawn.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +52,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -57,6 +69,9 @@ public class MainActivity extends AppCompatActivity
     //    }
     //}
 
+    /**+
+     * Closes the drawer when the back button is pressed.
+     */
     @Override
     public void onBackPressed() {
 
@@ -70,18 +85,30 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    /**+
+     * Inflate the options menu. This adds items to the action bar if it is present. The one with
+     * the three buttons, which resides physically on Samsung phones.
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+    /**+
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -96,7 +123,12 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
-
+    /**+
+     * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
+     * of MainActivity.
+     *
+     * @param fragment
+     */
     public void changeFragment (Fragment fragment){
         String backStateName = fragment.getClass().getName();
         System.out.println(fragment.getClass().getSimpleName());
@@ -117,7 +149,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
+    /**+
+     * Handles the selection of items in the drawer and replaces the fragment container of
+     * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
+     *
+     * @param item
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
