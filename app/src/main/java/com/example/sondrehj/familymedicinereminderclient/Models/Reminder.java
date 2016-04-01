@@ -18,6 +18,7 @@ public class Reminder implements Serializable {
     }
 
     public Reminder(int reminderId, String ownerId, String name, String time) {
+        setReminderId(reminderId);
         setOwnerId(ownerId);
         setName(name);
         setTime(time);

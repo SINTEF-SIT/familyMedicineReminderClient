@@ -28,16 +28,15 @@ public class ReminderListContent {
     static {
         // Add some sample items.
         //for (int i = 1; i <= COUNT; i++) {
-            addItem(createReminder());
+        //addItem(createReminder());
         //}
     }
 
-    private static void addItem(Reminder reminder) {
-
-        ITEMS.add(new Reminder(0, "0", "Morning pill", "08:00"));
-        ITEMS.add(new Reminder(1, "1", "Afternoon pill", "15:00"));
-        ITEMS.add(new Reminder(2, "2", "Evening pill", "20:00"));
-    }
+    //private static void addItem(Reminder reminder) {
+    //    ITEMS.add(new Reminder(0, "0", "Morning pill", "08:00"));
+    //    ITEMS.add(new Reminder(1, "1", "Afternoon pill", "15:00"));
+    //    ITEMS.add(new Reminder(2, "2", "Evening pill", "20:00"));
+    //}
 
     private static Reminder createReminder() {
         return new Reminder(0, "1", "My reminder", "My time");
