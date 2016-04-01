@@ -47,8 +47,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        MySQLiteHelper db = new MySQLiteHelper(this);
 
+        //Read local database, maa kanskje flyttes?
+        MySQLiteHelper db = new MySQLiteHelper(this);
         MedicationListContent.ITEMS.addAll(db.getMedications());
     }
 

@@ -7,12 +7,14 @@ import java.sql.SQLOutput;
  * Created by nikolai on 24/02/16.
  */
 public class Medication implements Serializable {
+    int medId;
     String ownerId;
     String name;
     Double count;
     String unit;
 
-    public Medication(String ownerId, String name, Double count, String unit) {
+    public Medication(int medId, String ownerId, String name, Double count, String unit) {
+        this.medId = medId;
         this.ownerId = ownerId;
         this.name = name;
         this.count = count;

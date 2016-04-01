@@ -122,6 +122,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
 
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
+                1,
                 "786#13%",
                 medicationName.getText().toString(),
                 Double.parseDouble(medicationAmount.getText().toString()),

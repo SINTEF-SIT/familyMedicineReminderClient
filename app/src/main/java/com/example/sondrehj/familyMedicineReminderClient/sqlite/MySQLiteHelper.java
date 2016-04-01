@@ -19,7 +19,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     SQLiteDatabase db;
     public static final String TABLE_MEDICATION = "medication";
-    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_ID = "med_id";
+    public static final String COLUMN_OWNER_ID = "owner_id";
     public static final String COLUMN_NAME = "medication_name";
     public static final String COLUMN_COUNT = "count";
     public static final String COLUMN_UNIT = "unit";
@@ -31,7 +32,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     // Database creation sql statement
     private static final String DATABASE_CREATE = "create table "
             + TABLE_MEDICATION + "(" + COLUMN_ID
-            + " integer primary key autoincrement, " + COLUMN_NAME
+            + " integer primary key autoincrement, " + COLUMN_OWNER_ID
+            + " text not null, " + COLUMN_NAME
             + " text not null, " + COLUMN_COUNT
             + " real, " + COLUMN_UNIT
             + " text not null);";
@@ -57,11 +59,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Adding new medication
+    //Queries, flyttes?
+
     public void addMedication(Medication medication) {
+        // Add new medication
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(COLUMN_OWNER_ID, medication.getOwnerId());
         values.put(COLUMN_NAME, medication.getName());
         values.put(COLUMN_COUNT, medication.getCount());
         values.put(COLUMN_UNIT, medication.getUnit());
@@ -71,8 +76,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public ArrayList<Medication> getMedications() {
+    public void updateMedication(Medication medication) {
+        // Add new medication
+        SQLiteDatabase db = this.getWritableDatabase();
 
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, medication.getName());
+        values.put(COLUMN_COUNT, medication.getCount());
+        values.put(COLUMN_UNIT, medication.getUnit());
+
+        // Inserting Row
+        //db.update(TABLE_MEDICATION, values, );
+        db.close(); // Closing database connection
+    }
+
+    public ArrayList<Medication> getMedications() {
+        //Retrieve medications
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION;
         SQLiteDatabase db  = this.getReadableDatabase();
         Cursor cursor      = db.rawQuery(selectQuery, null);
@@ -81,11 +100,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
 
+                int id = cursor.getInt(0);
                 String ownerId = "test";
-                String name = cursor.getString(1);
-                Double count = cursor.getDouble(2);
-                String unit = cursor.getString(3);
-                Medication m = new Medication(ownerId, name, count, unit);
+                String name = cursor.getString(2);
+                Double count = cursor.getDouble(3);
+                String unit = cursor.getString(4);
+                Medication m = new Medication(id, ownerId, name, count, unit);
 
                 data.add(m);
                 // get the data into array, or class variable

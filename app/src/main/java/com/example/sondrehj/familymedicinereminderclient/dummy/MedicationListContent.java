@@ -36,18 +36,14 @@ public class MedicationListContent {
 
     private static void addItem(Medication medication) {
 
-        ITEMS.add(new Medication("141", "Hydrocodone", 0.5, "g"));
-        ITEMS.add(new Medication("s", "Azithromycin", 2.0, "ml"));
-        ITEMS.add(new Medication("a", "Amoxicillin", 5.0, "mg"));
-        ITEMS.add(new Medication("c", "Hydrochlorot", 2.0, "pill(s)"));
-
-        ITEM_MAP.put(medication.getOwnerId(), medication);
+    //    ITEMS.add(new Medication("141", "Hydrocodone", 0.5, "g"));
+    //    ITEMS.add(new Medication("s", "Azithromycin", 2.0, "ml"));
+    //    ITEMS.add(new Medication("a", "Amoxicillin", 5.0, "mg"));
+    //    ITEMS.add(new Medication("c", "Hydrochlorot", 2.0, "pill(s)"));
+//
+    //    ITEM_MAP.put(medication.getOwnerId(), medication);
     }
 
-    private static Medication createDummyItem(int position) {
-
-        return new Medication("$€%%", "MDMA", 0.5, "mg");
-    }
 
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
