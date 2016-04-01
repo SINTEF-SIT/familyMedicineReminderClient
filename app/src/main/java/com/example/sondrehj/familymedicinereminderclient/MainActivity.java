@@ -194,7 +194,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
     @Override
     public void onSaveNewReminder() {
         changeFragment(ReminderListFragment.newInstance(1));
@@ -232,14 +231,23 @@ public class MainActivity extends AppCompatActivity
         System.out.println(medication);
     }
 
-    //called by timepicker in NewReminder
+    /**+
+     * Called by timepicker in NewReminder
+     * @param hourOfDay
+     * @param minute
+     */
     @Override
     public void setTime(int hourOfDay, int minute) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setTimeOnLayout(hourOfDay, minute);
     }
 
-    //called by datepicker in NewReminder
+    /**+
+     * Called by datepicker in NewReminder
+     * @param year
+     * @param month
+     * @param day
+     */
     @Override
     public void setDate(int year, int month, int day) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
