@@ -6,6 +6,7 @@ import java.io.Serializable;
  * Created by nikolai on 24/02/16.
  */
 public class Reminder implements Serializable {
+    int reminderId;
     String ownerId;
     String name;
     String time;
@@ -16,10 +17,18 @@ public class Reminder implements Serializable {
 
     }
 
-    public Reminder(String ownerId, String name, String time) {
+    public Reminder(int reminderId, String ownerId, String name, String time) {
         setOwnerId(ownerId);
         setName(name);
         setTime(time);
+    }
+
+    public int getReminderId(){
+        return reminderId;
+    }
+
+    public void setReminderId(int id) {
+        this.reminderId = id;
     }
 
     public String getOwnerId() {

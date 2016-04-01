@@ -15,8 +15,10 @@ import android.widget.Spinner;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 
 /**
@@ -84,8 +86,8 @@ public class MedicationStorageFragment extends android.app.Fragment {
             @Override
             public void onClick(View view) {
 
-                if(mMedicaiton == null) {
-                   createNewMedication();
+                if (mMedicaiton == null) {
+                    createNewMedication();
                 } else {
                     updateMedication();
                 }
@@ -120,6 +122,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
 
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
+                0,
                 "786#13%",
                 medicationName.getText().toString(),
                 Double.parseDouble(medicationAmount.getText().toString()),
@@ -129,6 +132,15 @@ public class MedicationStorageFragment extends android.app.Fragment {
         //Adds the new medicine to MedicationListContent
         MedicationListContent.ITEMS.add(0, medication);
         // TODO: Add new medicine to database
+        MySQLiteHelper db = new MySQLiteHelper(getActivity());
+        db.addMedication(medication);
+
+       //ArrayList<Medication> meds = db.getMedications();
+       //for (Medication m : meds
+       //     ) {
+       //    System.out.println(m.toString());
+       //}
+
     }
 
     public void updateMedication(){
@@ -142,6 +154,8 @@ public class MedicationStorageFragment extends android.app.Fragment {
         mMedicaiton.setCount(Double.parseDouble(medicationAmount.getText().toString()));
         mMedicaiton.setUnit(medicationUnit.getSelectedItem().toString());
         // TODO: Update existing medicine in database
+        MySQLiteHelper db = new MySQLiteHelper(getActivity());
+        db.updateMedication(mMedicaiton);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

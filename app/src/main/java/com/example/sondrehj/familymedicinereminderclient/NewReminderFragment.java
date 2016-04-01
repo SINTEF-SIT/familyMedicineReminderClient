@@ -192,7 +192,7 @@ public class NewReminderFragment extends android.app.Fragment {
         Reminder reminder = new Reminder();
         reminder.setName(nameEditText.getEditableText().toString());
         reminder.setTime(timeSetText.getText().toString());
-        reminder.setMedicine(new Medication("1", "Paracetamol", 2.0, "ml"));
+        reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
         ReminderListContent.ITEMS.add(0, reminder);
 

@@ -7,16 +7,26 @@ import java.sql.SQLOutput;
  * Created by nikolai on 24/02/16.
  */
 public class Medication implements Serializable {
+    int medId;
     String ownerId;
     String name;
     Double count;
     String unit;
 
-    public Medication(String ownerId, String name, Double count, String unit) {
+    public Medication(int medId, String ownerId, String name, Double count, String unit) {
+        this.medId = medId;
         this.ownerId = ownerId;
         this.name = name;
         this.count = count;
         this.unit = unit;
+    }
+
+    public int getMedId() {
+        return medId;
+    }
+
+    public void setmedId(int medId){
+        this.medId = medId;
     }
 
     public String getOwnerId() {
@@ -35,6 +45,10 @@ public class Medication implements Serializable {
         this.name = name;
     }
 
+    public String getUnit(){
+        return unit;
+    }
+
     public void setUnit(String unit){
         this.unit = unit;
     }
@@ -47,9 +61,6 @@ public class Medication implements Serializable {
         this.count = count;
     }
 
-    public String getUnit(){
-        return unit;
-    }
 
 
     public String toString(){
