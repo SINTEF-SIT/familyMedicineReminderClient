@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -22,6 +23,7 @@ import android.widget.TimePicker;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
 import java.util.Calendar;
 
@@ -44,6 +46,7 @@ public class NewReminderFragment extends android.app.Fragment {
     private TextView timeSetText;
     private Reminder reminder;
     private Button saveButton;
+    protected Activity mActivity;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -135,7 +138,11 @@ public class NewReminderFragment extends android.app.Fragment {
 
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                createReminder();
+                if (reminder == null) {
+                    createReminder();
+                } else {
+                    updateReminder();
+                }
             }
         });
 
@@ -174,6 +181,7 @@ public class NewReminderFragment extends android.app.Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mActivity = activity;
         if (activity instanceof OnNewReminderInteractionListener) {
             mListener = (OnNewReminderInteractionListener) activity;
         } else {
@@ -190,13 +198,27 @@ public class NewReminderFragment extends android.app.Fragment {
 
     public void createReminder() {
         Reminder reminder = new Reminder();
+        reminder.setOwnerId("temp");
         reminder.setName(nameEditText.getEditableText().toString());
         reminder.setTime(timeSetText.getText().toString());
         reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
         ReminderListContent.ITEMS.add(0, reminder);
-
         mListener.onSaveNewReminder();
+
+        //Add reminder to database
+        MySQLiteHelper db = new MySQLiteHelper(mActivity);
+        db.addReminder(reminder);
+    }
+
+    public void updateReminder() {
+        //Updates an existing Reminder object
+        reminder.setName(nameEditText.getText().toString());
+        reminder.setTime(timeSetText.getText().toString());
+        mListener.onSaveNewReminder();
+        //Update existing reminder in database
+        MySQLiteHelper db = new MySQLiteHelper(mActivity);
+        db.updateReminder(reminder);
     }
 
     /**

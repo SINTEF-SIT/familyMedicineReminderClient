@@ -16,10 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity
@@ -50,9 +52,16 @@ public class MainActivity extends AppCompatActivity
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        //Read local database, maa kanskje flyttes?
+        //Read and display data from local database. (Flyttes?)
         MySQLiteHelper db = new MySQLiteHelper(this);
-        MedicationListContent.ITEMS.addAll(db.getMedications());
+        //Medications
+        ArrayList<Medication> meds = db.getMedications();
+        Collections.reverse(meds);
+        MedicationListContent.ITEMS.addAll(meds);
+        //Reminders
+        ArrayList<Reminder> reminders = db.getReminders();
+        Collections.reverse(reminders);
+        ReminderListContent.ITEMS.addAll(reminders);
     }
 
     //@Override

@@ -10,6 +10,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
@@ -43,13 +46,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     //Reminder table
     public static final String TABLE_REMINDER = "reminder";
+    public static final String COLUMN_REMINDER_OWNER_ID = "owner_id";
     public static final String COLUMN_REMINDER_ID = "reminder_id";
     public static final String COLUMN_REMINDER_NAME = "medication_name";
     public static final String COLUMN_REMINDER_TIME = "unit";
     //Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
-            + " integer primary key autoincrement, " + COLUMN_OWNER_ID
+            + " integer primary key autoincrement, " + COLUMN_REMINDER_OWNER_ID
             + " text not null, " + COLUMN_REMINDER_NAME
             + " text not null, " + COLUMN_REMINDER_TIME
             + " text not null);";
@@ -108,6 +112,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    public void deleteMedication(Medication medication) {
+        //Deletes a medication
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MEDICATION, "med_id=" + medication.getMedId(), null);
+
+        //Removes the medication from the list content
+        MedicationListContent.ITEMS.remove(medication);
+        db.close();
+    }
+
+
     public ArrayList<Medication> getMedications() {
         //Retrieve medications
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION;
@@ -138,13 +153,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_OWNER_ID, reminder.getOwnerId());
+        values.put(COLUMN_REMINDER_OWNER_ID, reminder.getOwnerId());
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
         values.put(COLUMN_REMINDER_TIME, reminder.getTime());
 
         // Inserting Row
         long insertId = db.insert(TABLE_REMINDER, null, values);
         reminder.setReminderId(safeLongToInt(insertId));
+        System.out.println(insertId);
 
         db.close(); // Closing database connection
     }
@@ -156,6 +172,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
         values.put(COLUMN_REMINDER_TIME, reminder.getTime());
+        System.out.println(reminder.getReminderId());
 
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
         db.close(); // Closing database connection
@@ -184,6 +201,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
         return data;
     }
+
+    public void deleteReminder(Reminder reminder) {
+        // Deletes a reminder
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_REMINDER,"reminder_id=" + reminder.getReminderId(), null);
+        //Removes the reminder from the list content
+        ReminderListContent.ITEMS.remove(reminder);
+        db.close();
+    }
+
 
 
     public static int safeLongToInt(long l) {
