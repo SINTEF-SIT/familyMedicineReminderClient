@@ -26,6 +26,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -200,9 +201,22 @@ public class NewReminderFragment extends android.app.Fragment {
         Reminder reminder = new Reminder();
         reminder.setOwnerId("temp");
         reminder.setName(nameEditText.getEditableText().toString());
-        reminder.setTime(timeSetText.getText().toString());
+
+        String[] date = dateSetText.getText().toString().split("\\W+");
+        String[] time = timeSetText.getText().toString().split(":");
+
+        GregorianCalendar cal = new GregorianCalendar(
+                Integer.parseInt(date[2]),
+                Integer.parseInt(date[1]),
+                Integer.parseInt(date[0]),
+                Integer.parseInt(time[0]),
+                Integer.parseInt(time[1]));
+
+        System.out.println(timeSetText.getText().toString());
+        reminder.setDate(cal);
         reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
+        reminder.setIsActive(reminderSwitch.isActivated());
         ReminderListContent.ITEMS.add(0, reminder);
         mListener.onSaveNewReminder();
 
@@ -214,7 +228,18 @@ public class NewReminderFragment extends android.app.Fragment {
     public void updateReminder() {
         //Updates an existing Reminder object
         reminder.setName(nameEditText.getText().toString());
-        reminder.setTime(timeSetText.getText().toString());
+
+        String[] date = dateSetText.getText().toString().split("\\W+");
+        String[] time = timeSetText.getText().toString().split(":");
+
+        GregorianCalendar cal = new GregorianCalendar(
+                Integer.parseInt(date[2]),
+                Integer.parseInt(date[1]),
+                Integer.parseInt(date[0]),
+                Integer.parseInt(time[0]),
+                Integer.parseInt(time[1]));
+
+        reminder.setDate(cal);
         mListener.onSaveNewReminder();
         //Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);

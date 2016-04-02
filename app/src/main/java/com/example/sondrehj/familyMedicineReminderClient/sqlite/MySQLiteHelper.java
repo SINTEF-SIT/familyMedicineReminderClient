@@ -18,6 +18,8 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
@@ -48,15 +50,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String TABLE_REMINDER = "reminder";
     public static final String COLUMN_REMINDER_OWNER_ID = "owner_id";
     public static final String COLUMN_REMINDER_ID = "reminder_id";
-    public static final String COLUMN_REMINDER_NAME = "medication_name";
-    public static final String COLUMN_REMINDER_TIME = "unit";
+    public static final String COLUMN_REMINDER_NAME = "reminder_name";
+    public static final String COLUMN_REMINDER_DATE = "date";
+    public static final String COLUMN_REMINDER_ACTIVE = "active";
     //Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
             + " integer primary key autoincrement, " + COLUMN_REMINDER_OWNER_ID
             + " text not null, " + COLUMN_REMINDER_NAME
-            + " text not null, " + COLUMN_REMINDER_TIME
-            + " text not null);";
+            + " text not null, " + COLUMN_REMINDER_DATE
+            + " text not null, " + COLUMN_REMINDER_ACTIVE
+            + " boolean);";
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -152,10 +156,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Add new reminder
         SQLiteDatabase db = this.getWritableDatabase();
 
+        GregorianCalendar cal = reminder.getDate();
+        String year = Integer.toString(cal.get(Calendar.YEAR));
+        String month = Integer.toString(cal.get(Calendar.MONTH));
+        String date = Integer.toString(cal.get(Calendar.DATE));
+        String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
+        String min = Integer.toString(cal.get(Calendar.MINUTE));
+
+        String dateString = year + ";" + month + ";" + date + ";" + hour + ";" + min;
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_OWNER_ID, reminder.getOwnerId());
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
-        values.put(COLUMN_REMINDER_TIME, reminder.getTime());
+        values.put(COLUMN_REMINDER_DATE, dateString);
+        values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
 
         // Inserting Row
         long insertId = db.insert(TABLE_REMINDER, null, values);
@@ -169,10 +183,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
 
+        GregorianCalendar cal = reminder.getDate();
+        String year = Integer.toString(cal.get(Calendar.YEAR));
+        String month = Integer.toString(cal.get(Calendar.MONTH));
+        String date = Integer.toString(cal.get(Calendar.DATE));
+        String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
+        String min = Integer.toString(cal.get(Calendar.MINUTE));
+
+        String dateString = year + ";" + month + ";" + date + ";" + hour + ";" + min;
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
-        values.put(COLUMN_REMINDER_TIME, reminder.getTime());
-        System.out.println(reminder.getReminderId());
+        values.put(COLUMN_REMINDER_DATE, dateString);
+        values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
 
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
         db.close(); // Closing database connection
@@ -191,11 +214,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 int id = cursor.getInt(0);
                 String ownerId = "test";
                 String name = cursor.getString(2);
-                String time = cursor.getString(3);
-                Reminder r = new Reminder(id, ownerId, name, time);
+                String dateString = cursor.getString(3);
+                String[] dateArray = dateString.split(";");
 
+                GregorianCalendar date = new GregorianCalendar(
+                        Integer.parseInt(dateArray[0]), //Year
+                        Integer.parseInt(dateArray[1]), //Month
+                        Integer.parseInt(dateArray[2]), //Date
+                        Integer.parseInt(dateArray[3]), //Hour
+                        Integer.parseInt(dateArray[4])  //Minute
+                );
+
+                boolean isActive = cursor.getInt(4) > 0;
+                System.out.println(isActive);
+                Reminder r = new Reminder(id, ownerId, name, date, isActive);
                 data.add(r);
-                // get the data into array, or class variable
+
             } while (cursor.moveToNext());
         }
         cursor.close();

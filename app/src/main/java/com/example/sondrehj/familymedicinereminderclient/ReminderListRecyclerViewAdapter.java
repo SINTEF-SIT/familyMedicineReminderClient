@@ -6,11 +6,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.ReminderListFragment.OnReminderListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -40,7 +43,18 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mReminder = mValues.get(position);
         holder.mNameView.setText(mValues.get(position).getName());
-        holder.mDateTimeView.setText(mValues.get(position).getTime());
+        holder.mSwitch.setChecked(mValues.get(position).getIsActive());
+
+        GregorianCalendar cal = mValues.get(position).getDate();
+        String year = Integer.toString(cal.get(Calendar.YEAR));
+        String month = Integer.toString(cal.get(Calendar.MONTH));
+        String date = Integer.toString(cal.get(Calendar.DATE));
+        String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
+        String min = Integer.toString(cal.get(Calendar.MINUTE));
+
+        String dateString = hour + ":" + min + " (" + year + "/" + month + "/" + date + ")";
+
+        holder.mDateTimeView.setText(dateString);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +80,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         public final View mView;
         public final TextView mNameView;
         public final TextView mDateTimeView;
+        public final Switch mSwitch;
         public Reminder mReminder;
 
         public ViewHolder(View view) {
@@ -73,6 +88,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             mView = view;
             mNameView = (TextView) view.findViewById(R.id.name_text);
             mDateTimeView = (TextView) view.findViewById(R.id.datetime_text);
+            mSwitch = (Switch) view.findViewById(R.id.reminder_switch);
         }
 
         @Override

@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
 
 /**
  * Created by nikolai on 24/02/16.
@@ -9,19 +10,21 @@ public class Reminder implements Serializable {
     int reminderId;
     String ownerId;
     String name;
-    String time;
+    GregorianCalendar date;
     Medication medicine;
     String units;
+    Boolean isActive;
 
     public Reminder() {
 
     }
 
-    public Reminder(int reminderId, String ownerId, String name, String time) {
+    public Reminder(int reminderId, String ownerId, String name, GregorianCalendar date, Boolean isActive) {
         setReminderId(reminderId);
         setOwnerId(ownerId);
         setName(name);
-        setTime(time);
+        setDate(date);
+        setIsActive(isActive);
     }
 
     public int getReminderId(){
@@ -48,13 +51,17 @@ public class Reminder implements Serializable {
         this.name = name;
     }
 
-    public String getTime() {
-        return time;
+    public GregorianCalendar getDate() {
+        return date;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDate(GregorianCalendar date) {
+        this.date = date;
     }
+
+    public void setIsActive(Boolean b){ this.isActive = b; }
+
+    public boolean getIsActive() { return isActive; }
 
     public Medication getMedicine() {
         return medicine;
