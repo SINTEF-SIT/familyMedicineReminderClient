@@ -233,12 +233,12 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_symptoms) {
 
-            scheduleNotification(getNotification("Take your medication"), new GregorianCalendar(2016, 3, 2, 16, 23, 00));
+            //GregorianCalendar cal = new GregorianCalendar(2016, 3, 2, 23, 00);
+            //scheduleNotification(getNotification("Take your medication"), cal);
 
         } else if (id == R.id.nav_settings) {
 
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -285,6 +285,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNewReminderButtonClicked() {
         changeFragment(NewReminderFragment.newInstance(null));
+    }
+
+    @Override
+    public void onReminderListSwitchClicked(Reminder reminder) {
+
+        if (reminder.getIsActive()) {
+            reminder.setIsActive(false);
+            System.out.println("Reminder deactivated");
+        } else {
+            reminder.setIsActive(true);
+            System.out.println("Reminder activated");
+            scheduleNotification(getNotification("Take your medication"), reminder.getDate());
+        }
+        //Updates the DB
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.updateReminder(reminder);
     }
 
     @Override

@@ -158,7 +158,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         GregorianCalendar cal = reminder.getDate();
         String year = Integer.toString(cal.get(Calendar.YEAR));
-        String month = Integer.toString(cal.get(Calendar.MONTH));
+        String month = Integer.toString(cal.get(Calendar.MONTH) - 1);
         String date = Integer.toString(cal.get(Calendar.DATE));
         String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
         String min = Integer.toString(cal.get(Calendar.MINUTE));
@@ -185,7 +185,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         GregorianCalendar cal = reminder.getDate();
         String year = Integer.toString(cal.get(Calendar.YEAR));
-        String month = Integer.toString(cal.get(Calendar.MONTH));
+        String month = Integer.toString(cal.get(Calendar.MONTH) - 1);
         String date = Integer.toString(cal.get(Calendar.DATE));
         String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
         String min = Integer.toString(cal.get(Calendar.MINUTE));
@@ -226,7 +226,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 );
 
                 boolean isActive = cursor.getInt(4) > 0;
-                System.out.println(isActive);
                 Reminder r = new Reminder(id, ownerId, name, date, isActive);
                 data.add(r);
 

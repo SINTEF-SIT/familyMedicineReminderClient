@@ -47,7 +47,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
         GregorianCalendar cal = mValues.get(position).getDate();
         String year = Integer.toString(cal.get(Calendar.YEAR));
-        String month = Integer.toString(cal.get(Calendar.MONTH));
+        String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
         String date = Integer.toString(cal.get(Calendar.DATE));
         String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
         String min = Integer.toString(cal.get(Calendar.MINUTE));
@@ -56,11 +56,19 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
         holder.mDateTimeView.setText(dateString);
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                System.out.println("Clicked");
+                if (null != mListener) {
+                    mListener.onReminderListSwitchClicked(holder.mReminder);
+                }
+            }
+        });
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the

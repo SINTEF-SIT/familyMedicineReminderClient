@@ -206,13 +206,12 @@ public class NewReminderFragment extends android.app.Fragment {
         String[] time = timeSetText.getText().toString().split(":");
 
         GregorianCalendar cal = new GregorianCalendar(
-                Integer.parseInt(date[2]),
-                Integer.parseInt(date[1]),
-                Integer.parseInt(date[0]),
-                Integer.parseInt(time[0]),
-                Integer.parseInt(time[1]));
+                Integer.parseInt(date[2]),      //Year
+                Integer.parseInt(date[1]) - 1,  //Month
+                Integer.parseInt(date[0]),      //Date
+                Integer.parseInt(time[0]),      //Hour
+                Integer.parseInt(time[1]));     //Minute
 
-        System.out.println(timeSetText.getText().toString());
         reminder.setDate(cal);
         reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
@@ -233,11 +232,11 @@ public class NewReminderFragment extends android.app.Fragment {
         String[] time = timeSetText.getText().toString().split(":");
 
         GregorianCalendar cal = new GregorianCalendar(
-                Integer.parseInt(date[2]),
-                Integer.parseInt(date[1]),
-                Integer.parseInt(date[0]),
-                Integer.parseInt(time[0]),
-                Integer.parseInt(time[1]));
+                Integer.parseInt(date[2]),      //Year
+                Integer.parseInt(date[1]) - 1,  //Month
+                Integer.parseInt(date[0]),      //Date
+                Integer.parseInt(time[0]),      //Hour
+                Integer.parseInt(time[1]));     //Minute
 
         reminder.setDate(cal);
         mListener.onSaveNewReminder();
