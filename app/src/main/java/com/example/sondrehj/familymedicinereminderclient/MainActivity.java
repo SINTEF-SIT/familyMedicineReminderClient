@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**+
+    /**
      * Handles the selection of items in the drawer and replaces the fragment container of
      * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
      *
