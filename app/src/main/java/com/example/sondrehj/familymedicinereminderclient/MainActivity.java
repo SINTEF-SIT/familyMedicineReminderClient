@@ -233,9 +233,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_symptoms) {
 
-            //GregorianCalendar cal = new GregorianCalendar(2016, 3, 2, 23, 00);
-            //scheduleNotification(getNotification("Take your medication"), cal);
-
         } else if (id == R.id.nav_settings) {
 
         }
@@ -292,9 +289,9 @@ public class MainActivity extends AppCompatActivity
 
         if (reminder.getIsActive()) {
 
+            //Cancel the scheduled reminder
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    this,
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
                     reminder.getReminderId(),
                     new Intent(this, NotificationPublisher.class),
                     PendingIntent.FLAG_UPDATE_CURRENT);
@@ -302,9 +299,11 @@ public class MainActivity extends AppCompatActivity
             reminder.setIsActive(false);
             System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
         } else {
-            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
+
+            //Activate the reminder
             scheduleNotification(getNotification("Take your medication"), reminder);
             reminder.setIsActive(true);
+            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
         //Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -314,7 +313,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void addMedicationToMedicationList(Medication medication) {
 
-        System.out.println(medication);
     }
 
     /**
@@ -346,29 +344,45 @@ public class MainActivity extends AppCompatActivity
 
     private void scheduleNotification(Notification notification, Reminder reminder) {
 
+        //A variable containing the reminder date in milliseconds.
+        //Used for scheduling the notification.
         Long time = reminder.getDate().getTimeInMillis();
 
+        //Defines the Intent of the notification. The NotificationPublisher class uses this
+        //object to retrieve additional information about the notification.
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        //Adds the reminder_id to the Intent object.
+        //Used to easily identify notifications and their corresponding reminder.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
         System.out.println("ReminderID: " + reminder.getReminderId());
+        //Adds the reminder_days variable to the Intent object.
+        //Used to schedule notifications for the given days.
+        //TODO: Update placeholder with reminder.getDays(). Dependant on new variable in the reminder model and NewReminderFragment.
+        int[] days = {0, 1, 2, 3};
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, days);
+        //Adds the given notification object to the Intent object.
+        //Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-        //Repeating
-        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, 60000, pendingIntent);
+        //TODO: Create if-statement to check if the reminder is repeating. Dependant on new variable in the reminder model and NewReminderFragment.
 
-        //Once
+        //Schedules a repeating notification
+        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        //Schedules a non-repeating notification
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
 
     private Notification getNotification(String content) {
 
+        //Defines the Intent of the notification
         Intent intent = new Intent(this, this.getClass());
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
+        //Constructs the notification
         Notification notification=new Notification.Builder(MainActivity.this)
                 .setContentTitle("MYCYFAPP")
                 .setContentText(content)
