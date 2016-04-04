@@ -291,12 +291,20 @@ public class MainActivity extends AppCompatActivity
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    this,
+                    reminder.getReminderId(),
+                    new Intent(this, NotificationPublisher.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
             reminder.setIsActive(false);
-            System.out.println("Reminder deactivated");
+            System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
         } else {
+            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
+            scheduleNotification(getNotification("Take your medication"), reminder);
             reminder.setIsActive(true);
-            System.out.println("Reminder activated");
-            scheduleNotification(getNotification("Take your medication"), reminder.getDate());
         }
         //Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -336,15 +344,21 @@ public class MainActivity extends AppCompatActivity
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
-    private void scheduleNotification(Notification notification, GregorianCalendar date) {
+    private void scheduleNotification(Notification notification, Reminder reminder) {
 
-        Long time = date.getTimeInMillis();
+        Long time = reminder.getDate().getTimeInMillis();
 
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
+        System.out.println("ReminderID: " + reminder.getReminderId());
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        //Repeating
+        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, 60000, pendingIntent);
+
+        //Once
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
 
