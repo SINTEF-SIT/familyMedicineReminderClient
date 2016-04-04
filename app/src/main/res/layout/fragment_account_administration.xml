@@ -24,7 +24,8 @@
         Snooze notification
         Sign out
         Invite/share (choose method by OS default alternatives)
-
+        About
+        Contact
 
     GUARDIAN/GUARDEE
         how long to wait after child takes medicine to notify
@@ -34,17 +35,30 @@
 
     -->
 
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:src="@android:drawable/sym_def_app_icon" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <!--TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:text="Settings"
-            />
+            /-->
         <!-- Text field with automated validation for character length -->
         <!--android.support.design.widget.TextInputLayout
             android:id="@+id/textContainer"
@@ -125,5 +139,29 @@
 
 
     </LinearLayout>
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="2"
+        android:rowCount="4">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/textView"
+            android:layout_column="0"
+            android:layout_row="0" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/textView2"
+            android:layout_column="1"
+            android:layout_row="0" />
+    </GridLayout>
+
 
 </FrameLayout>
