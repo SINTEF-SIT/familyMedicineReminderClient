@@ -2,19 +2,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment">
 
 
     <!-- TODO: Update blank fragment layout -->
 
     <!--
-    Things to include:
+    Things to include
+
+    PERSONAL
+        Avatar?
         year of birth
-        discrete
+        email (create user for online deletion)
+        password
+        discrete mode
         sync?
 
-    for guardian:
-        hvor lenge vente før vi gir beskjed om
+    GENERAL
+        Turn on/off notification
+        Snooze notification
+        Sign out
+        Invite/share (choose method by OS default alternatives)
+
+
+    GUARDIAN/GUARDEE
+        how long to wait after child takes medicine to notify
+        nickenam children
+        delete children
+
 
     -->
 
@@ -29,14 +45,34 @@
             android:textSize="25sp"
             android:text="Settings"
             />
-
+        <!-- Text field with automated validation for character length -->
+        <!--android.support.design.widget.TextInputLayout
+            android:id="@+id/textContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:counterEnabled="true"
+            app:counterMaxLength="4"
+            >
+            <EditText
+                android:id="@+id/text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Text Hint"
+                />
+        </android.support.design.widget.TextInputLayout-->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
             android:ems="10"
             android:id="@+id/editText4"
-            android:text="1992" />
+            android:text="1992"
+            android:maxLength="4"
+            />
 
         <TextView
             android:layout_height="wrap_content"
@@ -44,6 +80,13 @@
             android:text="Year of birth"
             android:textSize="15sp"
             />
+
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New ToggleButton"
+            android:id="@+id/toggleButton" />
+        </LinearLayout>
 
         <!--GridLayout
             android:layout_width="match_parent"
