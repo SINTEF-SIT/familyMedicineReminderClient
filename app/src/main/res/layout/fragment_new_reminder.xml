@@ -11,7 +11,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
-    android:id="@+id/newreminderfrag">
+    android:id="@+id/newreminderfrag"
+    android:divider="@drawable/horizontal_divider"
+    android:showDividers="middle"
+    android:dividerPadding="10dp">
 
     <Switch
         android:layout_width="match_parent"
