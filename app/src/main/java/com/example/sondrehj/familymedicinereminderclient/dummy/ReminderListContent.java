@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.dummy;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class ReminderListContent {
     //}
 
     private static Reminder createReminder() {
-        return new Reminder(0, "1", "My reminder", "My time");
+        return new Reminder(0, "1", "My reminder", new GregorianCalendar(2016, 5, 10), true);
     }
 
     private static String makeDetails(int position) {

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.sondrehj.familymedicinereminderclient"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -28,4 +28,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.1.1'
     //compile 'io.reactivex:rxjava:1.0.10'
     //compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

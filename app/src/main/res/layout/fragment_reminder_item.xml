@@ -23,6 +23,7 @@
             android:textSize="22sp" />
 
         <Switch
+            android:id="@+id/reminder_switch"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.3"
