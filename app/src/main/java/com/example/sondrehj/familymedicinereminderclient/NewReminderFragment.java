@@ -7,17 +7,20 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -36,15 +39,17 @@ import java.util.Calendar;
  */
 public class NewReminderFragment extends android.app.Fragment {
 
+    private LinearLayout newReminderLayout;
     private Switch reminderSwitch;
     private EditText nameEditText;
     private LinearLayout datePickerLayout;
     private TextView dateSetText;
     private LinearLayout timePickerLayout;
     private TextView timeSetText;
-    private Reminder reminder;
+    private LinearLayout repeatLayout;
+    private Switch repeatSwitch;
     private Button saveButton;
-
+    private Reminder reminder;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -91,12 +96,15 @@ public class NewReminderFragment extends android.app.Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
 
+        newReminderLayout = (LinearLayout) view.findViewById(R.id.newReminderLayout);
         reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
+        nameEditText = (EditText) view.findViewById(R.id.nameEditText);
         datePickerLayout = (LinearLayout) view.findViewById(R.id.datePickerLayout);
         dateSetText = (TextView) view.findViewById(R.id.dateSetText);
         timePickerLayout = (LinearLayout) view.findViewById(R.id.timePickerLayout);
         timeSetText = (TextView) view.findViewById(R.id.timeSetText);
-        nameEditText = (EditText) view.findViewById(R.id.nameEditText);
+        repeatLayout = (LinearLayout) view.findViewById(R.id.repeatLayout);
+        repeatSwitch = (Switch) view.findViewById(R.id.repeatSwitch);
         saveButton = (Button) view.findViewById(R.id.saveButton);
 
         if (getArguments() != null) {
@@ -110,7 +118,7 @@ public class NewReminderFragment extends android.app.Fragment {
         int minute = c.get(Calendar.MINUTE);
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH) + 1; //month is 0-indexed
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        final int day = c.get(Calendar.DAY_OF_MONTH);
         String currentTime = String.format("%02d:%02d", hour, minute);
         timeSetText.setText(currentTime);
         String todaysDate = String.format("%02d.%02d.%4d", day, month, year);
@@ -132,6 +140,38 @@ public class NewReminderFragment extends android.app.Fragment {
                         timePickerFragment.show(getFragmentManager(), "timePicker");
                     }
                 });
+
+        repeatSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
+                        LinearLayout daysLayout = new LinearLayout(getActivity());
+                        if (isChecked) {
+                            Toast.makeText(getActivity(), "ON", Toast.LENGTH_LONG).show();
+
+
+                            daysLayout.setOrientation(LinearLayout.HORIZONTAL);
+                            LinearLayout.LayoutParams daysLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50);
+                            daysLayout.setLayoutParams(daysLayoutParams);
+                            newReminderLayout.addView(daysLayout, 5);
+
+                            TextView whichDays = new TextView(getActivity());
+                            String whichDaysString = "Which days?";
+                            whichDays.setText(whichDaysString);
+                            TextView daysPicked = new TextView(getActivity());
+                            String daysPickedString = "Every day";
+                            daysPicked.setText(daysPickedString);
+                            daysLayout.addView(whichDays);
+                            daysLayout.addView(daysPicked);
+                        } else {
+                            Toast.makeText(getActivity(), "OFF", Toast.LENGTH_LONG).show();
+                            //((ViewGroup)daysLayout.getParent()).removeView(daysLayout);
+                            //daysLayout.setVisibility(View.GONE);
+                            //repeatLayout.removeView(daysLayout);
+                        }
+                    }
+                }
+        );
+
 
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
