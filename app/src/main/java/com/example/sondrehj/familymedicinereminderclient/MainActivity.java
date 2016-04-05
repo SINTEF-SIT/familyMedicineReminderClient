@@ -354,7 +354,6 @@ public class MainActivity extends AppCompatActivity
         //Adds the reminder_id to the Intent object.
         //Used to easily identify notifications and their corresponding reminder.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
-        System.out.println("ReminderID: " + reminder.getReminderId());
         //Adds the reminder_days variable to the Intent object.
         //Used to schedule notifications for the given days.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
@@ -363,8 +362,6 @@ public class MainActivity extends AppCompatActivity
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        //TODO: Create if-statement to check if the reminder is repeating. Dependant on new variable in the reminder model and NewReminderFragment.
 
         //Schedules a notification on the user specified days.
         if (reminder.getDays().length > 0) {

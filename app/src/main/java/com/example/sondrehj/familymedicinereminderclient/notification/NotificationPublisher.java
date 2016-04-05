@@ -14,12 +14,12 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static String NOTIFICATION_ID = "notification-id";
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_DAYS = "notification-days";
-    public static String NOTIFICATION_REPEAT = "notification-repeat";
 
     public void onReceive(Context context, Intent intent) {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        //Retrives data from the given Intent object
         Notification notification = intent.getParcelableExtra(NOTIFICATION);
         int id = intent.getIntExtra(NOTIFICATION_ID, 0);
         int[] days = intent.getIntArrayExtra(NOTIFICATION_DAYS);
@@ -27,7 +27,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         int currentDay = cal.get(Calendar.DAY_OF_WEEK);
 
         System.out.println("Day of week: " + currentDay);
-        System.out.println("Alarm set for" + Arrays.toString(days));
+        System.out.println("Notification scheduled for days: " + Arrays.toString(days));
 
         //Checks if the user has specified days for the reminder
         if (days.length == 0) {
