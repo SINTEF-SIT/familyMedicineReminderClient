@@ -14,17 +14,20 @@ public class Reminder implements Serializable {
     Medication medicine;
     String units;
     Boolean isActive;
+    int[] days;
+
 
     public Reminder() {
 
     }
 
-    public Reminder(int reminderId, String ownerId, String name, GregorianCalendar date, Boolean isActive) {
+    public Reminder(int reminderId, String ownerId, String name, GregorianCalendar date, Boolean isActive, int[] days) {
         setReminderId(reminderId);
         setOwnerId(ownerId);
         setName(name);
         setDate(date);
         setIsActive(isActive);
+        setDays(days);
     }
 
     public int getReminderId(){
@@ -63,13 +66,9 @@ public class Reminder implements Serializable {
 
     public boolean getIsActive() { return isActive; }
 
-    public Medication getMedicine() {
-        return medicine;
-    }
+    public Medication getMedicine() { return medicine; }
 
-    public void setMedicine(Medication medicine) {
-        this.medicine = medicine;
-    }
+    public void setMedicine(Medication medicine) { this.medicine = medicine; }
 
     public String getUnits() {
         return units;
@@ -78,6 +77,11 @@ public class Reminder implements Serializable {
     public void setUnits(String units) {
         this.units = units;
     }
+
+    public void setDays(int[] days){ this.days = days; }
+
+    public int[] getDays() { return days; }
+
 
     public String toString() {
         return ownerId + ", " + name;

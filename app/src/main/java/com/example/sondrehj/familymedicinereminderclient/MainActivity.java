@@ -357,9 +357,7 @@ public class MainActivity extends AppCompatActivity
         System.out.println("ReminderID: " + reminder.getReminderId());
         //Adds the reminder_days variable to the Intent object.
         //Used to schedule notifications for the given days.
-        //TODO: Update placeholder with reminder.getDays(). Dependant on new variable in the reminder model and NewReminderFragment.
-        int[] days = {0, 1, 2, 3};
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, days);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
         //Adds the given notification object to the Intent object.
         //Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
@@ -368,11 +366,13 @@ public class MainActivity extends AppCompatActivity
 
         //TODO: Create if-statement to check if the reminder is repeating. Dependant on new variable in the reminder model and NewReminderFragment.
 
-        //Schedules a repeating notification
-        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
-
-        //Schedules a non-repeating notification
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+        //Schedules a notification on the user specified days.
+        if (reminder.getDays().length > 0) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else {
+            //Schedules a non-repeating notification
+            alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+        }
     }
 
     private Notification getNotification(String content) {
@@ -383,7 +383,7 @@ public class MainActivity extends AppCompatActivity
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
         //Constructs the notification
-        Notification notification=new Notification.Builder(MainActivity.this)
+        Notification notification = new Notification.Builder(MainActivity.this)
                 .setContentTitle("MYCYFAPP")
                 .setContentText(content)
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
@@ -392,12 +392,10 @@ public class MainActivity extends AppCompatActivity
                 .setContentIntent(pIntent)
                 .addAction(R.drawable.ic_sidebar_pill, "Register as taken", pIntent)
                 .build();
-        notification.flags |=Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
     }
-
-
 
 
 }

@@ -215,7 +215,8 @@ public class NewReminderFragment extends android.app.Fragment {
         reminder.setDate(cal);
         reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
-        reminder.setIsActive(reminderSwitch.isActivated());
+        reminder.setIsActive(reminderSwitch.isChecked());
+        reminder.setDays(new int[]{1,2,3,4});
         ReminderListContent.ITEMS.add(0, reminder);
         mListener.onSaveNewReminder();
 
