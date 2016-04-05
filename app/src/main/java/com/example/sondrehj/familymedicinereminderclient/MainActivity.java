@@ -233,9 +233,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_symptoms) {
 
-            //GregorianCalendar cal = new GregorianCalendar(2016, 3, 2, 23, 00);
-            //scheduleNotification(getNotification("Take your medication"), cal);
-
         } else if (id == R.id.nav_settings) {
 
         }
@@ -291,12 +288,22 @@ public class MainActivity extends AppCompatActivity
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
+
+            //Cancel the scheduled reminder
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                    reminder.getReminderId(),
+                    new Intent(this, NotificationPublisher.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
             reminder.setIsActive(false);
-            System.out.println("Reminder deactivated");
+            System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
         } else {
+
+            //Activate the reminder
+            scheduleNotification(getNotification("Take your medication"), reminder);
             reminder.setIsActive(true);
-            System.out.println("Reminder activated");
-            scheduleNotification(getNotification("Take your medication"), reminder.getDate());
+            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
         //Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -306,7 +313,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void addMedicationToMedicationList(Medication medication) {
 
-        System.out.println(medication);
     }
 
     /**
@@ -336,26 +342,45 @@ public class MainActivity extends AppCompatActivity
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
-    private void scheduleNotification(Notification notification, GregorianCalendar date) {
+    private void scheduleNotification(Notification notification, Reminder reminder) {
 
-        Long time = date.getTimeInMillis();
+        //A variable containing the reminder date in milliseconds.
+        //Used for scheduling the notification.
+        Long time = reminder.getDate().getTimeInMillis();
 
+        //Defines the Intent of the notification. The NotificationPublisher class uses this
+        //object to retrieve additional information about the notification.
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        //Adds the reminder_id to the Intent object.
+        //Used to easily identify notifications and their corresponding reminder.
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
+        //Adds the reminder_days variable to the Intent object.
+        //Used to schedule notifications for the given days.
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
+        //Adds the given notification object to the Intent object.
+        //Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+
+        //Schedules a notification on the user specified days.
+        if (reminder.getDays().length > 0) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else {
+            //Schedules a non-repeating notification
+            alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+        }
     }
 
     private Notification getNotification(String content) {
 
+        //Defines the Intent of the notification
         Intent intent = new Intent(this, this.getClass());
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
-        Notification notification=new Notification.Builder(MainActivity.this)
+        //Constructs the notification
+        Notification notification = new Notification.Builder(MainActivity.this)
                 .setContentTitle("MYCYFAPP")
                 .setContentText(content)
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
@@ -364,12 +389,10 @@ public class MainActivity extends AppCompatActivity
                 .setContentIntent(pIntent)
                 .addAction(R.drawable.ic_sidebar_pill, "Register as taken", pIntent)
                 .build();
-        notification.flags |=Notification.FLAG_AUTO_CANCEL;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
     }
-
-
 
 
 }

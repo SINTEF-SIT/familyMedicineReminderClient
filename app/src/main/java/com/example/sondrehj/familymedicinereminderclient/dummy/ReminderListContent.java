@@ -40,7 +40,7 @@ public class ReminderListContent {
     //}
 
     private static Reminder createReminder() {
-        return new Reminder(0, "1", "My reminder", new GregorianCalendar(2016, 5, 10), true);
+        return new Reminder(0, "1", "My reminder", new GregorianCalendar(2016, 5, 10), true, new int[]{1, 2});
     }
 
     private static String makeDetails(int position) {
