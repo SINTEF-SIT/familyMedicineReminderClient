@@ -15,11 +15,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.NavigationView;
-<<<<<<< HEAD
-=======
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
->>>>>>> cf08cbf2699f5d67fe9e64ea3a265f394d588a02
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,7 +25,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
@@ -36,11 +32,8 @@ import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListConte
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-<<<<<<< HEAD
 import com.example.sondrehj.familymedicinereminderclient.models.User;
-=======
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
->>>>>>> cf08cbf2699f5d67fe9e64ea3a265f394d588a02
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -80,10 +73,7 @@ public class MainActivity extends AppCompatActivity
 
 
     /**
-<<<<<<< HEAD
-=======
-     * +
->>>>>>> cf08cbf2699f5d67fe9e64ea3a265f394d588a02
+     *
      * Main entry point of the application. When onCreate is run, view is filled with the
      * layout activity_main in res. The fragment container which resides in the contentView is
      * changed to "MediciationListFragment()" with the changeFragment() function call.
@@ -130,7 +120,6 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
 
-<<<<<<< HEAD
         //test api call
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
@@ -153,11 +142,10 @@ public class MainActivity extends AppCompatActivity
                 Log.d("api", "failure");
             }
         });
-=======
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
->>>>>>> cf08cbf2699f5d67fe9e64ea3a265f394d588a02
     }
 
     //@Override
@@ -171,7 +159,7 @@ public class MainActivity extends AppCompatActivity
     //}
 
     /**
-     * +
+     *
      * Closes the drawer when the back button is pressed.
      */
     @Override
@@ -255,10 +243,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-<<<<<<< HEAD
-=======
-     * +
->>>>>>> cf08cbf2699f5d67fe9e64ea3a265f394d588a02
+     *
      * Handles the selection of items in the drawer and replaces the fragment container of
      * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
      *
