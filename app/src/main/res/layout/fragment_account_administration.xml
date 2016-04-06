@@ -1,45 +1,45 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+Things to include
+
+PERSONAL
+    Avatar?
+    year of birth
+    email (create user for online deletion)
+    password
+    discrete mode
+    sync?
+
+GENERAL
+    Turn on/off notification
+    Snooze notification
+    Sign out
+    Invite/share (choose method by OS default alternatives)
+    About
+    Contact
+
+GUARDIAN/GUARDEE
+    how long to wait after child takes medicine to notify
+    nickenam children
+    delete children
+-->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment">
+    tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment"
+    android:fillViewport="true">
 
-
-    <!-- TODO: Update blank fragment layout -->
-
-    <!--
-    Things to include
-
-    PERSONAL
-        Avatar?
-        year of birth
-        email (create user for online deletion)
-        password
-        discrete mode
-        sync?
-
-    GENERAL
-        Turn on/off notification
-        Snooze notification
-        Sign out
-        Invite/share (choose method by OS default alternatives)
-        About
-        Contact
-
-    GUARDIAN/GUARDEE
-        how long to wait after child takes medicine to notify
-        nickenam children
-        delete children
-
-
-    -->
-
-
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
+        android:id="@+id/newReminderLayout"
+        android:divider="@drawable/horizontal_divider"
+        android:showDividers="middle"
+        android:dividerPadding="10dp">
 
         <ImageView
             android:id="@+id/imageView2"
@@ -53,115 +53,131 @@
             android:layout_height="30dp"
             />
 
-        <!--TextView
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
-            android:text="Settings"
-            /-->
-        <!-- Text field with automated validation for character length -->
-        <!--android.support.design.widget.TextInputLayout
-            android:id="@+id/textContainer"
+            android:text="PERSONAL"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/textView" />
+
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:counterEnabled="true"
-            app:counterMaxLength="4"
-            >
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Year of birth"
+                android:id="@+id/nameText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="70dp" />
+
             <EditText
-                android:id="@+id/text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Text Hint"
-                />
-        </android.support.design.widget.TextInputLayout-->
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:ems="10"
-            android:id="@+id/editText4"
-            android:text="1992"
-            android:maxLength="4"
+                android:id="@+id/yearEditText"
+                android:ems="10"
+                android:inputType="number"
+                android:text="1992"
+
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Discrete reminders"
+            android:id="@+id/reminderSwitch"
+            android:checked="true"
+            android:textSize="20sp"
+            android:padding="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
             />
 
         <TextView
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:text="Year of birth"
-            android:textSize="15sp"
-            />
+            android:layout_height="wrap_content"
+            android:text="ACCOUNT FOR ONLINE DELETION"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/textView2" />
 
-        <ToggleButton
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New ToggleButton"
-            android:id="@+id/toggleButton" />
+            android:text="Email"
+            android:id="@+id/emailText"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:layout_gravity="center"
+            android:layout_marginRight="70dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/emailEditText"
+            android:inputType="textEmailAddress"
+            android:text="john.doe@email.com"
+            android:textAlignment="textEnd"
+            android:layout_gravity="end"
+            android:layout_marginRight="10dp" />
         </LinearLayout>
 
-        <!--GridLayout
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="3">
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/editText3"
-                android:layout_column="1"
-                android:layout_row="0"/>
+            android:layout_height="40dp">
 
             <TextView
-                android:layout_column="0"
-                android:layout_row="1"
-                android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="Year of birth"
-                android:textSize="15sp"
-                /-->
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:id="@+id/passwordText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="70dp" />
 
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordEditText"
+                android:inputType="textPassword"
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                android:layout_marginRight="10dp" />
+        </LinearLayout>
 
-
-        <!--/GridLayout-->
-
-
-        <!--TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:
-            android:text="Does this have to be with underscore" /-->
-
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:id="@+id/saveButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
 
     </LinearLayout>
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:rowCount="4">
+</ScrollView>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/textView"
-            android:layout_column="0"
-            android:layout_row="0" />
+    <!-- TODO: Update blank fragment layout -->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:id="@+id/textView2"
-            android:layout_column="1"
-            android:layout_row="0" />
-    </GridLayout>
-
-
-</FrameLayout>
