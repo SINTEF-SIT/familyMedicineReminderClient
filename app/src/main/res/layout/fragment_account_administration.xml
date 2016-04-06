@@ -16,6 +16,7 @@ GENERAL
     Invite/share (choose method by OS default alternatives)
     About
     Contact
+    Delete all data
 
 GUARDIAN/GUARDEE
     how long to wait after child takes medicine to notify
@@ -60,7 +61,7 @@ GUARDIAN/GUARDEE
             android:text="PERSONAL"
             android:padding="0dp"
             android:layout_marginLeft="10dp"
-            android:id="@+id/textView" />
+            android:id="@+id/settingsPersonalSection" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -109,10 +110,66 @@ GUARDIAN/GUARDEE
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ACCOUNT FOR ONLINE DELETION"
+            android:text="GENERAL"
             android:padding="0dp"
             android:layout_marginLeft="10dp"
-            android:id="@+id/textView2" />
+            android:id="@+id/settingsGeneralSection" />
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Receive notifications"
+            android:id="@+id/notificationSwitch"
+            android:checked="true"
+            android:textSize="20sp"
+            android:padding="10dp" />
+
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Snooze"
+                android:id="@+id/snoozeText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="70dp" />
+
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/seekBar"
+                android:layout_marginRight="74dp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Activate"
+                android:id="@+id/snoozeButton"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="end"
+                android:la
+                />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ACCOUNT FOR SYNC AND ONLINE DELETION"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/settingsAccountSection" />
 
         <LinearLayout
         android:orientation="horizontal"
@@ -167,6 +224,13 @@ GUARDIAN/GUARDEE
                 android:layout_marginRight="10dp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -174,6 +238,15 @@ GUARDIAN/GUARDEE
             android:id="@+id/saveButton"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Import data"
+            android:id="@+id/importButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
