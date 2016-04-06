@@ -120,5 +120,6 @@ public class ReminderListFragment extends android.app.Fragment {
         // TODO: Update argument type and name
         void onReminderListItemClicked(Reminder reminder);
         void onNewReminderButtonClicked();
+        void onReminderListSwitchClicked(Reminder reminder);
     }
 }

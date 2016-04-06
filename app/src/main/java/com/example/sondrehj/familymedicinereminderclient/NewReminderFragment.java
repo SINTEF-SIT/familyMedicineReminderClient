@@ -22,8 +22,10 @@ import android.widget.TextView;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 /**
@@ -51,6 +53,7 @@ public class NewReminderFragment extends android.app.Fragment {
     private NumberPicker numberPicker;
     private Button saveButton;
     private Reminder reminder;
+    protected Activity mActivity;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -220,7 +223,11 @@ public class NewReminderFragment extends android.app.Fragment {
 
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                createReminder();
+                if (reminder == null) {
+                    createReminder();
+                } else {
+                    updateReminder();
+                }
             }
         });
 
@@ -279,6 +286,7 @@ public class NewReminderFragment extends android.app.Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        mActivity = activity;
         if (activity instanceof OnNewReminderInteractionListener) {
             mListener = (OnNewReminderInteractionListener) activity;
         } else {
@@ -295,13 +303,51 @@ public class NewReminderFragment extends android.app.Fragment {
 
     public void createReminder() {
         Reminder reminder = new Reminder();
+        reminder.setOwnerId("temp");
         reminder.setName(nameEditText.getEditableText().toString());
-        reminder.setTime(timeSetText.getText().toString());
-        reminder.setMedicine(new Medication("1", "Paracetamol", 2.0, "ml"));
-        reminder.setUnits("1");
-        ReminderListContent.ITEMS.add(0, reminder);
 
+        String[] date = dateSetText.getText().toString().split("\\W+");
+        String[] time = timeSetText.getText().toString().split(":");
+
+        GregorianCalendar cal = new GregorianCalendar(
+                Integer.parseInt(date[2]),      //Year
+                Integer.parseInt(date[1]) - 1,  //Month
+                Integer.parseInt(date[0]),      //Date
+                Integer.parseInt(time[0]),      //Hour
+                Integer.parseInt(time[1]));     //Minute
+
+        reminder.setDate(cal);
+        reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
+        reminder.setUnits("1");
+        reminder.setIsActive(reminderSwitch.isChecked());
+        reminder.setDays(new int[]{1,2,3,4});
+        ReminderListContent.ITEMS.add(0, reminder);
         mListener.onSaveNewReminder();
+
+        //Add reminder to database
+        MySQLiteHelper db = new MySQLiteHelper(mActivity);
+        db.addReminder(reminder);
+    }
+
+    public void updateReminder() {
+        //Updates an existing Reminder object
+        reminder.setName(nameEditText.getText().toString());
+
+        String[] date = dateSetText.getText().toString().split("\\W+");
+        String[] time = timeSetText.getText().toString().split(":");
+
+        GregorianCalendar cal = new GregorianCalendar(
+                Integer.parseInt(date[2]),      //Year
+                Integer.parseInt(date[1]) - 1,  //Month
+                Integer.parseInt(date[0]),      //Date
+                Integer.parseInt(time[0]),      //Hour
+                Integer.parseInt(time[1]));     //Minute
+
+        reminder.setDate(cal);
+        mListener.onSaveNewReminder();
+        //Update existing reminder in database
+        MySQLiteHelper db = new MySQLiteHelper(mActivity);
+        db.updateReminder(reminder);
     }
 
     /**
