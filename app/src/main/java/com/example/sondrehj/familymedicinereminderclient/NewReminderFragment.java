@@ -1,15 +1,13 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.TimePickerDialog;
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +15,9 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -48,6 +45,10 @@ public class NewReminderFragment extends android.app.Fragment {
     private TextView timeSetText;
     private LinearLayout repeatLayout;
     private Switch repeatSwitch;
+    private LinearLayout daysLayout;
+    private TextView howOftenText;
+    private TextView daysPickedText;
+    private NumberPicker numberPicker;
     private Button saveButton;
     private Reminder reminder;
 
@@ -131,7 +132,7 @@ public class NewReminderFragment extends android.app.Fragment {
                         DialogFragment datePickerFragment = new DatePickerFragment();
                         datePickerFragment.show(getFragmentManager(), "datePicker");
                     }
-        });
+                });
 
         timePickerLayout.setOnClickListener(
                 new LinearLayout.OnClickListener() {
@@ -141,32 +142,76 @@ public class NewReminderFragment extends android.app.Fragment {
                     }
                 });
 
+        daysLayout = new LinearLayout(getActivity());
+        daysLayout.setOrientation(LinearLayout.HORIZONTAL);
+        //converting dp to px, because LayoutParams only takes px
+        int layoutHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
+        LinearLayout.LayoutParams daysLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, layoutHeight);
+        daysLayout.setLayoutParams(daysLayoutParams);
+        int layoutMarginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        int layoutMarginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
+        daysLayoutParams.setMargins(layoutMarginLeft, 0, layoutMarginRight, 0);
+
+        howOftenText = new TextView(getActivity());
+        String howOftenString = "How often?";
+        howOftenText.setText(howOftenString);
+        LinearLayout.LayoutParams whichDaysParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        howOftenText.setLayoutParams(whichDaysParams);
+        whichDaysParams.gravity = Gravity.CENTER;
+        howOftenText.setTextSize(22);
+        howOftenText.setTextColor(Color.parseColor("#000000"));
+
+        daysPickedText = new TextView(getActivity());
+        String daysPickedString = "Every day";
+        daysPickedText.setText(daysPickedString);
+        LinearLayout.LayoutParams daysPickedParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        daysPickedText.setLayoutParams(daysPickedParams);
+        daysPickedParams.gravity = Gravity.CENTER;  //layout:gravity
+        daysPickedText.setGravity(Gravity.RIGHT);       //gravity
+        daysPickedText.setTextSize(22);
+        daysPickedText.setTextColor(Color.parseColor("#8a000000"));
+
+        numberPicker = new NumberPicker(getActivity());
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(30);
+        numberPicker.setValue(1);
+        LinearLayout.LayoutParams numberPickerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        numberPicker.setLayoutParams(numberPickerParams);
+        numberPickerParams.gravity = Gravity.CENTER;
+
+        newReminderLayout.addView(daysLayout, 5);
+        daysLayout.addView(howOftenText);
+        daysLayout.addView(daysPickedText);
+        newReminderLayout.addView(numberPicker, 6);
+        daysLayout.setVisibility(View.GONE);
+        numberPicker.setVisibility(View.GONE);
+
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
-                        LinearLayout daysLayout = new LinearLayout(getActivity());
                         if (isChecked) {
-                            Toast.makeText(getActivity(), "ON", Toast.LENGTH_LONG).show();
+                            daysLayout.setVisibility(View.VISIBLE);
+                            daysLayout.setOnClickListener(new LinearLayout.OnClickListener() {
+                                public void onClick(View v) {
+                                    if (numberPicker.getVisibility() == View.GONE) {
+                                        numberPicker.setVisibility(View.VISIBLE);
 
+                                        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+                                            @Override
+                                            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                                                String newValString = "Every " + newVal + " day";
+                                                daysPickedText.setText(newValString);
+                                            }
+                                        });
+                                    } else if (numberPicker.getVisibility() == View.VISIBLE) {
+                                        numberPicker.setVisibility(View.GONE);
+                                    }
+                                }
+                            });
 
-                            daysLayout.setOrientation(LinearLayout.HORIZONTAL);
-                            LinearLayout.LayoutParams daysLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 50);
-                            daysLayout.setLayoutParams(daysLayoutParams);
-                            newReminderLayout.addView(daysLayout, 5);
-
-                            TextView whichDays = new TextView(getActivity());
-                            String whichDaysString = "Which days?";
-                            whichDays.setText(whichDaysString);
-                            TextView daysPicked = new TextView(getActivity());
-                            String daysPickedString = "Every day";
-                            daysPicked.setText(daysPickedString);
-                            daysLayout.addView(whichDays);
-                            daysLayout.addView(daysPicked);
                         } else {
-                            Toast.makeText(getActivity(), "OFF", Toast.LENGTH_LONG).show();
-                            //((ViewGroup)daysLayout.getParent()).removeView(daysLayout);
-                            //daysLayout.setVisibility(View.GONE);
-                            //repeatLayout.removeView(daysLayout);
+                            daysLayout.setVisibility(View.GONE);
+                            numberPicker.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -180,6 +225,26 @@ public class NewReminderFragment extends android.app.Fragment {
         });
 
         return view;
+    }
+/*
+    private void NumberPickerDialog() {
+        NumberPicker numberPicker = new NumberPicker(getActivity());
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(30);
+        NumberPicker.OnValueChangeListener numberListener = new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+            }
+        };
+    }
+*/
+
+
+    public TextView formatTextViewCorrectly(TextView tv) {
+
+
+        return tv;
     }
 
     public void setDateOnLayout(int year, int month, int day) {
