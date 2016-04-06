@@ -9,6 +9,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
-        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener {
+        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener {
 
     NotificationManager manager;
     Notification myNotication;
@@ -269,6 +271,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onPositiveUnitDialogResult(int unit) {
+        String[] units = getResources().getStringArray(R.array.unit_items);
+        MedicationStorageFragment sf = (MedicationStorageFragment) getFragmentManager().findFragmentByTag("MedicationStorageFragment");
+        sf.setUnitText(units[unit]);
+    }
+
+    @Override
+    public void onNegativeUnitDialogResult() {
+
+    }
+
+    @Override
     public void onMedicationStorageFragmentInteraction(Uri uri) {
 
     }
@@ -393,7 +407,6 @@ public class MainActivity extends AppCompatActivity
 
         return notification;
     }
-
 
 }
 
