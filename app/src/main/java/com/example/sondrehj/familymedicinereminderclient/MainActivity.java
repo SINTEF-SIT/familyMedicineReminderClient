@@ -27,6 +27,7 @@ import android.view.MenuItem;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
@@ -51,7 +52,8 @@ public class MainActivity extends AppCompatActivity
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
-        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener {
+        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
+        SelectDaysDialogFragment.OnDaysDialogResultListener {
 
     NotificationManager manager;
     Notification myNotication;
@@ -408,5 +410,26 @@ public class MainActivity extends AppCompatActivity
         return notification;
     }
 
+    @Override
+    public void onPositiveDaysDialogResult(ArrayList selectedDays) {
+        String[] days = getResources().getStringArray(R.array.reminder_days);
+        String daysSelected = "";
+        ArrayList<Integer> test = new ArrayList<>();
+
+        System.out.println("Days");
+        for (int i = 0; i < selectedDays.size(); i++) {
+            System.out.println(selectedDays.get(i));
+            daysSelected = daysSelected + days[(Integer) selectedDays.get(i)] + ", ";
+            test.add(((Integer) selectedDays.get(i) + 2) % 7);
+        }
+        System.out.println(test.toString());
+        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        nrf.setDaysOnLayout(daysSelected);
+    }
+
+    @Override
+    public void onNegativeDaysDialogResult() {
+
+    }
 }
 

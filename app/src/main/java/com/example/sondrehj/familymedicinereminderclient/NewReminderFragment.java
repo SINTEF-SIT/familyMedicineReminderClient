@@ -20,10 +20,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -51,6 +53,9 @@ public class NewReminderFragment extends android.app.Fragment {
     private TextView howOftenText;
     private TextView daysPickedText;
     private NumberPicker numberPicker;
+    private LinearLayout daysListLayout;
+    private TextView selectDaysText;
+    private TextView daysSelectedFromListText;
     private Button saveButton;
     private Reminder reminder;
     protected Activity mActivity;
@@ -145,6 +150,8 @@ public class NewReminderFragment extends android.app.Fragment {
                     }
                 });
 
+
+        //choose interval layout with number picker
         daysLayout = new LinearLayout(getActivity());
         daysLayout.setOrientation(LinearLayout.HORIZONTAL);
         //converting dp to px, because LayoutParams only takes px
@@ -158,14 +165,14 @@ public class NewReminderFragment extends android.app.Fragment {
         howOftenText = new TextView(getActivity());
         String howOftenString = "How often?";
         howOftenText.setText(howOftenString);
-        LinearLayout.LayoutParams whichDaysParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        howOftenText.setLayoutParams(whichDaysParams);
-        whichDaysParams.gravity = Gravity.CENTER;
+        LinearLayout.LayoutParams howOftenParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        howOftenText.setLayoutParams(howOftenParams);
+        howOftenParams.gravity = Gravity.CENTER;
         howOftenText.setTextSize(22);
         howOftenText.setTextColor(Color.parseColor("#000000"));
 
         daysPickedText = new TextView(getActivity());
-        String daysPickedString = "Every day";
+        String daysPickedString = "Interval";
         daysPickedText.setText(daysPickedString);
         LinearLayout.LayoutParams daysPickedParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         daysPickedText.setLayoutParams(daysPickedParams);
@@ -188,6 +195,32 @@ public class NewReminderFragment extends android.app.Fragment {
         newReminderLayout.addView(numberPicker, 6);
         daysLayout.setVisibility(View.GONE);
         numberPicker.setVisibility(View.GONE);
+
+
+        //choose which days layout with list
+        daysListLayout = new LinearLayout(getActivity());
+        daysListLayout.setOrientation(LinearLayout.HORIZONTAL);
+        daysListLayout.setLayoutParams(daysLayoutParams);
+
+        selectDaysText = new TextView(getActivity());
+        String selectDaysString = "Select days";
+        selectDaysText.setText(selectDaysString);
+        selectDaysText.setLayoutParams(howOftenParams);
+        selectDaysText.setTextSize(22);
+        selectDaysText.setTextColor(Color.parseColor("#000000"));
+
+        daysSelectedFromListText = new TextView(getActivity());
+        String daysSelectedFromListString = "";
+        daysSelectedFromListText.setText(daysSelectedFromListString);
+        daysSelectedFromListText.setLayoutParams(daysPickedParams);
+        daysSelectedFromListText.setGravity(Gravity.RIGHT);       //gravity
+        daysSelectedFromListText.setTextSize(22);
+        daysSelectedFromListText.setTextColor(Color.parseColor("#8a000000"));
+
+        newReminderLayout.addView(daysListLayout, 7);
+        daysListLayout.addView(selectDaysText);
+        daysListLayout.addView(daysSelectedFromListText);
+        daysListLayout.setVisibility(View.GONE);
 
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -212,9 +245,18 @@ public class NewReminderFragment extends android.app.Fragment {
                                 }
                             });
 
+                            daysListLayout.setVisibility(View.VISIBLE);
+
+                            daysListLayout.setOnClickListener(new LinearLayout.OnClickListener() {
+                                public void onClick(View v) {
+                                    SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
+                                    selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                                }
+                            });
                         } else {
                             daysLayout.setVisibility(View.GONE);
                             numberPicker.setVisibility(View.GONE);
+                            daysListLayout.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -270,6 +312,10 @@ public class NewReminderFragment extends android.app.Fragment {
         timeSetText.setText(timeSet);
     }
 
+    public void setDaysOnLayout(String selectedItems) {
+        daysSelectedFromListText.setText(selectedItems);
+    }
+
     //API Level >= 23
     @Override
     public void onAttach(Context context) {
@@ -321,6 +367,7 @@ public class NewReminderFragment extends android.app.Fragment {
         reminder.setUnits("1");
         reminder.setIsActive(reminderSwitch.isChecked());
         reminder.setDays(new int[]{1,2,3,4});
+
         ReminderListContent.ITEMS.add(0, reminder);
         mListener.onSaveNewReminder();
 
