@@ -25,7 +25,9 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -58,6 +60,7 @@ public class NewReminderFragment extends android.app.Fragment {
     private TextView daysSelectedFromListText;
     private Button saveButton;
     private Reminder reminder;
+    private int[] selectedDays;
     protected Activity mActivity;
 
     // TODO: Rename parameter arguments, choose names that match
@@ -115,24 +118,6 @@ public class NewReminderFragment extends android.app.Fragment {
         repeatLayout = (LinearLayout) view.findViewById(R.id.repeatLayout);
         repeatSwitch = (Switch) view.findViewById(R.id.repeatSwitch);
         saveButton = (Button) view.findViewById(R.id.saveButton);
-
-        if (getArguments() != null) {
-            Reminder tempReminder = (Reminder) getArguments().get(REMINDER_ARGS);
-            nameEditText.setText(tempReminder.getName());
-        }
-
-        //sets todays date and time as default
-        final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1; //month is 0-indexed
-        final int day = c.get(Calendar.DAY_OF_MONTH);
-        String currentTime = String.format("%02d:%02d", hour, minute);
-        timeSetText.setText(currentTime);
-        String todaysDate = String.format("%02d.%02d.%4d", day, month, year);
-        dateSetText.setText(todaysDate);
-
 
         datePickerLayout.setOnClickListener(
                 new LinearLayout.OnClickListener() {
@@ -210,11 +195,11 @@ public class NewReminderFragment extends android.app.Fragment {
         selectDaysText.setTextColor(Color.parseColor("#000000"));
 
         daysSelectedFromListText = new TextView(getActivity());
-        String daysSelectedFromListString = "";
+        String daysSelectedFromListString = "Mo, Tu, We, Th, Fr, Sa, Su";
         daysSelectedFromListText.setText(daysSelectedFromListString);
         daysSelectedFromListText.setLayoutParams(daysPickedParams);
         daysSelectedFromListText.setGravity(Gravity.RIGHT);       //gravity
-        daysSelectedFromListText.setTextSize(22);
+        daysSelectedFromListText.setTextSize(16);
         daysSelectedFromListText.setTextColor(Color.parseColor("#8a000000"));
 
         newReminderLayout.addView(daysListLayout, 7);
@@ -272,7 +257,7 @@ public class NewReminderFragment extends android.app.Fragment {
                 }
             }
         });
-
+        fillFields();
         return view;
     }
 /*
@@ -289,10 +274,34 @@ public class NewReminderFragment extends android.app.Fragment {
     }
 */
 
+    public void fillFields(){
+
+        //sets todays date and time as default
+        final Calendar c;
+        if (getArguments() != null) {
+            nameEditText.setText(reminder.getName());
+            c = reminder.getDate();
+            if(reminder.getDays().length > 1){
+                repeatSwitch.setChecked(true);
+            }
+
+        } else {
+            c = Calendar.getInstance();
+        }
+
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH) + 1; //month is 0-indexed
+        final int day = c.get(Calendar.DAY_OF_MONTH);
+        String time = String.format("%02d:%02d", hour, minute);
+        String date = String.format("%02d.%02d.%4d", day, month, year);
+
+        timeSetText.setText(time);
+        dateSetText.setText(date);
+    }
 
     public TextView formatTextViewCorrectly(TextView tv) {
-
-
         return tv;
     }
 
@@ -302,7 +311,7 @@ public class NewReminderFragment extends android.app.Fragment {
         dateSetText.setText(dateSet);
     }
 
-    public void setReminder(Reminder reminder){
+    public void setReminder(Reminder reminder) {
         System.out.println(reminder);
         this.reminder = reminder;
     }
@@ -312,8 +321,25 @@ public class NewReminderFragment extends android.app.Fragment {
         timeSetText.setText(timeSet);
     }
 
-    public void setDaysOnLayout(String selectedItems) {
-        daysSelectedFromListText.setText(selectedItems);
+    public void setDaysOnLayout(ArrayList selectedItems) {
+
+        String[] days = getResources().getStringArray(R.array.reminder_days);
+        String daysSelected = "";
+        selectedDays = new int[selectedItems.size()];
+
+        for (int i = 0; i < selectedItems.size(); i++) {
+            System.out.println(selectedItems.get(i));
+            daysSelected = daysSelected + days[(Integer) selectedItems.get(i)] + ", ";
+            selectedDays[i] = ((Integer) selectedItems.get(i) + 2) % 7;
+        }
+
+        System.out.println("Days");
+        for (int d : selectedDays) {
+            System.out.println(d);
+        }
+
+        Arrays.sort(selectedDays);
+        daysSelectedFromListText.setText(daysSelected);
     }
 
     //API Level >= 23
@@ -361,13 +387,20 @@ public class NewReminderFragment extends android.app.Fragment {
                 Integer.parseInt(date[0]),      //Date
                 Integer.parseInt(time[0]),      //Hour
                 Integer.parseInt(time[1]));     //Minute
-
         reminder.setDate(cal);
+        // Non-repeating
+        if (selectedDays == null) {
+            int calendarDay = cal.get(Calendar.DAY_OF_WEEK);
+            System.out.println("Current_day:" + calendarDay);
+            reminder.setDays(new int[]{calendarDay});
+        }
+        // Repeating
+        else {
+            reminder.setDays(selectedDays);
+        }
         reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
         reminder.setIsActive(reminderSwitch.isChecked());
-        reminder.setDays(new int[]{1,2,3,4});
-
         ReminderListContent.ITEMS.add(0, reminder);
         mListener.onSaveNewReminder();
 
@@ -389,8 +422,19 @@ public class NewReminderFragment extends android.app.Fragment {
                 Integer.parseInt(date[0]),      //Date
                 Integer.parseInt(time[0]),      //Hour
                 Integer.parseInt(time[1]));     //Minute
-
         reminder.setDate(cal);
+
+        // Non-repeating
+        if (selectedDays == null) {
+            int calendarDay = cal.get(Calendar.DAY_OF_WEEK);
+            System.out.println("Current_day:" + calendarDay);
+            reminder.setDays(new int[]{calendarDay});
+        }
+        // Repeating
+        else {
+            reminder.setDays(selectedDays);
+        }
+
         mListener.onSaveNewReminder();
         //Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);

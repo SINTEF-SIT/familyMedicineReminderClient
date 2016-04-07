@@ -206,6 +206,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             dayString += day + ";";
         }
 
+        System.out.println(dayString);
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
         values.put(COLUMN_REMINDER_DATE, dateString);
