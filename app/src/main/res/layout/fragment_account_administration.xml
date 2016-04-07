@@ -29,7 +29,8 @@ GUARDIAN/GUARDEE
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:focusableInTouchMode="false">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -138,13 +139,14 @@ GUARDIAN/GUARDEE
                 android:layout_marginLeft="10dp"
                 android:textColor="#000000"
                 android:layout_gravity="center"
-                android:layout_marginRight="70dp" />
+                android:layout_marginRight="10dp" />
 
             <SeekBar
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:id="@+id/seekBar"
-                android:layout_marginRight="74dp"/>
+                android:padding="0dp"
+                android:layout_marginRight="130dp"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -153,7 +155,6 @@ GUARDIAN/GUARDEE
                 android:id="@+id/snoozeButton"
                 android:layout_marginRight="10dp"
                 android:layout_gravity="end"
-                android:la
                 />
 
         </LinearLayout>
@@ -248,6 +249,61 @@ GUARDIAN/GUARDEE
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GUARDIAN/GUARDEE"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/guardianSection" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notify time"
+                android:id="@+id/notifyTimeText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/notifyTime"
+                android:padding="0dp"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="If your child has not takes their medicine, you will be notified this long time after your child was supposed to take it."
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/notifyTimeInfo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ABOUT/CONTACT"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/aboutSection" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This application is developed by a group of 6 students at Norwegian University og Science and Technology (NTNU) as their bachelor thesis. It was made in collaboration with SINTEF for a EU project called My Cystic Fibrosis App (MyCyFApp). Contact: epost@mycyfapp.eu"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/aboutUsSection" />
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -273,6 +329,8 @@ GUARDIAN/GUARDEE
         </LinearLayout>
 
     </LinearLayout>
+
+
 
 </ScrollView>
 
