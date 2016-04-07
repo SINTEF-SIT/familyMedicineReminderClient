@@ -1,11 +1,14 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -122,7 +125,19 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
 
-        //test api call
+        /**
+         * This is a dummy account for the SyncAdapter - don't move yet.
+         */
+        Account newAccount = new Account("dummyaccount", "com.sportsteamkarma");
+        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
+        accountManager.addAccountExplicitly(newAccount, null, null);
+
+        ContentResolver.setSyncAutomatically(
+                newAccount, "com.example.sondrehj.familyMedicineReminderClient.provider", true);
+
+        /**
+         * This is an Rest Api example call - move this outside of UI.
+         */
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
         User user = new User("Sondre", "Pelle11");
