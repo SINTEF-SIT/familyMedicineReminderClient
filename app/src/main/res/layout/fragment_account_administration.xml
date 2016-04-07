@@ -39,10 +39,10 @@ GUARDIAN/GUARDEE
         android:layout_height="wrap_content"
         tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
         android:id="@+id/newReminderLayout"
-        android:divider="@drawable/horizontal_divider"
         android:showDividers="middle"
         android:dividerPadding="10dp">
-
+        <!--android:divider="@drawable/horizontal_divider"-->
+cam
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
