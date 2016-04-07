@@ -51,6 +51,7 @@ public interface MyCyFAPPServiceAPI {
     @PUT("user/{userID}/medication/{medicationID}")
     Call<Medication> updateMedication(@Path("userID") String userID, @Body Medication medication);
 
+    //https://developers.google.com/cloud-messaging/network-manager#schedule_a_persistent_task
 
     /**
      *
