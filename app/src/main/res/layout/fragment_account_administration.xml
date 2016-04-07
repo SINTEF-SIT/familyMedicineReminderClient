@@ -248,6 +248,10 @@ GUARDIAN/GUARDEE
             android:layout_marginTop="10dp" />
 
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -283,10 +287,16 @@ GUARDIAN/GUARDEE
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="If your child has not takes their medicine, you will be notified this long time after your child was supposed to take it."
+            android:text="The amount of wait-time you will be notified after your child has failed to take their medicine."
             android:padding="0dp"
+            android:textSize="8dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:id="@+id/notifyTimeInfo" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -303,6 +313,11 @@ GUARDIAN/GUARDEE
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:id="@+id/aboutUsSection" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
 
         <LinearLayout
             android:orientation="horizontal"
