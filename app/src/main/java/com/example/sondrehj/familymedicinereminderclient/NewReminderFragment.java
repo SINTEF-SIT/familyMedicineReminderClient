@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
@@ -248,10 +249,16 @@ public class NewReminderFragment extends android.app.Fragment {
         );
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                if (reminder == null) {
-                    createReminder();
+                if (nameEditText.getText().toString().equals("")) {
+                    Toast toast = Toast.makeText(getActivity(), "Name must be entered!", Toast.LENGTH_LONG);
+                    toast.show();
                 } else {
-                    updateReminder();
+
+                    if (reminder == null) {
+                        createReminder();
+                    } else {
+                        updateReminder();
+                    }
                 }
             }
         });
