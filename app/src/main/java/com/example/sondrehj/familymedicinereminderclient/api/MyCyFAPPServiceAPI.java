@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.api;
 
+import com.example.sondrehj.familymedicinereminderclient.MedicationCabinetFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
@@ -19,9 +20,13 @@ import retrofit2.http.Path;
  */
 public interface MyCyFAPPServiceAPI {
 
-    //REMINDERS
-    @GET("user/{id}/reminder")
-    Call<List<Reminder>> getUserReminderList(@Path("id") String userID);
+    /**
+     *
+     * REMINDER REQUESTS
+     *
+     **/
+    @GET("user/{userID}/reminder")
+    Call<List<Reminder>> getUserReminderList(@Path("userID") String userID);
 
     @POST("user/{userID}/reminder")
     Call<Reminder> createReminder(@Path("userID") String userID, @Body Reminder reminder);
@@ -32,19 +37,33 @@ public interface MyCyFAPPServiceAPI {
     @DELETE("user/{userID}/reminder/{reminderID}")
     Call<Reminder> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
 
+    /**
+     *
+     * MEDICATION REQUESTS
+     *
+     **/
+    @GET("user/{userID}/medication")
+    Call<Medication> getUserMedicationList(@Path("userID") String userID);
 
-    //MEDICATIONS
+    @POST("user/{userID}/medication")
+    Call<Medication> createMedication(@Path("userID") String userID, @Body Medication medication);
 
-    //USER
-    @GET("user/{id}/children")
-    Call<User> getChildren(@Path("id") String userID);
+    @PUT("user/{userID}/medication/{medicationID}")
+    Call<Medication> updateMedication(@Path("userID") String userID, @Body Medication medication);
 
-    @POST("user/{id}/children")
-    Call<User> addChild(@Path("id") String userID);
+    //https://developers.google.com/cloud-messaging/network-manager#schedule_a_persistent_task
+
+    /**
+     *
+     * USER REQUESTS
+     *
+     **/
+    @GET("user/{userID}/children")
+    Call<User> getChildren(@Path("userID") String userID);
+
+    @POST("user/{userID}/children")
+    Call<User> addChild(@Path("userID") String userID);
 
     @POST("user")
     Call<User> createUser(@Body User user);
-
-
-
 }
