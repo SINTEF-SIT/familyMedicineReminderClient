@@ -266,11 +266,11 @@ public class NewReminderFragment extends android.app.Fragment {
         if (getArguments() != null) {
             nameEditText.setText(reminder.getName());
             c = reminder.getDate();
-            if (reminder.getDays().length > 1) {
+            if (reminder.getDays().length >= 1) {
                 repeatSwitch.setChecked(true);
                 daysSelectedFromListText.setText(
-                        Html.fromHtml(getSelectedDaysText(reminder.getDays())));
-                //daysSelectedFromListText.setText(s);
+                        Html.fromHtml(mListener.newReminderListGetSelectedDaysText(reminder.getDays())));
+                reminderSwitch.setChecked(reminder.getIsActive());
             }
         } else {
             c = Calendar.getInstance();
@@ -313,7 +313,7 @@ public class NewReminderFragment extends android.app.Fragment {
         }
         Arrays.sort(selectedDays);
         daysSelectedFromListText.setText(
-                Html.fromHtml(getSelectedDaysText(selectedDays)));
+                Html.fromHtml(mListener.newReminderListGetSelectedDaysText(selectedDays)));
     }
 
     //API Level >= 23
@@ -364,9 +364,7 @@ public class NewReminderFragment extends android.app.Fragment {
         reminder.setDate(cal);
         // Non-repeating
         if (selectedDays == null || !repeatSwitch.isChecked()) {
-            int calendarDay = cal.get(Calendar.DAY_OF_WEEK);
-            System.out.println("Calendar day: " + calendarDay);
-            reminder.setDays(new int[]{calendarDay});
+            reminder.setDays(new int[]{});
         }
         // Repeating
         else if(selectedDays.length > 0) {
@@ -397,12 +395,11 @@ public class NewReminderFragment extends android.app.Fragment {
                 Integer.parseInt(time[0]),      //Hour
                 Integer.parseInt(time[1]));     //Minute
         reminder.setDate(cal);
+        reminder.setIsActive(reminderSwitch.isChecked());
 
         // Non-repeating
-        if (selectedDays == null && reminder.getDays().length == 1 || !repeatSwitch.isChecked()) {
-            int calendarDay = cal.get(Calendar.DAY_OF_WEEK);
-            System.out.println("Current_day:" + calendarDay);
-            reminder.setDays(new int[]{calendarDay});
+        if (selectedDays == null && reminder.getDays().length == 0 || !repeatSwitch.isChecked()) {
+            reminder.setDays(new int[]{});
         }
         // Repeating
         else if(selectedDays == null && reminder.getDays().length > 1){
@@ -417,36 +414,6 @@ public class NewReminderFragment extends android.app.Fragment {
         db.updateReminder(reminder);
     }
 
-    public String getSelectedDaysText(int[] reminder_days) {
-        String[] days_abb = new String[]{"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
-        String[] reminder_days_abb = new String[reminder_days.length];
-        String s = "";
-        for (int i = 0; i < reminder_days.length; i++) {
-            reminder_days_abb[i] = days_abb[reminder_days[i]];
-        }
-        for (String day_abb : days_abb) {
-            if (!day_abb.equals("Sa") && !day_abb.equals("Su")) {
-                if (Arrays.asList(reminder_days_abb).contains(day_abb)) {
-                    s += "<b>" + day_abb + ", </b>";
-                } else {
-                    s += day_abb + ", ";
-                }
-            }
-        }
-        if (reminder_days[0] == 0) {
-            s += "<b>Sa, </b>";
-        } else {
-            s += "Sa, ";
-        }
-        if (reminder_days[1] == 1 || reminder_days[0] == 1) {
-            s += "<b>Su</b>";
-        } else {
-            s += "Su";
-        }
-        return s;
-    }
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -460,6 +427,7 @@ public class NewReminderFragment extends android.app.Fragment {
     public interface OnNewReminderInteractionListener {
         // TODO: Update argument type and name
         void onSaveNewReminder(Reminder r);
+        String newReminderListGetSelectedDaysText(int[] reminder_days);
     }
 
 }

@@ -59,16 +59,17 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         String timeDateString;
 
         // Text for a repeating reminder
-        if(holder.mReminder.getDays().length > 1){
-            timeDateString = timeString;
-            holder.mDateTimeView.setText(timeDateString);
+        if(holder.mReminder.getDays().length > 0){
+            String daySelectString = mListener.ReminderListGetSelectedDaysText(holder.mReminder.getDays());
+            holder.mDateTimeView.setText(timeString);
+            holder.mDaySelectView.setText(Html.fromHtml(daySelectString));
         }
         // Text for a non-repeating reminder
         else {
-            timeDateString = timeString + " (" + dateString + ")";
+            holder.mDateTimeView.setText(timeString);
+            holder.mDaySelectView.setText("(" + dateString + ")");
         }
 
-        holder.mDateTimeView.setText(timeDateString);
 
         holder.mSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +104,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         public final TextView mNameView;
         public final TextView mDateTimeView;
         public final Switch mSwitch;
+        public final TextView mDaySelectView;
         public Reminder mReminder;
 
         public ViewHolder(View view) {
@@ -111,6 +113,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             mNameView = (TextView) view.findViewById(R.id.name_text);
             mDateTimeView = (TextView) view.findViewById(R.id.datetime_text);
             mSwitch = (Switch) view.findViewById(R.id.reminder_switch);
+            mDaySelectView = (TextView) view.findViewById(R.id.day_select_text);
         }
 
         @Override
