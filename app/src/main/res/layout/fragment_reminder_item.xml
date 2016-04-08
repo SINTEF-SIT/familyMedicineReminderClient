@@ -32,15 +32,31 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/datetime_text"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="40dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_below="@+id/upper_layout"
-        android:textColor="#7b7b7b"
-        android:textSize="18sp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/datetime_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="#7b7b7b"
+            android:textSize="18sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.5"
+            android:text="test" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/day_select_text"
+            android:text="test" />
+    </LinearLayout>
 
 </RelativeLayout>
