@@ -1,30 +1,29 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
+
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
@@ -36,26 +35,15 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
@@ -65,14 +53,10 @@ public class MainActivity extends AppCompatActivity
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener {
 
+    private static Account account;
     NotificationManager manager;
     Notification myNotication;
     Boolean started = false;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
 
     /**
@@ -109,8 +93,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
 
         //Read and display data from local database. (Flyttes?)
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -123,7 +107,21 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
 
-        //test api call
+        /**
+         * This is a dummy account for the SyncAdapter - should be moved to application init,
+         * not stay in the UI thread.
+         */
+        account = new Account("Account", "com.example.sondrehj.familymedicinereminderclient");
+        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
+        accountManager.addAccountExplicitly(account, null, null);
+
+        ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+        ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
+        Log.d("Sync", "Sync set to automatic.");
+
+        /**
+         * This is an Rest Api example call - move this outside of UI.
+         */
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
         User user = new User("Sondre", "Pelle11");
@@ -146,9 +144,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+    }
+
+    /**
+     * Gets the instantiazed account of the system, used with the SyncAdapter and
+     * ContentResolver, might have to be moved sometime.
+     * @return
+     */
+    public static Account getAccount(){
+        return account;
     }
 
     //@Override
@@ -506,7 +511,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
-
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setDaysOnLayout(selectedDays);
     }

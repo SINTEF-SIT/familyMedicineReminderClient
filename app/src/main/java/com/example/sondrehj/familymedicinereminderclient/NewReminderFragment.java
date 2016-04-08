@@ -258,19 +258,6 @@ public class NewReminderFragment extends android.app.Fragment {
         fillFields();
         return view;
     }
-/*
-    private void NumberPickerDialog() {
-        NumberPicker numberPicker = new NumberPicker(getActivity());
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(30);
-        NumberPicker.OnValueChangeListener numberListener = new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-
-            }
-        };
-    }
-*/
 
     public void fillFields() {
 
