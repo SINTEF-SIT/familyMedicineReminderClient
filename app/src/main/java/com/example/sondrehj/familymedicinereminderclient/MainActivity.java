@@ -306,7 +306,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveNewReminder() {
+    public void onSaveNewReminder(Reminder r) {
+
+        if (r.getIsActive()) {
+
+            //Activate the reminder
+            scheduleNotification(getNotification("Take your medication"), r);
+            r.setIsActive(true);
+            System.out.println("Reminder: " + r.getReminderId() + " was activated");
+        }
+        //Updates the DB
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.updateReminder(r);
+
         changeFragment(ReminderListFragment.newInstance(1));
     }
 
@@ -460,19 +472,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
-        String[] days = getResources().getStringArray(R.array.reminder_days);
-        String daysSelected = "";
-        ArrayList<Integer> test = new ArrayList<>();
-
-        System.out.println("Days");
-        for (int i = 0; i < selectedDays.size(); i++) {
-            System.out.println(selectedDays.get(i));
-            daysSelected = daysSelected + days[(Integer) selectedDays.get(i)] + ", ";
-            test.add(((Integer) selectedDays.get(i) + 2) % 7);
-        }
-        System.out.println(test.toString());
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
-        nrf.setDaysOnLayout(daysSelected);
+        nrf.setDaysOnLayout(selectedDays);
     }
 
     @Override

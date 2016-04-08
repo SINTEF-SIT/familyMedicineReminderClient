@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,15 +47,28 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         holder.mSwitch.setChecked(mValues.get(position).getIsActive());
 
         GregorianCalendar cal = mValues.get(position).getDate();
-        String year = Integer.toString(cal.get(Calendar.YEAR));
-        String month = Integer.toString(cal.get(Calendar.MONTH) + 1);
-        String date = Integer.toString(cal.get(Calendar.DATE));
-        String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
-        String min = Integer.toString(cal.get(Calendar.MINUTE));
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int date = cal.get(Calendar.DATE);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int min = cal.get(Calendar.MINUTE);
 
-        String dateString = hour + ":" + min + " (" + year + "/" + month + "/" + date + ")";
 
-        holder.mDateTimeView.setText(dateString);
+        String timeString = String.format("%02d:%02d", hour, min);
+        String dateString = String.format("%02d.%02d.%4d", date, month, year);
+        String timeDateString;
+
+        // Text for a repeating reminder
+        if(holder.mReminder.getDays().length > 1){
+            timeDateString = timeString;
+            holder.mDateTimeView.setText(timeDateString);
+        }
+        // Text for a non-repeating reminder
+        else {
+            timeDateString = timeString + " (" + dateString + ")";
+        }
+
+        holder.mDateTimeView.setText(timeDateString);
 
         holder.mSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
