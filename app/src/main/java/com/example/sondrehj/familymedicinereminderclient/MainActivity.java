@@ -39,9 +39,6 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -67,14 +64,10 @@ public class MainActivity extends AppCompatActivity
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener {
 
+    private static Account account;
     NotificationManager manager;
     Notification myNotication;
     Boolean started = false;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
 
     /**
@@ -128,12 +121,13 @@ public class MainActivity extends AppCompatActivity
         /**
          * This is a dummy account for the SyncAdapter - don't move yet.
          */
-        Account newAccount = new Account("dummyaccount", "com.sportsteamkarma");
+        account = new Account("Account", "com.example.sondrehj.familymedicinereminderclient");
         AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
-        accountManager.addAccountExplicitly(newAccount, null, null);
+        accountManager.addAccountExplicitly(account, null, null);
 
-        ContentResolver.setSyncAutomatically(
-                newAccount, "com.example.sondrehj.familyMedicineReminderClient.provider", true);
+        ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+        ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
+        Log.d("Sync", "Sync set to automatic.");
 
         /**
          * This is an Rest Api example call - move this outside of UI.
@@ -160,9 +154,16 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+    }
+
+    /**
+     * Gets the instantiazed account of the system, used with the SyncAdapter and
+     * ContentResolver, might have to be moved sometime.
+     * @return
+     */
+    public static Account getAccount(){
+        return account;
     }
 
     //@Override

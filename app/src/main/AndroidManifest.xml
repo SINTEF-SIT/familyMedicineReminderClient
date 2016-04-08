@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -14,6 +15,7 @@
         android:label="editInManifest"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
             android:label="editInManifest"
@@ -24,16 +26,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver android:name=".notification.NotificationPublisher" />
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+
+        <receiver android:name=".sync.NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name=".sync.DummyProvider"
-            android:authorities="com.example.sondrehj.familyMedicineReminderClient.content"
+            android:authorities="com.example.sondrehj.familymedicinereminderclient.content"
             android:syncable="true"
             android:label="DummyProvider" />
 
@@ -46,6 +50,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
         <service
             android:name="com.example.sondrehj.familymedicinereminderclient.sync.SyncService"
             android:exported="true"

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Created by nikolai on 07/04/16.
@@ -18,6 +19,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
     }
 
+    /**
+     * This function is ran when requestSync is called from anywhere in the
+     * android system with the right authority. The functions performs a sync of the data.
+     *
+     * @param account
+     * @param extras
+     * @param authority
+     * @param provider
+     * @param syncResult
+     */
     @Override
     public void onPerformSync(
             Account account,
@@ -26,7 +37,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
-        Log.d("Sync", "SyncIsPerforming.");
-
+        Log.d("Sync", "Sync is performing");
     }
 }

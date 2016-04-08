@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sync-adapter
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:contentAuthority="com.example.sondrehj.familyMedicineReminderClient.content"
-    android:accountType="com.example.sondrehj.familyMedicineReminderClient"
+    android:contentAuthority="com.example.sondrehj.familymedicinereminderclient.content"
+    android:accountType="com.example.sondrehj.familymedicinereminderclient"
     android:userVisible="false"
     android:supportsUploading="false"
     android:allowParallelSyncs="false"
