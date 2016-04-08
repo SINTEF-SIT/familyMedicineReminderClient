@@ -27,7 +27,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         int currentDay = cal.get(Calendar.DAY_OF_WEEK);
 
         System.out.println("Day of week: " + currentDay);
-        System.out.println("Notification scheduled for days: " + Arrays.toString(days));
+        System.out.println("Notification: " + id + " scheduled for days: " + Arrays.toString(days));
 
         //Checks if the user has specified days for the reminder
         if (days.length == 0) {
