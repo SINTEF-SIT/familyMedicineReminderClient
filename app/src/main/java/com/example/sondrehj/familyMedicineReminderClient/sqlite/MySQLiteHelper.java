@@ -171,8 +171,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         for (int day : reminder.getDays()) {
             dayString += day + ";";
         }
-        System.out.println(Arrays.toString(reminder.getDays()));
-        System.out.println(dayString);
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_OWNER_ID, reminder.getOwnerId());
@@ -184,7 +182,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Inserting Row
         long insertId = db.insert(TABLE_REMINDER, null, values);
         reminder.setReminderId(safeLongToInt(insertId));
-        System.out.println(insertId);
+        System.out.println("New reminder: " + insertId + " scheduled for days: " + Arrays.toString(reminder.getDays()));
 
         db.close(); // Closing database connection
     }
@@ -206,14 +204,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             dayString += day + ";";
         }
 
-        System.out.println(dayString);
-
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
         values.put(COLUMN_REMINDER_DATE, dateString);
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
 
+        System.out.println("Reminder: " + reminder.getReminderId() + " was updated");
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
         db.close(); // Closing database connection
     }

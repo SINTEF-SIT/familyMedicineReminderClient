@@ -290,7 +290,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveNewReminder() {
+    public void onSaveNewReminder(Reminder r) {
+
+        if (r.getIsActive()) {
+
+            //Activate the reminder
+            scheduleNotification(getNotification("Take your medication"), r);
+            r.setIsActive(true);
+            System.out.println("Reminder: " + r.getReminderId() + " was activated");
+        }
+        //Updates the DB
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.updateReminder(r);
+
         changeFragment(ReminderListFragment.newInstance(1));
     }
 

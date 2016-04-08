@@ -38,7 +38,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem"
         android:layout_below="@+id/upper_layout"
-        android:textSize="22sp"
+        android:textColor="#7b7b7b"
+        android:textSize="18sp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp" />
 

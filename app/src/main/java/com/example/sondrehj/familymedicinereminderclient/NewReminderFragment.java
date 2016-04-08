@@ -5,7 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,7 +25,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
-import java.lang.reflect.Array;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,7 +33,7 @@ import java.util.GregorianCalendar;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {} subclass.
  * Activities that contain this fragment must implement the
  * {@link NewReminderFragment.OnNewReminderInteractionListener} interface
  * to handle interaction events.
@@ -246,8 +246,6 @@ public class NewReminderFragment extends android.app.Fragment {
                     }
                 }
         );
-
-
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 if (reminder == null) {
@@ -274,17 +272,19 @@ public class NewReminderFragment extends android.app.Fragment {
     }
 */
 
-    public void fillFields(){
+    public void fillFields() {
 
-        //sets todays date and time as default
+        // Sets today's date and time as default
         final Calendar c;
         if (getArguments() != null) {
             nameEditText.setText(reminder.getName());
             c = reminder.getDate();
-            if(reminder.getDays().length > 1){
+            if (reminder.getDays().length > 1) {
                 repeatSwitch.setChecked(true);
+                daysSelectedFromListText.setText(
+                        Html.fromHtml(getSelectedDaysText(reminder.getDays())));
+                //daysSelectedFromListText.setText(s);
             }
-
         } else {
             c = Calendar.getInstance();
         }
@@ -301,10 +301,6 @@ public class NewReminderFragment extends android.app.Fragment {
         dateSetText.setText(date);
     }
 
-    public TextView formatTextViewCorrectly(TextView tv) {
-        return tv;
-    }
-
     public void setDateOnLayout(int year, int month, int day) {
         month = month + 1;  //month is 0-indexed
         String dateSet = String.format("%02d.%02d.%4d", day, month, year);
@@ -312,7 +308,6 @@ public class NewReminderFragment extends android.app.Fragment {
     }
 
     public void setReminder(Reminder reminder) {
-        System.out.println(reminder);
         this.reminder = reminder;
     }
 
@@ -323,23 +318,15 @@ public class NewReminderFragment extends android.app.Fragment {
 
     public void setDaysOnLayout(ArrayList selectedItems) {
 
-        String[] days = getResources().getStringArray(R.array.reminder_days);
-        String daysSelected = "";
         selectedDays = new int[selectedItems.size()];
 
+        // Convert to the expected format for GregorianCalendar
         for (int i = 0; i < selectedItems.size(); i++) {
-            System.out.println(selectedItems.get(i));
-            daysSelected = daysSelected + days[(Integer) selectedItems.get(i)] + ", ";
             selectedDays[i] = ((Integer) selectedItems.get(i) + 2) % 7;
         }
-
-        System.out.println("Days");
-        for (int d : selectedDays) {
-            System.out.println(d);
-        }
-
         Arrays.sort(selectedDays);
-        daysSelectedFromListText.setText(daysSelected);
+        daysSelectedFromListText.setText(
+                Html.fromHtml(getSelectedDaysText(selectedDays)));
     }
 
     //API Level >= 23
@@ -389,20 +376,20 @@ public class NewReminderFragment extends android.app.Fragment {
                 Integer.parseInt(time[1]));     //Minute
         reminder.setDate(cal);
         // Non-repeating
-        if (selectedDays == null) {
+        if (selectedDays == null || !repeatSwitch.isChecked()) {
             int calendarDay = cal.get(Calendar.DAY_OF_WEEK);
-            System.out.println("Current_day:" + calendarDay);
+            System.out.println("Calendar day: " + calendarDay);
             reminder.setDays(new int[]{calendarDay});
         }
         // Repeating
-        else {
+        else if(selectedDays.length > 0) {
             reminder.setDays(selectedDays);
         }
         reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
         reminder.setUnits("1");
         reminder.setIsActive(reminderSwitch.isChecked());
         ReminderListContent.ITEMS.add(0, reminder);
-        mListener.onSaveNewReminder();
+        mListener.onSaveNewReminder(reminder);
 
         //Add reminder to database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
@@ -425,21 +412,53 @@ public class NewReminderFragment extends android.app.Fragment {
         reminder.setDate(cal);
 
         // Non-repeating
-        if (selectedDays == null) {
+        if (selectedDays == null && reminder.getDays().length == 1 || !repeatSwitch.isChecked()) {
             int calendarDay = cal.get(Calendar.DAY_OF_WEEK);
             System.out.println("Current_day:" + calendarDay);
             reminder.setDays(new int[]{calendarDay});
         }
         // Repeating
-        else {
+        else if(selectedDays == null && reminder.getDays().length > 1){
+            reminder.setDays(reminder.getDays());
+        } else {
             reminder.setDays(selectedDays);
         }
 
-        mListener.onSaveNewReminder();
+        mListener.onSaveNewReminder(reminder);
         //Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.updateReminder(reminder);
     }
+
+    public String getSelectedDaysText(int[] reminder_days) {
+        String[] days_abb = new String[]{"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
+        String[] reminder_days_abb = new String[reminder_days.length];
+        String s = "";
+        for (int i = 0; i < reminder_days.length; i++) {
+            reminder_days_abb[i] = days_abb[reminder_days[i]];
+        }
+        for (String day_abb : days_abb) {
+            if (!day_abb.equals("Sa") && !day_abb.equals("Su")) {
+                if (Arrays.asList(reminder_days_abb).contains(day_abb)) {
+                    s += "<b>" + day_abb + ", </b>";
+                } else {
+                    s += day_abb + ", ";
+                }
+            }
+        }
+        if (reminder_days[0] == 0) {
+            s += "<b>Sa, </b>";
+        } else {
+            s += "Sa, ";
+        }
+        if (reminder_days[1] == 1 || reminder_days[0] == 1) {
+            s += "<b>Su</b>";
+        } else {
+            s += "Su";
+        }
+        return s;
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -453,27 +472,7 @@ public class NewReminderFragment extends android.app.Fragment {
      */
     public interface OnNewReminderInteractionListener {
         // TODO: Update argument type and name
-        void onSaveNewReminder();
-    }
-
-    public Switch getReminderSwitch() {
-        return reminderSwitch;
-    }
-
-    public EditText getNameEditText() {
-        return nameEditText;
-    }
-
-    public TextView getDateSetText() {
-        return dateSetText;
-    }
-
-    public TextView getTimeSetText() {
-        return timeSetText;
-    }
-
-    public Button getSaveButton() {
-        return saveButton;
+        void onSaveNewReminder(Reminder r);
     }
 
 }
