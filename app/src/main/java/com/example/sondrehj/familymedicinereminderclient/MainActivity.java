@@ -43,6 +43,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -307,6 +308,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public String newReminderListGetSelectedDaysText(int[] reminder_days) {
+        return getSelectedDaysText(reminder_days);
+    }
+
+    @Override
     public void onMedicationCabinetFragmentInteraction(Uri uri) {
 
     }
@@ -371,6 +377,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public String ReminderListGetSelectedDaysText(int[] reminder_days) {
+        return getSelectedDaysText(reminder_days);
+    }
+
+    @Override
     public void addMedicationToMedicationList(Medication medication) {
 
     }
@@ -427,8 +438,12 @@ public class MainActivity extends AppCompatActivity
         if (reminder.getDays().length > 0) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
         } else {
-            //Schedules a non-repeating notification
-            alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+
+            Calendar cal = Calendar.getInstance();
+            if (!reminder.getDate().before(cal)) {
+                //Schedules a non-repeating notification
+                alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+            }
         }
     }
 
@@ -453,6 +468,41 @@ public class MainActivity extends AppCompatActivity
 
         return notification;
     }
+
+    public String getSelectedDaysText(int[] reminder_days) {
+        String[] days_abb = new String[]{"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
+        String[] reminder_days_abb = new String[reminder_days.length];
+        String s = "";
+        if (reminder_days.length >= 1) {
+            for (int i = 0; i < reminder_days.length; i++) {
+                reminder_days_abb[i] = days_abb[reminder_days[i]];
+            }
+            for (String day_abb : days_abb) {
+                if (!day_abb.equals("Sa") && !day_abb.equals("Su")) {
+                    if (Arrays.asList(reminder_days_abb).contains(day_abb)) {
+                        s += "<b>" + day_abb + ", </b>";
+                    } else {
+                        s += "<font color=\"#c5c5c5\">" + day_abb + ", " + "</font>";
+                    }
+                }
+            }
+            if (Arrays.asList(reminder_days_abb).contains("Sa")) {
+                s += "<b>Sa, </b>";
+            } else {
+                s += "<font color=\"#c5c5c5\">" + "Sa, " + "</font>";
+            }
+            if(Arrays.asList(reminder_days_abb).contains("Su")) {
+                s += "<b>Su</b>";
+            } else {
+                s += "<font color=\"#c5c5c5\">" + "Su" + "</font>";
+            }
+        } else {
+            s = "<font color=\"#c5c5c5\">" + "Mo, Tu, We, Th, Fr, Sa, Su" + "</font>";
+            //s = "Mo, Tu, We, Th, Fr, Sa, Su";
+        }
+        return s;
+    }
+
 
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {

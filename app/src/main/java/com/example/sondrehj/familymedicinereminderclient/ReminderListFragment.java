@@ -121,5 +121,6 @@ public class ReminderListFragment extends android.app.Fragment {
         void onReminderListItemClicked(Reminder reminder);
         void onNewReminderButtonClicked();
         void onReminderListSwitchClicked(Reminder reminder);
+        String ReminderListGetSelectedDaysText(int[] reminder_days);
     }
 }
