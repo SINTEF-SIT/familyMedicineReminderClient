@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
@@ -96,14 +97,24 @@ public class MedicationStorageFragment extends android.app.Fragment {
         saveMedicationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
+                EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
+                TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
 
-                if (mMedicaiton == null) {
-                    createNewMedication();
+                if (medicationName.getText().toString().equals("") || medicationAmount.getText().toString().equals("")
+                        ||  medicationUnit.getText().toString().equals("Click to choose")) {
+                    Toast toast = Toast.makeText(getActivity(), "All fields must be entered!", Toast.LENGTH_LONG);
+                    toast.show();
+
                 } else {
-                    updateMedication();
+                    if (mMedicaiton == null) {
+                        createNewMedication();
+                    } else {
+                        updateMedication();
+                    }
+                    //Return to MedicationCabinet
+                    ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
                 }
-                //Return to MedicationCabinet
-                ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
             }
         });
 

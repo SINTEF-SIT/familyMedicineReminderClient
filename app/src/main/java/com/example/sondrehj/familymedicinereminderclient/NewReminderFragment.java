@@ -275,26 +275,7 @@ public class NewReminderFragment extends android.app.Fragment {
 
         return view;
     }
-/*
-    private void NumberPickerDialog() {
-        NumberPicker numberPicker = new NumberPicker(getActivity());
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(30);
-        NumberPicker.OnValueChangeListener numberListener = new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
 
-            }
-        };
-    }
-*/
-
-
-    public TextView formatTextViewCorrectly(TextView tv) {
-
-
-        return tv;
-    }
 
     public void setDateOnLayout(int year, int month, int day) {
         month = month + 1;  //month is 0-indexed
