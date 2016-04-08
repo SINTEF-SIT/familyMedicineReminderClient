@@ -118,33 +118,6 @@ public class MainActivity extends AppCompatActivity
         ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
         Log.d("Sync", "Sync set to automatic.");
-
-        /**
-         * This is an Rest Api example call - move this outside of UI.
-         */
-        MyCyFAPPServiceAPI apiService = RestService.createRestService();
-
-        User user = new User("Sondre", "Pelle11");
-        Call<User> call = apiService.createUser(user);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    int statusCode = response.code();
-                    User user = response.body();
-                    Log.d("api", statusCode + " : " + user.toString());
-                } else {
-                    Log.d("api", "error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d("api", "failure");
-            }
-        });
-
-
     }
 
     /**
