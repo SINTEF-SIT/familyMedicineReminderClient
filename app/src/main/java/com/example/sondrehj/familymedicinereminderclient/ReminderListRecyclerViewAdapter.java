@@ -56,7 +56,6 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
         String timeString = String.format("%02d:%02d", hour, min);
         String dateString = String.format("%02d.%02d.%4d", date, month, year);
-        String timeDateString;
 
         // Text for a repeating reminder
         if(holder.mReminder.getDays().length > 0){
