@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
@@ -46,6 +48,9 @@ public class NewReminderFragment extends android.app.Fragment {
     private Switch reminderSwitch;
     private EditText nameEditText;
     private LinearLayout datePickerLayout;
+    private LinearLayout endDatePickerLayout;
+    private TextView endDatePickedText;
+    private TextView endDatePickerText;
     private TextView dateSetText;
     private LinearLayout timePickerLayout;
     private TextView timeSetText;
@@ -62,6 +67,7 @@ public class NewReminderFragment extends android.app.Fragment {
     private Reminder reminder;
     private int[] selectedDays;
     protected Activity mActivity;
+    private String currentStartDate;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -147,6 +153,7 @@ public class NewReminderFragment extends android.app.Fragment {
         int layoutMarginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         daysLayoutParams.setMargins(layoutMarginLeft, 0, layoutMarginRight, 0);
 
+
         howOftenText = new TextView(getActivity());
         String howOftenString = "How often?";
         howOftenText.setText(howOftenString);
@@ -165,6 +172,7 @@ public class NewReminderFragment extends android.app.Fragment {
         daysPickedText.setGravity(Gravity.RIGHT);       //gravity
         daysPickedText.setTextSize(22);
         daysPickedText.setTextColor(Color.parseColor("#8a000000"));
+
 
         numberPicker = new NumberPicker(getActivity());
         numberPicker.setMinValue(1);
@@ -202,15 +210,42 @@ public class NewReminderFragment extends android.app.Fragment {
         daysSelectedFromListText.setTextSize(16);
         daysSelectedFromListText.setTextColor(Color.parseColor("#8a000000"));
 
-        newReminderLayout.addView(daysListLayout, 7);
         daysListLayout.addView(selectDaysText);
         daysListLayout.addView(daysSelectedFromListText);
         daysListLayout.setVisibility(View.GONE);
+
+        endDatePickerLayout = new LinearLayout(getActivity());
+        endDatePickerLayout.setOrientation(LinearLayout.HORIZONTAL);
+        endDatePickerLayout.setLayoutParams(daysLayoutParams);
+        endDatePickerLayout.setVisibility(View.GONE);
+
+        endDatePickerText = new TextView(getActivity());
+        String endDatePickerString = "End date";
+        endDatePickerText.setText(endDatePickerString);
+        endDatePickerText.setLayoutParams(howOftenParams);
+        endDatePickerText.setTextSize(22);
+        endDatePickerText.setTextColor(Color.parseColor("#000000"));
+
+        endDatePickedText = new TextView(getActivity());
+        String endDatePickedString= "Continuous";
+        endDatePickedText.setText(endDatePickedString);
+        endDatePickedText.setLayoutParams(daysPickedParams);
+        endDatePickedText.setGravity(Gravity.RIGHT);       //gravity
+        endDatePickedText.setTextSize(22);
+        endDatePickedText.setTextColor(Color.parseColor("#8a000000"));
+
+        endDatePickerLayout.addView(endDatePickerText);
+        endDatePickerLayout.addView(endDatePickedText);
+
+        newReminderLayout.addView(endDatePickerLayout, 7);
+        newReminderLayout.addView(daysListLayout, 8);
 
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
                         if (isChecked) {
+
+                            /*
                             daysLayout.setVisibility(View.VISIBLE);
                             daysLayout.setOnClickListener(new LinearLayout.OnClickListener() {
                                 public void onClick(View v) {
@@ -228,17 +263,27 @@ public class NewReminderFragment extends android.app.Fragment {
                                         numberPicker.setVisibility(View.GONE);
                                     }
                                 }
-                            });
+                            }); */
+
+                            endDatePickerLayout.setVisibility(View.VISIBLE);
+                            endDatePickerLayout.setOnClickListener(
+                                    new LinearLayout.OnClickListener() {
+                                        public void onClick(View v) {
+                                            EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
+                                            endDate.show(getFragmentManager(), "endDatePicker");
+                                        }
+                                    });
 
                             daysListLayout.setVisibility(View.VISIBLE);
-
                             daysListLayout.setOnClickListener(new LinearLayout.OnClickListener() {
                                 public void onClick(View v) {
                                     SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
                                     selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
                                 }
                             });
+
                         } else {
+                            endDatePickerLayout.setVisibility(View.GONE);
                             daysLayout.setVisibility(View.GONE);
                             numberPicker.setVisibility(View.GONE);
                             daysListLayout.setVisibility(View.GONE);
@@ -266,11 +311,23 @@ public class NewReminderFragment extends android.app.Fragment {
         if (getArguments() != null) {
             nameEditText.setText(reminder.getName());
             c = reminder.getDate();
-            if (reminder.getDays().length >= 1) {
+            if (reminder.getDays().length >= 1 || reminder.getEndDate() != null) {
                 repeatSwitch.setChecked(true);
                 daysSelectedFromListText.setText(
                         Html.fromHtml(mListener.newReminderListGetSelectedDaysText(reminder.getDays())));
                 reminderSwitch.setChecked(reminder.getIsActive());
+
+                GregorianCalendar endCal = reminder.getEndDate();
+                int year = endCal.get(Calendar.YEAR);
+                int month = endCal.get(Calendar.MONTH) + 1; //month is 0-indexed
+                final int day = endCal.get(Calendar.DAY_OF_MONTH);
+
+                if(year == 9998) {
+                    endDatePickedText.setText("Continuous");
+                } else {
+                    String date = String.format("%02d.%02d.%4d", day, month, year);
+                    endDatePickedText.setText(date);
+                }
             }
         } else {
             c = Calendar.getInstance();
@@ -283,7 +340,7 @@ public class NewReminderFragment extends android.app.Fragment {
         final int day = c.get(Calendar.DAY_OF_MONTH);
         String time = String.format("%02d:%02d", hour, minute);
         String date = String.format("%02d.%02d.%4d", day, month, year);
-
+        currentStartDate = date;
         timeSetText.setText(time);
         dateSetText.setText(date);
     }
@@ -292,6 +349,13 @@ public class NewReminderFragment extends android.app.Fragment {
         month = month + 1;  //month is 0-indexed
         String dateSet = String.format("%02d.%02d.%4d", day, month, year);
         dateSetText.setText(dateSet);
+        currentStartDate = dateSet;
+    }
+
+    public void setEndDateOnLayout(int year, int month, int day) {
+        month = month + 1;  //month is 0-indexed
+        String dateSet = String.format("%02d.%02d.%4d", day, month, year);
+        endDatePickedText.setText(dateSet);
     }
 
     public void setReminder(Reminder reminder) {
@@ -315,6 +379,113 @@ public class NewReminderFragment extends android.app.Fragment {
         daysSelectedFromListText.setText(
                 Html.fromHtml(mListener.newReminderListGetSelectedDaysText(selectedDays)));
     }
+
+
+    public void createReminder() {
+        Reminder reminder = new Reminder();
+        reminder.setOwnerId("temp");
+        reminder.setName(nameEditText.getEditableText().toString());
+
+        String[] date = dateSetText.getText().toString().split("\\W+");
+        String[] time = timeSetText.getText().toString().split(":");
+
+        GregorianCalendar cal = new GregorianCalendar(
+                Integer.parseInt(date[2]),      //Year
+                Integer.parseInt(date[1]) - 1,  //Month
+                Integer.parseInt(date[0]),      //Date
+                Integer.parseInt(time[0]),      //Hour
+                Integer.parseInt(time[1]));     //Minute
+        reminder.setDate(cal);
+        // Non-repeating
+        if (!repeatSwitch.isChecked()) {
+            reminder.setDays(new int[]{});
+        }
+        // Repeating
+        else {
+            if(selectedDays.length > 0) {
+                reminder.setDays(selectedDays);
+            }
+            if(endDatePickedText.getText().toString().equals("Continuous")){
+                reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
+            } else if (!endDatePickedText.getText().toString().equals("Continuous")) {
+                String[] endDate = endDatePickedText.getText().toString().split("\\W+");
+                GregorianCalendar endCal = new GregorianCalendar(
+                        Integer.parseInt(endDate[2]),      //Year
+                        Integer.parseInt(endDate[1]) - 1,  //Month
+                        Integer.parseInt(endDate[0]),      //Date
+                        Integer.parseInt(time[0]),      //Hour
+                        Integer.parseInt(time[1]));     //Minute
+                reminder.setEndDate(endCal);
+            }
+        }
+        reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
+        reminder.setUnits("1");
+        reminder.setIsActive(reminderSwitch.isChecked());
+        reminder.setReminderServerId(-1);
+        ReminderListContent.ITEMS.add(0, reminder);
+        mListener.onSaveNewReminder(reminder);
+
+        //Add reminder to database
+        MySQLiteHelper db = new MySQLiteHelper(mActivity);
+        db.addReminder(reminder);
+    }
+
+    public void updateReminder() {
+        //Updates an existing Reminder object
+        reminder.setName(nameEditText.getText().toString());
+
+        String[] date = dateSetText.getText().toString().split("\\W+");
+        String[] time = timeSetText.getText().toString().split(":");
+
+        GregorianCalendar cal = new GregorianCalendar(
+                Integer.parseInt(date[2]),      //Year
+                Integer.parseInt(date[1]) - 1,  //Month
+                Integer.parseInt(date[0]),      //Date
+                Integer.parseInt(time[0]),      //Hour
+                Integer.parseInt(time[1]));     //Minute
+        reminder.setDate(cal);
+        reminder.setIsActive(reminderSwitch.isChecked());
+
+        // Non-repeating
+        if(!repeatSwitch.isChecked()) {
+            System.out.println("NOT CHECKED");
+            reminder.setDays(new int[]{});
+            reminder.setEndDate(null);
+        }
+
+        if (selectedDays == null && reminder.getDays().length == 0) {
+            reminder.setDays(new int[]{});
+        }
+
+        // Repeating
+        if(repeatSwitch.isChecked()){
+            System.out.println("CHECKED");
+            if (selectedDays == null && reminder.getDays().length > 1){
+                reminder.setDays(reminder.getDays());
+            } else {
+                reminder.setDays(selectedDays);
+            }
+            if(endDatePickedText.getText().toString().equals("Continuous")){
+                reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
+            } else if (!endDatePickedText.getText().toString().equals("Continuous")) {
+                String[] endDate = endDatePickedText.getText().toString().split("\\W+");
+                GregorianCalendar endCal = new GregorianCalendar(
+                        Integer.parseInt(endDate[2]),      //Year
+                        Integer.parseInt(endDate[1]) - 1,  //Month
+                        Integer.parseInt(endDate[0]),      //Date
+                        Integer.parseInt(time[0]),      //Hour
+                        Integer.parseInt(time[1]));     //Minute
+                reminder.setEndDate(endCal);
+            }
+        }
+
+        mListener.onSaveNewReminder(reminder);
+        //Update existing reminder in database
+        MySQLiteHelper db = new MySQLiteHelper(mActivity);
+        db.updateReminder(reminder);
+    }
+
+
 
     //API Level >= 23
     @Override
@@ -345,73 +516,6 @@ public class NewReminderFragment extends android.app.Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void createReminder() {
-        Reminder reminder = new Reminder();
-        reminder.setOwnerId("temp");
-        reminder.setName(nameEditText.getEditableText().toString());
-
-        String[] date = dateSetText.getText().toString().split("\\W+");
-        String[] time = timeSetText.getText().toString().split(":");
-
-        GregorianCalendar cal = new GregorianCalendar(
-                Integer.parseInt(date[2]),      //Year
-                Integer.parseInt(date[1]) - 1,  //Month
-                Integer.parseInt(date[0]),      //Date
-                Integer.parseInt(time[0]),      //Hour
-                Integer.parseInt(time[1]));     //Minute
-        reminder.setDate(cal);
-        // Non-repeating
-        if (selectedDays == null || !repeatSwitch.isChecked()) {
-            reminder.setDays(new int[]{});
-        }
-        // Repeating
-        else if(selectedDays.length > 0) {
-            reminder.setDays(selectedDays);
-        }
-        reminder.setMedicine(new Medication(1, "1", "Paracetamol", 2.0, "ml"));
-        reminder.setUnits("1");
-        reminder.setIsActive(reminderSwitch.isChecked());
-        ReminderListContent.ITEMS.add(0, reminder);
-        mListener.onSaveNewReminder(reminder);
-
-        //Add reminder to database
-        MySQLiteHelper db = new MySQLiteHelper(mActivity);
-        db.addReminder(reminder);
-    }
-
-    public void updateReminder() {
-        //Updates an existing Reminder object
-        reminder.setName(nameEditText.getText().toString());
-
-        String[] date = dateSetText.getText().toString().split("\\W+");
-        String[] time = timeSetText.getText().toString().split(":");
-
-        GregorianCalendar cal = new GregorianCalendar(
-                Integer.parseInt(date[2]),      //Year
-                Integer.parseInt(date[1]) - 1,  //Month
-                Integer.parseInt(date[0]),      //Date
-                Integer.parseInt(time[0]),      //Hour
-                Integer.parseInt(time[1]));     //Minute
-        reminder.setDate(cal);
-        reminder.setIsActive(reminderSwitch.isChecked());
-
-        // Non-repeating
-        if (selectedDays == null && reminder.getDays().length == 0 || !repeatSwitch.isChecked()) {
-            reminder.setDays(new int[]{});
-        }
-        // Repeating
-        else if(selectedDays == null && reminder.getDays().length > 1){
-            reminder.setDays(reminder.getDays());
-        } else {
-            reminder.setDays(selectedDays);
-        }
-
-        mListener.onSaveNewReminder(reminder);
-        //Update existing reminder in database
-        MySQLiteHelper db = new MySQLiteHelper(mActivity);
-        db.updateReminder(reminder);
     }
 
     /**

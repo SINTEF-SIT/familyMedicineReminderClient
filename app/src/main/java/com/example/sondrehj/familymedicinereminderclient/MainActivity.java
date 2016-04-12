@@ -28,6 +28,7 @@ import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener {
+        SelectDaysDialogFragment.OnDaysDialogResultListener, EndDatePickerFragment.EndDatePickerListener {
 
     private static Account account;
     NotificationManager manager;
@@ -389,6 +390,13 @@ public class MainActivity extends AppCompatActivity
     public void setDate(int year, int month, int day) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setDateOnLayout(year, month, day);
+    }
+
+    @Override
+    public void setEndDate(int year, int month, int day) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        newReminderFragment.setEndDateOnLayout(year, month, day);
+
     }
 
     private void scheduleNotification(Notification notification, Reminder reminder) {
