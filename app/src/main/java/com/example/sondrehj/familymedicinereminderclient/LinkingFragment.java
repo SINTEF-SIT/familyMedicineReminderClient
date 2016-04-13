@@ -1,12 +1,16 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 
 /**
@@ -17,9 +21,10 @@ import android.view.ViewGroup;
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LinkingFragment extends android.app.Fragment {
+public class LinkingFragment extends android.app.Fragment implements View.OnClickListener{
 
     private OnLinkingFragmentInteractionListener mListener;
+    private ImageView statusIcon;
 
     public LinkingFragment() {
         // Required empty public constructor
@@ -46,7 +51,23 @@ public class LinkingFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_linking, container, false);
+        View view = inflater.inflate(R.layout.fragment_linking, container, false);
+        statusIcon = (ImageView) view.findViewById(R.id.status_icon);
+        Button linkbutton = (Button) view.findViewById(R.id.link_button);
+        linkbutton.setOnClickListener(this);
+        return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.link_button:
+                int color = Color.parseColor("#FF64DD17"); //The color u want
+                statusIcon.setColorFilter(color);
+                break;
+            default:
+                System.out.println("error happened in LinkingFragment: onClick Switch-case");
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

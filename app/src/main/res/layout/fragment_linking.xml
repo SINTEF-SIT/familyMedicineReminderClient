@@ -1,13 +1,98 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.LinkingFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+ <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:context="com.example.sondrehj.familymedicinereminderclient.LinkingFragment"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+     android:weightSum="1">
 
-</FrameLayout>
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Enter the ID below in a Guardian app to link your user."
+         android:id="@+id/infotext2"
+         android:layout_gravity="center_horizontal"
+         android:width="200dp"
+         android:layout_marginTop="50dp"
+         android:layout_marginBottom="25dp" />
+
+     <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+         android:layout_marginTop="25dp"
+         android:layout_marginBottom="25dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your ID: "
+                android:id="@+id/infotext1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="placeholderID"
+                android:id="@+id/user_linking_id"
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+
+     <LinearLayout
+         android:orientation="vertical"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="25dp">
+
+         <TextView
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Enter the ID from the childrens phone:"
+             android:id="@+id/infotext3"
+             android:layout_gravity="center" />
+
+         <EditText
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/editText2"
+             android:layout_gravity="center_horizontal"
+             android:layout_marginRight="80dp"
+             android:layout_marginLeft="80dp"
+             android:hint="ex. 43xgad63" />
+
+     </LinearLayout>
+
+     <LinearLayout
+         android:orientation="vertical"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal">
+
+         <Button
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:text="Link accounts"
+             android:id="@+id/link_button" />
+     </LinearLayout>
+
+     <ImageView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:id="@+id/status_icon"
+         android:layout_gravity="center_horizontal"
+         android:src="@drawable/android_ok"
+         android:tint="#c4c4c4"
+         android:layout_marginTop="10dp" />
+
+     <TextView
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Replace with error messages"
+         android:id="@+id/infotext5"
+         android:layout_gravity="center_horizontal"
+         android:layout_marginTop="10dp" />
+
+ </LinearLayout>
