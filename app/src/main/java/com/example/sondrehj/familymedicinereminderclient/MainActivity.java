@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
      * as you specify a parent activity in AndroidManifest.xml.
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Called by timepicker in NewReminder
      *
      * @param hourOfDay
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Called by datepicker in NewReminder
      *
      * @param year
