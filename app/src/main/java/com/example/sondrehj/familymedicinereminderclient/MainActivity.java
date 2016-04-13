@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener {
+        SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener {
 
     private static Account account;
     NotificationManager manager;
@@ -269,6 +269,9 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_settings) {
 
+        } else if (id == R.id.nav_guardian_dashboard) {
+            System.out.println("nav_guardian_dashboard");
+            changeFragment(new GuardianDashboard());
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

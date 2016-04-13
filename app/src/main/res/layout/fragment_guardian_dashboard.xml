@@ -9,19 +9,19 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:id="@+id/pasientLayout"
         android:paddingBottom="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Sondre Hjetland"
             android:id="@+id/nameText"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:textSize="22sp"
+            android:textColor="#000000"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -56,16 +56,15 @@
 
             <Button
                 android:id="@+id/medicineIcon3"
-
                 android:text="\?"
                 android:textColor="#FFFFFF"
                 android:textSize="25sp"
-
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:background="@drawable/questionmark"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp" />
+
         </LinearLayout>
 
     </LinearLayout>
