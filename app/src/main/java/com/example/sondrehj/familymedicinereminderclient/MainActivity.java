@@ -8,13 +8,17 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,6 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
@@ -34,7 +39,13 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
+import com.example.sondrehj.familymedicinereminderclient.playservice.MyGcmListenerService;
+import com.example.sondrehj.familymedicinereminderclient.playservice.MyInstanceIDListenerService;
+import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+
         // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -107,6 +119,13 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
 
+        //check if google play services are enabled (required for GCM).
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+
         /**
          * This is a dummy account for the SyncAdapter - should be moved to application init,
          * not stay in the UI thread.
@@ -118,33 +137,6 @@ public class MainActivity extends AppCompatActivity
         ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
         Log.d("Sync", "Sync set to automatic.");
-
-        /**
-         * This is an Rest Api example call - move this outside of UI.
-         */
-        MyCyFAPPServiceAPI apiService = RestService.createRestService();
-
-        User user = new User("Sondre", "Pelle11");
-        Call<User> call = apiService.createUser(user);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    int statusCode = response.code();
-                    User user = response.body();
-                    Log.d("api", statusCode + " : " + user.toString());
-                } else {
-                    Log.d("api", "error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d("api", "failure");
-            }
-        });
-
-
     }
 
     /**
@@ -518,6 +510,27 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNegativeDaysDialogResult() {
 
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, 9000)
+                        .show();
+            } else {
+                Log.i("main", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 }
 

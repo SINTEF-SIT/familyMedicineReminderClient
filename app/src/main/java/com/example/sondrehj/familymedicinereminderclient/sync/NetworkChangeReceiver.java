@@ -16,10 +16,11 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 /**
  * A class that extends the BroadcastReceiver class, and implements the function onReceive.
  * It functions to notify of network changes on the device.
+ *
+ * TODO: extend WakefulBroadcastReceiver?
  */
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
-    // Constants
     // Content provider authority
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient.content";
     /**
