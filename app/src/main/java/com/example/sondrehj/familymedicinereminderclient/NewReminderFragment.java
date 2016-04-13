@@ -123,6 +123,7 @@ public class NewReminderFragment extends android.app.Fragment {
         datePickerLayout.setOnClickListener(
                 new LinearLayout.OnClickListener() {
                     public void onClick(View v) {
+                        //TODO: Valider at man ikke kan sette en dato tilbake i tid? Kan bli kluss
                         DialogFragment datePickerFragment = new DatePickerFragment();
                         datePickerFragment.show(getFragmentManager(), "datePicker");
                     }
@@ -217,12 +218,20 @@ public class NewReminderFragment extends android.app.Fragment {
                                 public void onClick(View v) {
                                     if (numberPicker.getVisibility() == View.GONE) {
                                         numberPicker.setVisibility(View.VISIBLE);
+                                        String everyDay = "Every day";
+                                        daysPickedText.setText(everyDay);
 
                                         numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                                             @Override
                                             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                                                String newValString = "Every " + newVal + " day";
-                                                daysPickedText.setText(newValString);
+                                                if (newVal == 1) {
+                                                    String newValString = "Every day";
+                                                    daysPickedText.setText(newValString);
+                                                } else {
+
+                                                    String newValString = "Every " + newVal + " day";
+                                                    daysPickedText.setText(newValString);
+                                                }
                                             }
                                         });
                                     } else if (numberPicker.getVisibility() == View.VISIBLE) {
@@ -235,7 +244,17 @@ public class NewReminderFragment extends android.app.Fragment {
 
                             daysListLayout.setOnClickListener(new LinearLayout.OnClickListener() {
                                 public void onClick(View v) {
+                                    //TODO: Når man åpner en ny dialog (for andre gang) er dagene man har krysset av, fjernet
                                     SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
+                                    /*
+                                    int[] selectedDays2 = new int[selectedDays.length];
+                                    for (int i = 0; i < selectedDays.length; i++) {
+                                        selectedDays2[i] = selectedDays[i];
+                                    }
+                                    Bundle daysAlreadyChecked = new Bundle();
+                                    daysAlreadyChecked.putIntArray("alreadySelected", selectedDays2);
+                                    selectDaysDialogFragment.setArguments(daysAlreadyChecked);
+                                    */
                                     selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
                                 }
                             });
