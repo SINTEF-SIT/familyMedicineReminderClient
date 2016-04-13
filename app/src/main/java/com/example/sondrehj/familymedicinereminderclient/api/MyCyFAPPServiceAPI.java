@@ -75,9 +75,9 @@ public interface MyCyFAPPServiceAPI {
      * LINKING REQUESTS
      *
      */
-    @GET("user/{userID}/linking")
+    @GET("user/{userID}/link")
     Call<User> getLinkingRequests(@Path("userID") String userID);
 
-    @POST("user/{userID}/linking")
-    Call<User> sendLinkingRequest(@Path(""))
+    @POST("user/{userID}/link/{withID}")
+    Call<User> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
 }
