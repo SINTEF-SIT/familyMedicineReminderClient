@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -156,7 +157,6 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
 
     /**
      * +
@@ -274,12 +274,12 @@ public class MainActivity extends AppCompatActivity
 
         if (r.getIsActive()) {
 
-            //Activate the reminder
+            // Activate the reminder
             scheduleNotification(getNotification("Take your medication"), r);
             r.setIsActive(true);
             System.out.println("Reminder: " + r.getReminderId() + " was activated");
         }
-        //Updates the DB
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
@@ -334,23 +334,17 @@ public class MainActivity extends AppCompatActivity
 
         if (reminder.getIsActive()) {
 
-            //Cancel the scheduled reminder
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                    reminder.getReminderId(),
-                    new Intent(this, NotificationPublisher.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager.cancel(pendingIntent);
+            // Cancel the scheduled reminder
+            cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
         } else {
 
-            //Activate the reminder
+            // Activate the reminder
             scheduleNotification(getNotification("Take your medication"), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
-        //Updates the DB
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
     }
@@ -399,35 +393,34 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void scheduleNotification(Notification notification, Reminder reminder) {
+    private void scheduleNotification(Notification notification, Reminder reminder, boolean triggerdBySwitch) {
 
-        //A variable containing the reminder date in milliseconds.
-        //Used for scheduling the notification.
+        // A variable containing the reminder date in milliseconds.
+        // Used for scheduling the notification.
         Long time = reminder.getDate().getTimeInMillis();
 
-        //Defines the Intent of the notification. The NotificationPublisher class uses this
-        //object to retrieve additional information about the notification.
+        // Defines the Intent of the notification. The NotificationPublisher class uses this
+        // object to retrieve additional information about the notification.
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        //Adds the reminder_id to the Intent object.
-        //Used to easily identify notifications and their corresponding reminder.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
-        //Adds the reminder_days variable to the Intent object.
-        //Used to schedule notifications for the given days.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
-        //Adds the given notification object to the Intent object.
-        //Used to publish the given notification.
+        // Adds the given notification object to the Intent object.
+        // Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        // Adds the given reminder object to the Intent object
+        // Used to cancel and filter Notifications
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-
-        //Schedules a notification on the user specified days.
-        if (reminder.getDays().length > 0) {
+        Calendar cal = Calendar.getInstance();
+        
+        // Schedules a repeating notification on the user specified days.
+        if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
+            System.out.println("Alarm set");
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
-        } else {
-
-            Calendar cal = Calendar.getInstance();
+        }
+        // Schedules a non-repeating notification
+        else {
             if (!reminder.getDate().before(cal)) {
-                //Schedules a non-repeating notification
                 alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
             }
         }
@@ -453,6 +446,17 @@ public class MainActivity extends AppCompatActivity
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
+    }
+
+    public void cancelNotification(int id){
+        //Cancel the scheduled reminder
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                id,
+                new Intent(this, NotificationPublisher.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+        System.out.println("Reminder: " + id + " was deactivated");
     }
 
     public String getSelectedDaysText(int[] reminder_days) {

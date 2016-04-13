@@ -39,9 +39,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/nameEditText"
             android:inputType="text"
-            android:layout_marginRight="10dp"
-            android:textAlignment="textEnd"
-            android:gravity="end" />
+            android:layout_marginRight="10dp" />
 
     </LinearLayout>
 

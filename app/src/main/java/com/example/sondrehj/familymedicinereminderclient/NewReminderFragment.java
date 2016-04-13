@@ -227,7 +227,7 @@ public class NewReminderFragment extends android.app.Fragment {
         endDatePickerText.setTextColor(Color.parseColor("#000000"));
 
         endDatePickedText = new TextView(getActivity());
-        String endDatePickedString= "Continuous";
+        String endDatePickedString = "Continuous";
         endDatePickedText.setText(endDatePickedString);
         endDatePickedText.setLayoutParams(daysPickedParams);
         endDatePickedText.setGravity(Gravity.RIGHT);       //gravity
@@ -309,20 +309,20 @@ public class NewReminderFragment extends android.app.Fragment {
         // Sets today's date and time as default
         final Calendar c;
         if (getArguments() != null) {
+            reminderSwitch.setChecked(reminder.getIsActive());
             nameEditText.setText(reminder.getName());
             c = reminder.getDate();
-            if (reminder.getDays().length >= 1 || reminder.getEndDate() != null) {
+            System.out.println(reminder.getEndDate());
+            if (reminder.getDays().length >= 1) {
                 repeatSwitch.setChecked(true);
                 daysSelectedFromListText.setText(
                         Html.fromHtml(mListener.newReminderListGetSelectedDaysText(reminder.getDays())));
-                reminderSwitch.setChecked(reminder.getIsActive());
-
                 GregorianCalendar endCal = reminder.getEndDate();
                 int year = endCal.get(Calendar.YEAR);
                 int month = endCal.get(Calendar.MONTH) + 1; //month is 0-indexed
                 final int day = endCal.get(Calendar.DAY_OF_MONTH);
 
-                if(year == 9998) {
+                if (year == 9998) {
                     endDatePickedText.setText("Continuous");
                 } else {
                     String date = String.format("%02d.%02d.%4d", day, month, year);
@@ -331,6 +331,8 @@ public class NewReminderFragment extends android.app.Fragment {
             }
         } else {
             c = Calendar.getInstance();
+            daysSelectedFromListText.setText(
+                    Html.fromHtml(mListener.newReminderListGetSelectedDaysText(new int[]{0,1,2,3,4,5,6})));
         }
 
         int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -402,10 +404,10 @@ public class NewReminderFragment extends android.app.Fragment {
         }
         // Repeating
         else {
-            if(selectedDays.length > 0) {
+            if (selectedDays.length > 0) {
                 reminder.setDays(selectedDays);
             }
-            if(endDatePickedText.getText().toString().equals("Continuous")){
+            if (endDatePickedText.getText().toString().equals("Continuous")) {
                 reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
             } else if (!endDatePickedText.getText().toString().equals("Continuous")) {
                 String[] endDate = endDatePickedText.getText().toString().split("\\W+");
@@ -447,7 +449,7 @@ public class NewReminderFragment extends android.app.Fragment {
         reminder.setIsActive(reminderSwitch.isChecked());
 
         // Non-repeating
-        if(!repeatSwitch.isChecked()) {
+        if (!repeatSwitch.isChecked()) {
             System.out.println("NOT CHECKED");
             reminder.setDays(new int[]{});
             reminder.setEndDate(null);
@@ -458,14 +460,14 @@ public class NewReminderFragment extends android.app.Fragment {
         }
 
         // Repeating
-        if(repeatSwitch.isChecked()){
+        if (repeatSwitch.isChecked()) {
             System.out.println("CHECKED");
-            if (selectedDays == null && reminder.getDays().length > 1){
+            if (selectedDays == null && reminder.getDays().length > 1) {
                 reminder.setDays(reminder.getDays());
             } else {
                 reminder.setDays(selectedDays);
             }
-            if(endDatePickedText.getText().toString().equals("Continuous")){
+            if (endDatePickedText.getText().toString().equals("Continuous")) {
                 reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
             } else if (!endDatePickedText.getText().toString().equals("Continuous")) {
                 String[] endDate = endDatePickedText.getText().toString().split("\\W+");
@@ -480,11 +482,10 @@ public class NewReminderFragment extends android.app.Fragment {
         }
 
         mListener.onSaveNewReminder(reminder);
-        //Update existing reminder in database
+        // Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.updateReminder(reminder);
     }
-
 
 
     //API Level >= 23
@@ -531,6 +532,7 @@ public class NewReminderFragment extends android.app.Fragment {
     public interface OnNewReminderInteractionListener {
         // TODO: Update argument type and name
         void onSaveNewReminder(Reminder r);
+
         String newReminderListGetSelectedDaysText(int[] reminder_days);
     }
 

@@ -22,10 +22,15 @@ public class SelectDaysDialogFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        for(int x = 0; x < 7; x++) {
+            selectedItems.add(x);
+        }
+        boolean[] checkedItems = {true, true, true, true, true, true, true};
+
         // Set the dialog title
         builder.setTitle("Select Days")
                 // Set choice items to unit_items array
-                .setMultiChoiceItems(R.array.reminder_days, null, new DialogInterface.OnMultiChoiceClickListener() {
+                .setMultiChoiceItems(R.array.reminder_days, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int chosen, boolean isChecked) {
                         if (isChecked) {

@@ -28,7 +28,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
             DatePickerDialog dp = new DatePickerDialog(getActivity(), this, year, month, day);
             // Disables dates back in time
             Calendar cal = Calendar.getInstance();
-            dp.getDatePicker().setMinDate(cal.getTimeInMillis());
+            //dp.getDatePicker().setMinDate(cal.getTimeInMillis());
             // Returns the instance of DatePickerDialog
             return dp;
         }
