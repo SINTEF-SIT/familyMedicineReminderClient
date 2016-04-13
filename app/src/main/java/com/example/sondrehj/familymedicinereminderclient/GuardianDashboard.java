@@ -4,9 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -18,6 +20,11 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 public class GuardianDashboard extends Fragment {
+
+    private LinearLayout guardianDashboardLayout;
+
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -61,11 +68,24 @@ public class GuardianDashboard extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        TextView textView = new TextView(getActivity());
-        textView.setText(R.string.hello_blank_fragment);
-        return textView;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_guardian_dashboard, container, false);
+        guardianDashboardLayout = (LinearLayout) view.findViewById(R.id.newReminderLayout);
+
+
+
+        return view;
+    }
+
+    public void addPasientToView() {
+        LinearLayout pasientLayout = new LinearLayout(getActivity());
+        pasientLayout.setOrientation(LinearLayout.VERTICAL);
+        //converting dp to px, because LayoutParams only takes px
+        LinearLayout.LayoutParams daysLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        pasientLayout.setLayoutParams(daysLayoutParams);
+        int layoutMarginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        int layoutMarginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
+        daysLayoutParams.setMargins(layoutMarginLeft, 0, layoutMarginRight, 0);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
