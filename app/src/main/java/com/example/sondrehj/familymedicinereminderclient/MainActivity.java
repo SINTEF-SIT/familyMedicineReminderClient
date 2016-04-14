@@ -8,17 +8,13 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -27,39 +23,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
-import android.widget.ProgressBar;
 
-import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
-import com.example.sondrehj.familymedicinereminderclient.playservice.MyGcmListenerService;
-import com.example.sondrehj.familymedicinereminderclient.playservice.MyInstanceIDListenerService;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
-        ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener {
@@ -99,7 +84,6 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
 
         // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -191,7 +175,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
      * as you specify a parent activity in AndroidManifest.xml.
@@ -216,7 +200,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
@@ -255,20 +239,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        System.out.print(id);
-
         if (id == R.id.nav_reminders) {
-            System.out.print("nav_reminders");
-            changeFragment(ReminderListFragment.newInstance(1));
-
+            changeFragment(ReminderListFragment.newInstance());
+            System.out.print("navigated to reminder list fragment");
         } else if (id == R.id.nav_medication) {
-            System.out.print("nav_medication");
-            changeFragment(new MedicationListFragment());
-
-        } else if (id == R.id.nav_symptoms) {
-
+            changeFragment(MedicationListFragment.newInstance());
+            System.out.print("navigated to medication cabinet fragment");
         } else if (id == R.id.nav_settings) {
-
+            //TODO: fill inn changefragment to settings fragment
+            System.out.println("navigated to settings fragment");
+        } else if (id == R.id.nav_linking) {
+            changeFragment(LinkingFragment.newInstance());
+            System.out.println("navigated to linking fragment");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -301,7 +283,7 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
-        changeFragment(ReminderListFragment.newInstance(1));
+        changeFragment(ReminderListFragment.newInstance());
     }
 
     @Override
@@ -384,7 +366,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Called by timepicker in NewReminder
      *
      * @param hourOfDay
@@ -397,7 +379,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
+     *
      * Called by datepicker in NewReminder
      *
      * @param year
