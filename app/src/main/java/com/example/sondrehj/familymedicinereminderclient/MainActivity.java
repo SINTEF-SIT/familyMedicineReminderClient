@@ -24,8 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 
-import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
@@ -34,9 +32,11 @@ import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialog
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
+import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,14 +44,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
-        ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener, EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener {
@@ -61,15 +57,13 @@ public class MainActivity extends AppCompatActivity
     Notification myNotication;
     Boolean started = false;
 
-
     /**
-     *
      * Main entry point of the application. When onCreate is run, view is filled with the
      * layout activity_main in res. The fragment container which resides in the contentView is
      * changed to "MediciationListFragment()" with the changeFragment() function call.
-     * <p/>
+     *
      * In addition, the Sidebar/Drawer is instantiated.
-     * <p/>
+     *
      * Portrait mode is enforced because if the screen is rotated you loose a lot of references
      * when the instance is redrawn.
      *
@@ -109,6 +103,13 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Reminder> reminders = db.getReminders();
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
+
+        //check if google play services are enabled (required for GCM).
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
 
         /**
          * This is a dummy account for the SyncAdapter - should be moved to application init,
@@ -160,7 +161,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
      * Inflate the options menu. This adds items to the action bar if it is present. The one with
      * the three buttons, which resides physically on Samsung phones.
      *
@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
      * as you specify a parent activity in AndroidManifest.xml.
@@ -199,7 +198,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
@@ -226,7 +224,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Handles the selection of items in the drawer and replaces the fragment container of
      * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
      *
@@ -238,20 +235,18 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        System.out.print(id);
-
         if (id == R.id.nav_reminders) {
-            System.out.print("nav_reminders");
-            changeFragment(ReminderListFragment.newInstance(1));
-
+            changeFragment(ReminderListFragment.newInstance());
+            System.out.print("navigated to reminder list fragment");
         } else if (id == R.id.nav_medication) {
-            System.out.print("nav_medication");
-            changeFragment(new MedicationListFragment());
-
-        } else if (id == R.id.nav_symptoms) {
-
+            changeFragment(MedicationListFragment.newInstance());
+            System.out.print("navigated to medication cabinet fragment");
         } else if (id == R.id.nav_settings) {
-
+            //TODO: fill inn changefragment to settings fragment
+            System.out.println("navigated to settings fragment");
+        } else if (id == R.id.nav_linking) {
+            changeFragment(LinkingFragment.newInstance());
+            System.out.println("navigated to linking fragment");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -284,7 +279,7 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
-        changeFragment(ReminderListFragment.newInstance(1));
+        changeFragment(ReminderListFragment.newInstance());
     }
 
     @Override
@@ -361,7 +356,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
      * Called by timepicker in NewReminder
      *
      * @param hourOfDay
@@ -374,7 +368,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * +
      * Called by datepicker in NewReminder
      *
      * @param year
@@ -510,5 +503,26 @@ public class MainActivity extends AppCompatActivity
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setMedicationOnLayout(med);
     }
-}
 
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, 9000)
+                        .show();
+            } else {
+                Log.i("main", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+}

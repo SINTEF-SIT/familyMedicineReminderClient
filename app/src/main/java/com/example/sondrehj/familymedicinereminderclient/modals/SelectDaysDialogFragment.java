@@ -16,6 +16,9 @@ public class SelectDaysDialogFragment extends DialogFragment {
 
     private OnDaysDialogResultListener mListener;
     ArrayList<Integer> selectedItems = new ArrayList<>();
+    //Det som er kommentert ut var et forsøk på å sende over de dagene som allerede var checked
+    //boolean[] checkedItems = new boolean[7];
+    //int[] daysAlreadyChecked = getArguments().getIntArray("alreadySelected");
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class SelectDaysDialogFragment extends DialogFragment {
         builder.setTitle("Select Days")
                 // Set choice items to unit_items array
                 .setMultiChoiceItems(R.array.reminder_days, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+
                     @Override
                     public void onClick(DialogInterface arg0, int chosen, boolean isChecked) {
                         if (isChecked) {

@@ -66,4 +66,18 @@ public interface MyCyFAPPServiceAPI {
 
     @POST("user")
     Call<User> createUser(@Body User user);
+
+    @POST("user/{userID}/{token}")
+    Call<User> postToken(@Path("userID") String userID, @Path("token") String token);
+
+    /**
+     *
+     * LINKING REQUESTS
+     *
+     */
+    @GET("user/{userID}/link")
+    Call<User> getLinkingRequests(@Path("userID") String userID);
+
+    @POST("user/{userID}/link/{withID}")
+    Call<User> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
 }

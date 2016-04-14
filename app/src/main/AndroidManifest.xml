@@ -8,6 +8,13 @@
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission android:name="com.example.gcm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.example.gcm.permission.C2D_MESSAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -29,18 +36,19 @@
 
         <receiver android:name=".notification.NotificationPublisher" />
 
+        <!-- Network connectivity requirement -->
         <receiver android:name=".sync.NetworkChangeReceiver" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
 
+        <!-- SyncAdapter requirements -->
         <provider
             android:name=".sync.DummyProvider"
             android:authorities="com.example.sondrehj.familymedicinereminderclient.content"
             android:syncable="true"
             android:label="DummyProvider" />
-
         <service
             android:name="com.example.sondrehj.familymedicinereminderclient.sync.AuthenticatorService">
             <intent-filter>
@@ -50,7 +58,6 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-
         <service
             android:name="com.example.sondrehj.familymedicinereminderclient.sync.SyncService"
             android:exported="true"
@@ -63,5 +70,40 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
+        <!-- GCM Push notifications -->
+        <!-- [START gcm_receiver] -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="gcm.play.android.samples.com.gcmquickstart" />
+            </intent-filter>
+        </receiver>
+        <!-- [END gcm_receiver] -->
+
+        <!-- [START gcm_listener] -->
+        <service
+            android:name="com.example.sondrehj.familymedicinereminderclient.playservice.MyGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <!-- [END gcm_listener] -->
+        <!-- [START instanceId_listener] -->
+        <service
+            android:name="com.example.sondrehj.familymedicinereminderclient.playservice.MyInstanceIDListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID"/>
+            </intent-filter>
+        </service>
+        <!-- [END instanceId_listener] -->
+        <service
+            android:name="com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService"
+            android:exported="false">
+        </service>
     </application>
 </manifest>

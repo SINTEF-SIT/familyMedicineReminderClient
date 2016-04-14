@@ -1,13 +1,353 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+Things to include
+
+PERSONAL
+    Avatar?
+    year of birth
+    email (create user for online deletion)
+    password
+    discrete mode
+    sync?
+
+GENERAL
+    Turn on/off notification
+    Snooze notification
+    Sign out
+    Invite/share (choose method by OS default alternatives)
+    About
+    Contact
+    Delete all data
+
+GUARDIAN/GUARDEE
+    how long to wait after child takes medicine to notify
+    nickenam children
+    delete children
+-->
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment">
+    tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment"
+    android:fillViewport="true"
+    android:focusableInTouchMode="false">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
+        android:id="@+id/newReminderLayout"
+        android:showDividers="middle"
+        android:dividerPadding="10dp">
+        <!--android:divider="@drawable/horizontal_divider"-->
+cam
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:src="@android:drawable/sym_def_app_icon" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PERSONAL"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/settingsPersonalSection" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Year of birth"
+                android:id="@+id/nameText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="70dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/yearEditText"
+                android:ems="10"
+                android:inputType="number"
+                android:text="1992"
+
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Discrete reminders"
+            android:id="@+id/reminderSwitch"
+            android:checked="true"
+            android:textSize="20sp"
+            android:padding="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GENERAL"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/settingsGeneralSection" />
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Receive notifications"
+            android:id="@+id/notificationSwitch"
+            android:checked="true"
+            android:textSize="20sp"
+            android:padding="10dp" />
+
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Snooze"
+                android:id="@+id/snoozeText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp" />
+
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/seekBar"
+                android:padding="0dp"
+                android:layout_marginRight="130dp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Activate"
+                android:id="@+id/snoozeButton"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="end"
+                />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ACCOUNT FOR SYNC AND ONLINE DELETION"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/settingsAccountSection" />
+
+        <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:id="@+id/emailText"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:layout_gravity="center"
+            android:layout_marginRight="70dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/emailEditText"
+            android:inputType="textEmailAddress"
+            android:text="john.doe@email.com"
+            android:textAlignment="textEnd"
+            android:layout_gravity="end"
+            android:layout_marginRight="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:id="@+id/passwordText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="70dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordEditText"
+                android:inputType="textPassword"
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                android:layout_marginRight="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            android:id="@+id/saveButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Import data"
+            android:id="@+id/importButton"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp" />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GUARDIAN/GUARDEE"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/guardianSection" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Notify time"
+                android:id="@+id/notifyTimeText"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_gravity="center"
+                android:layout_marginRight="10dp" />
+
+            <SeekBar
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/notifyTime"
+                android:padding="0dp"
+                android:layout_marginRight="10dp"/>
+        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The amount of wait-time you will be notified after your child has failed to take their medicine."
+            android:padding="0dp"
+            android:textSize="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/notifyTimeInfo" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ABOUT/CONTACT"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/aboutSection" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This application is developed by a group of 6 students at Norwegian University og Science and Technology (NTNU) as their bachelor thesis. It was made in collaboration with SINTEF for a EU project called My Cystic Fibrosis App (MyCyFApp). Contact: epost@mycyfapp.eu"
+            android:padding="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/aboutUsSection" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share/invite"
+                android:id="@+id/shareButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete all data"
+                android:id="@+id/deleteButton"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+</ScrollView>
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
