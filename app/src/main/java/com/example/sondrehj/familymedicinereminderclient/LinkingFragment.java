@@ -5,13 +5,18 @@ import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,10 +26,14 @@ import android.widget.ImageView;
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LinkingFragment extends android.app.Fragment implements View.OnClickListener{
+public class LinkingFragment extends android.app.Fragment{
 
     private OnLinkingFragmentInteractionListener mListener;
-    private ImageView statusIcon;
+
+    @Bind(R.id.link_button) Button linkButton;
+    @Bind(R.id.status_icon) ImageView statusIcon;
+    @Bind(R.id.id_input_field_data) TextView idInputField;
+    @Bind(R.id.status_feedback) TextView statusText;
 
     public LinkingFragment() {
         // Required empty public constructor
@@ -36,7 +45,6 @@ public class LinkingFragment extends android.app.Fragment implements View.OnClic
      *
      * @return A new instance of fragment LinkingFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static LinkingFragment newInstance() {
         LinkingFragment fragment = new LinkingFragment();
         return fragment;
@@ -48,33 +56,46 @@ public class LinkingFragment extends android.app.Fragment implements View.OnClic
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linking, container, false);
-        statusIcon = (ImageView) view.findViewById(R.id.status_icon);
-        Button linkbutton = (Button) view.findViewById(R.id.link_button);
-        linkbutton.setOnClickListener(this);
+        ButterKnife.bind(this, view);
         return view;
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.link_button:
+    @OnClick(R.id.link_button)
+    public void tryToLink() {
+        if (idInputField.getTextSize() == 5) {
+            boolean isLinked = linkWithAccount(" ");
+            if (isLinked) {
                 int color = Color.parseColor("#FF64DD17"); //The color u want
                 statusIcon.setColorFilter(color);
-                break;
-            default:
-                System.out.println("error happened in LinkingFragment: onClick Switch-case");
+            } else {
+                int color = Color.parseColor("#FF64DD17"); //The color u want
+                statusIcon.setColorFilter(color);
+            }
+        } else {
+            statusText.setText("Enter a 5-digit ID. Try again...");
+            clearStatusTextAfterSeconds(3);
         }
+
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    public void clearStatusTextAfterSeconds(int i) {
+        new CountDownTimer(i*1000,1000){
+
+            @Override
+            public void onTick(long miliseconds){}
+
+            @Override
+            public void onFinish(){
+                statusText.setText("");
+            }
+        }.start();
+    }
+
+    public boolean linkWithAccount(String idToLinkWith){
+
+        return true;
     }
 
     @Override
@@ -92,6 +113,11 @@ public class LinkingFragment extends android.app.Fragment implements View.OnClic
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 
     /**
