@@ -26,6 +26,8 @@ import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener {
+        SelectDaysDialogFragment.OnDaysDialogResultListener, EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener {
 
     private static Account account;
     NotificationManager manager;
@@ -267,12 +270,12 @@ public class MainActivity extends AppCompatActivity
 
         if (r.getIsActive()) {
 
-            //Activate the reminder
+            // Activate the reminder
             scheduleNotification(getNotification("Take your medication"), r);
             r.setIsActive(true);
             System.out.println("Reminder: " + r.getReminderId() + " was activated");
         }
-        //Updates the DB
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
@@ -327,23 +330,17 @@ public class MainActivity extends AppCompatActivity
 
         if (reminder.getIsActive()) {
 
-            //Cancel the scheduled reminder
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                    reminder.getReminderId(),
-                    new Intent(this, NotificationPublisher.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager.cancel(pendingIntent);
+            // Cancel the scheduled reminder
+            cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
         } else {
 
-            //Activate the reminder
+            // Activate the reminder
             scheduleNotification(getNotification("Take your medication"), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
-        //Updates the DB
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
     }
@@ -383,35 +380,41 @@ public class MainActivity extends AppCompatActivity
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
+    @Override
+    public void setEndDate(int year, int month, int day) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        newReminderFragment.setEndDateOnLayout(year, month, day);
+
+    }
+
     private void scheduleNotification(Notification notification, Reminder reminder) {
 
-        //A variable containing the reminder date in milliseconds.
-        //Used for scheduling the notification.
+        // A variable containing the reminder date in milliseconds.
+        // Used for scheduling the notification.
         Long time = reminder.getDate().getTimeInMillis();
 
-        //Defines the Intent of the notification. The NotificationPublisher class uses this
-        //object to retrieve additional information about the notification.
+        // Defines the Intent of the notification. The NotificationPublisher class uses this
+        // object to retrieve additional information about the notification.
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        //Adds the reminder_id to the Intent object.
-        //Used to easily identify notifications and their corresponding reminder.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
-        //Adds the reminder_days variable to the Intent object.
-        //Used to schedule notifications for the given days.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
-        //Adds the given notification object to the Intent object.
-        //Used to publish the given notification.
+        // Adds the given notification object to the Intent object.
+        // Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        // Adds the given reminder object to the Intent object
+        // Used to cancel and filter Notifications
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Calendar cal = Calendar.getInstance();
 
-        //Schedules a notification on the user specified days.
-        if (reminder.getDays().length > 0) {
+        // Schedules a repeating notification on the user specified days.
+        if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
+            System.out.println("Alarm set");
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
-        } else {
-
-            Calendar cal = Calendar.getInstance();
+        }
+        // Schedules a non-repeating notification
+        else {
             if (!reminder.getDate().before(cal)) {
-                //Schedules a non-repeating notification
                 alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
             }
         }
@@ -437,6 +440,17 @@ public class MainActivity extends AppCompatActivity
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
+    }
+
+    public void cancelNotification(int id){
+        //Cancel the scheduled reminder
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                id,
+                new Intent(this, NotificationPublisher.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+        System.out.println("Reminder: " + id + " was deactivated");
     }
 
     public String getSelectedDaysText(int[] reminder_days) {
@@ -473,7 +487,6 @@ public class MainActivity extends AppCompatActivity
         return s;
     }
 
-
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
@@ -484,6 +497,13 @@ public class MainActivity extends AppCompatActivity
     public void onNegativeDaysDialogResult() {
 
     }
+
+    @Override
+    public void onPositiveMedicationPickerDialogResult(Medication med) {
+        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        nrf.setMedicationOnLayout(med);
+    }
+
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
