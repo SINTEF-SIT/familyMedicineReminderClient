@@ -54,15 +54,13 @@ public class MainActivity extends AppCompatActivity
     Notification myNotication;
     Boolean started = false;
 
-
     /**
-     *
      * Main entry point of the application. When onCreate is run, view is filled with the
      * layout activity_main in res. The fragment container which resides in the contentView is
      * changed to "MediciationListFragment()" with the changeFragment() function call.
-     * <p/>
+     *
      * In addition, the Sidebar/Drawer is instantiated.
-     * <p/>
+     *
      * Portrait mode is enforced because if the screen is rotated you loose a lot of references
      * when the instance is redrawn.
      *
@@ -159,9 +157,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /**
-     * +
      * Inflate the options menu. This adds items to the action bar if it is present. The one with
      * the three buttons, which resides physically on Samsung phones.
      *
@@ -175,7 +171,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
      * as you specify a parent activity in AndroidManifest.xml.
@@ -200,7 +195,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
@@ -227,7 +221,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Handles the selection of items in the drawer and replaces the fragment container of
      * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
      *
@@ -366,7 +359,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Called by timepicker in NewReminder
      *
      * @param hourOfDay
@@ -379,7 +371,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Called by datepicker in NewReminder
      *
      * @param year
@@ -515,4 +506,3 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 }
-
