@@ -23,10 +23,6 @@ import java.util.List;
  */
 public class ReminderListFragment extends android.app.Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnReminderListFragmentInteractionListener mListener;
 
     /**
@@ -38,21 +34,14 @@ public class ReminderListFragment extends android.app.Fragment {
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ReminderListFragment newInstance(int columnCount) {
+    public static ReminderListFragment newInstance() {
         ReminderListFragment fragment = new ReminderListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -120,5 +109,7 @@ public class ReminderListFragment extends android.app.Fragment {
         // TODO: Update argument type and name
         void onReminderListItemClicked(Reminder reminder);
         void onNewReminderButtonClicked();
+        void onReminderListSwitchClicked(Reminder reminder);
+        String ReminderListGetSelectedDaysText(int[] reminder_days);
     }
 }

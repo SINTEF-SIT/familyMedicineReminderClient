@@ -1,12 +1,20 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,18 +22,52 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
+import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
+import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
-        ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
-        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener {
+        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
+        SelectDaysDialogFragment.OnDaysDialogResultListener {
+
+    private static Account account;
+    NotificationManager manager;
+    Notification myNotication;
+    Boolean started = false;
 
 
+    /**
+     *
+     * Main entry point of the application. When onCreate is run, view is filled with the
+     * layout activity_main in res. The fragment container which resides in the contentView is
+     * changed to "MediciationListFragment()" with the changeFragment() function call.
+     * <p/>
+     * In addition, the Sidebar/Drawer is instantiated.
+     * <p/>
+     * Portrait mode is enforced because if the screen is rotated you loose a lot of references
+     * when the instance is redrawn.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,16 +77,59 @@ public class MainActivity extends AppCompatActivity
 
         changeFragment(new MedicationListFragment());
 
+        manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        //Read and display data from local database. (Flyttes?)
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        //Medications
+        ArrayList<Medication> meds = db.getMedications();
+        Collections.reverse(meds);
+        MedicationListContent.ITEMS.addAll(meds);
+        //Reminders
+        ArrayList<Reminder> reminders = db.getReminders();
+        Collections.reverse(reminders);
+        ReminderListContent.ITEMS.addAll(reminders);
+
+        //check if google play services are enabled (required for GCM).
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+
+        /**
+         * This is a dummy account for the SyncAdapter - should be moved to application init,
+         * not stay in the UI thread.
+         */
+        account = new Account("Account", "com.example.sondrehj.familymedicinereminderclient");
+        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
+        accountManager.addAccountExplicitly(account, null, null);
+
+        ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+        ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
+        Log.d("Sync", "Sync set to automatic.");
+    }
+
+    /**
+     * Gets the instantiazed account of the system, used with the SyncAdapter and
+     * ContentResolver, might have to be moved sometime.
+     * @return
+     */
+    public static Account getAccount(){
+        return account;
     }
 
     //@Override
@@ -57,6 +142,10 @@ public class MainActivity extends AppCompatActivity
     //    }
     //}
 
+    /**
+     *
+     * Closes the drawer when the back button is pressed.
+     */
     @Override
     public void onBackPressed() {
 
@@ -70,18 +159,32 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    /**
+     * +
+     * Inflate the options menu. This adds items to the action bar if it is present. The one with
+     * the three buttons, which resides physically on Samsung phones.
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+    /**
+     *
+     * Handle action bar item clicks here. The action bar will
+     * automatically handle clicks on the Home/Up button, so long
+     * as you specify a parent activity in AndroidManifest.xml.
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -96,13 +199,19 @@ public class MainActivity extends AppCompatActivity
         //you can leave it empty
     }
 
-
-    public void changeFragment (Fragment fragment){
+    /**
+     *
+     * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
+     * of MainActivity.
+     *
+     * @param fragment
+     */
+    public void changeFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
         System.out.println(fragment.getClass().getSimpleName());
         boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
 
-        if (!fragmentPopped){ //fragment not in back stack, create it.
+        if (!fragmentPopped) { //fragment not in back stack, create it.
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             //Animation
             transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
@@ -117,28 +226,32 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
+    /**
+     *
+     * Handles the selection of items in the drawer and replaces the fragment container of
+     * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
+     *
+     * @param item
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        System.out.print(id);
-
         if (id == R.id.nav_reminders) {
-            System.out.print("nav_reminders");
-            changeFragment(ReminderListFragment.newInstance(1));
-
+            changeFragment(ReminderListFragment.newInstance());
+            System.out.print("navigated to reminder list fragment");
         } else if (id == R.id.nav_medication) {
-            System.out.print("nav_medication");
-            changeFragment(new MedicationListFragment());
-
-        } else if (id == R.id.nav_symptoms) {
-
+            changeFragment(MedicationListFragment.newInstance());
+            System.out.print("navigated to medication cabinet fragment");
         } else if (id == R.id.nav_settings) {
-
+            //TODO: fill inn changefragment to settings fragment
+            System.out.println("navigated to settings fragment");
+        } else if (id == R.id.nav_linking) {
+            changeFragment(LinkingFragment.newInstance());
+            System.out.println("navigated to linking fragment");
         }
- 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -156,10 +269,26 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onSaveNewReminder(Reminder r) {
+
+        if (r.getIsActive()) {
+
+            //Activate the reminder
+            scheduleNotification(getNotification("Take your medication"), r);
+            r.setIsActive(true);
+            System.out.println("Reminder: " + r.getReminderId() + " was activated");
+        }
+        //Updates the DB
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.updateReminder(r);
+
+        changeFragment(ReminderListFragment.newInstance());
+    }
 
     @Override
-    public void onSaveNewReminder() {
-        changeFragment(ReminderListFragment.newInstance(1));
+    public String newReminderListGetSelectedDaysText(int[] reminder_days) {
+        return getSelectedDaysText(reminder_days);
     }
 
     @Override
@@ -169,6 +298,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onWelcomeFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onPositiveUnitDialogResult(int unit) {
+        String[] units = getResources().getStringArray(R.array.unit_items);
+        MedicationStorageFragment sf = (MedicationStorageFragment) getFragmentManager().findFragmentByTag("MedicationStorageFragment");
+        sf.setUnitText(units[unit]);
+    }
+
+    @Override
+    public void onNegativeUnitDialogResult() {
 
     }
 
@@ -189,22 +330,189 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void addMedicationToMedicationList(Medication medication) {
+    public void onReminderListSwitchClicked(Reminder reminder) {
 
-        System.out.println(medication);
+        if (reminder.getIsActive()) {
+
+            //Cancel the scheduled reminder
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                    reminder.getReminderId(),
+                    new Intent(this, NotificationPublisher.class),
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+            reminder.setIsActive(false);
+            System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
+        } else {
+
+            //Activate the reminder
+            scheduleNotification(getNotification("Take your medication"), reminder);
+            reminder.setIsActive(true);
+            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
+        }
+        //Updates the DB
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.updateReminder(reminder);
     }
 
-    //called by timepicker in NewReminder
+    @Override
+    public String ReminderListGetSelectedDaysText(int[] reminder_days) {
+        return getSelectedDaysText(reminder_days);
+    }
+
+    @Override
+    public void addMedicationToMedicationList(Medication medication) {
+
+    }
+
+    /**
+     *
+     * Called by timepicker in NewReminder
+     *
+     * @param hourOfDay
+     * @param minute
+     */
     @Override
     public void setTime(int hourOfDay, int minute) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setTimeOnLayout(hourOfDay, minute);
     }
 
-    //called by datepicker in NewReminder
+    /**
+     *
+     * Called by datepicker in NewReminder
+     *
+     * @param year
+     * @param month
+     * @param day
+     */
     @Override
     public void setDate(int year, int month, int day) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setDateOnLayout(year, month, day);
     }
+
+    private void scheduleNotification(Notification notification, Reminder reminder) {
+
+        //A variable containing the reminder date in milliseconds.
+        //Used for scheduling the notification.
+        Long time = reminder.getDate().getTimeInMillis();
+
+        //Defines the Intent of the notification. The NotificationPublisher class uses this
+        //object to retrieve additional information about the notification.
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        //Adds the reminder_id to the Intent object.
+        //Used to easily identify notifications and their corresponding reminder.
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
+        //Adds the reminder_days variable to the Intent object.
+        //Used to schedule notifications for the given days.
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
+        //Adds the given notification object to the Intent object.
+        //Used to publish the given notification.
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        //Schedules a notification on the user specified days.
+        if (reminder.getDays().length > 0) {
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+        } else {
+
+            Calendar cal = Calendar.getInstance();
+            if (!reminder.getDate().before(cal)) {
+                //Schedules a non-repeating notification
+                alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+            }
+        }
+    }
+
+    private Notification getNotification(String content) {
+
+        //Defines the Intent of the notification
+        Intent intent = new Intent(this, this.getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        //Constructs the notification
+        Notification notification = new Notification.Builder(MainActivity.this)
+                .setContentTitle("MYCYFAPP")
+                .setContentText(content)
+                .setSmallIcon(R.drawable.ic_sidebar_pill)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pIntent)
+                .addAction(R.drawable.ic_sidebar_pill, "Register as taken", pIntent)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        return notification;
+    }
+
+    public String getSelectedDaysText(int[] reminder_days) {
+        String[] days_abb = new String[]{"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
+        String[] reminder_days_abb = new String[reminder_days.length];
+        String s = "";
+        if (reminder_days.length >= 1) {
+            for (int i = 0; i < reminder_days.length; i++) {
+                reminder_days_abb[i] = days_abb[reminder_days[i]];
+            }
+            for (String day_abb : days_abb) {
+                if (!day_abb.equals("Sa") && !day_abb.equals("Su")) {
+                    if (Arrays.asList(reminder_days_abb).contains(day_abb)) {
+                        s += "<b>" + day_abb + ", </b>";
+                    } else {
+                        s += "<font color=\"#c5c5c5\">" + day_abb + ", " + "</font>";
+                    }
+                }
+            }
+            if (Arrays.asList(reminder_days_abb).contains("Sa")) {
+                s += "<b>Sa, </b>";
+            } else {
+                s += "<font color=\"#c5c5c5\">" + "Sa, " + "</font>";
+            }
+            if(Arrays.asList(reminder_days_abb).contains("Su")) {
+                s += "<b>Su</b>";
+            } else {
+                s += "<font color=\"#c5c5c5\">" + "Su" + "</font>";
+            }
+        } else {
+            s = "<font color=\"#c5c5c5\">" + "Mo, Tu, We, Th, Fr, Sa, Su" + "</font>";
+            //s = "Mo, Tu, We, Th, Fr, Sa, Su";
+        }
+        return s;
+    }
+
+
+    @Override
+    public void onPositiveDaysDialogResult(ArrayList selectedDays) {
+        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        nrf.setDaysOnLayout(selectedDays);
+    }
+
+    @Override
+    public void onNegativeDaysDialogResult() {
+
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, 9000)
+                        .show();
+            } else {
+                Log.i("main", "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
 }
+
