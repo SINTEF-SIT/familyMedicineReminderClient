@@ -29,6 +29,7 @@ import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener, EndDatePickerFragment.EndDatePickerListener {
+        SelectDaysDialogFragment.OnDaysDialogResultListener, EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener {
 
     private static Account account;
     NotificationManager manager;
@@ -393,7 +394,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void scheduleNotification(Notification notification, Reminder reminder, boolean triggerdBySwitch) {
+    private void scheduleNotification(Notification notification, Reminder reminder) {
 
         // A variable containing the reminder date in milliseconds.
         // Used for scheduling the notification.
@@ -412,7 +413,7 @@ public class MainActivity extends AppCompatActivity
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
-        
+
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
             System.out.println("Alarm set");
@@ -493,7 +494,6 @@ public class MainActivity extends AppCompatActivity
         return s;
     }
 
-
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
@@ -503,6 +503,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onNegativeDaysDialogResult() {
 
+    }
+
+    @Override
+    public void onPositiveMedicationPickerDialogResult(Medication med) {
+        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        nrf.setMedicationOnLayout(med);
     }
 }
 
