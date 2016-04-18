@@ -2,7 +2,6 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -76,11 +76,13 @@ public class GuardianDashboard extends android.app.Fragment {
         View view = inflater.inflate(R.layout.fragment_guardian_dashboard, container, false);
 
         guardianDashboardLayout = (LinearLayout) view.findViewById(R.id.guardianDashboardLayout);
-
+        guardianDashboardLayout.setDividerDrawable(getResources().getDrawable(R.drawable.horizontal_divider));
+        guardianDashboardLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
         LinearLayout pasientLayout = addPasientToView();
-        LinearLayout medicineLayout = (LinearLayout) pasientLayout.getChildAt(1);
-        addDefaultMedicineIcon(medicineLayout);
-
+        addDefaultMedicineIcon(pasientLayout);
+        addDefaultMedicineIcon(pasientLayout);
+        addDefaultMedicineIcon(pasientLayout);
+        addDefaultMedicineIcon(pasientLayout);
 
         return view;
     }
@@ -91,7 +93,7 @@ public class GuardianDashboard extends android.app.Fragment {
         LinearLayout.LayoutParams pasientLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         pasientLayout.setLayoutParams(pasientLayoutParams);
         //converting dp to px, because LayoutParams only takes px
-        int layoutPaddingBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
+        int layoutPaddingBottom = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 20, getResources().getDisplayMetrics());
         pasientLayout.setPadding(0, 0, 0, layoutPaddingBottom);
         guardianDashboardLayout.addView(pasientLayout);
 
@@ -109,6 +111,7 @@ public class GuardianDashboard extends android.app.Fragment {
         pasientNameParams.setMargins(0, pasientNameMarginTop, 0, pasientNameMarginBottom);
         pasientLayout.addView(pasientNameText);
 
+        /*
         LinearLayout medicineLayout = new LinearLayout(getActivity());
         medicineLayout.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams medicineLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -120,28 +123,80 @@ public class GuardianDashboard extends android.app.Fragment {
         int layoutMarginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
         medicineLayoutParams.setMargins(layoutMarginLeft, 0, layoutMarginRight, 0);
         pasientLayout.addView(medicineLayout);
+        */
+        GridLayout gridLayout = new GridLayout(getActivity());
+        LinearLayout.LayoutParams gridLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        gridLayout.setLayoutParams(gridLayoutParams);
+        gridLayoutParams.gravity = Gravity.CENTER;
+        gridLayout.setColumnCount(5);
+        gridLayout.setRowCount(2);
+        pasientLayout.addView(gridLayout);
+
 
         return pasientLayout;
     }
 
-    public void addDefaultMedicineIcon(LinearLayout medicineLayout) {
-        Button medicine = new Button(getActivity());
-        medicine.setBackgroundResource(R.drawable.questionmark);
+    public void addDefaultMedicineIcon(LinearLayout pasientLayout) {
+        Button medicineButton = new Button(getActivity());
+        medicineButton.setBackgroundResource(R.drawable.questionmark);
         String questionmark = "?";
-        medicine.setText(questionmark);
-        medicine.setTextColor(Color.parseColor("#FFFFFF"));
-        medicine.setTextSize(25);
-        medicine.setGravity(Gravity.CENTER);
-        medicine.setPadding(0, 0, 0, 0);    //gets fucked if not padding is set for some reason
+        medicineButton.setText(questionmark);
+        medicineButton.setTextColor(Color.parseColor("#FFFFFF"));
+        medicineButton.setTextSize(25);
+        medicineButton.setGravity(Gravity.CENTER);
+        medicineButton.setPadding(0, 0, 0, 0);    //gets fucked if not padding is set for some reason
+        //converting dp to px, because LayoutParams only takes px
+        int buttonWidthHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+        //LinearLayout.LayoutParams medicineParams = new LinearLayout.LayoutParams(buttonWidthHeight, buttonWidthHeight);
+        GridLayout.LayoutParams medicineParams = new GridLayout.LayoutParams();
+        medicineParams.width = buttonWidthHeight;
+        medicineParams.height = buttonWidthHeight;
+        medicineButton.setLayoutParams(medicineParams);
+        int buttonMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+        medicineParams.setMargins(buttonMargin, buttonMargin, buttonMargin, buttonMargin);
+
+        GridLayout medicineLayout = (GridLayout) pasientLayout.getChildAt(1);
+        medicineLayout.addView(medicineButton);
+    }
+
+    public void addCheckMarkIcon(LinearLayout pasientLayout) {
+        Button medicineButton = new Button(getActivity());
+        medicineButton.setBackgroundResource(R.drawable.green_checkmark);
+        String checkmark = "✓";
+        medicineButton.setText(checkmark);
+        medicineButton.setTextColor(Color.parseColor("#FFFFFF"));
+        medicineButton.setTextSize(25);
+        medicineButton.setGravity(Gravity.CENTER);
+        medicineButton.setPadding(0, 0, 0, 0);    //gets fucked if not padding is set for some reason
         //converting dp to px, because LayoutParams only takes px
         int buttonWidthHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
         LinearLayout.LayoutParams medicineParams = new LinearLayout.LayoutParams(buttonWidthHeight, buttonWidthHeight);
-        medicine.setLayoutParams(medicineParams);
+        medicineButton.setLayoutParams(medicineParams);
         int buttonMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
         medicineParams.setMargins(buttonMargin, 0, buttonMargin, 0);
-        medicineLayout.addView(medicine);
 
+        LinearLayout medicineLayout = (LinearLayout) pasientLayout.getChildAt(1);
+        medicineLayout.addView(medicineButton);
+    }
 
+    public void addRedXIcon(LinearLayout pasientLayout) {
+        Button medicineButton = new Button(getActivity());
+        medicineButton.setBackgroundResource(R.drawable.red_x);
+        String x = "X";
+        medicineButton.setText(x);
+        medicineButton.setTextColor(Color.parseColor("#FFFFFF"));
+        medicineButton.setTextSize(25);
+        medicineButton.setGravity(Gravity.CENTER);
+        medicineButton.setPadding(0, 0, 0, 0);    //gets fucked if not padding is set for some reason
+        //converting dp to px, because LayoutParams only takes px
+        int buttonWidthHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+        LinearLayout.LayoutParams medicineParams = new LinearLayout.LayoutParams(buttonWidthHeight, buttonWidthHeight);
+        medicineButton.setLayoutParams(medicineParams);
+        int buttonMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+        medicineParams.setMargins(buttonMargin, 0, buttonMargin, 0);
+
+        LinearLayout medicineLayout = (LinearLayout) pasientLayout.getChildAt(1);
+        medicineLayout.addView(medicineButton);
     }
 
 
