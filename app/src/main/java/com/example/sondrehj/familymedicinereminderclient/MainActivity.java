@@ -51,7 +51,9 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener, EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener {
+        SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener,
+        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener {
+
 
     private static Account account;
     NotificationManager manager;
@@ -246,6 +248,9 @@ public class MainActivity extends AppCompatActivity
             //TODO: fill inn changefragment to settings fragment
             changeFragment(AccountAdministrationFragment.newInstance());
             System.out.println("navigated to settings fragment");
+        } else if (id == R.id.nav_guardian_dashboard) {
+            changeFragment(new GuardianDashboard());
+            System.out.println("navigated to guardian dashboard");
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
             System.out.println("navigated to linking fragment");
