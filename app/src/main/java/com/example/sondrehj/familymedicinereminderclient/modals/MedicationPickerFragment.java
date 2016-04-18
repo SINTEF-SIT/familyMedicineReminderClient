@@ -9,40 +9,36 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
-public class SelectDaysDialogFragment extends DialogFragment {
+public class MedicationPickerFragment extends DialogFragment {
 
-    private OnDaysDialogResultListener mListener;
-    ArrayList<Integer> selectedItems = new ArrayList<>();
-    //Det som er kommentert ut var et forsøk på å sende over de dagene som allerede var checked
-    //boolean[] checkedItems = new boolean[7];
-    //int[] daysAlreadyChecked = getArguments().getIntArray("alreadySelected");
+    private OnMedicationPickerDialogResultListener mListener;
+    int selectedItem;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        for(int x = 0; x < 7; x++) {
-            selectedItems.add(x);
+        final List<Medication> medications = MedicationListContent.ITEMS;
+        String[] medicationNames = new String[medications.size()];
+        for(int count = 0; count < medicationNames.length; count++) {
+            medicationNames[count] = medications.get(count).getName();
         }
-        boolean[] checkedItems = {true, true, true, true, true, true, true};
 
         // Set the dialog title
-        builder.setTitle("Select Days")
+        builder.setTitle("Select Medication")
                 // Set choice items to unit_items array
-                .setMultiChoiceItems(R.array.reminder_days, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
-
+                .setSingleChoiceItems(medicationNames, -1, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int chosen, boolean isChecked) {
-                        if (isChecked) {
-                            // If the user checked the item, add it to the selected item
-                            selectedItems.add(chosen);
-                        } else {
-                            selectedItems.remove(Integer.valueOf(chosen));
-                        }
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        selectedItem = arg1;
                     }
                 })
                         // Set the action buttons
@@ -50,8 +46,9 @@ public class SelectDaysDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         // Set unit TextView to the selected list item
-                        mListener.onPositiveDaysDialogResult(selectedItems);
-                        System.out.println(selectedItems);
+                        System.out.println(selectedItem);
+                        mListener.onPositiveMedicationPickerDialogResult(medications.get(selectedItem));
+                        System.out.println(medications.get(selectedItem).getName());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -69,8 +66,8 @@ public class SelectDaysDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnDaysDialogResultListener) {
-            mListener = (OnDaysDialogResultListener) context;
+        if (context instanceof OnMedicationPickerDialogResultListener) {
+            mListener = (OnMedicationPickerDialogResultListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -81,17 +78,16 @@ public class SelectDaysDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof OnDaysDialogResultListener) {
-            mListener = (OnDaysDialogResultListener) activity;
+        if (activity instanceof OnMedicationPickerDialogResultListener) {
+            mListener = (OnMedicationPickerDialogResultListener) activity;
         } else {
             throw new RuntimeException(activity.toString()
-                    + " must implement OnDaysDialogResultListener");
+                    + " must implement OnUnitDialogResultListener");
         }
     }
 
-    public interface OnDaysDialogResultListener {
-        void onPositiveDaysDialogResult(ArrayList days);
-        void onNegativeDaysDialogResult();
+    public interface OnMedicationPickerDialogResultListener {
+        void onPositiveMedicationPickerDialogResult(Medication med);
     }
 
 }

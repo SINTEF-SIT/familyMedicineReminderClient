@@ -4,24 +4,24 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_reminders"
-            android:icon="@drawable/ic_sidebar_alarm"
+            android:icon="@drawable/android_appointment_reminder"
             android:title="Reminders" />
         <item
             android:id="@+id/nav_medication"
-            android:icon="@drawable/ic_sidebar_pill"
+            android:icon="@drawable/android_pill"
             android:title="Medication" />
         <item
-            android:id="@+id/nav_symptoms"
-            android:icon="@drawable/ic_sidebar_heartbeat"
-            android:title="Symptoms" />
-        <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/android_settings"
             android:title="Settings" />
         <item
             android:id="@+id/nav_guardian_dashboard"
             android:icon="@drawable/ic_menu_manage"
             android:title="Guardian Dashboard" />
+        <item
+            android:id="@+id/nav_linking"
+            android:icon="@drawable/android_add_link"
+            android:title="Linking" />
     </group>
 
 </menu>
