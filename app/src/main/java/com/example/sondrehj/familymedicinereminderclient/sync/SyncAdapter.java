@@ -48,10 +48,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         /**
          * This is an Rest Api example call - keep outside of UI threads.
          */
-        MyCyFAPPServiceAPI apiService = RestService.createRestService();
+        MyCyFAPPServiceAPI api = RestService.createRestService();
 
         User user = new User("Sondre", "Pelle11");
-        Call<User> call = apiService.createUser(user);
+        Call<User> call = api.createUser(user);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

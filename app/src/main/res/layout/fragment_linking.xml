@@ -17,7 +17,7 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:text="Enter the ID below in a Guardian app to link your user."
-             android:id="@+id/linking_info_text"
+             android:id="@+id/link_patient_infotext"
              android:layout_gravity="center_horizontal"
              android:width="200dp"
              android:layout_marginTop="50dp"
@@ -35,13 +35,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Your ID: "
-                android:id="@+id/id_field_info" />
+                android:id="@+id/link_patient_id_helper" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="placeholderID"
-                android:id="@+id/id_field_data"
+                android:text=""
+                android:id="@+id/link_patient_id"
                 android:nestedScrollingEnabled="false" />
         </LinearLayout>
 
@@ -55,18 +55,18 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:text="Enter the ID from the childrens phone:"
-                 android:id="@+id/id_input_field_info"
+                 android:id="@+id/link_guardian_id_helper"
                  android:layout_gravity="center" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/id_input_field_data"
+                android:id="@+id/link_guardian_id_input"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginRight="80dp"
                 android:layout_marginLeft="80dp"
                 android:hint="ex. 42d8a"
-                android:enabled="false" />
+                android:enabled="true" />
 
         </LinearLayout>
 
@@ -83,7 +83,7 @@
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:text="Link accounts"
-                 android:id="@+id/link_button" />
+                 android:id="@+id/link_guardian_button" />
         </LinearLayout>
 
     </LinearLayout>
@@ -99,7 +99,7 @@
         <ImageView
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
-             android:id="@+id/status_icon"
+             android:id="@+id/link_guardian_status_icon"
              android:layout_gravity="center_horizontal"
              android:src="@drawable/android_ok"
              android:tint="#c4c4c4"
@@ -109,7 +109,7 @@
         <TextView
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
-            android:id="@+id/status_feedback"
+            android:id="@+id/link_guardian_status_text"
              android:layout_gravity="center_horizontal"
             android:layout_marginBottom="25dp" />
     </LinearLayout>
