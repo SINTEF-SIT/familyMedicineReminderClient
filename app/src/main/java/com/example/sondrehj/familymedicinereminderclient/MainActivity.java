@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
@@ -243,6 +244,7 @@ public class MainActivity extends AppCompatActivity
             System.out.print("navigated to medication cabinet fragment");
         } else if (id == R.id.nav_settings) {
             //TODO: fill inn changefragment to settings fragment
+            changeFragment(AccountAdministrationFragment.newInstance());
             System.out.println("navigated to settings fragment");
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
