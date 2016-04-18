@@ -1,6 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.api;
 
-import com.example.sondrehj.familymedicinereminderclient.MedicationCabinetFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;

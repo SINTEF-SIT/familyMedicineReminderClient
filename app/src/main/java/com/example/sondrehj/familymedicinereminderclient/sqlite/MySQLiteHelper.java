@@ -16,7 +16,6 @@ import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListConte
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -26,7 +25,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     //Database information
     SQLiteDatabase db;
-    private static final String DATABASE_NAME = "client.db";
+    private static final String DATABASE_NAME = "familymedicinereminderclient.db";
     private static final int DATABASE_VERSION = 2;
 
     //Tables
