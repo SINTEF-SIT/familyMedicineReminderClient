@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity
             account = reminderAccounts[0];
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
+
+
             changeFragment(new MedicationListFragment());
         }
 
@@ -122,12 +124,7 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
 
-        //check if google play services are enabled (required for GCM).
-        if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
+
     }
 
     /**
@@ -543,6 +540,13 @@ public class MainActivity extends AppCompatActivity
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
         MainActivity.account = newAccount;
+
+        //check if google play services are enabled (required for GCM).
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
 
         changeFragment(new MedicationListFragment());
     }
