@@ -61,7 +61,7 @@ public interface MyCyFAPPServiceAPI {
     Call<User> getChildren(@Path("userID") String userID);
 
     @POST("user/{userID}/children")
-    Call<User> addChild(@Path("userID") String userID);
+    Call<User> addChild(@Path("userID") String userID); //TODO: needs to send notion of a child.
 
     @POST("user")
     Call<User> createUser(@Body User user);

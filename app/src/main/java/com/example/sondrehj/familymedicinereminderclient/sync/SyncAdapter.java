@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -44,5 +45,17 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             SyncResult syncResult) {
 
         Log.d("Sync", "Sync is performing");
+
+        String notificationType = extras.getString("notificationType");
+        MyCyFAPPServiceAPI api = RestService.createRestService();
+        Synchronizer synchronizer = new Synchronizer("N1yY-", api);
+        switch (notificationType) {
+            case "remindersChanged":
+                synchronizer.syncReminders();
+                break;
+            case "medicationsChanged":
+                //syncMedications();
+                break;
+        }
     }
 }
