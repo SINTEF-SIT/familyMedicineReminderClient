@@ -31,7 +31,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(checkInternet(context)) {
+        if(ServiceManager.isNetworkAvailable(context)) {
             //Toast.makeText(context, "Network available - do stuff!", Toast.LENGTH_LONG).show();
             ContentResolver.setSyncAutomatically(
                     MainActivity.getAccount(),
@@ -41,20 +41,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     MainActivity.getAccount(),
                     AUTHORITY,
                     Bundle.EMPTY);
-        }
-    }
-
-    /**
-     * Runs the helper ServiceManager to check whether the network is available or not.
-     * @param context
-     * @return
-     */
-    boolean checkInternet(Context context) {
-        ServiceManager serviceManager = new ServiceManager(context);
-        if (serviceManager.isNetworkAvailable()) {
-            return true;
-        } else {
-            return false;
         }
     }
 }
