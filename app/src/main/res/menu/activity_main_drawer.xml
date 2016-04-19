@@ -15,6 +15,10 @@
             android:icon="@drawable/android_settings"
             android:title="Settings" />
         <item
+            android:id="@+id/nav_guardian_dashboard"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Guardian Dashboard" />
+        <item
             android:id="@+id/nav_linking"
             android:icon="@drawable/android_add_link"
             android:title="Linking" />

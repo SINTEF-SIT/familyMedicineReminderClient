@@ -7,8 +7,6 @@ import android.app.DialogFragment;
 import android.os.Bundle;
 import android.widget.DatePicker;
 
-import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
