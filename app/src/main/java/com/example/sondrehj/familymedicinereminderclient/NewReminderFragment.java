@@ -220,7 +220,7 @@ public class NewReminderFragment extends android.app.Fragment {
         daysListLayout.setLayoutParams(daysLayoutParams);
 
         selectDaysText = new TextView(getActivity());
-        String selectDaysString = "Select days";
+        final String selectDaysString = "Select days";
         selectDaysText.setText(selectDaysString);
         selectDaysText.setLayoutParams(howOftenParams);
         selectDaysText.setTextSize(18);
@@ -312,22 +312,45 @@ public class NewReminderFragment extends android.app.Fragment {
                             daysListLayout.setVisibility(View.VISIBLE);
                             daysListLayout.setOnClickListener(new LinearLayout.OnClickListener() {
                                 public void onClick(View v) {
-                                    //TODO: Når man åpner en ny dialog (for andre gang) er dagene man har krysset av, fjernet
-                                    SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
-                                    /*
-                                    int[] selectedDays2 = new int[selectedDays.length];
+
+                                    if(selectedDays != null){
+                                    int[] selectedItems = new int[selectedDays.length];
+                                    // Convert to the expected format for SelectDaysDialogFragment
                                     for (int i = 0; i < selectedDays.length; i++) {
-                                        selectedDays2[i] = selectedDays[i];
+                                        switch (selectedDays[i]) {
+                                            case 0:
+                                                selectedItems[i] = 5;
+                                                break;
+                                            case 1:
+                                                selectedItems[i] = 6;
+                                                break;
+                                            case 2:
+                                                selectedItems[i] = 0;
+                                                break;
+                                            case 3:
+                                                selectedItems[i] = 1;
+                                                break;
+                                            case 4:
+                                                selectedItems[i] = 2;
+                                                break;
+                                            case 5:
+                                                selectedItems[i] = 3;
+                                                break;
+                                            case 6:
+                                                selectedItems[i] = 4;
+                                                break;
+                                        }
                                     }
-                                    Bundle daysAlreadyChecked = new Bundle();
-                                    daysAlreadyChecked.putIntArray("alreadySelected", selectedDays2);
-                                    selectDaysDialogFragment.setArguments(daysAlreadyChecked);
-                                    */
-                                    selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                                        SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
+                                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                                    } else {
+                                        SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
+                                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                                    }
                                 }
                             });
-
                         } else {
+                            selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
                             endDatePickerLayout.setVisibility(View.GONE);
                             daysLayout.setVisibility(View.GONE);
                             numberPicker.setVisibility(View.GONE);
@@ -402,6 +425,7 @@ public class NewReminderFragment extends android.app.Fragment {
                 repeatSwitch.setChecked(true);
                 daysSelectedFromListText.setText(
                         Html.fromHtml(mListener.newReminderListGetSelectedDaysText(reminder.getDays())));
+                selectedDays = reminder.getDays();
                 GregorianCalendar endCal = reminder.getEndDate();
                 int year = endCal.get(Calendar.YEAR);
                 int month = endCal.get(Calendar.MONTH) + 1; //month is 0-indexed
@@ -414,6 +438,12 @@ public class NewReminderFragment extends android.app.Fragment {
                     String date = String.format("%02d.%02d.%4d", day, month, year);
                     endDatePickedText.setText(date);
                 }
+
+            }
+            else {
+                selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
+                daysSelectedFromListText.setText(
+                        Html.fromHtml(mListener.newReminderListGetSelectedDaysText(new int[]{0,1,2,3,4,5,6})));
             }
             // Set the medicine fields if the reminder got a medicine attached.
             if(reminder.getMedicine() != null){
@@ -432,6 +462,7 @@ public class NewReminderFragment extends android.app.Fragment {
         // Set today's date and time as default if a reminder is not provided
         else {
             c = Calendar.getInstance();
+            selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
             daysSelectedFromListText.setText(
                     Html.fromHtml(mListener.newReminderListGetSelectedDaysText(new int[]{0,1,2,3,4,5,6})));
         }

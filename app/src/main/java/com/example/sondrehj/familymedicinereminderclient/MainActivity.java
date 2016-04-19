@@ -456,7 +456,6 @@ public class MainActivity extends AppCompatActivity
             System.out.println(" Reducing by: " + reminder.getDosage());
             reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
             System.out.println(" New value: " + reminder.getMedicine().getCount());
-            System.out.println("------------------------------------");
 
             // Updates MedicationListViewFragment with new data.
             for(int i = 0; i < MedicationListContent.ITEMS.size(); i++){
@@ -470,6 +469,7 @@ public class MainActivity extends AppCompatActivity
             db.updateAmountMedication(reminder.getMedicine());
             Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
         }
+        System.out.println("------------------------------------");
     }
 
     public void cancelNotification(int id){
