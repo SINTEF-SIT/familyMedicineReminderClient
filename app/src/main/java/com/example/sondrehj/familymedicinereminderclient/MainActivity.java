@@ -77,16 +77,17 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        AccountManager accMngr = AccountManager.get(this);
-        Account[] fappAccounts = accMngr.getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+        AccountManager accountManager = AccountManager.get(this);
+        Account[] reminderAccounts = accountManager.
+                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
 
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
 
-        if(fappAccounts.length == 0) {
+        if(reminderAccounts.length == 0) {
             changeFragment(new WelcomeFragment());
         }
         else {
-            account = fappAccounts[0];
+            account = reminderAccounts[0];
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
             changeFragment(new MedicationListFragment());

@@ -69,6 +69,8 @@ public class RegistrationIntentService extends IntentService {
     private void sendRegistrationToServer(String token) {
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
+
+
         Call<User> call = apiService.postToken("userID", token);
         call.enqueue(new Callback<User>() {
             @Override
