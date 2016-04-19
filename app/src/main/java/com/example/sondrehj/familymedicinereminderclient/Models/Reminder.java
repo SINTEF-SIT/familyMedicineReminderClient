@@ -14,7 +14,7 @@ public class Reminder implements Serializable {
     GregorianCalendar date;
     GregorianCalendar endDate;
     Medication medicine;
-    String units;
+    Double dosage;
     Boolean isActive;
     int[] days;
 
@@ -88,12 +88,12 @@ public class Reminder implements Serializable {
 
     public void setMedicine(Medication medicine) { this.medicine = medicine; }
 
-    public String getUnits() {
-        return units;
+    public Double getDosage() {
+        return dosage;
     }
 
-    public void setUnits(String units) {
-        this.units = units;
+    public void setDosage(Double dosage) {
+        this.dosage = dosage;
     }
 
     public void setDays(int[] days){ this.days = days; }
