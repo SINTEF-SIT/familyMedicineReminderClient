@@ -30,6 +30,7 @@ import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFra
 import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.WelcomeFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
@@ -46,11 +47,10 @@ import java.util.Collections;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
-        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener,
-        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener {
+        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
 
 
     private static Account account;
@@ -77,7 +77,19 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        changeFragment(new MedicationListFragment());
+
+
+        AccountManager accMngr = AccountManager.get(this);
+        Account[] fappAccounts = accMngr.getAccountsByType("mycyfappaccount");
+
+        if(fappAccounts.length == 0) {
+            changeFragment(new WelcomeFragment());
+        }
+        else {
+            account = fappAccounts[0];
+            changeFragment(new MedicationListFragment());
+
+        }
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -294,11 +306,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMedicationCabinetFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void onWelcomeFragmentInteraction(Uri uri) {
 
     }
 
@@ -529,5 +536,10 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void OnNewAccountCreated(String username, String password) {
+        System.out.println("In new account created!");
     }
 }
