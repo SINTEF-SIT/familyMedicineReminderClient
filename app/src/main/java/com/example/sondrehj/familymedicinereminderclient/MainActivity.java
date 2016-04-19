@@ -77,19 +77,23 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-
         AccountManager accMngr = AccountManager.get(this);
-        Account[] fappAccounts = accMngr.getAccountsByType("mycyfappaccount");
+        Account[] fappAccounts = accMngr.getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+
+        //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
 
         if(fappAccounts.length == 0) {
             changeFragment(new WelcomeFragment());
         }
         else {
             account = fappAccounts[0];
+            ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+            ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
             changeFragment(new MedicationListFragment());
-
         }
+
+
+        Log.d("Sync", "Sync set to automatic.");
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -123,18 +127,6 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-
-        /**
-         * This is a dummy account for the SyncAdapter - should be moved to application init,
-         * not stay in the UI thread.
-         */
-        account = new Account("Account", "com.example.sondrehj.familymedicinereminderclient");
-        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
-        accountManager.addAccountExplicitly(account, null, null);
-
-        ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
-        ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
-        Log.d("Sync", "Sync set to automatic.");
     }
 
     /**
@@ -539,7 +531,18 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnNewAccountCreated(String username, String password) {
+    public void OnNewAccountCreated(String userId, String password) {
         System.out.println("In new account created!");
+        Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
+        AccountManager manager = AccountManager.get(this);
+        Bundle userdata = new Bundle();
+        userdata.putString("passtoken", password);
+        userdata.putString("userId", userId);
+        manager.addAccountExplicitly(newAccount, password, userdata);
+        ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+        ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
+        MainActivity.account = newAccount;
+
+        changeFragment(new MedicationListFragment());
     }
 }

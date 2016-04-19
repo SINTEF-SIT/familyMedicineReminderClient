@@ -43,7 +43,6 @@ public class WelcomeFragment extends android.app.Fragment {
      *
      * @return A new instance of fragment WelcomeFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static WelcomeFragment newInstance(Account newAccount) {
         WelcomeFragment fragment = new WelcomeFragment();
         return fragment;
@@ -84,7 +83,12 @@ public class WelcomeFragment extends android.app.Fragment {
             return;
         }
 
-        MyCyFAPPServiceAPI service = RestService.createRestService();
+        //TODO: Replace this section with the section commented below
+
+        mListener.OnNewAccountCreated("dummy_user_id", "dummy_password");
+
+        //TODO: Uncomment this section. It is commented for development reasons only
+        /*MyCyFAPPServiceAPI service = RestService.createRestService();
         User user = new User();
         Call<User> call = service.createUser(user);
         progress.show();
@@ -98,8 +102,9 @@ public class WelcomeFragment extends android.app.Fragment {
                 System.out.println("Password:" + password);
                 progress.dismiss();
 
+                //TODO: Update with password != null as well
                 if (mListener != null) {
-                    if (userId != null && password != null) {
+                    if (userId != null) {
                         mListener.OnNewAccountCreated(userId, password);
                     }
                 }
@@ -111,7 +116,9 @@ public class WelcomeFragment extends android.app.Fragment {
                 failureToast.show();
                 System.out.println("Could not create user" + t.getMessage());
             }
-        });
+
+        });*/
+
     }
 
     @Override

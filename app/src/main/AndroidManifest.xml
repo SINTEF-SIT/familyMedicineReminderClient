@@ -106,5 +106,6 @@
             android:name="com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService"
             android:exported="false">
         </service>
+
     </application>
 </manifest>
