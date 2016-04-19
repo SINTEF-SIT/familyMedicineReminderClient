@@ -2,21 +2,29 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
+import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,10 +38,14 @@ public class LinkingFragment extends android.app.Fragment{
 
     private OnLinkingFragmentInteractionListener mListener;
 
-    @Bind(R.id.link_button) Button linkButton;
-    @Bind(R.id.status_icon) ImageView statusIcon;
-    @Bind(R.id.id_input_field_data) TextView idInputField;
-    @Bind(R.id.status_feedback) TextView statusText;
+    @Bind(R.id.link_guardian_button) Button linkButton;
+    @Bind(R.id.link_guardian_status_icon) ImageView statusIcon;
+    @Bind(R.id.link_guardian_status_text) TextView statusText;
+    @Bind(R.id.link_guardian_id_helper) TextView idInputHelper;
+    @Bind(R.id.link_guardian_id_input) EditText idInput;
+    @Bind(R.id.link_patient_infotext) TextView infoText;
+    @Bind(R.id.link_patient_id_helper) TextView idHelper;
+    @Bind(R.id.link_patient_id) TextView userID;
 
     public LinkingFragment() {
         // Required empty public constructor
@@ -59,25 +71,74 @@ public class LinkingFragment extends android.app.Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linking, container, false);
         ButterKnife.bind(this, view);
+        getActivity().setTitle("Linking");
+        //TODO: retrieve user type (guardian or patient). Use this to build the interface.
+        if (false) {
+            linkButton.setVisibility(View.GONE);
+            statusIcon.setVisibility(View.GONE);
+            idInputHelper.setVisibility(View.GONE);
+            idInput.setVisibility(View.GONE);
+            //// TODO: retrieve userID from this user.
+            userID.setText("replace with id");
+        } else {
+            infoText.setVisibility(View.GONE);
+            idHelper.setVisibility(View.GONE);
+            userID.setVisibility(View.GONE);
+        }
         return view;
     }
 
-    @OnClick(R.id.link_button)
+    @OnClick(R.id.link_guardian_button)
     public void tryToLink() {
-        if (idInputField.getTextSize() == 5) {
-            boolean isLinked = linkWithAccount(" ");
-            if (isLinked) {
-                int color = Color.parseColor("#FF64DD17"); //The color u want
-                statusIcon.setColorFilter(color);
-            } else {
-                int color = Color.parseColor("#FF64DD17"); //The color u want
-                statusIcon.setColorFilter(color);
-            }
+        // input validation
+        if (idInput.getText().length() == 5) {
+            // give textual feedback about linking
+            statusText.setText("Linking with: " + idInput.getText().toString() + "...");
+            // set the color of the status icon to yellow to give feedback
+            int color = Color.parseColor("#FFFDD835");
+            statusIcon.setColorFilter(color);
+
+            linkWithAccount(idInput.getText().toString());
         } else {
             statusText.setText("Enter a 5-digit ID. Try again...");
             clearStatusTextAfterSeconds(3);
         }
+    }
 
+    public void linkWithAccount(String idToLinkWith){
+        Log.d("Linking", "initiating linking with account ID " + idToLinkWith + ".");
+        MyCyFAPPServiceAPI api = RestService.createRestService();
+
+        //TODO: fetch this user's ID to send with the request.
+
+        Call<User> call = api.sendLinkingRequest("12345", idToLinkWith);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful()) {
+                    User user = response.body();
+                    Log.d("linking/api", "successful linking.");
+                    //TODO: persist linked status to the device.
+                    int color = Color.parseColor("#FF64DD17");
+                    statusIcon.setColorFilter(color);
+                } else {
+                    Log.d("linking/api", "unsuccessful linking.");
+                    int color = Color.parseColor("#FFBF360C");
+                    statusIcon.setColorFilter(color);
+                    statusText.setText("Linking error, try again later.");
+                    clearStatusTextAfterSeconds(3);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.d("linking/api", "onFailure.");
+                statusText.setText("Cannot initiate network call.");
+                int color = Color.parseColor("#FFBF360C");
+                statusIcon.setColorFilter(color);
+                clearStatusTextAfterSeconds(8);
+            }
+        });
     }
 
     public void clearStatusTextAfterSeconds(int i) {
@@ -88,14 +149,10 @@ public class LinkingFragment extends android.app.Fragment{
 
             @Override
             public void onFinish(){
-                statusText.setText("");
+                if (statusText != null)
+                    statusText.setText("");
             }
         }.start();
-    }
-
-    public boolean linkWithAccount(String idToLinkWith){
-
-        return true;
     }
 
     @Override

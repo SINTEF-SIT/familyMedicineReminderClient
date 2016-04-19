@@ -26,8 +26,11 @@ import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.WelcomeFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
@@ -44,25 +47,24 @@ import java.util.Collections;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
-        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        WelcomeFragment.OnFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener {
+        SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener,
+        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
+
 
     private static Account account;
     NotificationManager manager;
     Notification myNotication;
     Boolean started = false;
 
-
     /**
-     *
      * Main entry point of the application. When onCreate is run, view is filled with the
      * layout activity_main in res. The fragment container which resides in the contentView is
      * changed to "MediciationListFragment()" with the changeFragment() function call.
-     * <p/>
+     *
      * In addition, the Sidebar/Drawer is instantiated.
-     * <p/>
+     *
      * Portrait mode is enforced because if the screen is rotated you loose a lot of references
      * when the instance is redrawn.
      *
@@ -75,7 +77,24 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        changeFragment(new MedicationListFragment());
+        AccountManager accountManager = AccountManager.get(this);
+        Account[] reminderAccounts = accountManager.
+                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+
+        //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
+
+        if(reminderAccounts.length == 0) {
+            changeFragment(new WelcomeFragment());
+        }
+        else {
+            account = reminderAccounts[0];
+            ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+            ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
+            changeFragment(new MedicationListFragment());
+        }
+
+
+        Log.d("Sync", "Sync set to automatic.");
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -109,18 +128,6 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-
-        /**
-         * This is a dummy account for the SyncAdapter - should be moved to application init,
-         * not stay in the UI thread.
-         */
-        account = new Account("Account", "com.example.sondrehj.familymedicinereminderclient");
-        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
-        accountManager.addAccountExplicitly(account, null, null);
-
-        ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
-        ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
-        Log.d("Sync", "Sync set to automatic.");
     }
 
     /**
@@ -159,9 +166,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     /**
-     * +
      * Inflate the options menu. This adds items to the action bar if it is present. The one with
      * the three buttons, which resides physically on Samsung phones.
      *
@@ -175,7 +180,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
      * as you specify a parent activity in AndroidManifest.xml.
@@ -200,7 +204,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
@@ -227,7 +230,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Handles the selection of items in the drawer and replaces the fragment container of
      * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
      *
@@ -247,7 +249,11 @@ public class MainActivity extends AppCompatActivity
             System.out.print("navigated to medication cabinet fragment");
         } else if (id == R.id.nav_settings) {
             //TODO: fill inn changefragment to settings fragment
+            changeFragment(AccountAdministrationFragment.newInstance());
             System.out.println("navigated to settings fragment");
+        } else if (id == R.id.nav_guardian_dashboard) {
+            changeFragment(new GuardianDashboard());
+            System.out.println("navigated to guardian dashboard");
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
             System.out.println("navigated to linking fragment");
@@ -274,12 +280,12 @@ public class MainActivity extends AppCompatActivity
 
         if (r.getIsActive()) {
 
-            //Activate the reminder
+            // Activate the reminder
             scheduleNotification(getNotification("Take your medication"), r);
             r.setIsActive(true);
             System.out.println("Reminder: " + r.getReminderId() + " was activated");
         }
-        //Updates the DB
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
@@ -293,11 +299,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onMedicationCabinetFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void onWelcomeFragmentInteraction(Uri uri) {
 
     }
 
@@ -334,23 +335,17 @@ public class MainActivity extends AppCompatActivity
 
         if (reminder.getIsActive()) {
 
-            //Cancel the scheduled reminder
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                    reminder.getReminderId(),
-                    new Intent(this, NotificationPublisher.class),
-                    PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager.cancel(pendingIntent);
+            // Cancel the scheduled reminder
+            cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was deactivated");
         } else {
 
-            //Activate the reminder
+            // Activate the reminder
             scheduleNotification(getNotification("Take your medication"), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
-        //Updates the DB
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
     }
@@ -366,7 +361,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Called by timepicker in NewReminder
      *
      * @param hourOfDay
@@ -379,7 +373,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Called by datepicker in NewReminder
      *
      * @param year
@@ -392,35 +385,41 @@ public class MainActivity extends AppCompatActivity
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
+    @Override
+    public void setEndDate(int year, int month, int day) {
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        newReminderFragment.setEndDateOnLayout(year, month, day);
+
+    }
+
     private void scheduleNotification(Notification notification, Reminder reminder) {
 
-        //A variable containing the reminder date in milliseconds.
-        //Used for scheduling the notification.
+        // A variable containing the reminder date in milliseconds.
+        // Used for scheduling the notification.
         Long time = reminder.getDate().getTimeInMillis();
 
-        //Defines the Intent of the notification. The NotificationPublisher class uses this
-        //object to retrieve additional information about the notification.
+        // Defines the Intent of the notification. The NotificationPublisher class uses this
+        // object to retrieve additional information about the notification.
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        //Adds the reminder_id to the Intent object.
-        //Used to easily identify notifications and their corresponding reminder.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, reminder.getReminderId());
-        //Adds the reminder_days variable to the Intent object.
-        //Used to schedule notifications for the given days.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_DAYS, reminder.getDays());
-        //Adds the given notification object to the Intent object.
-        //Used to publish the given notification.
+        // Adds the given notification object to the Intent object.
+        // Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        // Adds the given reminder object to the Intent object
+        // Used to cancel and filter Notifications
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Calendar cal = Calendar.getInstance();
 
-        //Schedules a notification on the user specified days.
-        if (reminder.getDays().length > 0) {
+        // Schedules a repeating notification on the user specified days.
+        if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
+            System.out.println("Alarm set");
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
-        } else {
-
-            Calendar cal = Calendar.getInstance();
+        }
+        // Schedules a non-repeating notification
+        else {
             if (!reminder.getDate().before(cal)) {
-                //Schedules a non-repeating notification
                 alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
             }
         }
@@ -446,6 +445,17 @@ public class MainActivity extends AppCompatActivity
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
+    }
+
+    public void cancelNotification(int id){
+        //Cancel the scheduled reminder
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
+                id,
+                new Intent(this, NotificationPublisher.class),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+        System.out.println("Reminder: " + id + " was deactivated");
     }
 
     public String getSelectedDaysText(int[] reminder_days) {
@@ -482,7 +492,6 @@ public class MainActivity extends AppCompatActivity
         return s;
     }
 
-
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
@@ -493,6 +502,13 @@ public class MainActivity extends AppCompatActivity
     public void onNegativeDaysDialogResult() {
 
     }
+
+    @Override
+    public void onPositiveMedicationPickerDialogResult(Medication med) {
+        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        nrf.setMedicationOnLayout(med);
+    }
+
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -514,5 +530,20 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
-}
 
+    @Override
+    public void OnNewAccountCreated(String userId, String password) {
+        System.out.println("In new account created!");
+        Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
+        AccountManager manager = AccountManager.get(this);
+        Bundle userdata = new Bundle();
+        userdata.putString("passtoken", password);
+        userdata.putString("userId", userId);
+        manager.addAccountExplicitly(newAccount, password, userdata);
+        ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
+        ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
+        MainActivity.account = newAccount;
+
+        changeFragment(new MedicationListFragment());
+    }
+}

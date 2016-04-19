@@ -1,0 +1,231 @@
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
+    android:id="@+id/newReminderLayout"
+    android:divider="@drawable/horizontal_divider"
+    android:showDividers="middle">
+
+
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Reminder"
+        android:id="@+id/reminderSwitch"
+        android:checked="true"
+        android:textSize="22sp"
+        android:padding="10dp" />
+
+    <FrameLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="65dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:layout_marginTop="5dp"
+            android:id="@+id/nameText"
+            android:textSize="18sp"
+            android:layout_marginLeft="16dp"
+            android:textColor="#000000" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/nameEditText"
+            android:inputType="text"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="16dp"
+            android:textSize="14sp"
+            android:layout_marginRight="16dp"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/datePickerLayout"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Date"
+            android:id="@+id/dateText"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="5dp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Click to choose"
+            android:id="@+id/dateSetText"
+            android:textSize="14sp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="32dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/timePickerLayout"
+        android:clickable="true"
+        android:layout_marginRight="0dp"
+        android:background="?attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Time"
+            android:id="@+id/timeText"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="16dp"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:id="@+id/timeSetText"
+            android:textSize="14sp"
+            android:text="Click to choose"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="32dp" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/linearLayout"
+        android:clickable="true"
+        android:layout_marginRight="0dp"
+        android:background="?attr/selectableItemBackground" >
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Attach medication"
+            android:id="@+id/medicationSwitch"
+            android:checked="false"
+            android:textSize="22sp"
+            android:padding="10dp" />
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/chooseMedicationWrapper"
+        android:clickable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Medication"
+            android:id="@+id/chooseMedication"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#DDDD"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Click to choose"
+            android:id="@+id/chosenMedication"
+            android:textSize="14sp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginTop="32dp"
+            android:textColor="#DDDD"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:id="@+id/chooseDosageWrapper">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dosage"
+            android:layout_marginTop="5dp"
+            android:id="@+id/chooseDosage"
+            android:textSize="18sp"
+            android:layout_marginLeft="16dp"
+            android:textColor="#DDDD" />
+
+        <EditText
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/dosage"
+            android:inputType="numberDecimal"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="16dp"
+            android:textSize="14sp"
+            android:layout_marginRight="16dp"
+            android:enabled="false"
+            android:textColor="#DDDD" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:id="@+id/dosageUnit"
+            android:textSize="14sp"
+            android:textColor="#DDDD"
+            android:layout_marginLeft="78dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/repeatLayout">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Repeat"
+            android:id="@+id/repeatSwitch"
+            android:checked="false"
+            android:textSize="22sp"
+            android:padding="10dp" />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:id="@+id/saveButton"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="40dp" />
+
+    </LinearLayout>
+
+</ScrollView>

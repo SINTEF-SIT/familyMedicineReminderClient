@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
@@ -70,6 +69,8 @@ public class RegistrationIntentService extends IntentService {
     private void sendRegistrationToServer(String token) {
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
+
+
         Call<User> call = apiService.associateToken("userID", token);
         call.enqueue(new Callback<User>() {
             @Override
@@ -89,5 +90,4 @@ public class RegistrationIntentService extends IntentService {
             }
         });
     }
-
 }

@@ -1,7 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
 import java.io.Serializable;
-import java.sql.SQLOutput;
 
 /**
  * Created by nikolai on 24/02/16.

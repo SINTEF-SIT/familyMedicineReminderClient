@@ -8,11 +8,13 @@ import java.util.GregorianCalendar;
  */
 public class Reminder implements Serializable {
     int reminderId;
+    int reminderServerId;
     String ownerId;
     String name;
     GregorianCalendar date;
+    GregorianCalendar endDate;
     Medication medicine;
-    String units;
+    Double dosage;
     Boolean isActive;
     int[] days;
 
@@ -38,6 +40,14 @@ public class Reminder implements Serializable {
         this.reminderId = id;
     }
 
+    public int getReminderServerId(){
+        return reminderServerId;
+    }
+
+    public void setReminderServerId(int id) {
+        this.reminderServerId = id;
+    }
+
     public String getOwnerId() {
         return ownerId;
     }
@@ -52,6 +62,14 @@ public class Reminder implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public GregorianCalendar getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(GregorianCalendar endDate) {
+        this.endDate = endDate;
     }
 
     public GregorianCalendar getDate() {
@@ -70,12 +88,12 @@ public class Reminder implements Serializable {
 
     public void setMedicine(Medication medicine) { this.medicine = medicine; }
 
-    public String getUnits() {
-        return units;
+    public Double getDosage() {
+        return dosage;
     }
 
-    public void setUnits(String units) {
-        this.units = units;
+    public void setDosage(Double dosage) {
+        this.dosage = dosage;
     }
 
     public void setDays(int[] days){ this.days = days; }
