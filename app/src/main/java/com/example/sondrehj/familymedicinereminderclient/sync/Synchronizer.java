@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.sync;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import java.sql.SQLOutput;
 import java.util.List;
@@ -47,6 +48,20 @@ public class Synchronizer {
         return true;
     }
 
+    public void getLinkingRequest() {
+        Call<User> call = restApi.getLinkingRequest(userToSync);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
+    }
 
 
 

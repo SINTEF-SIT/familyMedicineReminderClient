@@ -48,13 +48,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Synchronizer synchronizer = new Synchronizer("N1yY-", api);
+        Synchronizer synchronizer = new Synchronizer(account.name, api);
         switch (notificationType) {
             case "remindersChanged":
                 synchronizer.syncReminders();
                 break;
             case "medicationsChanged":
                 //syncMedications();
+                break;
+            case "linkingRequest":
+
                 break;
         }
     }
