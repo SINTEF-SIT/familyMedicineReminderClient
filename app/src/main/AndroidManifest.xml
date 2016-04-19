@@ -27,6 +27,7 @@
             android:name=".MainActivity"
             android:label="editInManifest"
             android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

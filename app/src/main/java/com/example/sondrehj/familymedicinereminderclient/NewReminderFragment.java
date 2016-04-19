@@ -396,7 +396,6 @@ public class NewReminderFragment extends android.app.Fragment {
             reminderSwitch.setChecked(reminder.getIsActive());
             nameEditText.setText(reminder.getName());
             c = reminder.getDate();
-            System.out.println(reminder.getEndDate());
 
             // Set the repeat fields if the reminder is repeating.
             if (reminder.getDays().length >= 1) {
@@ -546,6 +545,9 @@ public class NewReminderFragment extends android.app.Fragment {
         ReminderListContent.ITEMS.add(0, reminder);
         mListener.onSaveNewReminder(reminder);
 
+        System.out.println("----------Reminder Created----------" + "\n" + reminder);
+        System.out.println("------------------------------------");
+
         //Add reminder to database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.addReminder(reminder);
@@ -570,7 +572,6 @@ public class NewReminderFragment extends android.app.Fragment {
 
         // Non-repeating
         if (!repeatSwitch.isChecked()) {
-            System.out.println("NOT CHECKED");
             reminder.setDays(new int[]{});
             reminder.setEndDate(null);
         }
@@ -581,7 +582,6 @@ public class NewReminderFragment extends android.app.Fragment {
 
         // Repeating
         if (repeatSwitch.isChecked()) {
-            System.out.println("CHECKED");
             if (selectedDays == null && reminder.getDays().length > 1) {
                 reminder.setDays(reminder.getDays());
             } else {
@@ -612,6 +612,9 @@ public class NewReminderFragment extends android.app.Fragment {
         }
 
         mListener.onSaveNewReminder(reminder);
+        System.out.println("----------Reminder Updated----------" + "\n" + reminder);
+        System.out.println("------------------------------------");
+
         // Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.updateReminder(reminder);

@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
@@ -38,6 +39,7 @@ import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -206,7 +208,7 @@ public class MainActivity extends AppCompatActivity
      */
     public void changeFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
-        System.out.println(fragment.getClass().getSimpleName());
+        System.out.println("Navigated to: " + fragment.getClass().getSimpleName());
         boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped) { //fragment not in back stack, create it.
@@ -238,20 +240,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_reminders) {
             changeFragment(ReminderListFragment.newInstance());
-            System.out.print("navigated to reminder list fragment");
         } else if (id == R.id.nav_medication) {
             changeFragment(MedicationListFragment.newInstance());
-            System.out.print("navigated to medication cabinet fragment");
         } else if (id == R.id.nav_settings) {
             //TODO: fill inn changefragment to settings fragment
             changeFragment(AccountAdministrationFragment.newInstance());
-            System.out.println("navigated to settings fragment");
         } else if (id == R.id.nav_guardian_dashboard) {
             changeFragment(new GuardianDashboard());
-            System.out.println("navigated to guardian dashboard");
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
-            System.out.println("navigated to linking fragment");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -274,11 +271,9 @@ public class MainActivity extends AppCompatActivity
     public void onSaveNewReminder(Reminder r) {
 
         if (r.getIsActive()) {
-
             // Activate the reminder
-            scheduleNotification(getNotification("Take your medication"), r);
+            scheduleNotification(getNotification("Take your medication", r), r);
             r.setIsActive(true);
-            System.out.println("Reminder: " + r.getReminderId() + " was activated");
         }
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -321,7 +316,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onReminderListItemClicked(Reminder reminder) {
-        System.out.print("Reminder was clicked");
         changeFragment(NewReminderFragment.newInstance(reminder));
     }
 
@@ -341,7 +335,7 @@ public class MainActivity extends AppCompatActivity
         } else {
 
             // Activate the reminder
-            scheduleNotification(getNotification("Take your medication"), reminder);
+            scheduleNotification(getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
@@ -414,7 +408,6 @@ public class MainActivity extends AppCompatActivity
 
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
-            System.out.println("Alarm set");
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
         }
         // Schedules a non-repeating notification
@@ -425,17 +418,18 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private Notification getNotification(String content) {
+    private Notification getNotification(String content, Reminder reminder) {
 
         //Defines the Intent of the notification
         Intent intent = new Intent(this, this.getClass());
+        intent.putExtra("notification-reminder", reminder);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
 
         //Constructs the notification
         Notification notification = new Notification.Builder(MainActivity.this)
                 .setContentTitle("MYCYFAPP")
-                .setContentText(content)
+                .setContentText(reminder.getName())
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
@@ -445,6 +439,38 @@ public class MainActivity extends AppCompatActivity
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
+    }
+
+    /**
+     * Called when a notification is clicked. If the intent contains a reminder with a medication attached,
+     * the amount of "units" decreases by the given dosage.
+     *
+     * @param intent the intent instance created by getNotification(String content, Reminder reminder)
+     */
+    protected void onNewIntent(Intent intent) {
+        Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
+        System.out.println("--------Notification Pressed--------");
+        System.out.println(" Notification for reminder: " + reminder.getName());
+        if (reminder.getMedicine() != null){
+            System.out.println(" Medication attached: " + reminder.getMedicine().getName());
+            System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
+            System.out.println(" Reducing by: " + reminder.getDosage());
+            reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
+            System.out.println(" New value: " + reminder.getMedicine().getCount());
+            System.out.println("------------------------------------");
+
+            // Updates MedicationListViewFragment with new data.
+            for(int i = 0; i < MedicationListContent.ITEMS.size(); i++){
+                if (MedicationListContent.ITEMS.get(i).getMedId() == reminder.getMedicine().getMedId()) {
+                    MedicationListContent.ITEMS.set(i, reminder.getMedicine());
+                }
+            }
+
+            // Updates the DB
+            MySQLiteHelper db = new MySQLiteHelper(this);
+            db.updateAmountMedication(reminder.getMedicine());
+            Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void cancelNotification(int id){
@@ -530,4 +556,5 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+
 }

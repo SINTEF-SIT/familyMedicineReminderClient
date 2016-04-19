@@ -98,6 +98,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     //Queries, flyttes?
 
+    // ----- MEDICATIONS ----- //
+
     public void addMedication(Medication medication) {
         // Add new medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -129,17 +131,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public void deleteMedication(Medication medication) {
-        //Deletes a medication
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_MEDICATION, "med_id=" + medication.getMedId(), null);
-
-        //Removes the medication from the list content
-        MedicationListContent.ITEMS.remove(medication);
-        db.close();
-    }
-
-
     public ArrayList<Medication> getMedications() {
         //Retrieve medications
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION;
@@ -161,6 +152,30 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
         return data;
     }
+
+    public void deleteMedication(Medication medication) {
+        //Deletes a medication
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MEDICATION, "med_id=" + medication.getMedId(), null);
+
+        //Removes the medication from the list content
+        MedicationListContent.ITEMS.remove(medication);
+        db.close();
+    }
+
+    public void updateAmountMedication(Medication medication){
+        // Update existing medication
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Prepares the statement
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_MED_COUNT, medication.getCount());
+
+        db.update(TABLE_MEDICATION, values, "med_id=" + medication.getMedId(), null);
+        db.close(); // Closing database connection
+    }
+
+    // ----- REMINDERS ----- //
 
     public void addReminder(Reminder reminder) {
         // Add new reminder
@@ -212,8 +227,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Inserting Row
         long insertId = db.insert(TABLE_REMINDER, null, values);
         reminder.setReminderId(safeLongToInt(insertId));
-        System.out.println("New reminder: " + insertId + " scheduled for days: " + Arrays.toString(reminder.getDays()));
-
         db.close(); // Closing database connection
     }
 
@@ -263,8 +276,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             values.putNull(COLUMN_REM_MEDICATION_ID);
             values.putNull(COLUMN_REM_MEDICATION_DOSAGE);
         }
-
-        System.out.println("Reminder: " + reminder.getReminderId() + " was updated");
 
         // Executes the query
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
@@ -343,10 +354,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                         if(med.getMedId() == medicationId){
                             reminder.setMedicine(med);
                             reminder.setDosage(dosage);
-                            System.out.println(
-                                    "Reminder: " + reminder.getName() +
-                                    ". Medicine Attached: " + reminder.getMedicine().getName()
-                            );
                         }
                     }
                 }
