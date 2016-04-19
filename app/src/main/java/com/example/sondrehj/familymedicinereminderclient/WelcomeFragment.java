@@ -85,10 +85,10 @@ public class WelcomeFragment extends android.app.Fragment {
 
         //TODO: Replace this section with the section commented below
 
-        mListener.OnNewAccountCreated("dummy_user_id", "dummy_password");
+        //mListener.OnNewAccountCreated("dummy_user_id", "dummy_password");
 
         //TODO: Uncomment this section. It is commented for development reasons only
-        /*MyCyFAPPServiceAPI service = RestService.createRestService();
+        MyCyFAPPServiceAPI service = RestService.createRestService();
         User user = new User();
         Call<User> call = service.createUser(user);
         progress.show();
@@ -116,8 +116,7 @@ public class WelcomeFragment extends android.app.Fragment {
                 failureToast.show();
                 System.out.println("Could not create user" + t.getMessage());
             }
-
-        });*/
+        });
 
     }
 

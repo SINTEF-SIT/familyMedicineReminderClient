@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -45,14 +46,26 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         Log.d("Sync", "Sync is performing");
 
+        String notificationType = extras.getString("notificationType");
+        MyCyFAPPServiceAPI api = RestService.createRestService();
+        Synchronizer synchronizer = new Synchronizer("N1yY-", api);
+        switch (notificationType) {
+            case "remindersChanged":
+                synchronizer.syncReminders();
+                break;
+            case "medicationsChanged":
+                //syncMedications();
+                break;
+
+        }
+
         /**
          * This is an Rest Api example call - keep outside of UI threads.
          */
-        MyCyFAPPServiceAPI api = RestService.createRestService();
 
-        User user = new User("Sondre", "Pelle11");
-        Call<User> call = api.createUser(user);
-        call.enqueue(new Callback<User>() {
+        //User user = new User("Sondre", "Pelle11");
+        //Call<User> call = api.createUser(user);
+        /*call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
@@ -68,6 +81,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d("api", "failure");
             }
-        });
+        });*/
     }
 }

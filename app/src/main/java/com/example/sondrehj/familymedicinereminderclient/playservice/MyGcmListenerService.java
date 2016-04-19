@@ -26,19 +26,24 @@ public class MyGcmListenerService extends GcmListenerService {
      */
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        String notificationType = data.getString("notificationType");
         Log.d(TAG, "From: " + from);
-        Log.d(TAG, "Message: " + message);
+        Log.d(TAG, "Notification type: " + notificationType);
 
 
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
+        Bundle extras = new Bundle();
+        extras.putString("notificationType", notificationType);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+
         ContentResolver.requestSync(
                 MainActivity.getAccount(),
                 AUTHORITY,
-                Bundle.EMPTY);
+                extras);
         /**
          * Production applications would usually process the message here.
          * Eg: - Syncing with server.
