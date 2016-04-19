@@ -49,7 +49,7 @@ public class RegistrationIntentService extends IntentService {
             Log.i(TAG, "GCM Registration Token: " + token);
 
             // pass along this data
-            //sendRegistrationToServer(token);
+            sendRegistrationToServer(token);
             sharedPreferences.edit().putBoolean(PlayservicePreferences.SENT_TOKEN_TO_SERVER, true).apply();
 
     } catch (IOException e) {
@@ -70,7 +70,7 @@ public class RegistrationIntentService extends IntentService {
     private void sendRegistrationToServer(String token) {
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
-        Call<User> call = apiService.postToken("userID", token);
+        Call<User> call = apiService.associateToken("userID", token);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
