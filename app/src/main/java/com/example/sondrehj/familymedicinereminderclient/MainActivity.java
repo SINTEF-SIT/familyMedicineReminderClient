@@ -2,7 +2,9 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.Notification;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+
+import okhttp3.internal.Platform;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
@@ -134,8 +138,8 @@ public class MainActivity extends AppCompatActivity
      * ContentResolver, might have to be moved sometime.
      * @return
      */
-    public static Account getAccount(){
-        return account;
+    public static Account getAccount(Context context){
+        return AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient")[0];
     }
 
     //@Override

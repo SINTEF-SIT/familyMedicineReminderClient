@@ -48,7 +48,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Synchronizer synchronizer = new Synchronizer("N1yY-", api);
+
+        Synchronizer synchronizer = new Synchronizer(account.name, api);
         switch (notificationType) {
             case "remindersChanged":
                 synchronizer.syncReminders();
@@ -58,29 +59,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 break;
 
         }
-
-        /**
-         * This is an Rest Api example call - keep outside of UI threads.
-         */
-
-        //User user = new User("Sondre", "Pelle11");
-        //Call<User> call = api.createUser(user);
-        /*call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    int statusCode = response.code();
-                    User user = response.body();
-                    Log.d("api", statusCode + " : " + user.toString());
-                } else {
-                    Log.d("api", "error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d("api", "failure");
-            }
-        });*/
     }
 }

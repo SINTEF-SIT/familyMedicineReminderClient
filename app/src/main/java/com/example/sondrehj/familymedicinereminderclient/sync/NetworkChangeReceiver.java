@@ -34,11 +34,11 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if(ServiceManager.isNetworkAvailable(context)) {
             //Toast.makeText(context, "Network available - do stuff!", Toast.LENGTH_LONG).show();
             ContentResolver.setSyncAutomatically(
-                    MainActivity.getAccount(),
+                    MainActivity.getAccount(context),
                     AUTHORITY,
                     true);
             ContentResolver.requestSync(
-                    MainActivity.getAccount(),
+                    MainActivity.getAccount(context),
                     AUTHORITY,
                     Bundle.EMPTY);
         }
