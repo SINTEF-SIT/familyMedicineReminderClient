@@ -141,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Choose Medication"
+            android:text="Medication"
             android:id="@+id/chooseMedication"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="5dp"
@@ -169,7 +169,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Choose Dosage"
+            android:text="Dosage"
             android:layout_marginTop="5dp"
             android:id="@+id/chooseDosage"
             android:textSize="18sp"

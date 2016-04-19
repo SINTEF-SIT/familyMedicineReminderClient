@@ -46,7 +46,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " real, " + COLUMN_MED_UNIT
             + " text not null);";
 
-    //Reminder table
+    // Reminder table
     public static final String TABLE_REMINDER = "reminder";
     public static final String COLUMN_REMINDER_OWNER_ID = "owner_id";
     public static final String COLUMN_REMINDER_ID = "reminder_id";
@@ -56,7 +56,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_REMINDER_DAYS = "days";
     public static final String COLUMN_REMINDER_END_DATE = "end_date";
     public static final String COLUMN_REMINDER_SERVER_ID = "reminder_server_id";
-    //Reminder table creation statement
+    public static final String COLUMN_REM_MEDICATION_ID = "reminder_medication_id";
+    public static final String COLUMN_REM_MEDICATION_DOSAGE = "medication_dosage";
+    // Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
             + " integer primary key autoincrement, " + COLUMN_REMINDER_OWNER_ID
@@ -66,7 +68,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " boolean, " + COLUMN_REMINDER_DAYS
             + " text, " + COLUMN_REMINDER_END_DATE
             + " text, " + COLUMN_REMINDER_SERVER_ID
-            + " integer);";
+            + " integer, " + COLUMN_REM_MEDICATION_ID
+            + " integer, " + COLUMN_REM_MEDICATION_DOSAGE
+            + " real);";
+
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -87,6 +92,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICATION);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMINDER);
         onCreate(db);
     }
 
@@ -187,6 +193,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             dayString += day + ";";
         }
 
+
         // Prepares the statement
         ContentValues values = new ContentValues();
         values.put(COLUMN_REMINDER_OWNER_ID, reminder.getOwnerId());
@@ -196,6 +203,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
         values.put(COLUMN_REMINDER_SERVER_ID, reminder.getReminderServerId());
+        // We store the medicationId as a reference if a medication is attached.
+        if(reminder.getMedicine() != null) {
+            values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
+            values.put(COLUMN_REM_MEDICATION_DOSAGE, reminder.getDosage());
+        }
 
         // Inserting Row
         long insertId = db.insert(TABLE_REMINDER, null, values);
@@ -243,6 +255,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
+        // We store the medicationId as a reference if a medication is attached.
+        if(reminder.getMedicine() != null) {
+            values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
+            values.put(COLUMN_REM_MEDICATION_DOSAGE, reminder.getDosage());
+        } else {
+            values.putNull(COLUMN_REM_MEDICATION_ID);
+            values.putNull(COLUMN_REM_MEDICATION_DOSAGE);
+        }
 
         System.out.println("Reminder: " + reminder.getReminderId() + " was updated");
 
@@ -270,6 +290,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 String dayString = cursor.getString(5);
                 String endDateString = cursor.getString(6);
                 int serverId = cursor.getInt(7);
+                int medicationId = cursor.getInt(8);
+                Double dosage = cursor.getDouble(9);
 
                 // Converting daysString to an int[] containing all the days.
                 int[] days;
@@ -314,6 +336,20 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
                 reminder.setReminderServerId(serverId);
+                // Attaches a referenced medication to the reminder object if set.
+                // "Join"-operation
+                if(medicationId != 0) {
+                    for(Medication med : MedicationListContent.ITEMS){
+                        if(med.getMedId() == medicationId){
+                            reminder.setMedicine(med);
+                            reminder.setDosage(dosage);
+                            System.out.println(
+                                    "Reminder: " + reminder.getName() +
+                                    ". Medicine Attached: " + reminder.getMedicine().getName()
+                            );
+                        }
+                    }
+                }
                 data.add(reminder);
             } while (cursor.moveToNext());
         }
