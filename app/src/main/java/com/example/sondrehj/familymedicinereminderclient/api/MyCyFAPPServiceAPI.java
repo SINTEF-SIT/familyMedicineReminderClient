@@ -67,7 +67,7 @@ public interface MyCyFAPPServiceAPI {
     Call<User> createUser(@Body User user);
 
     @POST("user/{userID}/{token}")
-    Call<User> postToken(@Path("userID") String userID, @Path("token") String token);
+    Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);
 
     /**
      *
