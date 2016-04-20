@@ -44,30 +44,5 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             SyncResult syncResult) {
 
         Log.d("Sync", "Sync is performing");
-
-        /**
-         * This is an Rest Api example call - keep outside of UI threads.
-         */
-        MyCyFAPPServiceAPI apiService = RestService.createRestService();
-
-        User user = new User("Sondre", "Pelle11");
-        Call<User> call = apiService.createUser(user);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    int statusCode = response.code();
-                    User user = response.body();
-                    Log.d("api", statusCode + " : " + user.toString());
-                } else {
-                    Log.d("api", "error");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-                Log.d("api", "failure");
-            }
-        });
     }
 }

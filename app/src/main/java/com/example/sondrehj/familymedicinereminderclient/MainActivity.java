@@ -80,18 +80,21 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        AccountManager accMngr = AccountManager.get(this);
-        Account[] fappAccounts = accMngr.getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+        AccountManager accountManager = AccountManager.get(this);
+        Account[] reminderAccounts = accountManager.
+                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
 
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
 
-        if(fappAccounts.length == 0) {
+        if(reminderAccounts.length == 0) {
             changeFragment(new WelcomeFragment());
         }
         else {
-            account = fappAccounts[0];
+            account = reminderAccounts[0];
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
+
+
             changeFragment(new MedicationListFragment());
         }
 
@@ -124,12 +127,7 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
 
-        //check if google play services are enabled (required for GCM).
-        if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
-            Intent intent = new Intent(this, RegistrationIntentService.class);
-            startService(intent);
-        }
+
     }
 
     /**
@@ -570,6 +568,13 @@ public class MainActivity extends AppCompatActivity
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
         MainActivity.account = newAccount;
+
+        //check if google play services are enabled (required for GCM).
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
 
         changeFragment(new MedicationListFragment());
     }

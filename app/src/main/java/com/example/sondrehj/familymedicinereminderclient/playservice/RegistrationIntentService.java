@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.playservice;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,7 +50,7 @@ public class RegistrationIntentService extends IntentService {
             Log.i(TAG, "GCM Registration Token: " + token);
 
             // pass along this data
-            //sendRegistrationToServer(token);
+            sendRegistrationToServer(token);
             sharedPreferences.edit().putBoolean(PlayservicePreferences.SENT_TOKEN_TO_SERVER, true).apply();
 
     } catch (IOException e) {
@@ -69,24 +71,31 @@ public class RegistrationIntentService extends IntentService {
     private void sendRegistrationToServer(String token) {
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
 
-        Call<User> call = apiService.postToken("userID", token);
+        AccountManager accountManager = AccountManager.get(this);
+        Account[] reminderAccounts = accountManager.
+                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+        Account account = reminderAccounts[0];
+        Log.d(TAG, "account: " + account.name);
+
+
+
+        Call<User> call = apiService.associateToken(account.name, token);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
                     int statusCode = response.code();
                     User user = response.body();
-                    Log.d("api", statusCode + " : " + user.toString());
+                    Log.d(TAG, statusCode + " : " + user.toString());
                 } else {
-                    Log.d("api", "error");
+                    Log.d(TAG, "error in associateToken call.");
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Log.d("api", "failure in tokenregistration");
+                Log.d(TAG, "failure in token registration.");
             }
         });
     }
-
 }
