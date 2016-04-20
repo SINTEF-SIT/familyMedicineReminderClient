@@ -46,10 +46,10 @@
         </LinearLayout>
 
         <LinearLayout
-             android:orientation="vertical"
-             android:layout_width="fill_parent"
-             android:layout_height="wrap_content"
-             android:layout_marginTop="20dp">
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
 
             <TextView
                  android:layout_width="wrap_content"
@@ -57,6 +57,7 @@
                  android:text="Enter the ID from the childrens phone:"
                  android:id="@+id/link_guardian_id_helper"
                  android:layout_gravity="center" />
+
 
             <EditText
                 android:layout_width="match_parent"
@@ -84,6 +85,7 @@
                  android:layout_height="match_parent"
                  android:text="Link accounts"
                  android:id="@+id/link_guardian_button" />
+
         </LinearLayout>
 
     </LinearLayout>
@@ -97,20 +99,20 @@
         android:layout_alignParentStart="true">
 
         <ImageView
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:id="@+id/link_guardian_status_icon"
-             android:layout_gravity="center_horizontal"
-             android:src="@drawable/android_ok"
-             android:tint="#c4c4c4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/link_guardian_status_icon"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/android_ok"
+            android:tint="#c4c4c4"
             android:layout_marginBottom="10dp"
             android:contentDescription="Status Icon" />
 
         <TextView
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/link_guardian_status_text"
-             android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="25dp" />
     </LinearLayout>
 

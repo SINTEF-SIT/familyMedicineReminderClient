@@ -116,6 +116,7 @@ public class WelcomeFragment extends android.app.Fragment {
                 failureToast.show();
                 System.out.println("Could not create user: " + t.getMessage());
             }
+
         });
 
     }

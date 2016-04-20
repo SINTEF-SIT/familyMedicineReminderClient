@@ -150,7 +150,7 @@ public class LinkingFragment extends android.app.Fragment{
             @Override
             public void onFinish(){
                 if (statusText != null)
-                statusText.setText("");
+                    statusText.setText("");
             }
         }.start();
     }

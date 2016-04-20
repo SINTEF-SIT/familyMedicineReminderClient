@@ -11,24 +11,58 @@ import android.os.Bundle;
 import com.example.sondrehj.familymedicinereminderclient.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class SelectDaysDialogFragment extends DialogFragment {
 
     private OnDaysDialogResultListener mListener;
     ArrayList<Integer> selectedItems = new ArrayList<>();
+    private int[] daysAlreadySelected;
+
+    private static final String DAYS_SELECTED_ARGS = "days-selected";
+
     //Det som er kommentert ut var et forsøk på å sende over de dagene som allerede var checked
     //boolean[] checkedItems = new boolean[7];
     //int[] daysAlreadyChecked = getArguments().getIntArray("alreadySelected");
+
+
+    public static SelectDaysDialogFragment newInstance(int[] daysAlreadySelected) {
+        SelectDaysDialogFragment fragment = new SelectDaysDialogFragment();
+        if (daysAlreadySelected != null) {
+            Bundle bundle = new Bundle();
+            bundle.putIntArray(DAYS_SELECTED_ARGS, daysAlreadySelected);
+            fragment.setArguments(bundle);
+            fragment.setDaysAlreadySelected(daysAlreadySelected);
+        }
+        return fragment;
+    }
+
+    public void setDaysAlreadySelected(int[] daysAlreadySelected) {
+        this.daysAlreadySelected = daysAlreadySelected;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        for(int x = 0; x < 7; x++) {
-            selectedItems.add(x);
+        boolean[] checkedItems = new boolean[]{false, false, false, false, false, false, false};
+
+        if (daysAlreadySelected != null) {
+            for (int day : daysAlreadySelected) {
+                selectedItems.add(day);
+                checkedItems[day] = true;
+            }
         }
-        boolean[] checkedItems = {true, true, true, true, true, true, true};
+        else {
+            for (int x = 0; x < 7; x++) {
+                selectedItems.add(x);
+                checkedItems[x] = true;
+            }
+        }
+
+        System.out.println(Arrays.toString(daysAlreadySelected));
+
 
         // Set the dialog title
         builder.setTitle("Select Days")
@@ -91,6 +125,7 @@ public class SelectDaysDialogFragment extends DialogFragment {
 
     public interface OnDaysDialogResultListener {
         void onPositiveDaysDialogResult(ArrayList days);
+
         void onNegativeDaysDialogResult();
     }
 
