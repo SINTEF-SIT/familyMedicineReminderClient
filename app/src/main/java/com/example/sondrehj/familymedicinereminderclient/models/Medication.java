@@ -63,6 +63,8 @@ public class Medication implements Serializable {
 
 
     public String toString(){
-        return "Name: " + this.name + "\n" + "Count: " + this.count + "\n" + "Unit: " + this.unit;
+        return " Name: " + this.name + "\n" +
+                " Count: " + this.count + "\n" +
+                " Unit: " + this.unit;
     }
 }

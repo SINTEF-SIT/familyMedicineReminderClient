@@ -52,6 +52,7 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
             holder.mIdView.setText(amount);
         }
 
+
         holder.mContentView.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
