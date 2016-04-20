@@ -134,5 +134,15 @@ public final class Converter {
         return s;
     }
 
+    public static String dayIndexToDayString(int i) {
+        String[] days = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
+        return days[i];
+    }
+
+    public static String monthIndexToMonthString(int i){
+        String[] months = {"jan", "feb", "mar", "apr", "may", "june", "jul", "aug", "sep", "oct", "nov", "des"};
+        return months[i];
+    }
+
 
 }

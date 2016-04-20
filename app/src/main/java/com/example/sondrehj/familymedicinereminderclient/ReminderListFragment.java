@@ -49,7 +49,7 @@ public class ReminderListFragment extends android.app.Fragment {
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
-            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            //recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
 
