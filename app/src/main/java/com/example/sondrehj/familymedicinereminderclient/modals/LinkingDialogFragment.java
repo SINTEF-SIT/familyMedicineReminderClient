@@ -33,10 +33,10 @@ public class LinkingDialogFragment extends DialogFragment {
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Someone wants to link with your account and become your guardian! " +
-                    "Only press yes if you know who this is!")
-                    .setPositiveButton("Link!", new DialogInterface.OnClickListener() {
+                    "Only press yes if you know who this is!" + "Do you want to link your account?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Call<User> call = api.responseToLinkingRequest(account.name, "approve");
+                            Call<User> call = api.responseToLinkingRequest(account.name, "accept");
                             call.enqueue(new Callback<User>() {
                                 @Override
                                 public void onResponse(Call<User> call, Response<User> response) {
@@ -50,7 +50,7 @@ public class LinkingDialogFragment extends DialogFragment {
                             });
                         }
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // User cancelled the dialog
                             Call<User> call = api.responseToLinkingRequest(account.name, "deny");
