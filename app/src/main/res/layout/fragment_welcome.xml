@@ -10,16 +10,18 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="633dp"
         android:weightSum="1"
-        android:layout_gravity="center|right">
+        android:layout_gravity="center|right"
+        android:background="#f3f3f3">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:background="#ffffff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -34,7 +36,7 @@
                 android:layout_alignParentLeft="true" />
 
             <Spinner
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/languageSpinner"
                 android:entries="@array/languages"
@@ -49,7 +51,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:weightSum="1">
+            android:weightSum="1"
+            android:background="#ffffff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -81,10 +84,11 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="204dp"
+            android:layout_width="257dp"
             android:layout_height="90dp"
             android:layout_gravity="center"
-            android:layout_marginTop="60dp">
+            android:layout_marginTop="60dp"
+            android:layout_weight="0.05">
 
             <Button
                 android:layout_width="match_parent"
@@ -101,10 +105,11 @@
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="204dp"
+            android:layout_width="257dp"
             android:layout_height="90dp"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="30dp"
+            android:layout_weight="0.06">
 
             <Button
                 android:layout_width="match_parent"
