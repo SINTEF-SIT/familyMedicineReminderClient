@@ -9,9 +9,11 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,7 +51,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
 
-        Synchronizer synchronizer = new Synchronizer(account.name, api);
+        Synchronizer synchronizer = new Synchronizer(account.name, api, new MySQLiteHelper(getContext()));
         switch (notificationType) {
             case "remindersChanged":
                 synchronizer.syncReminders();

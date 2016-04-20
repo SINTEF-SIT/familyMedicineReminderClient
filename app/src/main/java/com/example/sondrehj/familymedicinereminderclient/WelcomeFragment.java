@@ -114,7 +114,7 @@ public class WelcomeFragment extends android.app.Fragment {
             public void onFailure(Call<User> call, Throwable t) {
                 progress.dismiss();
                 failureToast.show();
-                System.out.println("Could not create user" + t.getMessage());
+                System.out.println("Could not create user: " + t.getMessage());
             }
         });
 
