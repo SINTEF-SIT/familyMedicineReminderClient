@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import retrofit2.Response;
  * Created by nikolai on 07/04/16.
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
+
     private Context context;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
@@ -48,23 +50,31 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
+
         Log.d("Sync", "Sync is performing");
 
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
         Synchronizer synchronizer = new Synchronizer(account.name, api);
-        switch (notificationType) {
-            case "remindersChanged":
-                synchronizer.syncReminders();
-                break;
-            case "medicationsChanged":
-                //syncMedications();
-                break;
-            case "linkingRequest":
-                //incoming linking request from push notification
-                BusService.getBus().post(new LinkingRequestEvent());
-
-                break;
+        if (notificationType != null) {
+            switch (notificationType) {
+                case "remindersChanged":
+                    synchronizer.syncReminders();
+                    break;
+                case "medicationsChanged":
+                    //syncMedications();
+                    break;
+                case "linkingRequest":
+                    Log.d("SyncAdapter", "in switch -> linkingRequest");
+                    //incoming linking request from push notification
+                    Intent intent = new Intent();
+                    intent.setAction("openDialog");
+                    intent.putExtra("action", "open_dialog");
+                    context.sendBroadcast(intent);
+                    break;
+            }
+        } else {
+            Log.d("SyncAdapter", "notificationType == null");
         }
     }
 }

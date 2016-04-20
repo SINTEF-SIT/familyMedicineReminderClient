@@ -81,13 +81,12 @@ public class LinkingFragment extends android.app.Fragment{
         ButterKnife.bind(this, view);
         getActivity().setTitle("Linking");
         //TODO: retrieve user type (guardian or patient). Use this to build the interface.
-        if (false) {
+        if (true) {
             linkButton.setVisibility(View.GONE);
             statusIcon.setVisibility(View.GONE);
             idInputHelper.setVisibility(View.GONE);
             idInput.setVisibility(View.GONE);
-            //// TODO: retrieve userID from this user.
-            userID.setText("replace with id");
+            userID.setText(MainActivity.getAccount().name);
         } else {
             infoText.setVisibility(View.GONE);
             idHelper.setVisibility(View.GONE);
@@ -122,6 +121,7 @@ public class LinkingFragment extends android.app.Fragment{
                 getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
         final Account account = reminderAccounts[0];
 
+        Log.d("linking/api", "sendlinkingrequest userID: " + account.name);
         Call<User> call = api.sendLinkingRequest(account.name, idToLinkWith);
         call.enqueue(new Callback<User>() {
             @Override
@@ -143,7 +143,7 @@ public class LinkingFragment extends android.app.Fragment{
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Log.d("linking/api", "onFailure.");
+                Log.d("linking/api", "sendlinkingrequest -> onFailure.");
                 statusText.setText("Cannot initiate network call.");
                 int color = Color.parseColor("#FFBF360C");
                 statusIcon.setColorFilter(color);

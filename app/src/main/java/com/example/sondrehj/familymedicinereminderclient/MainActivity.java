@@ -42,6 +42,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Bus;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity
         SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener,
         EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
 
+    private SyncReceiver syncReceiver;
     private static Account account;
     NotificationManager manager;
     Notification myNotication;
@@ -138,13 +140,25 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onResume(){
         super.onResume();
+
+        //registering the event bus
         BusService.getBus().register(this);
+
+        /**
+         * Registering the SyncReceiver to receive intents from the SyncAdapter,
+         * because the Bus cannot register to the SyncAdaptar (it is another process altogether).
+         */
+        syncReceiver = new SyncReceiver();
+        IntentFilter intentFilter = new IntentFilter("openDialog");
+        registerReceiver(syncReceiver, intentFilter);
     }
 
     @Override
     public void onPause(){
         super.onPause();
+        //unregistering to prevent errors
         BusService.getBus().unregister(this);
+        unregisterReceiver(syncReceiver);
     }
 
     /**
@@ -168,6 +182,7 @@ public class MainActivity extends AppCompatActivity
 
     @Subscribe
     public void handleLinkingRequest(LinkingRequestEvent event) {
+        Log.d("Main", "Handled linking request");
         FragmentManager fm = getSupportFragmentManager();
         LinkingDialogFragment linkingDialogFragment = new LinkingDialogFragment();
         linkingDialogFragment.show(fm, "linking_request_fragment");

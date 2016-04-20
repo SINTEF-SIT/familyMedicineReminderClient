@@ -55,18 +55,4 @@ public class Synchronizer {
         return true;
     }
 
-    public void getLinkingRequest() {
-        Call<User> call = restApi.getLinkingRequest(userToSync);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                BusService.getBus().post(new LinkingRequestEvent());
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-
-            }
-        });
-    }
 }
