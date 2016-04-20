@@ -49,7 +49,7 @@ public class NotificationPublisher extends BroadcastReceiver {
             if (!cal.before(endCal)) {
                 notificationManager.notify(id, notification);
                 cancelNotification(id);
-                System.out.println("| Notification was canceled. Reminder end date is before current date.");
+                System.out.println(" Notification was canceled. Reminder end date is before current date.");
             } else {
                 System.out.println(" Today's day of week: " + currentDay);
                 System.out.println(" Scheduled for days: " + Arrays.toString(days));

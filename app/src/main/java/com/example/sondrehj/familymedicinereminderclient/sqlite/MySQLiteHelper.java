@@ -15,6 +15,7 @@ import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListCon
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -182,32 +183,16 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Converts the reminder date to a string on the format year;month;date;hour;min
-        GregorianCalendar cal = reminder.getDate();
-        String year = Integer.toString(cal.get(Calendar.YEAR));
-        String month = Integer.toString(cal.get(Calendar.MONTH));
-        String date = Integer.toString(cal.get(Calendar.DATE));
-        String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
-        String min = Integer.toString(cal.get(Calendar.MINUTE));
-        String dateString = year + ";" + month + ";" + date + ";" + hour + ";" + min;
+        String dateString = Converter.calendarToDatabaseString(reminder.getDate());
 
         // Converts the reminder end date to a string on the format year;month;date;hour;min
         String endDateString = "0";
         if(reminder.getEndDate() != null) {
-            GregorianCalendar endCal = reminder.getEndDate();
-            String endYear = Integer.toString(endCal.get(Calendar.YEAR));
-            String endMonth = Integer.toString(endCal.get(Calendar.MONTH));
-            String endDate = Integer.toString(endCal.get(Calendar.DATE));
-            String endHour = Integer.toString(endCal.get(Calendar.HOUR_OF_DAY));
-            String endMin = Integer.toString(endCal.get(Calendar.MINUTE));
-            endDateString = endYear + ";" + endMonth + ";" + endDate + ";" + endHour + ";" + endMin;
+            endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
         }
 
         // Converts the reminder days array to a string on the format day1;day2;..;
-        String dayString = "";
-        for (int day : reminder.getDays()) {
-            dayString += day + ";";
-        }
-
+        String dayString = Converter.daysArrayToDatabaseString(reminder.getDays());
 
         // Prepares the statement
         ContentValues values = new ContentValues();
@@ -235,30 +220,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Converts the reminder date to a string on the format year;month;day;hour;min
-        GregorianCalendar cal = reminder.getDate();
-        String year = Integer.toString(cal.get(Calendar.YEAR));
-        String month = Integer.toString(cal.get(Calendar.MONTH));
-        String date = Integer.toString(cal.get(Calendar.DATE));
-        String hour = Integer.toString(cal.get(Calendar.HOUR_OF_DAY));
-        String min = Integer.toString(cal.get(Calendar.MINUTE));
-        String dateString = year + ";" + month + ";" + date + ";" + hour + ";" + min;
+        String dateString = Converter.calendarToDatabaseString(reminder.getDate());
 
         // Converts the reminder int[] days to a string on the format day1;day2;..;
-        String dayString = "";
-        for (int day : reminder.getDays()) {
-            dayString += day + ";";
-        }
+        String dayString = Converter.daysArrayToDatabaseString(reminder.getDays());
 
         // Converts the reminder endDate to a string on the format year;month;day;hour;min
         String endDateString = "0";
         if(reminder.getEndDate() != null) {
-            GregorianCalendar endCal = reminder.getEndDate();
-            String endYear = Integer.toString(endCal.get(Calendar.YEAR));
-            String endMonth = Integer.toString(endCal.get(Calendar.MONTH));
-            String endDate = Integer.toString(endCal.get(Calendar.DATE));
-            String endHour = Integer.toString(endCal.get(Calendar.HOUR_OF_DAY));
-            String endMin = Integer.toString(endCal.get(Calendar.MINUTE));
-            endDateString = endYear + ";" + endMonth + ";" + endDate + ";" + endHour + ";" + endMin;
+            endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
         }
 
         // Prepares the statement
@@ -305,39 +275,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 Double dosage = cursor.getDouble(9);
 
                 // Converting daysString to an int[] containing all the days.
-                int[] days;
-                if (dayString.length() > 0) {
-                    String[] daysStringArray = dayString.split(";");
-                    days = new int[daysStringArray.length];
-                    for (int i = 0; i < daysStringArray.length; i++) {
-                        days[i] = Integer.parseInt(daysStringArray[i]);
-                    }
-                } else {
-                    days = new int[]{};
-                }
+                int[] days = Converter.databaseDayStringToArray(dayString);
 
                 // Converting dateString to GregorianCalendar
-                String[] dateArray = dateString.split(";");
-                GregorianCalendar date = new GregorianCalendar(
-                        Integer.parseInt(dateArray[0]), //Year
-                        Integer.parseInt(dateArray[1]), //Month
-                        Integer.parseInt(dateArray[2]), //Date
-                        Integer.parseInt(dateArray[3]), //Hour
-                        Integer.parseInt(dateArray[4])  //Minute
-                );
+                GregorianCalendar date = Converter.databaseDateStringToCalendar(dateString);
 
                 // Converting endDateString to GregorianCalendar
                 GregorianCalendar endCal = new GregorianCalendar();
                 if(!endDateString.equals("0")) {
-                    String[] endDateArray = endDateString.split(";");
-                        endCal = new GregorianCalendar(
-                            Integer.parseInt(endDateArray[0]), //Year
-                            Integer.parseInt(endDateArray[1]), //Month
-                            Integer.parseInt(endDateArray[2]), //Date
-                            Integer.parseInt(endDateArray[3]), //Hour
-                            Integer.parseInt(endDateArray[4])  //Minute
-                    );
+                    endCal = Converter.databaseDateStringToCalendar(endDateString);
                 }
+
                 Reminder reminder = new Reminder();
                 reminder.setReminderId(id);
                 reminder.setOwnerId(ownerId);

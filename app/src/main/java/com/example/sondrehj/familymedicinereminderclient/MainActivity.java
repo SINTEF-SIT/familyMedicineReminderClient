@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.Notification;
@@ -447,6 +448,7 @@ public class MainActivity extends AppCompatActivity
      * @param intent the intent instance created by getNotification(String content, Reminder reminder)
      */
     protected void onNewIntent(Intent intent) {
+
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         System.out.println("--------Notification Pressed--------");
         System.out.println(" Notification for reminder: " + reminder.getName());
