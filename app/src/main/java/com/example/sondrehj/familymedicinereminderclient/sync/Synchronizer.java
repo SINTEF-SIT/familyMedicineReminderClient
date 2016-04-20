@@ -1,7 +1,14 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.content.Context;
+
+import com.example.sondrehj.familymedicinereminderclient.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
+import com.example.sondrehj.familymedicinereminderclient.modals.LinkingDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
@@ -53,7 +60,7 @@ public class Synchronizer {
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-
+                BusService.getBus().post(new LinkingRequestEvent());
             }
 
             @Override
@@ -62,11 +69,4 @@ public class Synchronizer {
             }
         });
     }
-
-
-
-
-
-
-
 }

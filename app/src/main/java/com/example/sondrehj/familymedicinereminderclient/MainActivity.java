@@ -8,13 +8,16 @@ import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,9 +27,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.modals.LinkingDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
@@ -38,6 +44,8 @@ import com.example.sondrehj.familymedicinereminderclient.playservice.Registratio
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +59,6 @@ public class MainActivity extends AppCompatActivity
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener,
         EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
-
 
     private static Account account;
     NotificationManager manager;
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //get the accountmanager
         AccountManager accountManager = AccountManager.get(this);
         Account[] reminderAccounts = accountManager.
                 getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
@@ -127,6 +135,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        BusService.getBus().register(this);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        BusService.getBus().unregister(this);
+    }
+
     /**
      * Gets the instantiazed account of the system, used with the SyncAdapter and
      * ContentResolver, might have to be moved sometime.
@@ -136,15 +156,22 @@ public class MainActivity extends AppCompatActivity
         return account;
     }
 
-    //@Override
-    //public void onBackPressed() {
-    //    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    //    if (drawer.isDrawerOpen(GravityCompat.START)) {
-    //        drawer.closeDrawer(GravityCompat.START);
-    //    } else {
-    //        super.onBackPressed();
-    //    }
-    //}
+    /*@Override
+    public void onBackPressed() {
+       DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+       if (drawer.isDrawerOpen(GravityCompat.START)) {
+           drawer.closeDrawer(GravityCompat.START);
+       } else {
+           super.onBackPressed();
+       }
+    }*/
+
+    @Subscribe
+    public void handleLinkingRequest(LinkingRequestEvent event) {
+        FragmentManager fm = getSupportFragmentManager();
+        LinkingDialogFragment linkingDialogFragment = new LinkingDialogFragment();
+        linkingDialogFragment.show(fm, "linking_request_fragment");
+    }
 
     /**
      *

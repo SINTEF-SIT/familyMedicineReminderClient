@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,7 +19,11 @@ import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,6 +52,7 @@ public class LinkingFragment extends android.app.Fragment{
     @Bind(R.id.link_patient_infotext) TextView infoText;
     @Bind(R.id.link_patient_id_helper) TextView idHelper;
     @Bind(R.id.link_patient_id) TextView userID;
+    private static Bus bus;
 
     public LinkingFragment() {
         // Required empty public constructor
@@ -65,6 +72,7 @@ public class LinkingFragment extends android.app.Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BusService.getBus().register(this);
     }
 
     @Override
@@ -109,9 +117,12 @@ public class LinkingFragment extends android.app.Fragment{
         Log.d("Linking", "initiating linking with account ID " + idToLinkWith + ".");
         MyCyFAPPServiceAPI api = RestService.createRestService();
 
-        //TODO: fetch this user's ID to send with the request.
+        AccountManager accountManager = AccountManager.get(getActivity());
+        Account[] reminderAccounts = accountManager.
+                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+        final Account account = reminderAccounts[0];
 
-        Call<User> call = api.sendLinkingRequest("12345", idToLinkWith);
+        Call<User> call = api.sendLinkingRequest(account.name, idToLinkWith);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -164,12 +175,14 @@ public class LinkingFragment extends android.app.Fragment{
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        BusService.getBus().register(this);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        BusService.getBus().unregister(this);
     }
 
     @Override public void onDestroyView() {

@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import retrofit2.Call;
@@ -21,9 +23,11 @@ import retrofit2.Response;
  * Created by nikolai on 07/04/16.
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
+    private Context context;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        this.context = context;
     }
 
     /**
@@ -57,6 +61,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 //syncMedications();
                 break;
             case "linkingRequest":
+                //incoming linking request from push notification
+                BusService.getBus().post(new LinkingRequestEvent());
 
                 break;
         }
