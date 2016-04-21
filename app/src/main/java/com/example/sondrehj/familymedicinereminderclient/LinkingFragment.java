@@ -20,10 +20,9 @@ import android.widget.TextView;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
+
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,6 +52,7 @@ public class LinkingFragment extends android.app.Fragment{
     @Bind(R.id.link_patient_id_helper) TextView idHelper;
     @Bind(R.id.link_patient_id) TextView userID;
     private static Bus bus;
+    private Context context;
 
     public LinkingFragment() {
         // Required empty public constructor
@@ -80,13 +80,18 @@ public class LinkingFragment extends android.app.Fragment{
         View view = inflater.inflate(R.layout.fragment_linking, container, false);
         ButterKnife.bind(this, view);
         getActivity().setTitle("Linking");
+
+        Account account = MainActivity.getAccount(context);
+
+        String userRole = AccountManager.get(context).getUserData(account, "userRole");
+
         //TODO: retrieve user type (guardian or patient). Use this to build the interface.
-        if (true) {
+        if (userRole.equals("patient")) {
             linkButton.setVisibility(View.GONE);
             statusIcon.setVisibility(View.GONE);
             idInputHelper.setVisibility(View.GONE);
             idInput.setVisibility(View.GONE);
-            userID.setText(MainActivity.getAccount().name);
+            userID.setText(account.name);
         } else {
             infoText.setVisibility(View.GONE);
             idHelper.setVisibility(View.GONE);
@@ -176,6 +181,7 @@ public class LinkingFragment extends android.app.Fragment{
                     + " must implement OnFragmentInteractionListener");
         }
         BusService.getBus().register(this);
+        this.context = context;
     }
 
     @Override

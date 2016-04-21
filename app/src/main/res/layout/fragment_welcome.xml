@@ -1,21 +1,52 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.sondrehj.familymedicinereminderclient.WelcomeFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.WelcomeFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:weightSum="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Continue"
-        android:id="@+id/continue_button"
-        android:layout_gravity="center"
-        android:allowUndo="false" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Please begin by selecting your role:"
+            android:id="@+id/welcome_info_text"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp" />
 
-</FrameLayout>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_patient_button"
+            android:text="User"
+            android:drawableLeft="@drawable/ic_person_black_48dp"
+            android:layout_gravity="center_horizontal"
+            android:width="180dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="10dp"
+            android:paddingLeft="25dp"
+            android:transitionName="pad"
+            android:height="90dp" />
+        />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_guardian_button"
+            android:text="Guardian"
+            android:drawableLeft="@drawable/ic_supervisor_account_black_48dp"
+            android:layout_gravity="center_horizontal"
+            android:width="180dp"
+            android:layout_marginTop="10dp"
+            android:height="90dp" />
+    </LinearLayout>
+
+</RelativeLayout>

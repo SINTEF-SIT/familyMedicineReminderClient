@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity
         EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
 
     private SyncReceiver syncReceiver;
-    private static Account account;
     NotificationManager manager;
     Notification myNotication;
     Boolean started = false;
@@ -92,19 +91,16 @@ public class MainActivity extends AppCompatActivity
                 getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
 
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
-
         if(reminderAccounts.length == 0) {
             changeFragment(new WelcomeFragment());
         }
         else {
-            account = reminderAccounts[0];
+            Account account = reminderAccounts[0];
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
             changeFragment(new MedicationListFragment());
         }
-
-        Log.d("Sync", "Sync set to automatic.");
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -133,6 +129,10 @@ public class MainActivity extends AppCompatActivity
         ReminderListContent.ITEMS.addAll(reminders);
     }
 
+    public static Account getAccount(Context context) {
+        return AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient")[0];
+    }
+
     @Override
     public void onResume(){
         super.onResume();
@@ -155,15 +155,6 @@ public class MainActivity extends AppCompatActivity
         //unregistering to prevent errors
         BusService.getBus().unregister(this);
         unregisterReceiver(syncReceiver);
-    }
-
-    /**
-     * Gets the instantiazed account of the system, used with the SyncAdapter and
-     * ContentResolver, might have to be moved sometime.
-     * @return
-     */
-    public static Account getAccount(){
-        return account;
     }
 
     /*@Override
@@ -190,7 +181,6 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onBackPressed() {
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -567,21 +557,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void OnNewAccountCreated(String userId, String password) {
+    public void OnNewAccountCreated(String userId, String password, String userRole) {
         System.out.println("In new account created!");
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
         AccountManager manager = AccountManager.get(this);
         Bundle userdata = new Bundle();
         userdata.putString("passtoken", password);
         userdata.putString("userId", userId);
+        userdata.putString("userRole", userRole);
         manager.addAccountExplicitly(newAccount, password, userdata);
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
-        MainActivity.account = newAccount;
 
         //check if google play services are enabled (required for GCM).
         if (checkPlayServices()) {
-            // Start IntentService to register this application with GCM.
+            // Start IntentService to register this application with GCM and
+            // associate user's token with the user on the back-end server.
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }

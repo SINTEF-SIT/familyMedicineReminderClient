@@ -25,10 +25,7 @@ public class LinkingDialogFragment extends DialogFragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final MyCyFAPPServiceAPI api = RestService.createRestService();
 
-            AccountManager accountManager = AccountManager.get(getContext());
-            Account[] reminderAccounts = accountManager.
-                    getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
-            final Account account = reminderAccounts[0];
+            final Account account = MainActivity.getAccount(getContext());
 
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
