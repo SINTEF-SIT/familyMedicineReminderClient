@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.sondrehj.familymedicinereminderclient.ReminderListFragment"
+        tools:context=".fragments.ReminderListFragment"
         tools:listitem="@layout/fragment_reminder_item2" />
 
     <android.support.design.widget.FloatingActionButton
@@ -25,7 +25,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="16dp"
-        app:backgroundTint="#10b318"
+        app:backgroundTint="#FF8C00"
         android:tint="#ffff"
         android:src="@android:drawable/ic_input_add" />
 

@@ -1,25 +1,25 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.fragments;
 
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sondrehj.familymedicinereminderclient.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MedicationCabinetFragment.OnFragmentInteractionListener} interface
+ * {@link AccountAdministrationFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MedicationCabinetFragment#newInstance} factory method to
+ * Use the {@link AccountAdministrationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MedicationCabinetFragment extends android.app.Fragment {
+public class AccountAdministrationFragment extends android.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -31,7 +31,7 @@ public class MedicationCabinetFragment extends android.app.Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public MedicationCabinetFragment() {
+    public AccountAdministrationFragment() {
         // Required empty public constructor
     }
 
@@ -39,17 +39,11 @@ public class MedicationCabinetFragment extends android.app.Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MedicationCabinetFragment.
+     * @return A new instance of fragment AccountAdministrationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MedicationCabinetFragment newInstance(String param1, String param2) {
-        MedicationCabinetFragment fragment = new MedicationCabinetFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
+    public static AccountAdministrationFragment newInstance() {
+        AccountAdministrationFragment fragment = new AccountAdministrationFragment();
         return fragment;
     }
 
@@ -66,27 +60,13 @@ public class MedicationCabinetFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_medication_cabinet, container, false);
-
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).changeFragment(new MedicationStorageFragment());
-            }
-        });
-
-        MedicationListFragment fragment = new MedicationListFragment();
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.add(R.id.fragment_list_container, fragment).commit();
-
-        return view;
+        return inflater.inflate(R.layout.fragment_account_administration, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onMedicationCabinetFragmentInteraction(uri);
+            mListener.onAccountAdminFragmentInteraction(uri);
         }
     }
 
@@ -107,9 +87,6 @@ public class MedicationCabinetFragment extends android.app.Fragment {
         mListener = null;
     }
 
-
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -122,6 +99,6 @@ public class MedicationCabinetFragment extends android.app.Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onMedicationCabinetFragmentInteraction(Uri uri);
+        void onAccountAdminFragmentInteraction(Uri uri);
     }
 }
