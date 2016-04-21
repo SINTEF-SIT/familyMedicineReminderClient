@@ -101,10 +101,8 @@ public class MainActivity extends AppCompatActivity
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
-
             changeFragment(new MedicationListFragment());
         }
-
 
         Log.d("Sync", "Sync set to automatic.");
 
@@ -133,8 +131,6 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Reminder> reminders = db.getReminders();
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
-
-
     }
 
     @Override
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity
         BusService.getBus().register(this);
 
         /**
-         * Registering the SyncReceiver to receive intents from the SyncAdapter,
+         * Registering the SyncReceiver to receive intents from the SyncAdapter, we need this
          * because the Bus cannot register to the SyncAdaptar (it is another process altogether).
          */
         syncReceiver = new SyncReceiver();
