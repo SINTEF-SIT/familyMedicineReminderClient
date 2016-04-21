@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.WelcomeFragment">
+    tools:context="com.example.sondrehj.familymedicinereminderclient.WelcomeFragment"
+    android:background="#EEEEEE">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -12,15 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="1"
-        android:layout_gravity="center|right"
-        android:background="#ffffff">
+        android:layout_gravity="center|right">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#c0c0c0"/>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:layout_marginTop="10dp"
             android:background="#ffffff">
 
             <TextView
@@ -52,7 +56,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-            android:background="#ffffff">
+            android:background="#ffffff"
+            android:layout_marginTop="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -93,11 +98,11 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:text="Continue"
+                android:text="Create user"
                 android:id="@+id/continue_button"
                 android:allowUndo="false"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#525252"
+                android:textColor="#454545"
                 android:textSize="18sp"
                 android:background="@drawable/button_shape"/>
 
@@ -118,7 +123,7 @@
                 android:id="@+id/link_button"
                 android:allowUndo="false"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#525252"
+                android:textColor="#454545"
                 android:textSize="18sp"
                 android:background="@drawable/button_shape"/>
 
