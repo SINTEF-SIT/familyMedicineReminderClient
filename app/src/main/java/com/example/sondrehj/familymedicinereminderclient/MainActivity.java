@@ -38,6 +38,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public String newReminderListGetSelectedDaysText(int[] reminder_days) {
-        return getSelectedDaysText(reminder_days);
+        return Converter.daysArrayToSelectedDaysText(reminder_days);
     }
 
     @Override
@@ -323,6 +324,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onReminderDeleteButtonClicked(Reminder reminder) {
+
+        // Cancel notification if set
+        if(reminder.getIsActive()){
+            cancelNotification(reminder.getReminderId());
+        }
+
+        // Delete reminder from local database
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.deleteReminder(reminder);
+    }
+
+    @Override
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
@@ -340,11 +354,6 @@ public class MainActivity extends AppCompatActivity
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
-    }
-
-    @Override
-    public String ReminderListGetSelectedDaysText(int[] reminder_days) {
-        return getSelectedDaysText(reminder_days);
     }
 
     @Override
@@ -481,40 +490,6 @@ public class MainActivity extends AppCompatActivity
                 PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingIntent);
         System.out.println("Reminder: " + id + " was deactivated");
-    }
-
-    public String getSelectedDaysText(int[] reminder_days) {
-        String[] days_abb = new String[]{"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
-        String[] reminder_days_abb = new String[reminder_days.length];
-        String s = "";
-        if (reminder_days.length >= 1) {
-            for (int i = 0; i < reminder_days.length; i++) {
-                reminder_days_abb[i] = days_abb[reminder_days[i]];
-            }
-            for (String day_abb : days_abb) {
-                if (!day_abb.equals("Sa") && !day_abb.equals("Su")) {
-                    if (Arrays.asList(reminder_days_abb).contains(day_abb)) {
-                        s += "<b>" + day_abb + ", </b>";
-                    } else {
-                        s += "<font color=\"#c5c5c5\">" + day_abb + ", " + "</font>";
-                    }
-                }
-            }
-            if (Arrays.asList(reminder_days_abb).contains("Sa")) {
-                s += "<b>Sa, </b>";
-            } else {
-                s += "<font color=\"#c5c5c5\">" + "Sa, " + "</font>";
-            }
-            if(Arrays.asList(reminder_days_abb).contains("Su")) {
-                s += "<b>Su</b>";
-            } else {
-                s += "<font color=\"#c5c5c5\">" + "Su" + "</font>";
-            }
-        } else {
-            s = "<font color=\"#c5c5c5\">" + "Mo, Tu, We, Th, Fr, Sa, Su" + "</font>";
-            //s = "Mo, Tu, We, Th, Fr, Sa, Su";
-        }
-        return s;
     }
 
     @Override
