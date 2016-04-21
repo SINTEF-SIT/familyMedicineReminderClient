@@ -42,6 +42,12 @@ public class MedicationListFragment extends android.app.Fragment{
         return fragment;
     }
 
+    public void notifyChanged() {
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
+        recView.getAdapter().notifyDataSetChanged();
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

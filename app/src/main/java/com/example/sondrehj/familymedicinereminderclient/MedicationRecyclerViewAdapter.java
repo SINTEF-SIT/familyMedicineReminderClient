@@ -30,6 +30,12 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
         this.context = context;
     }
 
+    public void changeReminders(List<Medication> medications) {
+        mValues.clear();
+        mValues.addAll(medications);
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())

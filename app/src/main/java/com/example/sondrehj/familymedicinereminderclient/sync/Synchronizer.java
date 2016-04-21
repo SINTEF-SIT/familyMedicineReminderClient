@@ -1,10 +1,16 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.accounts.AccountManager;
+import android.media.MediaTimestamp;
+
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
@@ -37,15 +43,19 @@ public class Synchronizer {
                 System.out.println("In syncreminders");
                 ArrayList<Reminder> dbReminders = db.getReminders();
                 for(Reminder serverReminder : response.body()) {
-                    boolean changed = false;
+
+                    System.out.println("in add reminder");
+                    db.addReminder(serverReminder);
+
+                    /*boolean changed = false;
                     for (Reminder dbReminder : dbReminders) {
 
                         // If the two have the same server ID, we know they are the same, and we request
                         // an update. If we made a change, we want to move on to the next serverReminder.
                         if (serverReminder.getReminderServerId() == dbReminder.getReminderServerId()) {
                             dbReminder.setName(serverReminder.getName());
-                            dbReminder.setDate(serverReminder.getDate());
-                            dbReminder.setEndDate(serverReminder.getEndDate());
+                            dbReminder.setDate(Converter.databaseDateStringToCalendar(serverReminder.getDateString()));
+                            dbReminder.setEndDate(Converter.databaseDateStringToCalendar(serverReminder.getEndDateString()));
                             dbReminder.setMedicine(serverReminder.getMedicine());
                             dbReminder.setDosage(serverReminder.getDosage());
                             dbReminder.setIsActive(serverReminder.getIsActive());
@@ -53,31 +63,38 @@ public class Synchronizer {
                             changed = true;
                         }
                         if (changed) continue;
-                    }
-                    if (changed) continue;
-                    else {
-                        db.addReminder(serverReminder);
-                    }
+                    }*/
                 }
             }
 
             @Override
             public void onFailure(Call<List<Reminder>> call, Throwable t) {
-
+                System.out.println("Could not retrieve reminders: " + t.getMessage());
             }
         });
         return false;
     }
 
     public Boolean syncMedications() {
+        Call<List<Medication>> call = restApi.getUserMedicationList(userToSync);
+        call.enqueue(new Callback<List<Medication>>() {
+            @Override
+            public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
+                System.out.println("In sync medications");
+                ArrayList<Reminder> dbMedications = db.getReminders();
+                for(Medication serverMedication : response.body()) {
+                    System.out.println("in add medications");
+                    db.addMedication(serverMedication);
+                    MainActivity.refreshMedicationContent(db);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Medication>> call, Throwable t) {
+                System.out.println("Could not retrieve medications: " + t.getMessage());
+            }
+        });
         return true;
     }
-
-
-
-
-
-
-
-
 }

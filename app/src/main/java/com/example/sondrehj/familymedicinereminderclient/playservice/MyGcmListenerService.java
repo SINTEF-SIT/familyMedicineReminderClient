@@ -34,6 +34,7 @@ public class MyGcmListenerService extends GcmListenerService {
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.putExtra("type", "notifcationIntent");
 
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);
@@ -41,7 +42,7 @@ public class MyGcmListenerService extends GcmListenerService {
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
         ContentResolver.requestSync(
-                MainActivity.getAccount(getApplicationContext()),
+                MainActivity.getAccount(getBaseContext()),
                 AUTHORITY,
                 extras);
         /**

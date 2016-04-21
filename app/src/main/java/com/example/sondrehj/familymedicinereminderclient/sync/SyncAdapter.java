@@ -2,9 +2,11 @@ package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,9 +26,14 @@ import retrofit2.Response;
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
+    private Context context;
+
     public SyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
+        this.context = context;
     }
+
+
 
     /**
      * This function is ran when requestSync is called from anywhere in the
@@ -50,16 +57,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
+        MySQLiteHelper db = new MySQLiteHelper(getContext());
 
-        Synchronizer synchronizer = new Synchronizer(account.name, api, new MySQLiteHelper(getContext()));
+        Synchronizer synchronizer = new Synchronizer(account.name, api, db);
         switch (notificationType) {
             case "remindersChanged":
+                System.out.println("in reminderschanged");
                 synchronizer.syncReminders();
-                break;
-            case "medicationsChanged":
-                //syncMedications();
-                break;
+                Intent intent = new Intent();
 
+            case "medicationsChanged":
+                synchronizer.syncMedications();
+                break;
         }
     }
 }
