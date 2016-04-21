@@ -61,7 +61,7 @@ public interface MyCyFAPPServiceAPI {
     Call<User> getChildren(@Path("userID") String userID);
 
     @POST("user/{userID}/children")
-    Call<User> addChild(@Path("userID") String userID);
+    Call<User> addChild(@Path("userID") String userID); //TODO: needs to send notion of a child.
 
     @POST("user")
     Call<User> createUser(@Body User user);
@@ -74,9 +74,10 @@ public interface MyCyFAPPServiceAPI {
      * LINKING REQUESTS
      *
      */
-    @GET("user/{userID}/link")
-    Call<User> getLinkingRequests(@Path("userID") String userID);
 
-    @POST("user/{userID}/link/{withID}")
+    @POST("user/{userID}/linking/{withID}")
     Call<User> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
+
+    @POST("user/{userID}/linkingresponse/{response}")
+    Call<User> responseToLinkingRequest(@Path("userID") String userID, @Path("response") String response);
 }

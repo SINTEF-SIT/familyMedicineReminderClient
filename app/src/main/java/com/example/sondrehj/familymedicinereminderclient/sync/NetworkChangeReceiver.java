@@ -17,8 +17,7 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
  * A class that extends the BroadcastReceiver class, and implements the function onReceive.
  * It functions to notify of network changes on the device.
  *
- * TODO: extend WakefulBroadcastReceiver?
- */
+ * */
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
     // Content provider authority
@@ -34,11 +33,11 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
         if(ServiceManager.isNetworkAvailable(context)) {
             //Toast.makeText(context, "Network available - do stuff!", Toast.LENGTH_LONG).show();
             ContentResolver.setSyncAutomatically(
-                    MainActivity.getAccount(),
+                    MainActivity.getAccount(context),
                     AUTHORITY,
                     true);
             ContentResolver.requestSync(
-                    MainActivity.getAccount(),
+                    MainActivity.getAccount(context),
                     AUTHORITY,
                     Bundle.EMPTY);
         }
