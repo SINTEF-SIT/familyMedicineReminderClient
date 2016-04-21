@@ -323,6 +323,19 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onReminderDeleteButtonClicked(Reminder reminder) {
+
+        // Cancel notification if set
+        if(reminder.getIsActive()){
+            cancelNotification(reminder.getReminderId());
+        }
+
+        // Delete reminder from local database
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.deleteReminder(reminder);
+    }
+
+    @Override
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
@@ -340,11 +353,6 @@ public class MainActivity extends AppCompatActivity
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
-    }
-
-    @Override
-    public String ReminderListGetSelectedDaysText(int[] reminder_days) {
-        return getSelectedDaysText(reminder_days);
     }
 
     @Override

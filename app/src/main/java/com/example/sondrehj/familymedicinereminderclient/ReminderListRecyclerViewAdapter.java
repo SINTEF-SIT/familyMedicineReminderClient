@@ -105,10 +105,9 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             @Override
             public void onClick(View v) {
                 remove(holder.getAdapterPosition());
-                // TODO: delete  reminder from database & cancel notification if set
+                mListener.onReminderDeleteButtonClicked(holder.mReminder);
             }
         });
-
     }
 
     @Override

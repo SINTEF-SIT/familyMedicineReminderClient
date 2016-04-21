@@ -106,7 +106,7 @@ public class ReminderListFragment extends android.app.Fragment {
         // TODO: Update argument type and name
         void onReminderListItemClicked(Reminder reminder);
         void onNewReminderButtonClicked();
+        void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
-        String ReminderListGetSelectedDaysText(int[] reminder_days);
     }
 }
