@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.MedicationListFragment.OnListFragmentInteractionListener;
@@ -33,7 +35,7 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.medication_list_item2, parent, false);
+                .inflate(R.layout.medication_list_item3, parent, false);
         return new ViewHolder(view);
     }
 
@@ -41,31 +43,51 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
 
-        //Check if the amount got decimals.
-        if (mValues.get(position).getCount() % 1 == 0){
+        // Set the name
+        holder.mContentView.setText(mValues.get(position).getName());
+
+        // Set the amount.
+        if (mValues.get(position).getCount() % 1 == 0) {
             int i = mValues.get(position).getCount().intValue();
             String amount = Integer.toString(i) + " " + mValues.get(position).getUnit();
-            holder.mIdView.setText(amount);
+            holder.mMedAmountView.setText(amount);
         } else {
             String amount = Double.toString(mValues.get(position).getCount())
                     + " " + mValues.get(position).getUnit();
-            holder.mIdView.setText(amount);
+            holder.mMedAmountView.setText(amount);
         }
 
-
-        holder.mContentView.setText(mValues.get(position).getName());
+        // Set the icon
+        switch (holder.mItem.getUnit()) {
+            case "mg":case "pill(s)": case "mcg":case "g":
+                holder.mMedIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_pill));
+                break;
+            case "inhalation":
+                holder.mMedIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_lungs));
+                break;
+            case "ml":case "unit":
+                holder.mMedIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_bottle));
+                break;
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 if (null != mListener) {
                     mListener.onMedicationListFragmentInteraction(holder.mItem);
                 }
+            }
+        });
 
-                //Changes view to MedicationStorage
-                //((MainActivity)context).changeFragment(new MedicationStorageFragment());
+        holder.mDeleteWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    remove(holder.getAdapterPosition());
+
+                    //TODO: remove medication from database (handle notification conflict if medication is attached to reminder)
+                    //mListener.onMedicationListFragmentInteraction(holder.mItem);
+                }
             }
         });
     }
@@ -75,21 +97,29 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
         return mValues.size();
     }
 
+    public void remove(int position) {
+        mValues.remove(position);
+        notifyItemRemoved(position);
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final View mView;
-        public final TextView mIdView;
+        public final TextView mMedAmountView;
         public final TextView mContentView;
+        public final FrameLayout mDeleteWrapper;
+        public final ImageView mMedIcon;
         public Medication mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mMedAmountView = (TextView) view.findViewById(R.id.med_amount_left_text);
+            mContentView = (TextView) view.findViewById(R.id.med_content);
+            mDeleteWrapper = (FrameLayout) view.findViewById(R.id.med_delete_wrapper);
+            mMedIcon = (ImageView) view.findViewById(R.id.med_icon);
         }
-
 
         @Override
         public String toString() {
