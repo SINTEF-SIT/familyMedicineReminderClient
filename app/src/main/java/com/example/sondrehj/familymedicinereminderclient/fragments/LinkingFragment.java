@@ -84,8 +84,10 @@ public class LinkingFragment extends android.app.Fragment{
         getActivity().setTitle("Linking");
 
         Account account = MainActivity.getAccount(context);
+        Log.d("LinkingFragment", "Accountname: " + account.name);
 
         String userRole = AccountManager.get(context).getUserData(account, "userRole");
+        Log.d("LinkingFragment", "userRole equals: " + userRole);
 
         //TODO: retrieve user type (guardian or patient). Use this to build the interface.
         if (userRole.equals("patient")) {

@@ -565,14 +565,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole) {
-        System.out.println("In new account created!");
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
         AccountManager manager = AccountManager.get(this);
-        Bundle userdata = new Bundle();
-        userdata.putString("passtoken", password);
-        userdata.putString("userId", userId);
-        userdata.putString("userRole", userRole);
-        manager.addAccountExplicitly(newAccount, password, userdata);
+        boolean saved = manager.addAccountExplicitly(newAccount, password, null);
+        if (saved){
+            manager.setUserData(newAccount, "passtoken", password);
+            manager.setUserData(newAccount, "userId", userId);
+            manager.setUserData(newAccount, "userRole", userRole);
+        }
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
