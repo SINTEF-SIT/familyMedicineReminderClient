@@ -28,7 +28,7 @@ GUARDIAN/GUARDEE
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment"
+    tools:context=".fragments.AccountAdministrationFragment"
     android:fillViewport="true"
     android:focusableInTouchMode="false">
 
@@ -37,7 +37,7 @@ GUARDIAN/GUARDEE
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
+        tools:context=".fragments.NewReminderFragment"
         android:id="@+id/newReminderLayout"
         android:showDividers="middle"
         android:dividerPadding="10dp">

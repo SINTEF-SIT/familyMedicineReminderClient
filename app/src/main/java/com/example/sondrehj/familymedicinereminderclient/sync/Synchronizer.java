@@ -1,18 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
-import android.app.Activity;
-import android.app.FragmentManager;
-import android.content.Context;
-
-import com.example.sondrehj.familymedicinereminderclient.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
-import com.example.sondrehj.familymedicinereminderclient.modals.LinkingDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
 
-import java.sql.SQLOutput;
 import java.util.List;
 
 import retrofit2.Call;

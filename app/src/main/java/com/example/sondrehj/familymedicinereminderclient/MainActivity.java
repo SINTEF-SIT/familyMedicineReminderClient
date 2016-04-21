@@ -3,13 +3,11 @@ package com.example.sondrehj.familymedicinereminderclient;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,12 +31,21 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.DatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.LinkingFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationCabinetFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationStorageFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.NewReminderFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.ReminderListFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.WelcomeFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.LinkingDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
-import com.example.sondrehj.familymedicinereminderclient.WelcomeFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
@@ -48,12 +55,9 @@ import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 
@@ -62,7 +66,7 @@ public class MainActivity extends AppCompatActivity
         AccountAdministrationFragment.OnFragmentInteractionListener, NewReminderFragment.OnNewReminderInteractionListener,
         ReminderListFragment.OnReminderListFragmentInteractionListener, LinkingFragment.OnLinkingFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener, MedicationStorageFragment.OnFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
-        SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboard.OnFragmentInteractionListener,
+        SelectDaysDialogFragment.OnDaysDialogResultListener, GuardianDashboardFragment.OnFragmentInteractionListener,
         EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
 
     private SyncReceiver syncReceiver;
@@ -278,7 +282,7 @@ public class MainActivity extends AppCompatActivity
             //TODO: fill inn changefragment to settings fragment
             changeFragment(AccountAdministrationFragment.newInstance());
         } else if (id == R.id.nav_guardian_dashboard) {
-            changeFragment(new GuardianDashboard());
+            changeFragment(new GuardianDashboardFragment());
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
         }
