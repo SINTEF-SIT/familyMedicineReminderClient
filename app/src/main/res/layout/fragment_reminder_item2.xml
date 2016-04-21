@@ -87,7 +87,7 @@
 
         <FrameLayout
             android:id="@+id/delete_wrapper"
-            android:layout_width="38dp"
+            android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="right">
 
@@ -96,6 +96,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:text="x"
+                android:layout_marginLeft="20dp"
                 android:textColor="#9E9E9E"
                 android:textSize="30sp"
                 android:layout_gravity="top|right"
