@@ -13,15 +13,15 @@
     android:divider="@drawable/horizontal_divider"
     android:showDividers="middle">
 
-
     <Switch
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Reminder"
+        android:text="Active"
         android:id="@+id/reminderSwitch"
         android:checked="true"
-        android:textSize="22sp"
-        android:padding="10dp" />
+        android:textSize="18sp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="10dp"/>
 
     <FrameLayout
         android:orientation="horizontal"
@@ -114,6 +114,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:layout_marginTop="10dp"
         android:id="@+id/linearLayout"
         android:clickable="true"
         android:layout_marginRight="0dp"
@@ -126,6 +127,7 @@
             android:id="@+id/medicationSwitch"
             android:checked="false"
             android:textSize="22sp"
+            android:textColor="#03A9F4"
             android:padding="10dp" />
     </LinearLayout>
 
@@ -204,6 +206,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:id="@+id/repeatLayout">
 
         <Switch
@@ -213,6 +216,7 @@
             android:id="@+id/repeatSwitch"
             android:checked="false"
             android:textSize="22sp"
+            android:textColor="#03A9F4"
             android:padding="10dp" />
 
     </LinearLayout>

@@ -1,6 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
@@ -100,8 +102,45 @@ public class Reminder implements Serializable {
 
     public int[] getDays() { return days; }
 
+    public String getDateString(){
+        int hour = date.get(Calendar.HOUR_OF_DAY);
+        int minute = date.get(Calendar.MINUTE);
+        int year = date.get(Calendar.YEAR);
+        int month = date.get(Calendar.MONTH) + 1; //month is 0-indexed
+        final int day = date.get(Calendar.DAY_OF_MONTH);
+        String time = String.format("%02d:%02d", hour, minute);
+        String date = String.format("%02d.%02d.%4d", day, month, year);
+        return date + ". Time: " + time;
+    }
+
+    public String getEndDateString(){
+
+        if(endDate != null) {
+            int hour = endDate.get(Calendar.HOUR_OF_DAY);
+            int minute = endDate.get(Calendar.MINUTE);
+            int year = endDate.get(Calendar.YEAR);
+            int month = endDate.get(Calendar.MONTH) + 1; //month is 0-indexed
+            final int day = endDate.get(Calendar.DAY_OF_MONTH);
+            String time = String.format("%02d:%02d", hour, minute);
+            String date = String.format("%02d.%02d.%4d", day, month, year);
+            return date + ". Time: " + time;
+        }
+        return "Not set";
+    }
+
 
     public String toString() {
-        return ownerId + ", " + name;
+
+        String reminder_string =
+                " Name: " + getName() + "\n" +
+                " Date: " + getDateString()  + "\n" +
+                " End-date: " + getEndDateString() + "\n" +
+                " Days: " + Arrays.toString(getDays()) + "\n" +
+                " Active: " + getIsActive() + "\n";
+        if (getMedicine() != null) {
+            reminder_string += " Medication: " + getMedicine().getName() + "\n" +
+                    " Dosage: " + getDosage() + "\n";
+        }
+        return reminder_string;
     }
 }

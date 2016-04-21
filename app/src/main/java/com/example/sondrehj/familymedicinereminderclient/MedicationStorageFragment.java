@@ -155,15 +155,12 @@ public class MedicationStorageFragment extends android.app.Fragment {
 
         //Adds the new medicine to MedicationListContent
         MedicationListContent.ITEMS.add(0, medication);
-        // TODO: Add new medicine to database
+
+        // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
-
-       //ArrayList<Medication> meds = db.getMedications();
-       //for (Medication m : meds
-       //     ) {
-       //    System.out.println(m.toString());
-       //}
+        System.out.println("---------Medication Created---------" + "\n" + medication);
+        System.out.println("------------------------------------");
 
     }
 
@@ -177,9 +174,13 @@ public class MedicationStorageFragment extends android.app.Fragment {
         mMedicaiton.setName(medicationName.getText().toString());
         mMedicaiton.setCount(Double.parseDouble(medicationAmount.getText().toString()));
         mMedicaiton.setUnit(medicationUnit.getText().toString());
-        // TODO: Update existing medicine in database
+
+        // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.updateMedication(mMedicaiton);
+
+        System.out.println("---------Medication Updated---------" + "\n" + mMedicaiton);
+        System.out.println("------------------------------------");
     }
 
     // TODO: Rename method, update argument and hook method into UI event
