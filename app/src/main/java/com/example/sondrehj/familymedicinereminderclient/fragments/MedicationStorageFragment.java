@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -15,6 +15,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
+import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;

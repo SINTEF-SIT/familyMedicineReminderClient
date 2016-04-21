@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.sondrehj.familymedicinereminderclient.ReminderListFragment"
+        tools:context=".fragments.ReminderListFragment"
         tools:listitem="@layout/fragment_reminder_item2" />
 
     <android.support.design.widget.FloatingActionButton

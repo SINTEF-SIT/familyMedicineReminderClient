@@ -10,7 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.sondrehj.familymedicinereminderclient.MedicationListFragment.OnListFragmentInteractionListener;
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment.OnListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import java.util.List;
