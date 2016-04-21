@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -177,6 +178,19 @@ public class LinkingFragment extends android.app.Fragment{
 
     @Override
     public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnLinkingFragmentInteractionListener) {
+            mListener = (OnLinkingFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+        BusService.getBus().register(this);
+        this.context = context;
+    }
+
+    @Override
+    public void onAttach(Activity context) {
         super.onAttach(context);
         if (context instanceof OnLinkingFragmentInteractionListener) {
             mListener = (OnLinkingFragmentInteractionListener) context;
