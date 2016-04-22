@@ -143,8 +143,8 @@ public class MainActivity extends AppCompatActivity
         Collections.reverse(meds);
         MedicationListContent.ITEMS.clear();
         MedicationListContent.ITEMS.addAll(meds);
-        MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-        fragment.notifyChanged();
+        //MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+        //fragment.notifyChanged();
     }
 
     public static void refreshReminderContent(MySQLiteHelper db) {
@@ -596,6 +596,8 @@ public class MainActivity extends AppCompatActivity
             manager.setUserData(newAccount, "passtoken", password);
             manager.setUserData(newAccount, "userId", userId);
             manager.setUserData(newAccount, "userRole", userRole);
+            System.out.println(newAccount.toString());
+            System.out.println(AccountManager.get(getApplicationContext()).getUserData(newAccount, "userRole"));
         }
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);

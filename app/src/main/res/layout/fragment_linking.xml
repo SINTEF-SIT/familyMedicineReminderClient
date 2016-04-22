@@ -14,7 +14,6 @@
         android:layout_height="wrap_content">
 
         <TextView
-<<<<<<< HEAD
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:text="Enter the ID below in a Guardian app to link your user."
@@ -23,16 +22,7 @@
              android:width="200dp"
              android:layout_marginTop="50dp"
              android:layout_marginBottom="20dp" />
-=======
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Enter the ID below in a Guardian app to link your user."
-            android:id="@+id/link_patient_infotext"
-            android:layout_gravity="center_horizontal"
-            android:width="200dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp" />
->>>>>>> master
+
 
         <LinearLayout
             android:orientation="horizontal"
@@ -63,19 +53,12 @@
             android:layout_marginTop="20dp">
 
             <TextView
-<<<<<<< HEAD
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:text="Enter the ID from the childrens phone:"
                  android:id="@+id/link_guardian_id_helper"
                  android:layout_gravity="center" />
-=======
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Enter the ID from the childrens phone:"
-                android:id="@+id/link_guardian_id_helper"
-                android:layout_gravity="center" />
->>>>>>> master
+
 
 
             <EditText
@@ -100,17 +83,11 @@
             android:padding="10dp">
 
             <Button
-<<<<<<< HEAD
                  android:layout_width="match_parent"
                  android:layout_height="match_parent"
                  android:text="Link accounts"
                  android:id="@+id/link_guardian_button" />
-=======
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Link accounts"
-                android:id="@+id/link_guardian_button" />
->>>>>>> master
+
 
         </LinearLayout>
 

@@ -124,11 +124,7 @@ public class WelcomeFragment extends android.app.Fragment {
             public void onFailure(Call<User> call, Throwable t) {
                 progress.dismiss();
                 failureToast.show();
-<<<<<<< HEAD:app/src/main/java/com/example/sondrehj/familymedicinereminderclient/WelcomeFragment.java
-                System.out.println("Could not create user: " + t.getMessage());
-=======
-                Log.d(TAG, "Could not send network request: " + t.getMessage());
->>>>>>> master:app/src/main/java/com/example/sondrehj/familymedicinereminderclient/fragments/WelcomeFragment.java
+                    System.out.println("Could not create user: " + t.getMessage());
             }
         });
         return true;
