@@ -81,7 +81,7 @@
                 android:layout_marginLeft="20dp"
                 android:textColor="#9E9E9E"
                 android:text="x"
-                android:textSize="18sp" />
+                android:textSize="22sp" />
         </FrameLayout>
 
     </FrameLayout>
