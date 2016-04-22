@@ -60,7 +60,7 @@ public class MedicationListFragment extends android.app.Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.medication_item_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_medication_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.medication_list);
 
         // Set the adapter

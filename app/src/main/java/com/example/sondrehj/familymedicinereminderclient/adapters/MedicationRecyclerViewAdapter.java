@@ -42,7 +42,7 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.medication_list_item3, parent, false);
+                .inflate(R.layout.fragment_medication_item, parent, false);
         return new ViewHolder(view);
     }
 
