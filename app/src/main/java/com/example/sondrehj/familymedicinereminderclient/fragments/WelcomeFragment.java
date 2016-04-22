@@ -91,11 +91,6 @@ public class WelcomeFragment extends android.app.Fragment {
             failureToast.show();
         }
 
-        //TODO: Replace this section with the section commented below
-
-        //mListener.OnNewAccountCreated("dummy_user_id", "dummy_password");
-
-        //TODO: Uncomment this section. It is commented for development reasons only
         MyCyFAPPServiceAPI service = RestService.createRestService();
         User user = new User(role);
         Call<User> call = service.createUser(user);

@@ -1,8 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -11,17 +9,9 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 
 /**
  * Created by nikolai on 07/04/16.

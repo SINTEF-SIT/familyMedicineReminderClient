@@ -1,19 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
-import android.accounts.AccountManager;
-import android.media.MediaTimestamp;
-
-import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import java.util.List;

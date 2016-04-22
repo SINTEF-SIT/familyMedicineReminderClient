@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment.OnListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 

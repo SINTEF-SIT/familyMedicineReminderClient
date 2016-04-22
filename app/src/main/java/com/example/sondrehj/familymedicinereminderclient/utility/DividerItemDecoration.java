@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.utility;
 
 import android.content.Context;
 import android.content.res.TypedArray;

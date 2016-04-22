@@ -1,7 +1,6 @@
-package com.example.sondrehj.familymedicinereminderclient.modals;
+package com.example.sondrehj.familymedicinereminderclient.dialogs;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;

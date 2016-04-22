@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.modals;
+package com.example.sondrehj.familymedicinereminderclient.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,11 +20,6 @@ public class SelectDaysDialogFragment extends DialogFragment {
     private int[] daysAlreadySelected;
 
     private static final String DAYS_SELECTED_ARGS = "days-selected";
-
-    //Det som er kommentert ut var et forsøk på å sende over de dagene som allerede var checked
-    //boolean[] checkedItems = new boolean[7];
-    //int[] daysAlreadyChecked = getArguments().getIntArray("alreadySelected");
-
 
     public static SelectDaysDialogFragment newInstance(int[] daysAlreadySelected) {
         SelectDaysDialogFragment fragment = new SelectDaysDialogFragment();
@@ -125,8 +120,6 @@ public class SelectDaysDialogFragment extends DialogFragment {
 
     public interface OnDaysDialogResultListener {
         void onPositiveDaysDialogResult(ArrayList days);
-
-        void onNegativeDaysDialogResult();
     }
 
 }

@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sondrehj.familymedicinereminderclient.DividerItemDecoration;
+import com.example.sondrehj.familymedicinereminderclient.utility.DividerItemDecoration;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
-import com.example.sondrehj.familymedicinereminderclient.MedicationRecyclerViewAdapter;
+import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 /**
@@ -127,7 +127,6 @@ public class MedicationListFragment extends android.app.Fragment{
      */
 
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onMedicationListFragmentInteraction(Medication medication);
         }
     }
