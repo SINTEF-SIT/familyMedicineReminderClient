@@ -42,7 +42,7 @@ public interface MyCyFAPPServiceAPI {
      *
      **/
     @GET("user/{userID}/medication")
-    Call<Medication> getUserMedicationList(@Path("userID") String userID);
+    Call<List<Medication>>getUserMedicationList(@Path("userID") String userID);
 
     @POST("user/{userID}/medication")
     Call<Medication> createMedication(@Path("userID") String userID, @Body Medication medication);

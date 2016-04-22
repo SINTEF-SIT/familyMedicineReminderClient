@@ -2,7 +2,9 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.AlarmManager;
+
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.Notification;
@@ -21,6 +23,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,6 +63,8 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+
+import okhttp3.internal.Platform;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, MedicationCabinetFragment.OnFragmentInteractionListener,
@@ -127,15 +132,32 @@ public class MainActivity extends AppCompatActivity
 
         //Read and display data from local database. (Flyttes?)
         MySQLiteHelper db = new MySQLiteHelper(this);
-        //Medications
+
+        //Make sure the medication and reminder content is in sync with the database
+        refreshMedicationContent(db);
+        MainActivity.refreshReminderContent(db);
+    }
+
+    public void refreshMedicationContent(MySQLiteHelper db) {
         ArrayList<Medication> meds = db.getMedications();
         Collections.reverse(meds);
+        MedicationListContent.ITEMS.clear();
         MedicationListContent.ITEMS.addAll(meds);
-        //Reminders
+        MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+        fragment.notifyChanged();
+    }
+
+    public static void refreshReminderContent(MySQLiteHelper db) {
         ArrayList<Reminder> reminders = db.getReminders();
         Collections.reverse(reminders);
         ReminderListContent.ITEMS.addAll(reminders);
     }
+
+    /**
+     * Gets the instantiazed account of the system, used with the SyncAdapter and
+     * ContentResolver, might have to be moved sometime.
+     * @return
+     */
 
     public static Account getAccount(Context context) {
         return AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient")[0];
@@ -489,28 +511,30 @@ public class MainActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
 
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
-        System.out.println("--------Notification Pressed--------");
-        System.out.println(" Notification for reminder: " + reminder.getName());
-        if (reminder.getMedicine() != null){
-            System.out.println(" Medication attached: " + reminder.getMedicine().getName());
-            System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
-            System.out.println(" Reducing by: " + reminder.getDosage());
-            reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
-            System.out.println(" New value: " + reminder.getMedicine().getCount());
+        if(reminder != null) {
+            System.out.println("--------Notification Pressed--------");
+            System.out.println(" Notification for reminder: " + reminder.getName());
+            if (reminder.getMedicine() != null) {
+                System.out.println(" Medication attached: " + reminder.getMedicine().getName());
+                System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
+                System.out.println(" Reducing by: " + reminder.getDosage());
+                reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
+                System.out.println(" New value: " + reminder.getMedicine().getCount());
 
-            // Updates MedicationListViewFragment with new data.
-            for(int i = 0; i < MedicationListContent.ITEMS.size(); i++){
-                if (MedicationListContent.ITEMS.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                    MedicationListContent.ITEMS.set(i, reminder.getMedicine());
+                // Updates MedicationListViewFragment with new data.
+                for (int i = 0; i < MedicationListContent.ITEMS.size(); i++) {
+                    if (MedicationListContent.ITEMS.get(i).getMedId() == reminder.getMedicine().getMedId()) {
+                        MedicationListContent.ITEMS.set(i, reminder.getMedicine());
+                    }
                 }
-            }
 
-            // Updates the DB
-            MySQLiteHelper db = new MySQLiteHelper(this);
-            db.updateAmountMedication(reminder.getMedicine());
-            Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
+                // Updates the DB
+                MySQLiteHelper db = new MySQLiteHelper(this);
+                db.updateAmountMedication(reminder.getMedicine());
+                Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
+            }
+            System.out.println("------------------------------------");
         }
-        System.out.println("------------------------------------");
     }
 
     public void cancelNotification(int id){

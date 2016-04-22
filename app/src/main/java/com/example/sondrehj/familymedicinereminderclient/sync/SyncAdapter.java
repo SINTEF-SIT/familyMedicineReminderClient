@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -10,11 +11,13 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,6 +34,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         super(context, autoInitialize);
         this.context = context;
     }
+
+
 
     /**
      * This function is ran when requestSync is called from anywhere in the
@@ -55,14 +60,16 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Synchronizer synchronizer = new Synchronizer(account.name, api);
+        MySQLiteHelper db = new MySQLiteHelper(getContext());
+
+        Synchronizer synchronizer = new Synchronizer(account.name, api, db);
         if (notificationType != null) {
             switch (notificationType) {
                 case "remindersChanged":
                     synchronizer.syncReminders();
                     break;
                 case "medicationsChanged":
-                    //syncMedications();
+                    synchronizer.syncMedications();
                     break;
                 case "linkingRequest":
                     Log.d("SyncAdapter", "in switch -> linkingRequest");

@@ -34,6 +34,7 @@ public class MyGcmListenerService extends GcmListenerService {
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent.putExtra("type", "notifcationIntent");
 
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);

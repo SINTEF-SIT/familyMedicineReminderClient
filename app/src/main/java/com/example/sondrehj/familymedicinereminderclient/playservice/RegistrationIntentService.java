@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
@@ -70,16 +71,7 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         MyCyFAPPServiceAPI apiService = RestService.createRestService();
-
-        AccountManager accountManager = AccountManager.get(this);
-        Account[] reminderAccounts = accountManager.
-                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
-        Account account = reminderAccounts[0];
-        Log.d(TAG, "account: " + account.name);
-
-
-
-        Call<User> call = apiService.associateToken(account.name, token);
+        Call<User> call = apiService.associateToken(MainActivity.getAccount(getApplicationContext()).name, token);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

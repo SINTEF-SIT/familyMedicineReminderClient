@@ -28,6 +28,8 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
      * @param context
      * @param intent
      */
+
+    //TODO: Fix bug that appears when turning internet on and off (in welcomefragment, but possibly everywhere)
     @Override
     public void onReceive(Context context, Intent intent) {
         if(ServiceManager.isNetworkAvailable(context)) {
@@ -36,10 +38,11 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
                     MainActivity.getAccount(context),
                     AUTHORITY,
                     true);
-            ContentResolver.requestSync(
+
+            /*ContentResolver.requestSync(
                     MainActivity.getAccount(context),
                     AUTHORITY,
-                    Bundle.EMPTY);
+                    Bundle.EMPTY);*/
         }
     }
 }
