@@ -98,10 +98,8 @@
                 android:text="x"
                 android:layout_marginLeft="20dp"
                 android:textColor="#9E9E9E"
-                android:textSize="30sp"
-                android:layout_gravity="top|right"
-                android:paddingLeft="10dp"
-                android:layout_marginTop="-5dp" />
+                android:textSize="22sp"
+                android:layout_gravity="top|right" />
         </FrameLayout>
 
     </FrameLayout>
