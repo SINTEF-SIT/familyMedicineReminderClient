@@ -14,6 +14,8 @@ import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 
@@ -53,6 +55,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
+
         Log.d("Sync", "Sync is performing");
 
         String notificationType = extras.getString("notificationType");
@@ -60,15 +63,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         MySQLiteHelper db = new MySQLiteHelper(getContext());
 
         Synchronizer synchronizer = new Synchronizer(account.name, api, db);
-        switch (notificationType) {
-            case "remindersChanged":
-                System.out.println("in reminderschanged");
-                synchronizer.syncReminders();
-                Intent intent = new Intent();
-
-            case "medicationsChanged":
-                synchronizer.syncMedications();
-                break;
+        if (notificationType != null) {
+            switch (notificationType) {
+                case "remindersChanged":
+                    synchronizer.syncReminders();
+                    break;
+                case "medicationsChanged":
+                    synchronizer.syncMedications();
+                    break;
+                case "linkingRequest":
+                    Log.d("SyncAdapter", "in switch -> linkingRequest");
+                    //incoming linking request from push notification
+                    Intent intent = new Intent();
+                    intent.setAction("openDialog");
+                    intent.putExtra("action", "open_dialog");
+                    context.sendBroadcast(intent);
+                    break;
+            }
+        } else {
+            Log.d("SyncAdapter", "notificationType == null");
         }
     }
 }

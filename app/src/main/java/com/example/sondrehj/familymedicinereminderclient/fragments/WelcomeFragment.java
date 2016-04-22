@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -6,17 +6,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServiceManager;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +34,7 @@ import retrofit2.Response;
  */
 public class WelcomeFragment extends android.app.Fragment {
 
+    private final String TAG = "WelcomeFragment";
     private OnWelcomeListener mListener;
 
     public WelcomeFragment() {
@@ -56,31 +60,35 @@ public class WelcomeFragment extends android.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_welcome, container, false);
-        Button continueButton = (Button) view.findViewById(R.id.continue_button);
-
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onContinueButtonPressed(getActivity());
-            }
-        });
-
+        ButterKnife.bind(this, view);
+        getActivity().setTitle("Welcome");
         return view;
     }
 
-    public void onContinueButtonPressed(Context context) {
-        final Toast failureToast = Toast.makeText(context,
-                "An internet connection is required to create an account. Please try again once " +
-                        "you have connected to the internet.",
-                Toast.LENGTH_SHORT);
+    @OnClick(R.id.create_patient_button)
+    public void onCreatePatientButtonClick() {
+        createUserWithRole("patient");
+    }
+
+    @OnClick(R.id.create_guardian_button)
+    public void onCreateGuardianButtonClick() {
+        createUserWithRole("guardian");
+    }
+
+    private boolean createUserWithRole(String role) {
+        Context context = getActivity();
 
         final ProgressDialog progress = new ProgressDialog(context);
         progress.setTitle("Creating user");
         progress.setMessage("Please wait while a user is created...");
 
+        final Toast failureToast = Toast.makeText(context,
+                "An internet connection is required to create an account. Please try again once " +
+                        "you have connected to the internet.",
+                Toast.LENGTH_SHORT);
+
         if (!ServiceManager.isNetworkAvailable(context)) {
             failureToast.show();
-            return;
         }
 
         //TODO: Replace this section with the section commented below
@@ -89,23 +97,25 @@ public class WelcomeFragment extends android.app.Fragment {
 
         //TODO: Uncomment this section. It is commented for development reasons only
         MyCyFAPPServiceAPI service = RestService.createRestService();
-        User user = new User();
+        User user = new User(role);
         Call<User> call = service.createUser(user);
         progress.show();
 
         call.enqueue(new Callback<User>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                String userId = response.body().getUserID();
-                String password = response.body().getPassword();
-                System.out.println("UserID:" + userId);
-                System.out.println("Password:" + password);
+            public void onResponse(Call<User> call, Response<User> user) {
+                String userId = user.body().getUserID();
+                String password = user.body().getPassword();
+                String userRole = user.body().getUserRole();
+                Log.d(TAG, "response: userID: " + userId);
+                Log.d(TAG, "response: password: " + password);
+                Log.d(TAG, "response: userRole: " + userRole);
                 progress.dismiss();
 
                 //TODO: Update with password != null as well
                 if (mListener != null) {
                     if (userId != null) {
-                        mListener.OnNewAccountCreated(userId, password);
+                        mListener.OnNewAccountCreated(userId, password, userRole);
                     }
                 }
             }
@@ -114,10 +124,14 @@ public class WelcomeFragment extends android.app.Fragment {
             public void onFailure(Call<User> call, Throwable t) {
                 progress.dismiss();
                 failureToast.show();
+<<<<<<< HEAD:app/src/main/java/com/example/sondrehj/familymedicinereminderclient/WelcomeFragment.java
                 System.out.println("Could not create user: " + t.getMessage());
+=======
+                Log.d(TAG, "Could not send network request: " + t.getMessage());
+>>>>>>> master:app/src/main/java/com/example/sondrehj/familymedicinereminderclient/fragments/WelcomeFragment.java
             }
         });
-
+        return true;
     }
 
     @Override
@@ -144,6 +158,7 @@ public class WelcomeFragment extends android.app.Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        ButterKnife.unbind(this);
     }
 
     /**
@@ -157,6 +172,6 @@ public class WelcomeFragment extends android.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnWelcomeListener {
-        void OnNewAccountCreated(String userId, String password);
+        void OnNewAccountCreated(String userId, String password, String userRole);
     }
 }

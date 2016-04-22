@@ -28,16 +28,17 @@ GUARDIAN/GUARDEE
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sondrehj.familymedicinereminderclient.AccountAdministrationFragment"
+    tools:context=".fragments.AccountAdministrationFragment"
     android:fillViewport="true"
-    android:focusableInTouchMode="false">
+    android:focusableInTouchMode="false"
+    android:background="#EEEEEE">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="com.example.sondrehj.familymedicinereminderclient.NewReminderFragment"
+        tools:context=".fragments.NewReminderFragment"
         android:id="@+id/newReminderLayout"
         android:showDividers="middle"
         android:dividerPadding="10dp">
@@ -45,11 +46,11 @@ GUARDIAN/GUARDEE
 cam
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="93dp"
             android:layout_gravity="center_horizontal|top"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
-            android:src="@android:drawable/sym_def_app_icon" />
+            android:src="@drawable/mycyfapplogo" />
         <View
             android:layout_width="match_parent"
             android:layout_height="30dp"
@@ -64,10 +65,16 @@ cam
             android:layout_marginLeft="10dp"
             android:id="@+id/settingsPersonalSection" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="#ffffff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -94,6 +101,11 @@ cam
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
         <Switch
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -102,7 +114,13 @@ cam
             android:checked="true"
             android:textSize="20sp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
+            android:paddingRight="10dp"
+            android:background="#ffffff" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
 
         <View
             android:layout_width="match_parent"
@@ -117,6 +135,12 @@ cam
             android:layout_marginLeft="10dp"
             android:id="@+id/settingsGeneralSection" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
+
         <Switch
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -125,13 +149,18 @@ cam
             android:checked="true"
             android:textSize="20sp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp" />
-
+            android:paddingRight="10dp"
+            android:background="#ffffff" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
         <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-            android:weightSum="1">
+            android:weightSum="1"
+            android:background="#ffffff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -163,6 +192,11 @@ cam
 
         <View
             android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
+        <View
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             />
 
@@ -174,10 +208,16 @@ cam
             android:layout_marginLeft="10dp"
             android:id="@+id/settingsAccountSection" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
         <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+            android:background="#ffffff">
 
         <TextView
             android:layout_width="wrap_content"
@@ -201,10 +241,16 @@ cam
             android:layout_marginRight="10dp" />
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="40dp"
+            android:background="#ffffff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -226,6 +272,11 @@ cam
                 android:layout_gravity="end"
                 android:layout_marginRight="10dp" />
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -263,10 +314,16 @@ cam
             android:layout_marginLeft="10dp"
             android:id="@+id/guardianSection" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="40dp"
+            android:background="#ffffff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -288,6 +345,10 @@ cam
                 android:layout_marginLeft="10dp"
                 android:paddingLeft="10dp" />
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

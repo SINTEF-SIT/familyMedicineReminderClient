@@ -8,12 +8,14 @@ import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -42,7 +44,7 @@ public class Synchronizer {
             public void onResponse(Call<List<Reminder>> call, Response<List<Reminder>> response) {
                 System.out.println("In syncreminders");
                 ArrayList<Reminder> dbReminders = db.getReminders();
-                for(Reminder serverReminder : response.body()) {
+                for (Reminder serverReminder : response.body()) {
 
                     System.out.println("in add reminder");
                     db.addReminder(serverReminder);
@@ -82,10 +84,10 @@ public class Synchronizer {
             public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
                 System.out.println("In sync medications");
                 ArrayList<Reminder> dbMedications = db.getReminders();
-                for(Medication serverMedication : response.body()) {
+                for (Medication serverMedication : response.body()) {
                     System.out.println("in add medications");
                     db.addMedication(serverMedication);
-                    MainActivity.refreshMedicationContent(db);
+                    //MainActivity.refreshMedicationContent(db);
                 }
 
             }

@@ -42,7 +42,7 @@ public class MyGcmListenerService extends GcmListenerService {
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
         ContentResolver.requestSync(
-                MainActivity.getAccount(getBaseContext()),
+                MainActivity.getAccount(getApplicationContext()),
                 AUTHORITY,
                 extras);
         /**

@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
+import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.ReminderListRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
@@ -49,7 +52,7 @@ public class ReminderListFragment extends android.app.Fragment {
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
-            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            //recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
         }
 
@@ -106,7 +109,7 @@ public class ReminderListFragment extends android.app.Fragment {
         // TODO: Update argument type and name
         void onReminderListItemClicked(Reminder reminder);
         void onNewReminderButtonClicked();
+        void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
-        String ReminderListGetSelectedDaysText(int[] reminder_days);
     }
 }

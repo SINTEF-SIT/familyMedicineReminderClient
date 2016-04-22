@@ -6,11 +6,13 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.example.sondrehj.familymedicinereminderclient.ReminderListFragment.OnReminderListFragmentInteractionListener;
+import com.example.sondrehj.familymedicinereminderclient.fragments.ReminderListFragment.OnReminderListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -35,12 +37,12 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_reminder_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_reminder_item2, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mReminder = mValues.get(position);
         holder.mNameView.setText(mValues.get(position).getName());
         holder.mSwitch.setChecked(mValues.get(position).getIsActive());
@@ -51,21 +53,29 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         int date = cal.get(Calendar.DATE);
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
 
         String timeString = String.format("%02d:%02d", hour, min);
-        String dateString = String.format("%02d.%02d.%4d", date, month, year);
+        String dateString = Converter.dayIndexToDayString(dayOfWeek)
+                        + ". " + String.format("%02d", date)
+                        + ". " + Converter.monthIndexToMonthString(month) + ".";
 
         // Text for a repeating reminder
         if(holder.mReminder.getDays().length > 0){
-            String daySelectString = mListener.ReminderListGetSelectedDaysText(holder.mReminder.getDays());
+            if(holder.mReminder.getEndDate().get((Calendar.YEAR)) == 9998) {
+                holder.mDateText.setText("Continuous");
+            } else {
+                holder.mDateText.setText(dateString);
+            }
+            String daySelectString = Converter.daysArrayToSelectedDaysText(holder.mReminder.getDays());
+            holder.mDaysText.setText(Html.fromHtml(daySelectString));
             holder.mDateTimeView.setText(timeString);
-            holder.mDaySelectView.setText(Html.fromHtml(daySelectString));
         }
         // Text for a non-repeating reminder
         else {
             holder.mDateTimeView.setText(timeString);
-            holder.mDaySelectView.setText("(" + dateString + ")");
+            holder.mDateText.setText(dateString);
         }
 
 
@@ -90,6 +100,14 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
                 }
             }
         });
+
+        holder.mDeleteWrapper.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                remove(holder.getAdapterPosition());
+                mListener.onReminderDeleteButtonClicked(holder.mReminder);
+            }
+        });
     }
 
     @Override
@@ -97,12 +115,20 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         return mValues.size();
     }
 
+    public void remove(int position){
+        mValues.remove(position);
+        notifyItemRemoved(position);
+    }
+
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNameView;
         public final TextView mDateTimeView;
         public final Switch mSwitch;
-        public final TextView mDaySelectView;
+        public final TextView mDateText;
+        public final FrameLayout mDeleteWrapper;
+        public final TextView mDaysText;
         public Reminder mReminder;
 
         public ViewHolder(View view) {
@@ -111,7 +137,9 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             mNameView = (TextView) view.findViewById(R.id.name_text);
             mDateTimeView = (TextView) view.findViewById(R.id.datetime_text);
             mSwitch = (Switch) view.findViewById(R.id.reminder_switch);
-            mDaySelectView = (TextView) view.findViewById(R.id.day_select_text);
+            mDateText = (TextView) view.findViewById(R.id.reminder_item_date_text);
+            mDeleteWrapper = (FrameLayout) view.findViewById(R.id.delete_wrapper);
+            mDaysText = (TextView) view.findViewById(R.id.days_text);
         }
 
         @Override

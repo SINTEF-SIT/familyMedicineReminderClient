@@ -9,10 +9,15 @@ public class User {
     String userID; //6 digit alphanumerical
     String username; //optional
     String password;
+    String userRole;
     List<User> guardians;
     List<User> children;
 
     public User() {
+    }
+
+    public User(String userRole) {
+        this.userRole = userRole;
     }
 
     public User(String username, String password) {
@@ -43,6 +48,10 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setUserRole(String userRole) { this.userRole = userRole; }
+
+    public String getUserRole() { return userRole; }
 
     public List<User> getGuardians() {
         return guardians;
