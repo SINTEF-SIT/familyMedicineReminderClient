@@ -19,6 +19,7 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_REMINDER = "notification-reminder";
+    public static String NOTIFICATION_TYPE = "notification-type";
     public Context context;
 
     public void onReceive(Context context, Intent intent) {
@@ -29,12 +30,18 @@ public class NotificationPublisher extends BroadcastReceiver {
         // Retrieves data from the given Intent object
         Reminder reminder = (Reminder) intent.getSerializableExtra(NOTIFICATION_REMINDER);
         Notification notification = intent.getParcelableExtra(NOTIFICATION);
+        String notificationType = intent.getStringExtra(NOTIFICATION_TYPE);
         int id = reminder.getReminderId();
         int[] days = reminder.getDays();
         GregorianCalendar endCal = reminder.getEndDate();
 
         System.out.println("-------Notification Publisher-------");
         System.out.println(" Triggered by reminder: " + reminder.getName());
+
+        if(notificationType.equals("snooze")){
+            notificationManager.notify(id, notification);
+            return;
+        }
 
         // Today's date
         Calendar cal = Calendar.getInstance();
