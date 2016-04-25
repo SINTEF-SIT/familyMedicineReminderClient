@@ -13,6 +13,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -115,6 +116,21 @@ public class MainActivity extends AppCompatActivity
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
+
+        // Account settings
+        SharedPreferences sharedPrefs = getSharedPreferences("AccountSettings", MODE_PRIVATE);
+        SharedPreferences.Editor ed;
+        if (!sharedPrefs.contains("initialized")) {
+            ed = sharedPrefs.edit();
+            //Indicate that the default shared prefs have been set
+            ed.putBoolean("initialized", true);
+            //Set default values
+            ed.putInt("yearOfBirth", 2000);
+            ed.putInt("snoozeTime", 180000);
+            ed.apply();
+        }
+
+        System.out.println(getIntent().toString());
 
         // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -284,11 +300,13 @@ public class MainActivity extends AppCompatActivity
             // Schedules a new notification with the given snooze time
             if (notificationAction.equals("snooze")) {
 
-                // TODO: update 60000 to snooze-time in AccountAdministrationFragment.
+                SharedPreferences prefs = getSharedPreferences("AccountSettings", MODE_PRIVATE);
+                int snoozeTime = prefs.getInt("snoozeTime", 180000);
+
                 notificationScheduler.snoozeNotification(
                         notificationScheduler.getNotification("", reminder),
                         reminder,
-                        30000);
+                        snoozeTime);
                 System.out.println(" Snooze - Scheduling new notification");
                 notificationScheduler.removeNotification(reminder.getReminderId());
 
