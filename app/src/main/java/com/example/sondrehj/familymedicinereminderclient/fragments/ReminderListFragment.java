@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.ReminderListRecyclerViewAdapter;
-import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRecyclerViewAdapter;
+import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 /**
@@ -32,7 +32,7 @@ public class ReminderListFragment extends android.app.Fragment {
     public ReminderListFragment() {
     }
 
-    // TODO: Customize parameter initialization
+
     @SuppressWarnings("unused")
     public static ReminderListFragment newInstance() {
         ReminderListFragment fragment = new ReminderListFragment();
@@ -106,9 +106,8 @@ public class ReminderListFragment extends android.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnReminderListFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onReminderListItemClicked(Reminder reminder);
-        void onNewReminderButtonClicked();
         void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
     }

@@ -1,62 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp">
+    android:layout_height="110dp"
+    android:layout_marginBottom="1dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:layout_marginTop="7dp"
+    android:background="#fff"
+    android:elevation="2dp"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/upper_layout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground">
 
         <TextView
             android:id="@+id/name_text"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="0dp"
             android:layout_weight="0.7"
+            android:fontFamily="sans-serif-light"
+            android:hint="Paracetemole"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="#9E9E9E"
+            android:textSize="26sp" />
+
+        <ImageView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_gravity="center_vertical"
-            android:textSize="22sp" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/android_alarm_clock"
+            android:tint="#9E9E9E" />
 
         <Switch
             android:id="@+id/reminder_switch"
-            android:layout_width="0dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
             android:layout_weight="0.3"
-            android:checked="false"
-            android:layout_gravity="center_vertical" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_marginTop="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:checked="false" />
 
         <TextView
             android:id="@+id/datetime_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="sans-serif-light"
+            android:text="10:08"
             android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="#7b7b7b"
-            android:textSize="18sp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="0.5"
-            android:text="test" />
+            android:textColor="#9E9E9E"
+            android:textSize="32sp" />
 
         <TextView
+            android:id="@+id/days_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/day_select_text"
-            android:text="test" />
-    </LinearLayout>
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="sans-serif-light"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="#9E9E9E"
+            android:textSize="12sp" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/reminder_item_date_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="80dp"
+            android:layout_weight="2"
+            android:fontFamily="sans-serif-light"
+            android:text="12.09.2009"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#9E9E9E" />
+
+        <FrameLayout
+            android:id="@+id/delete_wrapper"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="right">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-light"
+                android:text="x"
+                android:layout_marginLeft="20dp"
+                android:textColor="#9E9E9E"
+                android:textSize="22sp"
+                android:layout_gravity="top|right" />
+        </FrameLayout>
+
+    </FrameLayout>
+
+</FrameLayout>

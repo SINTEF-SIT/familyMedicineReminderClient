@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.sqlite;
+package com.example.sondrehj.familymedicinereminderclient.database;
 
 /**
  * Created by sondre on 31/03/2016.
@@ -11,15 +11,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
-import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {

@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.dummy;
+package com.example.sondrehj.familymedicinereminderclient.database;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
@@ -14,6 +14,10 @@ import java.util.Map;
  * <p>
  * TODO: Replace all uses of this class before publishing your app.
  */
+
+
+
+
 public class ReminderListContent {
 
     /**
@@ -27,6 +31,8 @@ public class ReminderListContent {
     public static final Map<String, Reminder> ITEM_MAP = new HashMap<>();
 
     static {
+
+        String mysString = "Sde";
         // Add some sample items.
         //for (int i = 1; i <= COUNT; i++) {
         //addItem(createReminder());

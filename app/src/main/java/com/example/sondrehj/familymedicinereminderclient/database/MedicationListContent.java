@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.dummy;
+package com.example.sondrehj.familymedicinereminderclient.database;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
@@ -33,6 +33,7 @@ public class MedicationListContent {
     //        addItem(createDummyItem(1));
     //    //}
     //}
+
 
     private static void addItem(Medication medication) {
 

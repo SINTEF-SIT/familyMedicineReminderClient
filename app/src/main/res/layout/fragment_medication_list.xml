@@ -15,7 +15,7 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context=".fragments.MedicationListFragment"
-    tools:listitem="@layout/medication_list_item3" />
+    tools:listitem="@layout/fragment_medication_item" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/new_medication_fab"

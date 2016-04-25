@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sondrehj.familymedicinereminderclient.DividerItemDecoration;
+import com.example.sondrehj.familymedicinereminderclient.utility.DividerItemDecoration;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
-import com.example.sondrehj.familymedicinereminderclient.MedicationRecyclerViewAdapter;
+import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 /**
@@ -46,6 +46,13 @@ public class MedicationListFragment extends android.app.Fragment{
         return fragment;
     }
 
+    public void notifyChanged() {
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
+        if(recView != null) {
+            recView.getAdapter().notifyDataSetChanged();
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +61,7 @@ public class MedicationListFragment extends android.app.Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.medication_item_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_medication_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.medication_list);
 
         // Set the adapter
@@ -121,7 +128,6 @@ public class MedicationListFragment extends android.app.Fragment{
      */
 
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onMedicationListFragmentInteraction(Medication medication);
         }
     }

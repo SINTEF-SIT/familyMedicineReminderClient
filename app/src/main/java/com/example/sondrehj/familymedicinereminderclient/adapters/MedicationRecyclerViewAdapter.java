@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment.OnListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
@@ -32,10 +33,16 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
         this.context = context;
     }
 
+    public void changeReminders(List<Medication> medications) {
+        mValues.clear();
+        mValues.addAll(medications);
+        notifyDataSetChanged();
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.medication_list_item3, parent, false);
+                .inflate(R.layout.fragment_medication_item, parent, false);
         return new ViewHolder(view);
     }
 

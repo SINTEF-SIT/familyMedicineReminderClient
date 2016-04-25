@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.fragments.ReminderListFragment.OnReminderListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
@@ -37,7 +38,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_reminder_item2, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_reminder_item, parent, false);
         return new ViewHolder(view);
     }
 

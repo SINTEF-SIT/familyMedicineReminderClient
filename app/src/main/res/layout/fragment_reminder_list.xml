@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
         tools:context=".fragments.ReminderListFragment"
-        tools:listitem="@layout/fragment_reminder_item2" />
+        tools:listitem="@layout/fragment_reminder_item" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/reminder_fab"

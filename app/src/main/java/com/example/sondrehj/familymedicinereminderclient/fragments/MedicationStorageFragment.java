@@ -1,9 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
-import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,30 +14,23 @@ import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.dummy.MedicationListContent;
-import com.example.sondrehj.familymedicinereminderclient.modals.SelectUnitDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
-import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MedicationStorageFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link MedicationStorageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class MedicationStorageFragment extends android.app.Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_MEDICATION = "medication";
 
-    // TODO: Rename and change types of parameters
-    private Medication mMedicaiton;
-
-    private OnFragmentInteractionListener mListener;
-
+    private Medication mMedication;
     public MedicationStorageFragment() {
         // Required empty public constructor
     }
@@ -52,7 +42,6 @@ public class MedicationStorageFragment extends android.app.Fragment {
      * @param medication Parameter 1.
      * @return A new instance of fragment MedicationStorageFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static MedicationStorageFragment newInstance(Medication medication) {
         MedicationStorageFragment fragment = new MedicationStorageFragment();
         Bundle args = new Bundle();
@@ -65,7 +54,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mMedicaiton = (Medication) getArguments().getSerializable(ARG_MEDICATION);
+            mMedication = (Medication) getArguments().getSerializable(ARG_MEDICATION);
         }
     }
 
@@ -73,13 +62,13 @@ public class MedicationStorageFragment extends android.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_medication_storage, container, false);
+        return inflater.inflate(R.layout.fragment_edit_medication, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
 
-        if (mMedicaiton != null){
+        if (mMedication != null){
             fillTextFields();
         }
 
@@ -97,7 +86,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
                     toast.show();
 
                 } else {
-                    if (mMedicaiton == null) {
+                    if (mMedication == null) {
                         createNewMedication();
                     } else {
                         updateMedication();
@@ -134,9 +123,9 @@ public class MedicationStorageFragment extends android.app.Fragment {
         EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
         TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
 
-        medicationName.setText(mMedicaiton.getName());
-        medicationAmount.setText(Double.toString(mMedicaiton.getCount()));
-        medicationUnit.setText(mMedicaiton.getUnit());
+        medicationName.setText(mMedication.getName());
+        medicationAmount.setText(Double.toString(mMedication.getCount()));
+        medicationUnit.setText(mMedication.getUnit());
     }
 
     public void createNewMedication(){
@@ -167,75 +156,20 @@ public class MedicationStorageFragment extends android.app.Fragment {
     }
 
     public void updateMedication(){
-
         EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
         EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
         TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
 
         //Updates an existing Medication object
-        mMedicaiton.setName(medicationName.getText().toString());
-        mMedicaiton.setCount(Double.parseDouble(medicationAmount.getText().toString()));
-        mMedicaiton.setUnit(medicationUnit.getText().toString());
+        mMedication.setName(medicationName.getText().toString());
+        mMedication.setCount(Double.parseDouble(medicationAmount.getText().toString()));
+        mMedication.setUnit(medicationUnit.getText().toString());
 
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
-        db.updateMedication(mMedicaiton);
+        db.updateMedication(mMedication);
 
-        System.out.println("---------Medication Updated---------" + "\n" + mMedicaiton);
+        System.out.println("---------Medication Updated---------" + "\n" + mMedication);
         System.out.println("------------------------------------");
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onMedicationStorageFragmentInteraction(uri);
-        }
-    }
-
-    //API >= 23
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    //API < 23
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) activity;
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onMedicationStorageFragmentInteraction(Uri uri);
-        public void addMedicationToMedicationList(Medication medication);
     }
 }

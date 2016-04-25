@@ -40,14 +40,11 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LinkingFragment.OnLinkingFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class LinkingFragment extends android.app.Fragment{
 
-    private OnLinkingFragmentInteractionListener mListener;
     private boolean busIsRegistered;
 
     @Bind(R.id.link_guardian_button) Button linkButton;
@@ -200,12 +197,6 @@ public class LinkingFragment extends android.app.Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnLinkingFragmentInteractionListener) {
-            mListener = (OnLinkingFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
         if (!busIsRegistered) {
             BusService.getBus().register(this);
             busIsRegistered = true;
@@ -216,12 +207,6 @@ public class LinkingFragment extends android.app.Fragment{
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
-        if (context instanceof OnLinkingFragmentInteractionListener) {
-            mListener = (OnLinkingFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
         if (!busIsRegistered) {
             BusService.getBus().register(this);
             busIsRegistered = true;
@@ -232,7 +217,6 @@ public class LinkingFragment extends android.app.Fragment{
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
         if (busIsRegistered) {
             BusService.getBus().unregister(this);
             busIsRegistered = false;
@@ -254,8 +238,4 @@ public class LinkingFragment extends android.app.Fragment{
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnLinkingFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

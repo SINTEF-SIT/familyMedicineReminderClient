@@ -22,14 +22,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.TimePickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.dummy.ReminderListContent;
-import com.example.sondrehj.familymedicinereminderclient.modals.EndDatePickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.modals.MedicationPickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.modals.SelectDaysDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.EndDatePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.sqlite.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 
@@ -88,11 +89,8 @@ public class NewReminderFragment extends android.app.Fragment {
     protected Activity mActivity;
     private String currentStartDate;
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REMINDER_ARGS = "reminder";
-
-    // TODO: Rename and change types of parameters
 
     private OnNewReminderInteractionListener mListener;
 
@@ -107,7 +105,7 @@ public class NewReminderFragment extends android.app.Fragment {
      * @param reminder The reminder object of the new reminder
      * @return A new instance of fragment NewReminderFragment.
      */
-    // TODO: Rename and change types and number of parameters
+
     public static NewReminderFragment newInstance(Reminder reminder) {
         NewReminderFragment fragment = new NewReminderFragment();
         if (reminder != null) {
@@ -131,7 +129,7 @@ public class NewReminderFragment extends android.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_new_reminder2, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
 
         newReminderLayout = (LinearLayout) view.findViewById(R.id.newReminderLayout);
         reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
@@ -747,10 +745,6 @@ public class NewReminderFragment extends android.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnNewReminderInteractionListener {
-        // TODO: Update argument type and name
         void onSaveNewReminder(Reminder r);
-
-        String newReminderListGetSelectedDaysText(int[] reminder_days);
     }
-
 }

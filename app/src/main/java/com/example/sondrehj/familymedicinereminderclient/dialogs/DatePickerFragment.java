@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.fragments;
+package com.example.sondrehj.familymedicinereminderclient.dialogs;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
