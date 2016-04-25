@@ -27,7 +27,9 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
@@ -56,9 +58,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Subscribe;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -122,25 +126,7 @@ public class MainActivity extends AppCompatActivity
         //Read and display data from local database. (Flyttes?)
         MySQLiteHelper db = new MySQLiteHelper(this);
 
-        //Make sure the medication and reminder content is in sync with the database
-        refreshMedicationContent(db);
-        MainActivity.refreshReminderContent(db);
         //TODO: Look more at how database changes can be broadcasted to the system
-    }
-
-    public void refreshMedicationContent(MySQLiteHelper db) {
-        ArrayList<Medication> meds = db.getMedications();
-        Collections.reverse(meds);
-        MedicationListContent.ITEMS.clear();
-        MedicationListContent.ITEMS.addAll(meds);
-        //MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-        //fragment.notifyChanged();
-    }
-
-    public static void refreshReminderContent(MySQLiteHelper db) {
-        ArrayList<Reminder> reminders = db.getReminders();
-        Collections.reverse(reminders);
-        ReminderListContent.ITEMS.addAll(reminders);
     }
 
     /**
@@ -150,7 +136,11 @@ public class MainActivity extends AppCompatActivity
      */
 
     public static Account getAccount(Context context) {
-        return AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient")[0];
+        Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+        if (accountArray.length >= 1) {
+            return accountArray[0];
+        }
+        return null;
     }
 
     @Override
@@ -165,7 +155,7 @@ public class MainActivity extends AppCompatActivity
          * because the Bus cannot register to the SyncAdaptar (it is another process altogether).
          */
         syncReceiver = new SyncReceiver();
-        IntentFilter intentFilter = new IntentFilter("openDialog");
+        IntentFilter intentFilter = new IntentFilter("mycyfapp");
         registerReceiver(syncReceiver, intentFilter);
     }
 
@@ -183,6 +173,16 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         LinkingDialogFragment linkingDialogFragment = new LinkingDialogFragment();
         linkingDialogFragment.show(fm, "linking_request_fragment");
+    }
+
+    @Subscribe
+    public void handleDataChangedEvent(DataChangedEvent event) {
+        System.out.println("In handle data changed event");
+        MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+        if (fragment != null) {
+            System.out.println("Called notifychanged!");
+            fragment.notifyChanged();
+        }
     }
 
     /**
@@ -264,8 +264,6 @@ public class MainActivity extends AppCompatActivity
     /**
      * Called by timepicker in NewReminder
      *
-     * @param hourOfDay
-     * @param minute
      */
 
     //TODO: Move out of MainActivity if possible
@@ -332,6 +330,7 @@ public class MainActivity extends AppCompatActivity
      */
     protected void onNewIntent(Intent intent) {
 
+
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         if(reminder != null) {
             System.out.println("--------Notification Pressed--------");
@@ -344,9 +343,9 @@ public class MainActivity extends AppCompatActivity
                 System.out.println(" New value: " + reminder.getMedicine().getCount());
 
                 // Updates MedicationListViewFragment with new data.
-                for (int i = 0; i < MedicationListContent.ITEMS.size(); i++) {
-                    if (MedicationListContent.ITEMS.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                        MedicationListContent.ITEMS.set(i, reminder.getMedicine());
+                for (int i = 0; i < MedicationListFragment.medications.size(); i++) {
+                    if (MedicationListFragment.medications.get(i).getMedId() == reminder.getMedicine().getMedId()) {
+                        MedicationListFragment.medications.set(i, reminder.getMedicine());
                     }
                 }
 
@@ -355,6 +354,7 @@ public class MainActivity extends AppCompatActivity
                 db.updateAmountMedication(reminder.getMedicine());
                 Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
             }
+
             System.out.println("------------------------------------");
         }
     }
@@ -488,6 +488,11 @@ public class MainActivity extends AppCompatActivity
     public void onMedicationListFragmentInteraction(Medication medication) {
         Fragment fragment = MedicationStorageFragment.newInstance(medication);
         changeFragment(fragment);
+    }
+
+    @Override
+    public List<Medication> onGetMedications() {
+        return new MySQLiteHelper(this).getMedications();
     }
 
     @Override

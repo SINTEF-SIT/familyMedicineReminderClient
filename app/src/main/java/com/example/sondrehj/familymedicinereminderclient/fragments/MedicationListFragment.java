@@ -18,6 +18,9 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -28,6 +31,9 @@ public class MedicationListFragment extends android.app.Fragment{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+
+    public static List<Medication> medications = new ArrayList<>();
+
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
@@ -48,13 +54,17 @@ public class MedicationListFragment extends android.app.Fragment{
 
     public void notifyChanged() {
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
-        recView.getAdapter().notifyDataSetChanged();
+        medications.addAll(mListener.onGetMedications());
+        if (recView != null) {
+            recView.getAdapter().notifyDataSetChanged();
+            System.out.println("notifychanged called");
+        }
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        medications.addAll(mListener.onGetMedications());
     }
 
     @Override
@@ -72,7 +82,7 @@ public class MedicationListFragment extends android.app.Fragment{
                 recView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-            recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), MedicationListContent.ITEMS, mListener));
+            recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
         }
 
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.new_medication_fab);
@@ -82,10 +92,8 @@ public class MedicationListFragment extends android.app.Fragment{
                 ((MainActivity)getActivity()).changeFragment(new MedicationStorageFragment());
             }
         });
-
-        return view;
+    return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -128,5 +136,6 @@ public class MedicationListFragment extends android.app.Fragment{
 
     public interface OnListFragmentInteractionListener {
         void onMedicationListFragmentInteraction(Medication medication);
+        List<Medication> onGetMedications();
         }
     }

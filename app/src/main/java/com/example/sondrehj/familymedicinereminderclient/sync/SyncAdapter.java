@@ -52,7 +52,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         MyCyFAPPServiceAPI api = RestService.createRestService();
         MySQLiteHelper db = new MySQLiteHelper(getContext());
 
-        Synchronizer synchronizer = new Synchronizer(account.name, api, db);
+        Synchronizer synchronizer = new Synchronizer(account.name, api, db, context);
         if (notificationType != null) {
             switch (notificationType) {
                 case "remindersChanged":
@@ -65,7 +65,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     Log.d("SyncAdapter", "in switch -> linkingRequest");
                     //incoming linking request from push notification
                     Intent intent = new Intent();
-                    intent.setAction("openDialog");
+                    intent.setAction("mycyfapp"); //not action, but filter.
                     intent.putExtra("action", "open_dialog");
                     context.sendBroadcast(intent);
                     break;

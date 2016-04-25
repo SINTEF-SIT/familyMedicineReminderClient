@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
+import com.squareup.otto.Bus;
 
 /**
  * Created by nikolai on 20/04/16.
@@ -27,11 +29,17 @@ public class SyncReceiver extends BroadcastReceiver {
      */
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("received intent");
         Bundle extras = intent.getExtras();
         if (extras != null) {
             Log.d("this", extras.getString("action"));
-            if (extras.getString("action").equals("open_dialog")){
+            String action = extras.getString("action");
+            if (action.equals("open_dialog")){
                 BusService.getBus().post(new LinkingRequestEvent());
+            }
+            if (action.equals("syncMedications")){
+                BusService.getBus().post(new DataChangedEvent(action));
+                System.out.println("posted datachanged event");
             }
         }
     }
