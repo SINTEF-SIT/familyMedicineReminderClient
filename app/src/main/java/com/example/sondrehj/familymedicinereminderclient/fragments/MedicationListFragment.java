@@ -58,6 +58,7 @@ public class MedicationListFragment extends android.app.Fragment{
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
             System.out.println("notifychanged called");
+
         }
     }
 
