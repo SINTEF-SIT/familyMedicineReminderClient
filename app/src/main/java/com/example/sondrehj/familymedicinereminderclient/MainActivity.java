@@ -77,9 +77,9 @@ public class MainActivity extends AppCompatActivity
      * Main entry point of the application. When onCreate is run, view is filled with the
      * layout activity_main in res. The fragment container which resides in the contentView is
      * changed to "MediciationListFragment()" with the changeFragment() function call.
-     *
+     * <p/>
      * In addition, the Sidebar/Drawer is instantiated.
-     *
+     * <p/>
      * Portrait mode is enforced because if the screen is rotated you loose a lot of references
      * when the instance is redrawn.
      *
@@ -96,11 +96,10 @@ public class MainActivity extends AppCompatActivity
         Account account = MainActivity.getAccount(this);
 
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
-        if(account == null) {
+        if (account == null) {
             changeFragment(new WelcomeFragment());
             //TODO: Disable drawer and navigation when in welcomeFragment
-        }
-        else {
+        } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
             changeFragment(new MedicationListFragment());
@@ -151,6 +150,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Gets the instantiazed account of the system, used with the SyncAdapter and
      * ContentResolver, might have to be moved sometime.
+     *
      * @return
      */
 
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
         //registering the event bus
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         //unregistering to prevent errors
         BusService.getBus().unregister(this);
@@ -191,7 +191,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     *
      * Closes the drawer when the back button is pressed.
      */
     //TODO: Make the application quit after the last fragment is popped from the fragmentStack, instead of showing the activity's content
@@ -275,27 +274,47 @@ public class MainActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
 
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
-        if(reminder != null) {
+        String notificationAction = intent.getStringExtra("notification-action");
+
+
+        if (reminder != null) {
             System.out.println("--------Notification Pressed--------");
             System.out.println(" Notification for reminder: " + reminder.getName());
-            if (reminder.getMedicine() != null) {
-                System.out.println(" Medication attached: " + reminder.getMedicine().getName());
-                System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
-                System.out.println(" Reducing by: " + reminder.getDosage());
-                reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
-                System.out.println(" New value: " + reminder.getMedicine().getCount());
 
-                // Updates MedicationListViewFragment with new data.
-                for (int i = 0; i < MedicationListContent.ITEMS.size(); i++) {
-                    if (MedicationListContent.ITEMS.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                        MedicationListContent.ITEMS.set(i, reminder.getMedicine());
+            // Schedules a new notification with the given snooze time
+            if (notificationAction.equals("snooze")) {
+
+                // TODO: update 60000 to snooze-time in AccountAdministrationFragment.
+                notificationScheduler.snoozeNotification(
+                        notificationScheduler.getNotification("", reminder),
+                        reminder,
+                        30000);
+                System.out.println(" Snooze - Scheduling new notification");
+                notificationScheduler.removeNotification(reminder.getReminderId());
+
+            } else if (notificationAction.equals("regular")) {
+                if (reminder.getMedicine() != null) {
+                    System.out.println(" Medication attached: " + reminder.getMedicine().getName());
+                    System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
+                    System.out.println(" Reducing by: " + reminder.getDosage());
+                    reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
+                    System.out.println(" New value: " + reminder.getMedicine().getCount());
+
+                    // Updates MedicationListViewFragment with new data.
+                    for (int i = 0; i < MedicationListContent.ITEMS.size(); i++) {
+                        if (MedicationListContent.ITEMS.get(i).getMedId() == reminder.getMedicine().getMedId()) {
+                            MedicationListContent.ITEMS.set(i, reminder.getMedicine());
+                            MedicationListFragment mlf = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+                            if (mlf != null) {
+                                mlf.notifyChanged();
+                            }
+                        }
                     }
+                    // Updates the DB
+                    MySQLiteHelper db = new MySQLiteHelper(this);
+                    db.updateAmountMedication(reminder.getMedicine());
+                    Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
                 }
-
-                // Updates the DB
-                MySQLiteHelper db = new MySQLiteHelper(this);
-                db.updateAmountMedication(reminder.getMedicine());
-                Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
             }
             System.out.println("------------------------------------");
         }
@@ -327,7 +346,7 @@ public class MainActivity extends AppCompatActivity
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
         AccountManager manager = AccountManager.get(this);
         boolean saved = manager.addAccountExplicitly(newAccount, password, null);
-        if (saved){
+        if (saved) {
             manager.setUserData(newAccount, "passtoken", password);
             manager.setUserData(newAccount, "userId", userId);
             manager.setUserData(newAccount, "userRole", userRole);
@@ -453,7 +472,7 @@ public class MainActivity extends AppCompatActivity
     public void onReminderDeleteButtonClicked(Reminder reminder) {
 
         // Cancel notification if set
-        if(reminder.getIsActive()){
+        if (reminder.getIsActive()) {
             notificationScheduler.cancelNotification(reminder.getReminderId());
         }
 

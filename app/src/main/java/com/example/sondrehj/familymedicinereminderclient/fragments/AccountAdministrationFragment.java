@@ -19,6 +19,9 @@ import com.example.sondrehj.familymedicinereminderclient.R;
  */
 public class AccountAdministrationFragment extends android.app.Fragment {
 
+    public static int SNOOZE_TIME;
+
+
     public AccountAdministrationFragment() {
         // Required empty public constructor
     }
