@@ -1,7 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.modals;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -11,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.models.Message;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,6 +18,8 @@ import retrofit2.Response;
 
 /**
  * Created by nikolai on 19/04/16.
+ *
+ * This dialog opens when
  */
 public class LinkingDialogFragment extends DialogFragment {
         @Override
@@ -33,15 +34,15 @@ public class LinkingDialogFragment extends DialogFragment {
                     "Only press yes if you know who this is!" + "Do you want to link your account?")
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            Call<User> call = api.responseToLinkingRequest(account.name, "accept");
-                            call.enqueue(new Callback<User>() {
+                            Call<Message> call = api.responseToLinkingRequest(account.name, "accept");
+                            call.enqueue(new Callback<Message>() {
                                 @Override
-                                public void onResponse(Call<User> call, Response<User> response) {
+                                public void onResponse(Call<Message> call, Response<Message> response) {
 
                                 }
 
                                 @Override
-                                public void onFailure(Call<User> call, Throwable t) {
+                                public void onFailure(Call<Message> call, Throwable t) {
 
                                 }
                             });
@@ -50,15 +51,15 @@ public class LinkingDialogFragment extends DialogFragment {
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             // User cancelled the dialog
-                            Call<User> call = api.responseToLinkingRequest(account.name, "deny");
-                            call.enqueue(new Callback<User>() {
+                            Call<Message> call = api.responseToLinkingRequest(account.name, "deny");
+                            call.enqueue(new Callback<Message>() {
                                 @Override
-                                public void onResponse(Call<User> call, Response<User> response) {
+                                public void onResponse(Call<Message> call, Response<Message> response) {
 
                                 }
 
                                 @Override
-                                public void onFailure(Call<User> call, Throwable t) {
+                                public void onFailure(Call<Message> call, Throwable t) {
 
                                 }
                             });

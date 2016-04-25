@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 
@@ -31,15 +32,18 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(ServiceManager.isNetworkAvailable(context)) {
-            //Toast.makeText(context, "Network available - do stuff!", Toast.LENGTH_LONG).show();
-            ContentResolver.setSyncAutomatically(
+            try {
+                ContentResolver.setSyncAutomatically(
                     MainActivity.getAccount(context),
                     AUTHORITY,
                     true);
-            ContentResolver.requestSync(
+                ContentResolver.requestSync(
                     MainActivity.getAccount(context),
                     AUTHORITY,
                     Bundle.EMPTY);
+            } catch (Exception e) {
+                Toast.makeText(context, "Make a user account by restarting the application.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }
