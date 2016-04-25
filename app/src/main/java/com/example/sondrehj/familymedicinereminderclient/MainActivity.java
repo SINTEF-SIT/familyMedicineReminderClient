@@ -129,8 +129,17 @@ public class MainActivity extends AppCompatActivity
 
         //Read and display data from local database. (Flyttes?)
         MySQLiteHelper db = new MySQLiteHelper(this);
-
         //TODO: Look more at how database changes can be broadcasted to the system
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent intent = getIntent();
+        if (intent != null) {
+            onNewIntent(intent);
+            setIntent(null);
+        }
     }
 
     /**
@@ -273,51 +282,57 @@ public class MainActivity extends AppCompatActivity
      *
      * @param intent the intent instance created by getNotification(String content, Reminder reminder)
      */
-    protected void onNewIntent(Intent intent) {
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
 
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
 
+        if(notificationAction != null) {
+            if (reminder != null) {
+                System.out.println("--------Notification Pressed--------");
+                System.out.println(" Notification for reminder: " + reminder.getName());
 
-        if (reminder != null) {
-            System.out.println("--------Notification Pressed--------");
-            System.out.println(" Notification for reminder: " + reminder.getName());
+                // Schedules a new notification with the given snooze time
+                if (notificationAction.equals("snooze")) {
 
-            // Schedules a new notification with the given snooze time
-            if (notificationAction.equals("snooze")) {
+                    // TODO: update 60000 to snooze-time in AccountAdministrationFragment.
+                    notificationScheduler.snoozeNotification(
+                            notificationScheduler.getNotification("", reminder),
+                            reminder,
+                            30000);
+                    System.out.println(" Snooze - Scheduling new notification");
+                    notificationScheduler.removeNotification(reminder.getReminderId());
 
-                // TODO: update 60000 to snooze-time in AccountAdministrationFragment.
-                notificationScheduler.snoozeNotification(
-                        notificationScheduler.getNotification("", reminder),
-                        reminder,
-                        30000);
-                System.out.println(" Snooze - Scheduling new notification");
-                notificationScheduler.removeNotification(reminder.getReminderId());
+                } else if (notificationAction.equals("regular")) {
+                    if (reminder.getMedicine() != null) {
+                        System.out.println(" Medication attached: " + reminder.getMedicine().getName());
+                        System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
+                        System.out.println(" Reducing by: " + reminder.getDosage());
+                        reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
+                        System.out.println(" New value: " + reminder.getMedicine().getCount());
 
-            } else if (notificationAction.equals("regular")) {
-                if (reminder.getMedicine() != null) {
-                    System.out.println(" Medication attached: " + reminder.getMedicine().getName());
-                    System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
-                    System.out.println(" Reducing by: " + reminder.getDosage());
-                    reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
-                    System.out.println(" New value: " + reminder.getMedicine().getCount());
-
-                    // Updates MedicationListViewFragment with new data.
-                    for (int i = 0; i < MedicationListFragment.medications.size(); i++) {
-                        if (MedicationListFragment.medications.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                            MedicationListFragment.medications.set(i, reminder.getMedicine());
-                            MedicationListFragment mlf = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-                            if (mlf != null) {
-                                mlf.notifyChanged();
+                        // Updates MedicationListViewFragment with new data.
+                        for (int i = 0; i < MedicationListFragment.medications.size(); i++) {
+                            if (MedicationListFragment.medications.get(i).getMedId() == reminder.getMedicine().getMedId()) {
+                                MedicationListFragment.medications.set(i, reminder.getMedicine());
+                                MedicationListFragment mlf = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+                                if (mlf != null) {
+                                    mlf.notifyChanged();
+                                }
                             }
                         }
+                        // Updates the DB
+                        MySQLiteHelper db = new MySQLiteHelper(this);
+                        db.updateAmountMedication(reminder.getMedicine());
+                        Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
                     }
-                    // Updates the DB
-                    MySQLiteHelper db = new MySQLiteHelper(this);
-                    db.updateAmountMedication(reminder.getMedicine());
-                    Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
                 }
+
+                System.out.println("------------------------------------");
             } else if (notificationAction.equals("medicationsChanged")) {
                 Bundle extras = new Bundle();
                 extras.putString("notificationType", notificationAction);
@@ -329,8 +344,6 @@ public class MainActivity extends AppCompatActivity
                         "com.example.sondrehj.familymedicinereminderclient.content",
                         extras);
             }
-
-            System.out.println("------------------------------------");
         }
     }
 
