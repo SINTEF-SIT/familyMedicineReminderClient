@@ -49,6 +49,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragm
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
+import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity
 
     private SyncReceiver syncReceiver;
     NotificationManager manager;
+    private NotificationScheduler notificationScheduler;
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -111,6 +113,9 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        // NotificationScheduler
+        this.notificationScheduler = new NotificationScheduler(this);
 
         // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -262,69 +267,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Called by timepicker in NewReminder
-     *
-     * @param hourOfDay
-     * @param minute
-     */
-
-    //TODO: Move out of MainActivity if possible
-    private void scheduleNotification(Notification notification, Reminder reminder) {
-
-        // A variable containing the reminder date in milliseconds.
-        // Used for scheduling the notification.
-        Long time = reminder.getDate().getTimeInMillis();
-
-        // Defines the Intent of the notification. The NotificationPublisher class uses this
-        // object to retrieve additional information about the notification.
-        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        // Adds the given notification object to the Intent object.
-        // Used to publish the given notification.
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        // Adds the given reminder object to the Intent object
-        // Used to cancel and filter Notifications
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Calendar cal = Calendar.getInstance();
-
-        // Schedules a repeating notification on the user specified days.
-        if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
-        }
-        // Schedules a non-repeating notification
-        else {
-            if (!reminder.getDate().before(cal)) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
-            }
-        }
-    }
-
-    private Notification getNotification(String content, Reminder reminder) {
-
-        //Defines the Intent of the notification
-        Intent intent = new Intent(this, this.getClass());
-        intent.putExtra("notification-reminder", reminder);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
-
-        //Constructs the notification
-        Notification notification = new Notification.Builder(MainActivity.this)
-                .setContentTitle("MYCYFAPP")
-                .setContentText(reminder.getName())
-                .setSmallIcon(R.drawable.ic_sidebar_pill)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setAutoCancel(true)
-                .setContentIntent(pIntent)
-                .addAction(R.drawable.ic_sidebar_pill, "Register as taken", pIntent)
-                .build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        return notification;
-    }
-
-    /**
      * Called when a notification is clicked. If the intent contains a reminder with a medication attached,
      * the amount of "units" decreases by the given dosage.
      *
@@ -357,17 +299,6 @@ public class MainActivity extends AppCompatActivity
             }
             System.out.println("------------------------------------");
         }
-    }
-
-    public void cancelNotification(int id){
-        //Cancel the scheduled reminder
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,
-                id,
-                new Intent(this, NotificationPublisher.class),
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.cancel(pendingIntent);
-        System.out.println("Reminder: " + id + " was deactivated");
     }
 
     /**
@@ -495,7 +426,8 @@ public class MainActivity extends AppCompatActivity
 
         if (r.getIsActive()) {
             // Activate the reminder
-            scheduleNotification(getNotification("Take your medication", r), r);
+            notificationScheduler.scheduleNotification(
+                    notificationScheduler.getNotification("Take your medication", r), r);
             r.setIsActive(true);
         }
         // Updates the DB
@@ -522,7 +454,7 @@ public class MainActivity extends AppCompatActivity
 
         // Cancel notification if set
         if(reminder.getIsActive()){
-            cancelNotification(reminder.getReminderId());
+            notificationScheduler.cancelNotification(reminder.getReminderId());
         }
 
         // Delete reminder from local database
@@ -536,12 +468,13 @@ public class MainActivity extends AppCompatActivity
         if (reminder.getIsActive()) {
 
             // Cancel the scheduled reminder
-            cancelNotification(reminder.getReminderId());
+            notificationScheduler.cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
         } else {
 
             // Activate the reminder
-            scheduleNotification(getNotification("Take your medication", reminder), reminder);
+            notificationScheduler.scheduleNotification(
+                    notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
