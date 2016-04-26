@@ -23,8 +23,11 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
+import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 
 import butterknife.Bind;
@@ -42,6 +45,8 @@ import retrofit2.Response;
  */
 public class LinkingFragment extends android.app.Fragment{
 
+    private boolean busIsRegistered;
+
     @Bind(R.id.link_guardian_button) Button linkButton;
     @Bind(R.id.link_guardian_status_icon) ImageView statusIcon;
     @Bind(R.id.link_guardian_status_text) TextView statusText;
@@ -50,8 +55,6 @@ public class LinkingFragment extends android.app.Fragment{
     @Bind(R.id.link_patient_infotext) TextView infoText;
     @Bind(R.id.link_patient_id_helper) TextView idHelper;
     @Bind(R.id.link_patient_id) TextView userID;
-
-    private static Bus bus;
     private Context context;
 
     public LinkingFragment() {
@@ -72,7 +75,6 @@ public class LinkingFragment extends android.app.Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        BusService.getBus().register(this);
     }
 
     @Override
@@ -109,9 +111,8 @@ public class LinkingFragment extends android.app.Fragment{
             // give textual feedback about linking
             statusText.setText("Linking with: " + idInput.getText().toString() + "...");
             // set the color of the status icon to yellow to give feedback
-            int color = Color.parseColor("#FFFDD835");
+            int color = Color.parseColor("#FFEB3B");
             statusIcon.setColorFilter(color);
-
             linkWithAccount(idInput.getText().toString());
         } else {
             statusText.setText("Enter a 5-digit ID. Try again...");
@@ -129,34 +130,54 @@ public class LinkingFragment extends android.app.Fragment{
         final Account account = reminderAccounts[0];
 
         Log.d("linking/api", "sendlinkingrequest userID: " + account.name);
-        Call<User> call = api.sendLinkingRequest(account.name, idToLinkWith);
-        call.enqueue(new Callback<User>() {
+        Call<Message> call = api.sendLinkingRequest(account.name, idToLinkWith);
+        call.enqueue(new Callback<Message>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                if (response.isSuccessful()) {
-                    User user = response.body();
-                    Log.d("linking/api", "successful linking.");
-                    //TODO: persist linked status to the device.
-                    int color = Color.parseColor("#FF64DD17");
-                    statusIcon.setColorFilter(color);
-                } else {
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if (response.isSuccessful()) { //on received message object OK.
+                    Message m = response.body();
+                    String message = m.getMessage();
+                    if (message.equals("Successfully sent linking request to patient.")) {
+                        //continue
+                    } else {
+                        statusText.setText("Could not send linking request to patient.");
+                        int color = Color.parseColor("#FF5252");
+                        statusIcon.setColorFilter(color);
+                    }
+                    //TODO: persist linked status to the device.??
+                    clearStatusTextAfterSeconds(5);
+                } else { //on received message object FAIL.
                     Log.d("linking/api", "unsuccessful linking.");
-                    int color = Color.parseColor("#FFBF360C");
+                    int color = Color.parseColor("#FF5252");
                     statusIcon.setColorFilter(color);
-                    statusText.setText("Linking error, try again later.");
-                    clearStatusTextAfterSeconds(3);
+                    statusText.setText("Server error, please contact developer.");
+                    clearStatusTextAfterSeconds(5);
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<Message> call, Throwable t) {
                 Log.d("linking/api", "sendlinkingrequest -> onFailure.");
                 statusText.setText("Cannot initiate network call.");
-                int color = Color.parseColor("#FFBF360C");
+                int color = Color.parseColor("#FF5252");
                 statusIcon.setColorFilter(color);
-                clearStatusTextAfterSeconds(8);
+                clearStatusTextAfterSeconds(5);
             }
         });
+    }
+
+    @Subscribe
+    public void handleLinkingResultByNotification(LinkingResponseEvent event){
+        if (event.getMessage().equals("positiveResponse")) {
+            statusText.setText("The patient have successfully been linked to this guardian account!");
+            int color = Color.parseColor("#388E3C");
+            statusIcon.setColorFilter(color);
+        } else {
+            statusText.setText("The patient has denied the linking request.");
+            int color = Color.parseColor("#FFBF360C");
+            statusIcon.setColorFilter(color);
+        }
+        clearStatusTextAfterSeconds(5);
     }
 
     public void clearStatusTextAfterSeconds(int i) {
@@ -176,21 +197,30 @@ public class LinkingFragment extends android.app.Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        BusService.getBus().register(this);
+        if (!busIsRegistered) {
+            BusService.getBus().register(this);
+            busIsRegistered = true;
+        }
         this.context = context;
     }
 
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
-        BusService.getBus().register(this);
+        if (!busIsRegistered) {
+            BusService.getBus().register(this);
+            busIsRegistered = true;
+        }
         this.context = context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        BusService.getBus().unregister(this);
+        if (busIsRegistered) {
+            BusService.getBus().unregister(this);
+            busIsRegistered = false;
+        }
     }
 
     @Override public void onDestroyView() {

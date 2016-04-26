@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 
@@ -32,17 +33,19 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     //TODO: Fix bug that appears when turning internet on and off (in welcomefragment, but possibly everywhere)
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(ServiceManager.isNetworkAvailable(context)) {
-            //Toast.makeText(context, "Network available - do stuff!", Toast.LENGTH_LONG).show();
-            ContentResolver.setSyncAutomatically(
+        if (ServiceManager.isNetworkAvailable(context)) {
+            try {
+                ContentResolver.setSyncAutomatically(
                     MainActivity.getAccount(context),
                     AUTHORITY,
                     true);
-
-            /*ContentResolver.requestSync(
+                ContentResolver.requestSync(
                     MainActivity.getAccount(context),
                     AUTHORITY,
-                    Bundle.EMPTY);*/
+                    Bundle.EMPTY);
+            } catch (Exception e) { //TODO: runs even when the application is in the background.
+                Toast.makeText(context, "Make a user account by restarting the application.", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

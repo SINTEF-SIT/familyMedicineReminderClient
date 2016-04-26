@@ -18,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
+    private static String TAG = "SyncAdapter";
     private Context context;
 
     public SyncAdapter(Context context, boolean autoInitialize) {
@@ -62,12 +63,26 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     synchronizer.syncMedications();
                     break;
                 case "linkingRequest":
-                    Log.d("SyncAdapter", "in switch -> linkingRequest");
+                    Log.d(TAG, "in switch -> linkingRequest");
                     //incoming linking request from push notification
                     Intent intent = new Intent();
                     intent.setAction("mycyfapp"); //not action, but filter.
                     intent.putExtra("action", "open_dialog");
                     context.sendBroadcast(intent);
+                    break;
+                case "positiveLinkingResponse":
+                    Log.d(TAG, "in switch -> positiveLinkingResponse");
+                    Intent intent1 = new Intent();
+                    intent1.setAction("openDialog");
+                    intent1.putExtra("action", "notifyPositiveResultToLinkingFragment");
+                    context.sendBroadcast(intent1);
+                    break;
+                case "negativeLinkingResponse":
+                    Log.d(TAG, "in switch -> negativeLinkingResponse");
+                    Intent intent2 = new Intent();
+                    intent2.setAction("openDialog");
+                    intent2.putExtra("action", "notifyNegativeResultToLinkingFragment");
+                    context.sendBroadcast(intent2);
                     break;
             }
         } else {
