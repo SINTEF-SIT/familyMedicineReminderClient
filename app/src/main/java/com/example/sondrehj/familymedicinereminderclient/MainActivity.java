@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         SelectDaysDialogFragment.OnDaysDialogResultListener,
         EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
 
+    private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
     NotificationManager manager;
     private NotificationScheduler notificationScheduler;
@@ -158,33 +159,50 @@ public class MainActivity extends AppCompatActivity
         return AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient")[0];
     }
 
+    /**
+     * Registering the SyncReceiver to receive intents from the SyncAdapter, we need this
+     * because the Bus cannot register to the SyncAdapter (it is another process altogether).
+     * Registering the activity to the event bus.
+     */
     @Override
     public void onResume() {
         super.onResume();
-
-        //registering the event bus
         BusService.getBus().register(this);
-
-        /**
-         * Registering the SyncReceiver to receive intents from the SyncAdapter, we need this
-         * because the Bus cannot register to the SyncAdaptar (it is another process altogether).
-         */
         syncReceiver = new SyncReceiver();
-        IntentFilter intentFilter = new IntentFilter("openDialog");
+        IntentFilter intentFilter = new IntentFilter("mycyfapp");
         registerReceiver(syncReceiver, intentFilter);
     }
 
+    /**
+     * Unregister the activity from the bus.
+     * Unregister the receiver so that intents aren't received when the application is paused.
+     *
+     */
     @Override
     public void onPause() {
         super.onPause();
-        //unregistering to prevent errors
         BusService.getBus().unregister(this);
         unregisterReceiver(syncReceiver);
     }
 
+    /**
+     * Handle a LinkingRequest sent to the patient on the bus. Opens a LinkingDialogFragment
+     * which asks the patient wether it wants to link itself with a guardian account upon request.
+     *
+     * Flow:
+     * 1. Guardian presses link
+     * 2. Guardian sends rest call to the server
+     * 3. Server sends notification to patient
+     * 4. MyGCMListener asks for sync with notificationType in extras bundle
+     * 5. SyncAdapter sends a intent to the SyncReceiver.
+     * 6. SyncReceiver sends a LinkingRequestEvent out on the event bus which MainActivity is registered to.
+     * 7. MainActivity of patient handles incoming linking request
+     *
+     * @param event
+     */
     @Subscribe
     public void handleLinkingRequest(LinkingRequestEvent event) {
-        Log.d("Main", "Handled linking request");
+        Log.d(TAG, "Handled linking request by opening Linking Dialog.");
         FragmentManager fm = getSupportFragmentManager();
         LinkingDialogFragment linkingDialogFragment = new LinkingDialogFragment();
         linkingDialogFragment.show(fm, "linking_request_fragment");

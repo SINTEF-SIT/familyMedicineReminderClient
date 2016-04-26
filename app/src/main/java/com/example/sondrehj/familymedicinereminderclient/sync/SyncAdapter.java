@@ -26,11 +26,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         this.context = context;
     }
 
-
-
     /**
-     * This function is ran when requestSync is called from anywhere in the
-     * android system with the right authority. The functions performs a sync of the data.
+     * This function runs when requestSync is called from anywhere in the
+     * android system with the right authority. The functions performs a sync of the content provider.
+     * In our use case, the content provider is a stub, and we perform custom syncronization instead.
      *
      * @param account
      * @param extras
@@ -46,14 +45,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             ContentProviderClient provider,
             SyncResult syncResult) {
 
-
-        Log.d("Sync", "Sync is performing");
+        Log.d(TAG, "Sync is performing");
 
         String notificationType = extras.getString("notificationType");
         MyCyFAPPServiceAPI api = RestService.createRestService();
         MySQLiteHelper db = new MySQLiteHelper(getContext());
-
         Synchronizer synchronizer = new Synchronizer(account.name, api, db);
+
         if (notificationType != null) {
             switch (notificationType) {
                 case "remindersChanged":
@@ -66,21 +64,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     Log.d(TAG, "in switch -> linkingRequest");
                     //incoming linking request from push notification
                     Intent intent = new Intent();
-                    intent.setAction("openDialog");
+                    intent.setAction("mycyfapp");
                     intent.putExtra("action", "open_dialog");
                     context.sendBroadcast(intent);
                     break;
                 case "positiveLinkingResponse":
                     Log.d(TAG, "in switch -> positiveLinkingResponse");
                     Intent intent1 = new Intent();
-                    intent1.setAction("openDialog");
+                    intent1.setAction("mycyfapp");
                     intent1.putExtra("action", "notifyPositiveResultToLinkingFragment");
                     context.sendBroadcast(intent1);
                     break;
                 case "negativeLinkingResponse":
                     Log.d(TAG, "in switch -> negativeLinkingResponse");
                     Intent intent2 = new Intent();
-                    intent2.setAction("openDialog");
+                    intent2.setAction("mycyfapp");
                     intent2.putExtra("action", "notifyNegativeResultToLinkingFragment");
                     context.sendBroadcast(intent2);
                     break;
