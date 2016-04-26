@@ -23,7 +23,6 @@ public class ReminderListContent {
     /**
      * An array of sample (dummy) items.
      */
-    public static final List<Reminder> ITEMS = new ArrayList<>();
 
     /**
      * A map of sample (dummy) items, by ID.

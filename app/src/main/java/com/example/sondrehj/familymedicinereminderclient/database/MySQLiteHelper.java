@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.ReminderListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
@@ -75,7 +76,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         db = this.getWritableDatabase();
-
     }
 
     @Override
@@ -149,6 +149,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return data;
     }
 
@@ -257,7 +258,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_REMINDER;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        ArrayList<Reminder> data = new ArrayList<Reminder>();
+        ArrayList<Reminder> data = new ArrayList<>();
 
         // Loop through the retrieved data. Generates instances of the the reminder class.
         if (cursor.moveToFirst()) {
@@ -308,6 +309,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return data;
     }
 
@@ -316,7 +318,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_REMINDER, "reminder_id=" + reminder.getReminderId(), null);
         //Removes the reminder from the list content
-        ReminderListContent.ITEMS.remove(reminder);
+        ReminderListFragment.reminders.remove(reminder);
         db.close();
     }
 

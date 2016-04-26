@@ -13,8 +13,12 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -27,6 +31,8 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     //TODO: Animation is not triggering
 
     private OnReminderListFragmentInteractionListener mListener;
+
+    public static List<Reminder> reminders = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,6 +51,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        reminders.addAll(mListener.onGetReminders());
     }
 
     @Override
@@ -56,7 +63,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
             //recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-            recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
+            recView.setAdapter(new ReminderListRecyclerViewAdapter(context, reminders, mListener));
         }
 
         view.findViewById(R.id.reminder_fab).setOnClickListener(new View.OnClickListener() {
@@ -118,5 +125,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         void onReminderListItemClicked(Reminder reminder);
         void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
+        List<Reminder> onGetReminders();
+
     }
 }
