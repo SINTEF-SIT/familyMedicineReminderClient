@@ -80,20 +80,28 @@ public class MainActivity extends AppCompatActivity
      *
      * @param savedInstanceState
      */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         //get the accountmanager
         Account account = MainActivity.getAccount(this);
 
+
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
             changeFragment(new WelcomeFragment());
-            //TODO: Disable drawer and navigation when in welcomeFragment
+            //disables drawer and navigation when in welcomeFragment.
+            drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+            //hides ActionBarDrawerToggle
+            toggle.setDrawerIndicatorEnabled(false);
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
@@ -101,12 +109,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
@@ -388,6 +390,7 @@ public class MainActivity extends AppCompatActivity
      * @param password
      * @param userRole
      */
+
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole) {
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
@@ -400,6 +403,15 @@ public class MainActivity extends AppCompatActivity
             System.out.println(newAccount.toString());
             System.out.println(AccountManager.get(getApplicationContext()).getUserData(newAccount, "userRole"));
         }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //Enables drawer and action toggle when user is created
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        toggle.setDrawerIndicatorEnabled(true);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
