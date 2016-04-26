@@ -16,10 +16,11 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 /**
+ * API endpoint definitions
+ *
  * Created by nikolai on 04/04/16.
  */
 public interface MyCyFAPPServiceAPI {
-
     /**
      *
      * REMINDER REQUESTS
@@ -49,7 +50,10 @@ public interface MyCyFAPPServiceAPI {
     Call<Medication> createMedication(@Path("userID") String userID, @Body Medication medication);
 
     @PUT("user/{userID}/medication/{medicationID}")
-    Call<Medication> updateMedication(@Path("userID") String userID, @Body Medication medication);
+    Call<Medication> updateMedication(@Path("userID") String userID, @Path("medicationID") String medicationID, @Body Medication medication);
+
+    @DELETE("user/{userID}/medication/{medicationID}")
+    Call<Medication> deleteMedication(@Path("userID") String userID, @Path("medicationID") String medicationID);
 
     //https://developers.google.com/cloud-messaging/network-manager#schedule_a_persistent_task
 
@@ -60,9 +64,6 @@ public interface MyCyFAPPServiceAPI {
      **/
     @GET("user/{userID}/children")
     Call<User> getChildren(@Path("userID") String userID);
-
-    @POST("user/{userID}/children")
-    Call<User> addChild(@Path("userID") String userID); //TODO: needs to send notion of a child.
 
     @POST("user")
     Call<User> createUser(@Body User user);
@@ -75,7 +76,6 @@ public interface MyCyFAPPServiceAPI {
      * LINKING REQUESTS
      *
      */
-
     @POST("user/{userID}/linking/{withID}")
     Call<Message> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
 
