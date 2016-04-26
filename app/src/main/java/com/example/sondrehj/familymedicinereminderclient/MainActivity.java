@@ -2,7 +2,6 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
@@ -363,6 +362,8 @@ public class MainActivity extends AppCompatActivity
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
+     *
+     * TODO: Disallow usage of the application before the user fixes this error.
      */
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
