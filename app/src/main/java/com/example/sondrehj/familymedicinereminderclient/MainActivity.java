@@ -2,13 +2,10 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.AlarmManager;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,12 +24,9 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
-import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
-import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
@@ -50,7 +44,6 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialo
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -59,10 +52,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Subscribe;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -292,15 +282,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
-
     /**
      * Called when a notification is clicked. If the intent contains a reminder with a medication attached,
      * the amount of "units" decreases by the given dosage.
      *
      * @param intent the intent instance created by getNotification(String content, Reminder reminder)
      */
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -378,7 +365,7 @@ public class MainActivity extends AppCompatActivity
                 apiAvailability.getErrorDialog(this, resultCode, 9000)
                         .show();
             } else {
-                Log.i("main", "This device is not supported.");
+                Log.i(TAG, "This device is not supported.");
                 finish();
             }
             return false;
@@ -386,6 +373,13 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Function called by WelcomeFragment to save/add account to the AccountManager and
+     * fetch a gcm token which is sent to the server and associated with the user.
+     * @param userId
+     * @param password
+     * @param userRole
+     */
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole) {
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
@@ -466,7 +460,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_medication) {
             changeFragment(MedicationListFragment.newInstance());
         } else if (id == R.id.nav_settings) {
-            //TODO: fill inn changefragment to settings fragment
             changeFragment(AccountAdministrationFragment.newInstance());
         } else if (id == R.id.nav_guardian_dashboard) {
             changeFragment(new GuardianDashboardFragment());
