@@ -13,7 +13,11 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -24,6 +28,8 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 public class ReminderListFragment extends android.app.Fragment {
 
     private OnReminderListFragmentInteractionListener mListener;
+
+    public static List<Reminder> reminders = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -42,6 +48,7 @@ public class ReminderListFragment extends android.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        reminders.addAll(mListener.onGetReminders());
     }
 
     @Override
@@ -53,7 +60,7 @@ public class ReminderListFragment extends android.app.Fragment {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
             //recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-            recView.setAdapter(new ReminderListRecyclerViewAdapter(context, ReminderListContent.ITEMS, mListener));
+            recView.setAdapter(new ReminderListRecyclerViewAdapter(context, reminders, mListener));
         }
 
         view.findViewById(R.id.reminder_fab).setOnClickListener(new View.OnClickListener() {
@@ -110,5 +117,7 @@ public class ReminderListFragment extends android.app.Fragment {
         void onReminderListItemClicked(Reminder reminder);
         void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
+        List<Reminder> onGetReminders();
+
     }
 }

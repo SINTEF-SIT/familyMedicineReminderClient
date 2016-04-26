@@ -87,7 +87,7 @@ public class RegistrationIntentService extends IntentService {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d(TAG, "failure in token registration.");
-            }
+        }
         });
     }
 }
