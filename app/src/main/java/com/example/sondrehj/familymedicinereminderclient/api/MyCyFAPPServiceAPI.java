@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.api;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
@@ -76,8 +77,8 @@ public interface MyCyFAPPServiceAPI {
      */
 
     @POST("user/{userID}/linking/{withID}")
-    Call<User> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
+    Call<Message> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
 
     @POST("user/{userID}/linkingresponse/{response}")
-    Call<User> responseToLinkingRequest(@Path("userID") String userID, @Path("response") String response);
+    Call<Message> responseToLinkingRequest(@Path("userID") String userID, @Path("response") String response);
 }
