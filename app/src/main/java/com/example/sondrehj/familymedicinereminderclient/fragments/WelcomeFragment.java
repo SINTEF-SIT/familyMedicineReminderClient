@@ -17,6 +17,7 @@ import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServiceManager;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,7 +33,7 @@ import retrofit2.Response;
  * Use the {@link WelcomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WelcomeFragment extends android.app.Fragment {
+public class WelcomeFragment extends android.app.Fragment implements TitleSupplier {
 
     private final String TAG = "WelcomeFragment";
     private OnWelcomeListener mListener;
@@ -150,6 +151,11 @@ public class WelcomeFragment extends android.app.Fragment {
         super.onDetach();
         mListener = null;
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public String getTitle() {
+        return "Welcome!";
     }
 
     /**

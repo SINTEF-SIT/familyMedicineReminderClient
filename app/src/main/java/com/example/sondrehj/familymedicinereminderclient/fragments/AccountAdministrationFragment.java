@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 
 /**
@@ -15,7 +16,7 @@ import com.example.sondrehj.familymedicinereminderclient.R;
  * Use the {@link AccountAdministrationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AccountAdministrationFragment extends android.app.Fragment {
+public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
 
     public static int SNOOZE_TIME;
 
@@ -45,5 +46,10 @@ public class AccountAdministrationFragment extends android.app.Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_account_administration, container, false);
+    }
+
+    @Override
+    public String getTitle() {
+        return "Settings";
     }
 }

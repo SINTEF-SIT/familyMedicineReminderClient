@@ -55,6 +55,7 @@ import com.example.sondrehj.familymedicinereminderclient.notification.Notificati
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Subscribe;
@@ -257,6 +258,7 @@ public class MainActivity extends AppCompatActivity
     public void changeFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
         System.out.println("Navigated to: " + fragment.getClass().getSimpleName());
+
         boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped) { //fragment not in back stack, create it.
@@ -272,6 +274,11 @@ public class MainActivity extends AppCompatActivity
             //Commit the transaction
             transaction.commit();
         }
+        //change the header to which fragment you are on
+        TitleSupplier titleSupplier = (TitleSupplier) fragment;
+        setTitle(titleSupplier.getTitle());
+
+
     }
 
 
@@ -533,4 +540,5 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
     }
+
 }

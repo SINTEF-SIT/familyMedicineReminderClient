@@ -14,6 +14,7 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 /**
  * A fragment representing a list of Items.
@@ -21,7 +22,9 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.
  */
-public class ReminderListFragment extends android.app.Fragment {
+public class ReminderListFragment extends android.app.Fragment implements TitleSupplier {
+
+    //TODO: Animation is not triggering
 
     private OnReminderListFragmentInteractionListener mListener;
 
@@ -93,6 +96,11 @@ public class ReminderListFragment extends android.app.Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Reminders";
     }
 
     /**

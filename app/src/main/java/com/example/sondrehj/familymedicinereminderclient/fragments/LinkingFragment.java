@@ -26,6 +26,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
@@ -43,7 +44,7 @@ import retrofit2.Response;
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LinkingFragment extends android.app.Fragment{
+public class LinkingFragment extends android.app.Fragment implements TitleSupplier {
 
     private boolean busIsRegistered;
 
@@ -81,7 +82,6 @@ public class LinkingFragment extends android.app.Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linking, container, false);
         ButterKnife.bind(this, view);
-        getActivity().setTitle("Linking");
 
         Account account = MainActivity.getAccount(context);
         Log.d("LinkingFragment", "Accountname: " + account.name);
@@ -226,6 +226,11 @@ public class LinkingFragment extends android.app.Fragment{
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public String getTitle() {
+        return "Linking";
     }
 
     /**
