@@ -18,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MedicationList
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 
 /**
@@ -25,7 +26,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
  * Use the {@link MedicationStorageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MedicationStorageFragment extends android.app.Fragment {
+public class MedicationStorageFragment extends android.app.Fragment implements TitleSupplier {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_MEDICATION = "medication";
@@ -155,7 +156,7 @@ public class MedicationStorageFragment extends android.app.Fragment {
 
     }
 
-    public void updateMedication(){
+    public void updateMedication() {
         EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
         EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
         TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
@@ -171,5 +172,10 @@ public class MedicationStorageFragment extends android.app.Fragment {
 
         System.out.println("---------Medication Updated---------" + "\n" + mMedication);
         System.out.println("------------------------------------");
+    }
+
+    @Override
+    public String getTitle() {
+        return "New Medication";
     }
 }

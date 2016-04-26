@@ -18,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecy
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MedicationListFragment extends android.app.Fragment{
+public class MedicationListFragment extends android.app.Fragment implements TitleSupplier {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -124,6 +125,11 @@ public class MedicationListFragment extends android.app.Fragment{
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public String getTitle() {
+        return "Medications";
     }
 
     /**

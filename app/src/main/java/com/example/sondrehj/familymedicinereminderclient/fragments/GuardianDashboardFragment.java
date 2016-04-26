@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,7 +24,7 @@ import com.example.sondrehj.familymedicinereminderclient.R;
  * Use the {@link GuardianDashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GuardianDashboardFragment extends android.app.Fragment {
+public class GuardianDashboardFragment extends android.app.Fragment implements TitleSupplier {
 
     private LinearLayout guardianDashboardLayout;
 
@@ -178,5 +179,10 @@ public class GuardianDashboardFragment extends android.app.Fragment {
 
         LinearLayout medicineLayout = (LinearLayout) pasientLayout.getChildAt(1);
         medicineLayout.addView(medicineButton);
+    }
+
+    @Override
+    public String getTitle() {
+        return "Guardian Dashboard";
     }
 }

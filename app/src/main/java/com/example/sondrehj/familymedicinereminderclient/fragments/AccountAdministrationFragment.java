@@ -16,9 +16,10 @@ import android.widget.Toast;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+
 
 
 /**
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
  * Use the {@link AccountAdministrationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AccountAdministrationFragment extends android.app.Fragment {
+public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
 
 
     @Bind(R.id.account_year_edit_text) EditText yearEditText;
@@ -106,5 +107,8 @@ public class AccountAdministrationFragment extends android.app.Fragment {
         return true;
     }
 
-
+    @Override
+    public String getTitle() {
+        return "Settings";
+    }
 }
