@@ -76,7 +76,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         db = this.getWritableDatabase();
-
     }
 
     @Override
@@ -150,6 +149,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return data;
     }
 
@@ -258,7 +258,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         String selectQuery = "SELECT  * FROM " + TABLE_REMINDER;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        ArrayList<Reminder> data = new ArrayList<Reminder>();
+        ArrayList<Reminder> data = new ArrayList<>();
 
         // Loop through the retrieved data. Generates instances of the the reminder class.
         if (cursor.moveToFirst()) {
@@ -309,6 +309,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        db.close();
         return data;
     }
 

@@ -16,6 +16,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -309,25 +310,37 @@ public class MainActivity extends AppCompatActivity
 
         if(notificationAction != null) {
             if (reminder != null) {
-                System.out.println("--------Notification Pressed--------");
-                System.out.println(" Notification for reminder: " + reminder.getName());
+                System.out.println("--------Notification Pressed--------" + "\n" +
+                                " Notification for reminder: " + reminder.getName());
 
-                // Schedules a new notification with the given snooze time
+
+                // Check if the user clicked the "snooze" action on the notification.
                 if (notificationAction.equals("snooze")) {
 
-                    // TODO: update 60000 to snooze-time in AccountAdministrationFragment.
+                    // Get user specified snoozeTime from account settings
+                    SharedPreferences prefs = this.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
+                    int snoozeTime = prefs.getInt("snoozeTime", 180000);
+
+                    // Schedule a "new" notification with the given snooze time
                     notificationScheduler.snoozeNotification(
                             notificationScheduler.getNotification("", reminder),
                             reminder,
-                            30000);
+                            snoozeTime);
                     System.out.println(" Snooze - Scheduling new notification");
                     notificationScheduler.removeNotification(reminder.getReminderId());
+                    Toast.makeText(this, "Snooze activated", Toast.LENGTH_LONG).show();
 
-                } else if (notificationAction.equals("regular")) {
+                }
+                // Check if the user clicked the main notification action or the "take" action
+                else if (notificationAction.equals("regular")) {
+                    // Check if there is a medication "attached" to the notification.
                     if (reminder.getMedicine() != null) {
-                        System.out.println(" Medication attached: " + reminder.getMedicine().getName());
-                        System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
-                        System.out.println(" Reducing by: " + reminder.getDosage());
+                        System.out.println(
+                                        " Medication attached: " + reminder.getMedicine().getName() + "\n" +
+                                        " Number of medication units: " + reminder.getMedicine().getCount() + "\n" +
+                                        " Reducing by: " + reminder.getDosage());
+
+                        // We reduce the amount of the medication by the given dosage.
                         reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
                         System.out.println(" New value: " + reminder.getMedicine().getCount());
 
@@ -390,11 +403,14 @@ public class MainActivity extends AppCompatActivity
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
-        // TODO: clear list contents
+        // Clear Medication and Reminder lists
+        ReminderListFragment.reminders.clear();
+        MedicationListFragment.medications.clear();
 
         // TODO: clear all pendingIntents in AlarmManager
-        
+
         // TODO: wipe server data & account manager
+
 
     }
 
