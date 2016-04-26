@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +38,8 @@ public class AccountAdministrationFragment extends android.app.Fragment {
     @Bind(R.id.account_reminder_switch) Switch reminderSwitch;
     @Bind(R.id.account_save_button) Button saveButton;
     @Bind(R.id.account_snooze_edit_text) EditText snoozeEditText;
+    @Bind(R.id.account_delete_all_data_Button) Button deleteDataButton;
+
 
     public AccountAdministrationFragment() {
         // Required empty public constructor
@@ -71,6 +75,18 @@ public class AccountAdministrationFragment extends android.app.Fragment {
                 Toast.makeText(getActivity(), "Settings updated", Toast.LENGTH_SHORT).show();
             }
         });
+
+        deleteDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getActivity().getFragmentManager();
+                DeleteAllDataDialogFragment daf = new DeleteAllDataDialogFragment();
+                daf.show(fm, "delete");
+            }
+        });
+
+
+
         fillTextFields();
         return view;
     }

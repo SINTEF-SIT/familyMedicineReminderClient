@@ -70,11 +70,23 @@ GUARDIAN/GUARDEE
             android:layout_height="1dp"
             android:background="#DBDBDB"/>
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff">
+            android:layout_height="65dp"
+            android:background="#fff">
+
+            <EditText
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/account_year_edit_text"
+                android:inputType="number"
+                android:text="1992"
+                android:hint="year"
+                android:textSize="14sp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="bottom|left"
+                android:layout_marginTop="2dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,21 +96,9 @@ GUARDIAN/GUARDEE
                 android:textSize="20sp"
                 android:layout_marginLeft="10dp"
                 android:textColor="#000000"
-                android:layout_gravity="center"
-                android:layout_marginRight="70dp" />
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/account_year_edit_text"
-                android:ems="10"
-                android:inputType="number"
-                android:text="1992"
-                android:textAlignment="textEnd"
-                android:layout_gravity="end"
-                android:layout_marginRight="10dp" />
-
-        </LinearLayout>
+                android:layout_gravity="left|top"
+                android:layout_marginTop="5dp" />
+        </FrameLayout>
 
         <View
             android:layout_width="match_parent"
@@ -157,9 +157,8 @@ GUARDIAN/GUARDEE
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#fff"
-            android:layout_gravity="bottom">
+            android:layout_height="65dp"
+            android:background="#fff">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -169,18 +168,28 @@ GUARDIAN/GUARDEE
                 android:textSize="20sp"
                 android:layout_marginLeft="10dp"
                 android:textColor="#000000"
-                android:layout_gravity="center|left" />
+                android:layout_gravity="left|top"
+                android:layout_marginTop="5dp" />
 
             <EditText
-                android:layout_width="150dp"
+                android:layout_width="30dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/account_snooze_edit_text"
-                android:ems="10"
                 android:inputType="number"
-                android:hint="minutes"
+                android:textSize="14sp"
                 android:layout_marginRight="10dp"
-                android:textAlignment="textEnd"
-                android:layout_gravity="end" />
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="bottom|left"
+                android:layout_marginTop="2dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="minutes"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="bottom|left"
+                android:layout_marginLeft="40dp"/>
+
         </FrameLayout>
 
         <View
@@ -405,7 +414,7 @@ GUARDIAN/GUARDEE
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Delete all data"
-                android:id="@+id/deleteButton"
+                android:id="@+id/account_delete_all_data_Button"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp" />
 

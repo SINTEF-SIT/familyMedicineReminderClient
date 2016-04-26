@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences.Editor ed;
         if (!sharedPrefs.contains("initialized")) {
             ed = sharedPrefs.edit();
-            //Indicate that the default shared prefs have been set
+            // Indicate that the default shared prefs have been set
             ed.putBoolean("initialized", true);
-            //Set default values
+            // Set default values
             ed.putInt("yearOfBirth", 2000);
             ed.putInt("snoozeTime", 180000);
             ed.apply();
@@ -357,6 +357,20 @@ public class MainActivity extends AppCompatActivity
             return false;
         }
         return true;
+    }
+
+    public void deleteAllApplicationData(){
+
+        // Wipe the local database
+        this.deleteDatabase("familymedicinereminderclient.db");
+        // Wipe account settings stored by SharedPreferences
+        this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
+        // TODO: clear list contents
+
+        // TODO: clear all pendingIntents in AlarmManager
+        
+        // TODO: wipe server data & account manager
+
     }
 
     @Override
