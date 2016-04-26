@@ -47,6 +47,8 @@ import retrofit2.Response;
 public class LinkingFragment extends android.app.Fragment implements TitleSupplier {
 
     private boolean busIsRegistered;
+    private static String TAG = "LinkingFragment";
+    private Context context;
 
     @Bind(R.id.link_guardian_button) Button linkButton;
     @Bind(R.id.link_guardian_status_icon) ImageView statusIcon;
@@ -56,7 +58,6 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
     @Bind(R.id.link_patient_infotext) TextView infoText;
     @Bind(R.id.link_patient_id_helper) TextView idHelper;
     @Bind(R.id.link_patient_id) TextView userID;
-    private Context context;
 
     public LinkingFragment() {
         // Required empty public constructor
@@ -81,15 +82,14 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linking, container, false);
-        ButterKnife.bind(this, view);
 
-        Account account = MainActivity.getAccount(context);
+        ButterKnife.bind(this, view); //Binds references to the items in the inflated view.
+
+        Account account = MainActivity.getAccount(context); //Gets a reference to the account
         Log.d("LinkingFragment", "Accountname: " + account.name);
 
-        String userRole = AccountManager.get(context).getUserData(account, "userRole");
-        Log.d("LinkingFragment", "userRole equals: " + userRole);
-
-        //TODO: retrieve user type (guardian or patient). Use this to build the interface.
+        String userRole = AccountManager.get(context).getUserData(account, "userRole"); // Gets the userRole of the specified account.
+        Log.d(TAG, "The users role equals: " + userRole +". Hiding elements belonging to the opposite role.");
         if (userRole.equals("patient")) {
             linkButton.setVisibility(View.GONE);
             statusIcon.setVisibility(View.GONE);
@@ -106,14 +106,13 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
 
     @OnClick(R.id.link_guardian_button)
     public void tryToLink() {
-        // input validation
-        if (idInput.getText().length() == 5) {
-            // give textual feedback about linking
+        if (idInput.getText().length() == 5) { // input validation
+            //Give textual feedback about linking
             statusText.setText("Linking with: " + idInput.getText().toString() + "...");
-            // set the color of the status icon to yellow to give feedback
+            //Set the color of the status icon to yellow to signalise progress.
             int color = Color.parseColor("#FFEB3B");
             statusIcon.setColorFilter(color);
-            linkWithAccount(idInput.getText().toString());
+            linkWithAccount(idInput.getText().toString()); //Start linking progress.
         } else {
             statusText.setText("Enter a 5-digit ID. Try again...");
             clearStatusTextAfterSeconds(3);
@@ -121,17 +120,18 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
     }
 
     public void linkWithAccount(String idToLinkWith){
-        Log.d("Linking", "initiating linking with account ID " + idToLinkWith + ".");
-        MyCyFAPPServiceAPI api = RestService.createRestService();
+        MyCyFAPPServiceAPI api = RestService.createRestService(); //Creates a rest service and save the reference.
+        Account account = MainActivity.getAccount(context); //Fetches the user account
 
-        AccountManager accountManager = AccountManager.get(getActivity());
-        Account[] reminderAccounts = accountManager.
-                getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
-        final Account account = reminderAccounts[0];
-
-        Log.d("linking/api", "sendlinkingrequest userID: " + account.name);
+        Log.d(TAG, "sendlinkingrequest userID: " + account.name);
         Call<Message> call = api.sendLinkingRequest(account.name, idToLinkWith);
         call.enqueue(new Callback<Message>() {
+            /**
+             * Callback function when there is a valid response from the server.
+             * Validiation is done here, not in onFailure.
+             * @param call
+             * @param response
+             */
             @Override
             public void onResponse(Call<Message> call, Response<Message> response) {
                 if (response.isSuccessful()) { //on received message object OK.
@@ -147,7 +147,7 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
                     //TODO: persist linked status to the device.??
                     clearStatusTextAfterSeconds(5);
                 } else { //on received message object FAIL.
-                    Log.d("linking/api", "unsuccessful linking.");
+                    Log.d(TAG, "unsuccessful linking.");
                     int color = Color.parseColor("#FF5252");
                     statusIcon.setColorFilter(color);
                     statusText.setText("Server error, please contact developer.");
@@ -155,6 +155,12 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
                 }
             }
 
+            /**
+             * Callback function when the connection times out or there is not network.
+             *
+             * @param call
+             * @param t
+             */
             @Override
             public void onFailure(Call<Message> call, Throwable t) {
                 Log.d("linking/api", "sendlinkingrequest -> onFailure.");
@@ -194,6 +200,12 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
         }.start();
     }
 
+    /**
+     * Register this fragment to the event bus.
+     * Saves a reference to the application context.
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -204,6 +216,11 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
         this.context = context;
     }
 
+    /**
+     * Provides compatibility for api levels below 23
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
@@ -214,6 +231,9 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
         this.context = context;
     }
 
+    /**
+     * Unregisters the bus when the fragment is detached.
+     */
     @Override
     public void onDetach() {
         super.onDetach();
@@ -223,6 +243,9 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
         }
     }
 
+    /**
+     * Unbinds references to objects in the view.
+     */
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
@@ -243,4 +266,5 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
 }
