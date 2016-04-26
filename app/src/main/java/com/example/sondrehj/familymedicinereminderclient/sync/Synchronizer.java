@@ -1,11 +1,16 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -22,11 +27,13 @@ public class Synchronizer {
     private final MyCyFAPPServiceAPI restApi;
     private final String userToSync;
     private final MySQLiteHelper db;
+    private final Context context;
 
-    public Synchronizer(String userToSync, MyCyFAPPServiceAPI restApi, MySQLiteHelper db) {
+    public Synchronizer(String userToSync, MyCyFAPPServiceAPI restApi, MySQLiteHelper db, Context context) {
         this.restApi = restApi;
         this.userToSync = userToSync;
         this.db = db;
+        this.context = context;
     }
 
     public Boolean syncReminders() {
@@ -79,9 +86,13 @@ public class Synchronizer {
                 for (Medication serverMedication : response.body()) {
                     System.out.println("in add medications");
                     db.addMedication(serverMedication);
-                    //MainActivity.refreshMedicationContent(db);
                 }
-
+                System.out.println("Finished db, sending intent");
+                Intent intent = new Intent();
+                intent.setAction("mycyfapp");
+                intent.putExtra("action", "syncMedications");
+                context.sendBroadcast(intent);
+                Toast.makeText(context, "Synchronization finished!", Toast.LENGTH_SHORT).show();
             }
 
             @Override

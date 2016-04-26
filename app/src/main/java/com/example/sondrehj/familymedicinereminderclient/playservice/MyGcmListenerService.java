@@ -26,15 +26,17 @@ public class MyGcmListenerService extends GcmListenerService {
      */
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String notificationType = data.getString("notificationType");
+        String notificationType = data.getString("notification-action");
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Notification type: " + notificationType);
 
 
         final Intent notificationIntent = new Intent(this, MainActivity.class);
-        notificationIntent.setAction(Intent.ACTION_MAIN);
+        notificationIntent.setAction("mycyfapp");
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        notificationIntent.putExtra("type", "notifcationIntent");
+        notificationIntent.putExtra("notification-action", notificationType);
+
+        sendBroadcast(notificationIntent);
 
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);
@@ -45,11 +47,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 MainActivity.getAccount(getApplicationContext()),
                 AUTHORITY,
                 extras);
-        /**
-         * Production applications would usually process the message here.
-         * Eg: - Syncing with server.
-         *     - Store message in local database.
-         *     - Update UI.
-         */
+
+        //TODO: Put the above code for synchronization in a separate class, so we can reuse it
+
     }
 }

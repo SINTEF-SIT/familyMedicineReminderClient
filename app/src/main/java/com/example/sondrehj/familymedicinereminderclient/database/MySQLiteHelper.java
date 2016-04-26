@@ -9,8 +9,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
@@ -156,7 +158,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.delete(TABLE_MEDICATION, "med_id=" + medication.getMedId(), null);
 
         //Removes the medication from the list content
-        MedicationListContent.ITEMS.remove(medication);
+
+        MedicationListFragment.medications.remove(medication);   //TODO: Fix deletion now that MedicationListCOntent is removed.
         db.close();
     }
 
@@ -294,7 +297,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if(medicationId != 0) {
-                    for(Medication med : MedicationListContent.ITEMS){
+                    for(Medication med : MedicationListFragment.medications){
                         if(med.getMedId() == medicationId){
                             reminder.setMedicine(med);
                             reminder.setDosage(dosage);
