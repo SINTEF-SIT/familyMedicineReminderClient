@@ -56,6 +56,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         int min = cal.get(Calendar.MINUTE);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
+        System.out.println(dayOfWeek);
 
         String timeString = String.format("%02d:%02d", hour, min);
         String dateString = Converter.dayIndexToDayString(dayOfWeek)

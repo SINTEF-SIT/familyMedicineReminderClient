@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity
         if (account == null) {
             changeFragment(new WelcomeFragment());
             //disables drawer and navigation when in welcomeFragment.
+            //TODO: fix menu issue, not showing when you reopen the app or somethingsomething
             drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
             toggle.setDrawerIndicatorEnabled(false);

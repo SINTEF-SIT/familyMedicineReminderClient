@@ -153,6 +153,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         chooseMedicationText = (TextView) view.findViewById(R.id.chooseMedication);
         chosenMedicationTextView = (TextView) view.findViewById(R.id.chosenMedication);
         chooseMedicationWrapper = (LinearLayout) view.findViewById(R.id.chooseMedicationWrapper);
+        chooseMedicationWrapper.setVisibility(View.GONE);
 
         datePickerLayout.setOnClickListener(
                 new LinearLayout.OnClickListener() {
@@ -269,6 +270,22 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         newReminderLayout.addView(daysListLayout, 11);
         //TODO: Fix visibility
 
+        medicationSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
+                        if (isChecked) {
+                            enableMedicationField(true);
+                            if (medication != null) {
+                                enableDosageField(true);
+                            }
+                        } else {
+                            enableMedicationField(false);
+                            enableDosageField(false);
+                        }
+                    }
+                }
+        );
+
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
@@ -311,21 +328,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 }
         );
 
-        medicationSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
-                        if (isChecked) {
-                            enableMedicationField(true);
-                            if (medication != null) {
-                                enableDosageField(true);
-                            }
-                        } else {
-                            enableMedicationField(false);
-                            enableDosageField(false);
-                        }
-                    }
-                }
-        );
+
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
@@ -426,6 +429,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public void enableMedicationField(boolean enable) {
 
         if (enable) {
+            chooseMedicationWrapper.setVisibility(View.VISIBLE);
             chooseMedicationText.setTextColor(Color.parseColor("#000000"));
             chosenMedicationTextView.setTextColor(Color.parseColor("#8a000000"));
             chooseMedicationWrapper.setOnClickListener(new LinearLayout.OnClickListener() {
@@ -435,6 +439,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 }
             });
         } else {
+            chooseMedicationWrapper.setVisibility(View.GONE);
             chooseMedicationText.setTextColor(Color.parseColor("#dddddddd"));
             chosenMedicationTextView.setTextColor(Color.parseColor("#dddddddd"));
             chooseMedicationWrapper.setOnClickListener(null);

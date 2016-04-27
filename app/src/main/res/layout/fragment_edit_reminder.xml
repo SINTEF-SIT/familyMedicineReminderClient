@@ -116,7 +116,7 @@
             android:id="@+id/medicationSwitch"
             android:checked="false"
             android:textSize="20sp"
-            android:textColor="#03A9F4"
+            android:textColor="#000000"
             android:padding="10dp" />
 
 
@@ -133,7 +133,7 @@
             android:text="Medication"
             android:id="@+id/chooseMedication"
             android:layout_marginLeft="16dp"
-            android:textColor="#DDDD"
+            android:textColor="#000000"
             android:textSize="18sp"
             android:layout_gravity="center" />
 
@@ -163,29 +163,31 @@
             android:id="@+id/chooseDosage"
             android:textSize="18sp"
             android:layout_marginLeft="16dp"
-            android:textColor="#000000" />
+            android:textColor="#000000"
+            android:layout_gravity="center"/>
 
         <EditText
-            android:layout_width="60dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/dosage"
             android:inputType="numberDecimal"
-            android:layout_marginTop="24dp"
             android:layout_marginLeft="16dp"
             android:textSize="14sp"
             android:layout_marginRight="16dp"
             android:enabled="false"
-            android:textColor="#DDDD" />
+            android:textColor="#DDDD"
+            android:layout_gravity="center"
+            android:gravity="right"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
             android:id="@+id/dosageUnit"
             android:textSize="14sp"
             android:textColor="#DDDD"
             android:layout_marginLeft="78dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="right"/>
 
     </LinearLayout>
 
@@ -202,7 +204,7 @@
             android:id="@+id/repeatSwitch"
             android:checked="false"
             android:textSize="20sp"
-            android:textColor="#03A9F4"
+            android:textColor="#000000"
             android:padding="10dp" />
 
     </LinearLayout>

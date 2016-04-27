@@ -28,6 +28,10 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
  */
 public class MedicationStorageFragment extends android.app.Fragment implements TitleSupplier {
 
+    //TODO: Not really clear for the user that this is a cabinet where you list how many pills you possess in total
+
+    //TODO: When you add a medicine, ask the user if they want to set a reminder and set them to NewReminder
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_MEDICATION = "medication";
 
