@@ -100,9 +100,10 @@ public class MainActivity extends AppCompatActivity
         if (account == null) {
             changeFragment(new WelcomeFragment());
             //disables drawer and navigation when in welcomeFragment.
-            drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+            //TODO: fix this shit (ask hanna or nikolai)
+            //drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
-            toggle.setDrawerIndicatorEnabled(false);
+            //toggle.setDrawerIndicatorEnabled(false);
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
@@ -114,17 +115,19 @@ public class MainActivity extends AppCompatActivity
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
 
-        // Account settings
+        //Default account settings
         SharedPreferences sharedPrefs = getSharedPreferences("AccountSettings", MODE_PRIVATE);
-        SharedPreferences.Editor ed;
+        SharedPreferences.Editor editor;
         if (!sharedPrefs.contains("initialized")) {
-            ed = sharedPrefs.edit();
+            editor = sharedPrefs.edit();
             // Indicate that the default shared prefs have been set
-            ed.putBoolean("initialized", true);
+            editor.putBoolean("initialized", true);
             // Set default values
-            ed.putInt("yearOfBirth", 2000);
-            ed.putInt("snoozeTime", 180000);
-            ed.apply();
+            editor.putInt("snoozeDelay", 5); // 5 minutes
+            editor.putInt("gracePeriod", 30);// 30 minutes
+            editor.putBoolean("reminderSwitch", true);
+            editor.putBoolean("notificationSwitch", true);
+            editor.apply();
         }
 
         System.out.println(getIntent().toString());
@@ -438,10 +441,10 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         //Enables drawer and action toggle when user is created
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        toggle.setDrawerIndicatorEnabled(true);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        //toggle.setDrawerIndicatorEnabled(true);
+        //drawer.setDrawerListener(toggle);
+        //toggle.syncState();
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
@@ -601,5 +604,4 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
     }
-
 }
