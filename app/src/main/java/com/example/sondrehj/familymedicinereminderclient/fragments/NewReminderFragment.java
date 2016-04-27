@@ -70,6 +70,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     private TextView dosageUnitText;
     private TextView chooseMedicationText;
     private TextView chosenMedicationTextView;
+    private View border;
 
     private TextView endDatePickedText;
     private TextView endDatePickerText;
@@ -80,12 +81,12 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     private TextView howOftenText;
     private TextView daysPickedText;
     private TextView chosenMedicationText;
+    private LinearLayout chooseDosageWrapper;
     private TextView chosenDosageText;
     private EditText nameEditText;
     private Switch repeatSwitch;
     private Switch reminderSwitch;
     private Switch medicationSwitch;
-    private NumberPicker numberPicker;
     private Button saveButton;
     private Reminder reminder;
     private Medication medication;
@@ -153,6 +154,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         chooseMedicationText = (TextView) view.findViewById(R.id.chooseMedication);
         chosenMedicationTextView = (TextView) view.findViewById(R.id.chosenMedication);
         chooseMedicationWrapper = (LinearLayout) view.findViewById(R.id.chooseMedicationWrapper);
+        chooseDosageWrapper = (LinearLayout) view.findViewById(R.id.chooseDosageWrapper);
+        border = view.findViewById(R.id.border);
+        chooseDosageWrapper.setVisibility(View.GONE);
         chooseMedicationWrapper.setVisibility(View.GONE);
 
         datePickerLayout.setOnClickListener(
@@ -204,18 +208,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         daysPickedText.setTextSize(22);
         daysPickedText.setTextColor(Color.parseColor("#8a000000"));
 
-        numberPicker = new NumberPicker(getActivity());
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(30);
-        numberPicker.setValue(1);
-        LinearLayout.LayoutParams numberPickerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        numberPicker.setLayoutParams(numberPickerParams);
-        numberPickerParams.gravity = Gravity.CENTER;
-
         daysLayout.addView(howOftenText);
         daysLayout.addView(daysPickedText);
         daysLayout.setVisibility(View.GONE);
-        numberPicker.setVisibility(View.GONE);
 
         //choose which days layout with list
         daysListLayout = new LinearLayout(getActivity());
@@ -264,27 +259,10 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         endDatePickerLayout.addView(endDatePickerText);
         endDatePickerLayout.addView(endDatePickedText);
 
-        newReminderLayout.addView(daysLayout, 8);
-        newReminderLayout.addView(numberPicker, 9);
-        newReminderLayout.addView(endDatePickerLayout, 10);
-        newReminderLayout.addView(daysListLayout, 11);
-        //TODO: Fix visibility
+        repeatLayout.addView(daysLayout);
+        repeatLayout.addView(endDatePickerLayout);
+        repeatLayout.addView(daysListLayout);
 
-        medicationSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
-                        if (isChecked) {
-                            enableMedicationField(true);
-                            if (medication != null) {
-                                enableDosageField(true);
-                            }
-                        } else {
-                            enableMedicationField(false);
-                            enableDosageField(false);
-                        }
-                    }
-                }
-        );
 
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -321,13 +299,33 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
                             endDatePickerLayout.setVisibility(View.GONE);
                             daysLayout.setVisibility(View.GONE);
-                            numberPicker.setVisibility(View.GONE);
                             daysListLayout.setVisibility(View.GONE);
                         }
                     }
                 }
         );
 
+        medicationSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
+                        if (isChecked) {
+                            chooseMedicationWrapper.setVisibility(View.VISIBLE);
+                            chooseDosageWrapper.setVisibility(View.VISIBLE);
+                            border.setVisibility(View.VISIBLE);
+                            enableMedicationField(true);
+                            if (medication != null) {
+                                enableDosageField(true);
+                            }
+                        } else {
+                            chooseMedicationWrapper.setVisibility(View.GONE);
+                            chooseDosageWrapper.setVisibility(View.GONE);
+                            border.setVisibility(View.GONE);
+                            enableMedicationField(false);
+                            enableDosageField(false);
+                        }
+                    }
+                }
+        );
 
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
@@ -429,7 +427,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public void enableMedicationField(boolean enable) {
 
         if (enable) {
-            chooseMedicationWrapper.setVisibility(View.VISIBLE);
             chooseMedicationText.setTextColor(Color.parseColor("#000000"));
             chosenMedicationTextView.setTextColor(Color.parseColor("#8a000000"));
             chooseMedicationWrapper.setOnClickListener(new LinearLayout.OnClickListener() {
@@ -439,7 +436,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 }
             });
         } else {
-            chooseMedicationWrapper.setVisibility(View.GONE);
             chooseMedicationText.setTextColor(Color.parseColor("#dddddddd"));
             chosenMedicationTextView.setTextColor(Color.parseColor("#dddddddd"));
             chooseMedicationWrapper.setOnClickListener(null);

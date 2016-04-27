@@ -1,31 +1,46 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#EEEEEE">
 
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".fragments.NewReminderFragment"
-    android:id="@+id/newReminderLayout"
-    android:divider="@drawable/horizontal_divider"
-    android:showDividers="middle">
+    android:id="@+id/newReminderLayout">
 
-    <Switch
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Active"
-        android:id="@+id/reminderSwitch"
-        android:checked="true"
-        android:textSize="20sp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="43sp">
+        android:layout_height="43sp"
+        android:layout_gravity="center_horizontal"
+        android:background="#fff"
+        android:layout_marginTop="2dp">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Active"
+            android:id="@+id/reminderSwitch"
+            android:checked="true"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="43sp"
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,12 +62,31 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DATE &amp; TIME"
+        android:id="@+id/dateAndTimeHeader"
+        android:layout_marginLeft="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="43dp"
         android:id="@+id/datePickerLayout"
-        android:clickable="true" >
+        android:clickable="true"
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
@@ -77,6 +111,11 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -84,7 +123,7 @@
         android:id="@+id/timePickerLayout"
         android:clickable="true"
         android:layout_marginRight="0dp"
-        android:background="?attr/selectableItemBackground">
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
@@ -109,6 +148,56 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/repeatLayout"
+        android:background="#fff">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:text="Repeat"
+            android:id="@+id/repeatSwitch"
+            android:checked="false"
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MEDICATION"
+        android:id="@+id/medicationHeader"
+        android:layout_marginLeft="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="43sp"
+        android:layout_gravity="center_horizontal"
+        android:background="#fff">
+
         <Switch
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,14 +207,20 @@
             android:textSize="20sp"
             android:textColor="#000000"
             android:padding="10dp" />
+    </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="43dp"
         android:id="@+id/chooseMedicationWrapper"
-        android:clickable="true">
+        android:clickable="true"
+        android:background="#ffffff">
 
         <TextView
             android:layout_width="wrap_content"
@@ -150,11 +245,17 @@
             android:layout_marginRight="15dp"/>
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="43dp"
-        android:id="@+id/chooseDosageWrapper">
+        android:id="@+id/chooseDosageWrapper"
+        android:background="#ffffff">
 
         <TextView
             android:layout_width="wrap_content"
@@ -163,17 +264,16 @@
             android:id="@+id/chooseDosage"
             android:textSize="18sp"
             android:layout_marginLeft="16dp"
-            android:textColor="#000000"
+            android:textColor="#DDDD"
             android:layout_gravity="center"/>
 
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:id="@+id/dosage"
             android:inputType="numberDecimal"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="130dp"
             android:textSize="14sp"
-            android:layout_marginRight="16dp"
             android:enabled="false"
             android:textColor="#DDDD"
             android:layout_gravity="center"
@@ -185,29 +285,20 @@
             android:id="@+id/dosageUnit"
             android:textSize="14sp"
             android:textColor="#DDDD"
-            android:layout_marginLeft="78dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
             android:gravity="right"/>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/repeatLayout">
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="43dp"
-            android:text="Repeat"
-            android:id="@+id/repeatSwitch"
-            android:checked="false"
-            android:textSize="20sp"
-            android:textColor="#000000"
-            android:padding="10dp" />
-
-    </LinearLayout>
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:id="@+id/border"
+        android:visibility="gone"/>
 
     <Button
         android:layout_width="wrap_content"
