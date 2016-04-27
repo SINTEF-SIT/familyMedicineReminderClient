@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,10 +13,14 @@ import android.view.ViewGroup;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRecyclerViewAdapter;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +37,9 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
 
     private OnReminderListFragmentInteractionListener mListener;
 
-    public static List<Reminder> reminders = new ArrayList<>();
+    private Boolean busIsRegistered = false;
+
+    private List<Reminder> reminders = new ArrayList<>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -75,10 +82,36 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         return view;
     }
 
+    @Subscribe
+    public void handleRemindersChangedEvent(DataChangedEvent event) {
+        if(event.type.equals(DataChangedEvent.REMINDERS)) {
+            System.out.println("In handle data changed event");
+            reminders.clear();
+            reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
+            ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
+            if (fragment != null) {
+                fragment.notifyChanged();
+            }
+        }
+    }
+
+    public void notifyChanged() {
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
+        if (recView != null) {
+            System.out.println(reminders);
+            recView.getAdapter().notifyDataSetChanged();
+            System.out.println("notifychanged called");
+        }
+    }
+
     //API Level >= 23
     @Override
      public void onAttach(Context context) {
         super.onAttach(context);
+        if (!busIsRegistered) {
+            BusService.getBus().register(this);
+            busIsRegistered = true;
+        }
         if (context instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) context;
         } else {
@@ -91,6 +124,10 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (!busIsRegistered) {
+            BusService.getBus().register(this);
+            busIsRegistered = true;
+        }
         if (activity instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) activity;
         } else {
@@ -102,6 +139,10 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     @Override
     public void onDetach() {
         super.onDetach();
+        if (busIsRegistered) {
+            BusService.getBus().unregister(this);
+            busIsRegistered = false;
+        }
         mListener = null;
     }
 

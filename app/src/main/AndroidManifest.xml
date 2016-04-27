@@ -28,7 +28,7 @@
             android:name=".MainActivity"
             android:label="CF Reminders"
             android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -5,6 +5,9 @@ package com.example.sondrehj.familymedicinereminderclient.bus;
  */
 public class DataChangedEvent {
 
+    public static String REMINDERS = "reminders";
+    public static String MEDICATIONS = "medications";
+
     public String type;
 
     public DataChangedEvent(String type) {
