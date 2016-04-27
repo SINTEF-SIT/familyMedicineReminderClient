@@ -38,6 +38,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
         sendBroadcast(notificationIntent);
 
+
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
@@ -49,6 +50,5 @@ public class MyGcmListenerService extends GcmListenerService {
                 extras);
 
         //TODO: Put the above code for synchronization in a separate class, so we can reuse it
-
     }
 }

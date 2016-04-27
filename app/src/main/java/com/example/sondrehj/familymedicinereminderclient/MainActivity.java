@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -136,9 +135,6 @@ public class MainActivity extends AppCompatActivity
 
         //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        //Read and display data from local database. (Flyttes?)
-        MySQLiteHelper db = new MySQLiteHelper(this);
         //TODO: Look more at how database changes can be broadcasted to the system
     }
 
@@ -216,15 +212,6 @@ public class MainActivity extends AppCompatActivity
         linkingDialogFragment.show(fm, "linking_request_fragment");
     }
 
-    @Subscribe
-    public void handleDataChangedEvent(DataChangedEvent event) {
-        System.out.println("In handle data changed event");
-        MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-        if (fragment != null) {
-            System.out.println("Called notifychanged!");
-            fragment.notifyChanged();
-        }
-    }
 
     /**
      * Closes the drawer when the back button is pressed.
@@ -358,9 +345,10 @@ public class MainActivity extends AppCompatActivity
                         System.out.println(" New value: " + reminder.getMedicine().getCount());
 
                         // Updates MedicationListViewFragment with new data.
-                        for (int i = 0; i < MedicationListFragment.medications.size(); i++) {
-                            if (MedicationListFragment.medications.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                                MedicationListFragment.medications.set(i, reminder.getMedicine());
+                        List<Medication> meds = new MySQLiteHelper(this).getMedications();
+                        for (int i = 0; i < meds.size(); i++) {
+                            if (meds.get(i).getMedId() == reminder.getMedicine().getMedId()) {
+                                meds.set(i, reminder.getMedicine());
                                 MedicationListFragment mlf = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
                                 if (mlf != null) {
                                     mlf.notifyChanged();
@@ -387,6 +375,7 @@ public class MainActivity extends AppCompatActivity
                         extras);
             }
         }
+        setIntent(null);
     }
 
     /**
@@ -419,12 +408,7 @@ public class MainActivity extends AppCompatActivity
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
-        // Clear Medication and Reminder lists
-        ReminderListFragment.reminders.clear();
-        MedicationListFragment.medications.clear();
-
         // TODO: clear all pendingIntents in AlarmManager
-
         // TODO: wipe server data & account manager
     }
 
@@ -568,6 +552,7 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         changeFragment(ReminderListFragment.newInstance());
     }
 

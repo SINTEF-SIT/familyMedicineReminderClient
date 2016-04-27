@@ -7,13 +7,15 @@ import java.io.Serializable;
  */
 public class Medication implements Serializable {
     int medId;
+    int serverId;
     String ownerId;
     String name;
     Double count;
     String unit;
 
-    public Medication(int medId, String ownerId, String name, Double count, String unit) {
+    public Medication(int medId, int serverId, String ownerId, String name, Double count, String unit) {
         this.medId = medId;
+        this.serverId = serverId;
         this.ownerId = ownerId;
         this.name = name;
         this.count = count;
@@ -60,6 +62,9 @@ public class Medication implements Serializable {
         this.count = count;
     }
 
+    public int getServerId() { return serverId; }
+
+    public void setServerId(int serverId) { this.serverId = serverId; }
 
 
     public String toString(){
@@ -67,4 +72,6 @@ public class Medication implements Serializable {
                 " Count: " + this.count + "\n" +
                 " Unit: " + this.unit;
     }
+
+
 }

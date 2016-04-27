@@ -550,7 +550,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         }
         reminder.setIsActive(reminderSwitch.isChecked());
         reminder.setReminderServerId(-1);
-        ReminderListFragment.reminders.add(0, reminder);
 
 
         System.out.println("----------Reminder Created----------" + "\n" + reminder);
