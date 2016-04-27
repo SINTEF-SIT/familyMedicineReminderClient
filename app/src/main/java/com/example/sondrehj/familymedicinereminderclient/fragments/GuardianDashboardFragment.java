@@ -68,7 +68,7 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
 
         return view;
     }
-
+    //TODO: Comments is gone? RIP
     public LinearLayout addPasientToView() {
         LinearLayout pasientLayout = new LinearLayout(getActivity());
         pasientLayout.setOrientation(LinearLayout.VERTICAL);

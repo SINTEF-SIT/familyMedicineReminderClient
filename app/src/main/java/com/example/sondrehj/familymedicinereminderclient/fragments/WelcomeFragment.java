@@ -62,7 +62,7 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_welcome, container, false);
         ButterKnife.bind(this, view);
-        getActivity().setTitle("Welcome");
+        getActivity().setTitle("Welcome!");
         return view;
     }
 

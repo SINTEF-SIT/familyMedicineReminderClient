@@ -81,6 +81,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                 EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
                 TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
 
+                //TODO: Shouldn't be forced to set amount and unit
                 if (medicationName.getText().toString().equals("") || medicationAmount.getText().toString().equals("")
                         ||  medicationUnit.getText().toString().equals("Click to choose")) {
                     Toast toast = Toast.makeText(getActivity(), "All fields must be entered!", Toast.LENGTH_LONG);

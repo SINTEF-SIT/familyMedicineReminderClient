@@ -24,7 +24,7 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
  */
 public class ReminderListFragment extends android.app.Fragment implements TitleSupplier {
 
-    //TODO: Animation is not triggering
+    //TODO: Animation is not triggering when you go to reminder view
 
     private OnReminderListFragmentInteractionListener mListener;
 
