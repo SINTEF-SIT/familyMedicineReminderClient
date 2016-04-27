@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -18,6 +19,8 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 
@@ -31,12 +34,16 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
 
 
-    @Bind(R.id.account_year_edit_text) EditText yearEditText;
-    @Bind(R.id.account_notification_switch) Switch notificationSwitch;
-    @Bind(R.id.account_reminder_switch) Switch reminderSwitch;
-    @Bind(R.id.account_save_button) Button saveButton;
-    @Bind(R.id.account_snooze_edit_text) EditText snoozeEditText;
-    @Bind(R.id.account_delete_all_data_Button) Button deleteDataButton;
+    @Bind(R.id.account_group_guardian) LinearLayout guardianGroup;
+
+    @Bind(R.id.account_personal_year_input) EditText yearEditText;
+    @Bind(R.id.account_personal_reminder_switch) Switch reminderSwitch;
+
+    @Bind(R.id.account_general_notification_switch) Switch notificationSwitch;
+
+
+    @Bind(R.id.account_settings_save_button) Button saveButton;
+    @Bind(R.id.account_delete_data_button) Button deleteDataButton;
 
 
     public AccountAdministrationFragment() {
@@ -65,33 +72,27 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account_administration, container, false);
         ButterKnife.bind(this, view);
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateAccountInformation();
-                Toast.makeText(getActivity(), "Settings updated", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        deleteDataButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FragmentManager fm = getActivity().getFragmentManager();
-                DeleteAllDataDialogFragment daf = new DeleteAllDataDialogFragment();
-                daf.show(fm, "delete");
-            }
-        });
-
         fillTextFields();
+        guardianGroup.setVisibility(View.GONE);
         return view;
     }
 
-    public boolean updateAccountInformation(){
+    @OnClick(R.id.account_settings_save_button)
+    public void onSaveButtonClick() {
+        updateAccountInformation();
+        Toast.makeText(getActivity(), "Settings updated", Toast.LENGTH_SHORT).show();
+    }
 
+    @OnClick(R.id.account_delete_data_button)
+    public void onDeleteButtonClick() {
+        FragmentManager fm = getActivity().getFragmentManager();
+        DeleteAllDataDialogFragment daf = new DeleteAllDataDialogFragment();
+        daf.show(fm, "delete");
+    }
+
+    public boolean updateAccountInformation(){
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("AccountSettings", Context.MODE_PRIVATE).edit();
         editor.putInt("yearOfBirth", Integer.parseInt(yearEditText.getText().toString()));
-        editor.putInt("snoozeTime", Integer.parseInt(snoozeEditText.getText().toString()) * 60000);
         editor.apply();
         return true;
     }
@@ -102,7 +103,6 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
         int snoozeTime = prefs.getInt("snoozeTime", 180000) / 60000;
         int yearOfBirth = prefs.getInt("yearOfBirth", 2000);
 
-        snoozeEditText.setText(Integer.toString(snoozeTime));
         yearEditText.setText(Integer.toString(yearOfBirth));
         return true;
     }
