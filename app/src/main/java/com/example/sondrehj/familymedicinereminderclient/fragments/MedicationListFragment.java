@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.DividerItemDecoration;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
@@ -57,11 +58,13 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     public void notifyChanged() {
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
-        medications.addAll(mListener.onGetMedications());
+
+        // TODO: move this? Causes the application to crash
+        //medications.addAll(mListener.onGetMedications());
+
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
             System.out.println("notifychanged called");
-
         }
     }
 
@@ -85,7 +88,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
             } else {
                 recView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
         }
 
@@ -93,7 +95,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).changeFragment(new MedicationStorageFragment());
+                ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
             }
         });
     return view;

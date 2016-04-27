@@ -39,48 +39,297 @@ GUARDIAN/GUARDEE
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".fragments.NewReminderFragment"
-        android:id="@+id/newReminderLayout"
+        android:id="@+id/accountAdministrationLayout"
         android:showDividers="middle"
         android:dividerPadding="10dp">
         <!--android:divider="@drawable/horizontal_divider"-->
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/account_logo"
             android:layout_width="80dp"
             android:layout_height="93dp"
             android:layout_gravity="center_horizontal|top"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             android:src="@drawable/mycyfapplogo" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            />
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PERSONAL"
-            android:padding="0dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/settingsPersonalSection" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#ffffff">
+            android:layout_height="match_parent"
+            android:id="@+id/account_group_personal"
+            android:layout_marginBottom="25dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Year of birth"
-                android:id="@+id/nameText"
+                android:text="PERSONAL"
+                android:padding="0dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/account_personal_heading" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#fff">
+
+                <EditText
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/account_personal_year_input"
+                    android:inputType="number"
+                    android:text="1992"
+                    android:hint="year"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_gravity="right" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Year of birth"
+                    android:id="@+id/account_personal_year_text"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"
+                    android:layout_gravity="center_vertical" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Discrete reminders"
+                android:id="@+id/account_personal_reminder_switch"
+                android:checked="true"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="#ffffff" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/account_group_general"
+            android:layout_marginBottom="25dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GENERAL"
+                android:padding="0dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/account_general_heading" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <Switch
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="Receive notifications"
+                android:id="@+id/account_general_notification_switch"
+                android:checked="true"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="#ffffff" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#fff">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Snooze delay"
+                    android:id="@+id/account_general_snooze_text"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"
+                    android:layout_gravity="center_vertical" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:layout_gravity="center_vertical|right"
+                    android:textSize="20sp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/account_general_snooze_minutes_value" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="minute"
+                    android:layout_gravity="center_vertical|right"
+                    android:textSize="20sp"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/account_general_snooze_minutes_text"
+                    android:paddingRight="12dp" />
+
+                <SeekBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/account_general_snooze_seekbar"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/account_group_guardian">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GUARDIAN"
+                android:padding="0dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/account_guardian_heading" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#ffffff">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Grace period"
+                    android:id="@+id/account_guardian_grace_text"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="15dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:layout_gravity="center_vertical|right"
+                    android:textSize="20sp"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/account_guardian_grace_minutes_value" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|right"
+                    android:textSize="20sp"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/account_guardian_grace_minutes_text"
+                    android:text="minute"
+                    android:paddingRight="12dp" />
+
+                <SeekBar
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/account_guardian_grace_seekbar"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="center"
+                    android:paddingLeft="10dp" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="The length of the grace period where you will not get a notification if the child has failed to take their medicine."
+                android:padding="0dp"
+                android:textSize="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/account_guardian_grace_infotext" />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SAVE"
+            android:id="@+id/account_settings_save_button"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/account_group_sync"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACCOUNT FOR SYNC AND ONLINE DELETION"
+                android:padding="0dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/settingsAccountSection" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
+
+            <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+                android:background="#ffffff">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:id="@+id/emailText"
                 android:textSize="20sp"
                 android:layout_marginLeft="10dp"
                 android:textColor="#000000"
@@ -90,278 +339,75 @@ GUARDIAN/GUARDEE
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/yearEditText"
-                android:ems="10"
-                android:inputType="number"
-                android:text="1992"
-
+                android:id="@+id/emailEditText"
+                android:inputType="textEmailAddress"
+                android:hint="john.doe@email.com"
                 android:textAlignment="textEnd"
                 android:layout_gravity="end"
                 android:layout_marginRight="10dp" />
+            </LinearLayout>
 
-        </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="#ffffff">
 
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Discrete reminders"
-            android:id="@+id/reminderSwitch"
-            android:checked="true"
-            android:textSize="20sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="#ffffff" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Password"
+                    android:id="@+id/passwordText"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#000000"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="70dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/passwordEditText"
+                    android:inputType="textPassword"
+                    android:textAlignment="textEnd"
+                    android:layout_gravity="end"
+                    android:layout_marginRight="10dp" />
+            </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#DBDBDB"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GENERAL"
-            android:padding="0dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/settingsGeneralSection" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Receive notifications"
-            android:id="@+id/notificationSwitch"
-            android:checked="true"
-            android:textSize="20sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="#ffffff" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-        <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-            android:weightSum="1"
-            android:background="#ffffff">
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Snooze"
-                android:id="@+id/snoozeText"
-                android:textSize="20sp"
-                android:layout_marginLeft="10dp"
-                android:textColor="#000000"
-                android:layout_gravity="center" />
-
-            <SeekBar
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/seekBar"
-                android:layout_marginLeft="10dp"
-                android:layout_weight="0.90"
-                android:layout_marginRight="10dp" />
+                android:layout_gravity="center"
+                android:gravity="center">
 
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Activate"
-                android:id="@+id/snoozeButton"
-                android:layout_gravity="end"
-                android:layout_marginLeft="20dp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ACCOUNT FOR SYNC AND ONLINE DELETION"
-            android:padding="0dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/settingsAccountSection" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-
-        <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-            android:background="#ffffff">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email"
-            android:id="@+id/emailText"
-            android:textSize="20sp"
-            android:layout_marginLeft="10dp"
-            android:textColor="#000000"
-            android:layout_gravity="center"
-            android:layout_marginRight="70dp" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/emailEditText"
-            android:inputType="textEmailAddress"
-            android:text="john.doe@email.com"
-            android:textAlignment="textEnd"
-            android:layout_gravity="end"
-            android:layout_marginRight="10dp" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="#ffffff">
-
-            <TextView
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:id="@+id/account_sync_save_button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp" />
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password"
-                android:id="@+id/passwordText"
-                android:textSize="20sp"
-                android:layout_marginLeft="10dp"
-                android:textColor="#000000"
-                android:layout_gravity="center"
-                android:layout_marginRight="70dp" />
+                android:text="Import data"
+                android:id="@+id/account_sync_import_button"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/passwordEditText"
-                android:inputType="textPassword"
-                android:textAlignment="textEnd"
-                android:layout_gravity="end"
-                android:layout_marginRight="10dp" />
+            </LinearLayout>
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Register"
-            android:id="@+id/saveButton"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Import data"
-            android:id="@+id/importButton"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp" />
-
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GUARDIAN/GUARDEE"
-            android:padding="0dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/guardianSection" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="#ffffff">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Notify time"
-                android:id="@+id/notifyTimeText"
-                android:textSize="20sp"
-                android:layout_marginLeft="10dp"
-                android:textColor="#000000"
-                android:layout_gravity="center"
-                android:layout_marginRight="10dp" />
-
-            <SeekBar
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/notifyTime"
-                android:layout_marginRight="10dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="10dp" />
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DBDBDB"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="The amount of wait-time you will be notified after your child has failed to take their medicine."
-            android:padding="0dp"
-            android:textSize="8dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:id="@+id/notifyTimeInfo" />
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -369,20 +415,16 @@ GUARDIAN/GUARDEE
             android:text="ABOUT/CONTACT"
             android:padding="0dp"
             android:layout_marginLeft="10dp"
-            android:id="@+id/aboutSection" />
+            android:id="@+id/account_about_heading" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="This application is developed by a group of 6 students at Norwegian University og Science and Technology (NTNU) as their bachelor thesis. It was made in collaboration with SINTEF for a EU project called My Cystic Fibrosis App (MyCyFApp). Contact: epost@mycyfapp.eu"
+            android:text="This application is developed by a group of 6 students at Norwegian University og Science and Technology (NTNU) as their bachelor thesis. It was made in collaboration with SINTEF for a EU project called My Cystic Fibrosis App (MyCyFApp). Contact: eirivi@stud.ntnu.no"
             android:padding="0dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:id="@+id/aboutUsSection" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            />
+            android:id="@+id/account_about_text"
+            android:layout_marginBottom="20dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -395,14 +437,14 @@ GUARDIAN/GUARDEE
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Share/invite"
-                android:id="@+id/shareButton"
+                android:id="@+id/account_share_button"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp" />
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Delete all data"
-                android:id="@+id/deleteButton"
+                android:id="@+id/account_delete_data_button"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp" />
 

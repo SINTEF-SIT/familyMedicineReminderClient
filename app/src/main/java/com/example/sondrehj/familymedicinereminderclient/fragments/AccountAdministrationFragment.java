@@ -1,13 +1,28 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.app.FragmentManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+
 
 
 /**
@@ -18,7 +33,17 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
  */
 public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
 
-    public static int SNOOZE_TIME;
+
+    @Bind(R.id.account_group_guardian) LinearLayout guardianGroup;
+
+    @Bind(R.id.account_personal_year_input) EditText yearEditText;
+    @Bind(R.id.account_personal_reminder_switch) Switch reminderSwitch;
+
+    @Bind(R.id.account_general_notification_switch) Switch notificationSwitch;
+
+
+    @Bind(R.id.account_settings_save_button) Button saveButton;
+    @Bind(R.id.account_delete_data_button) Button deleteDataButton;
 
 
     public AccountAdministrationFragment() {
@@ -45,7 +70,41 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_account_administration, container, false);
+        View view = inflater.inflate(R.layout.fragment_account_administration, container, false);
+        ButterKnife.bind(this, view);
+        fillTextFields();
+        guardianGroup.setVisibility(View.GONE);
+        return view;
+    }
+
+    @OnClick(R.id.account_settings_save_button)
+    public void onSaveButtonClick() {
+        updateAccountInformation();
+        Toast.makeText(getActivity(), "Settings updated", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.account_delete_data_button)
+    public void onDeleteButtonClick() {
+        FragmentManager fm = getActivity().getFragmentManager();
+        DeleteAllDataDialogFragment daf = new DeleteAllDataDialogFragment();
+        daf.show(fm, "delete");
+    }
+
+    public boolean updateAccountInformation(){
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("AccountSettings", Context.MODE_PRIVATE).edit();
+        editor.putInt("yearOfBirth", Integer.parseInt(yearEditText.getText().toString()));
+        editor.apply();
+        return true;
+    }
+
+    public boolean fillTextFields(){
+
+        SharedPreferences prefs = getActivity().getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
+        int snoozeTime = prefs.getInt("snoozeTime", 180000) / 60000;
+        int yearOfBirth = prefs.getInt("yearOfBirth", 2000);
+
+        yearEditText.setText(Integer.toString(yearOfBirth));
+        return true;
     }
 
     @Override

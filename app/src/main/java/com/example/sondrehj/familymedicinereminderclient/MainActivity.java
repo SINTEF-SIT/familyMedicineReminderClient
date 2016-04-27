@@ -2,19 +2,17 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.AlarmManager;
-
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -27,12 +25,9 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
-import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
-import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
@@ -50,7 +45,6 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialo
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.notification.NotificationPublisher;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -60,10 +54,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.squareup.otto.Subscribe;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -91,20 +82,28 @@ public class MainActivity extends AppCompatActivity
      *
      * @param savedInstanceState
      */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         //get the accountmanager
         Account account = MainActivity.getAccount(this);
 
+
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
             changeFragment(new WelcomeFragment());
-            //TODO: Disable drawer and navigation when in welcomeFragment
+            //disables drawer and navigation when in welcomeFragment.
+            drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+            //hides ActionBarDrawerToggle
+            toggle.setDrawerIndicatorEnabled(false);
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
@@ -113,14 +112,23 @@ public class MainActivity extends AppCompatActivity
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
+
+        // Account settings
+        SharedPreferences sharedPrefs = getSharedPreferences("AccountSettings", MODE_PRIVATE);
+        SharedPreferences.Editor ed;
+        if (!sharedPrefs.contains("initialized")) {
+            ed = sharedPrefs.edit();
+            // Indicate that the default shared prefs have been set
+            ed.putBoolean("initialized", true);
+            // Set default values
+            ed.putInt("yearOfBirth", 2000);
+            ed.putInt("snoozeTime", 180000);
+            ed.apply();
+        }
+
+        System.out.println(getIntent().toString());
 
         // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -299,15 +307,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-
     /**
      * Called when a notification is clicked. If the intent contains a reminder with a medication attached,
      * the amount of "units" decreases by the given dosage.
      *
      * @param intent the intent instance created by getNotification(String content, Reminder reminder)
      */
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -318,25 +323,37 @@ public class MainActivity extends AppCompatActivity
 
         if(notificationAction != null) {
             if (reminder != null) {
-                System.out.println("--------Notification Pressed--------");
-                System.out.println(" Notification for reminder: " + reminder.getName());
+                System.out.println("--------Notification Pressed--------" + "\n" +
+                                " Notification for reminder: " + reminder.getName());
 
-                // Schedules a new notification with the given snooze time
+
+                // Check if the user clicked the "snooze" action on the notification.
                 if (notificationAction.equals("snooze")) {
 
-                    // TODO: update 60000 to snooze-time in AccountAdministrationFragment.
+                    // Get user specified snoozeTime from account settings
+                    SharedPreferences prefs = this.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
+                    int snoozeTime = prefs.getInt("snoozeTime", 180000);
+
+                    // Schedule a "new" notification with the given snooze time
                     notificationScheduler.snoozeNotification(
                             notificationScheduler.getNotification("", reminder),
                             reminder,
-                            30000);
+                            snoozeTime);
                     System.out.println(" Snooze - Scheduling new notification");
                     notificationScheduler.removeNotification(reminder.getReminderId());
+                    Toast.makeText(this, "Snooze activated", Toast.LENGTH_LONG).show();
 
-                } else if (notificationAction.equals("regular")) {
+                }
+                // Check if the user clicked the main notification action or the "take" action
+                else if (notificationAction.equals("regular")) {
+                    // Check if there is a medication "attached" to the notification.
                     if (reminder.getMedicine() != null) {
-                        System.out.println(" Medication attached: " + reminder.getMedicine().getName());
-                        System.out.println(" Number of medication units: " + reminder.getMedicine().getCount());
-                        System.out.println(" Reducing by: " + reminder.getDosage());
+                        System.out.println(
+                                        " Medication attached: " + reminder.getMedicine().getName() + "\n" +
+                                        " Number of medication units: " + reminder.getMedicine().getCount() + "\n" +
+                                        " Reducing by: " + reminder.getDosage());
+
+                        // We reduce the amount of the medication by the given dosage.
                         reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
                         System.out.println(" New value: " + reminder.getMedicine().getCount());
 
@@ -376,6 +393,8 @@ public class MainActivity extends AppCompatActivity
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
      * the Google Play Store or enable it in the device's system settings.
+     *
+     * TODO: Disallow usage of the application before the user fixes this error.
      */
     private boolean checkPlayServices() {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
@@ -385,13 +404,38 @@ public class MainActivity extends AppCompatActivity
                 apiAvailability.getErrorDialog(this, resultCode, 9000)
                         .show();
             } else {
-                Log.i("main", "This device is not supported.");
+                Log.i(TAG, "This device is not supported.");
                 finish();
             }
             return false;
         }
         return true;
     }
+
+
+    public void deleteAllApplicationData(){
+
+        // Wipe the local database
+        this.deleteDatabase("familymedicinereminderclient.db");
+        // Wipe account settings stored by SharedPreferences
+        this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
+        // Clear Medication and Reminder lists
+        ReminderListFragment.reminders.clear();
+        MedicationListFragment.medications.clear();
+
+        // TODO: clear all pendingIntents in AlarmManager
+
+        // TODO: wipe server data & account manager
+    }
+
+
+    /**
+     * Function called by WelcomeFragment to save/add account to the AccountManager and
+     * fetch a gcm token which is sent to the server and associated with the user.
+     * @param userId
+     * @param password
+     * @param userRole
+     */
 
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole) {
@@ -405,6 +449,15 @@ public class MainActivity extends AppCompatActivity
             System.out.println(newAccount.toString());
             System.out.println(AccountManager.get(getApplicationContext()).getUserData(newAccount, "userRole"));
         }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        //Enables drawer and action toggle when user is created
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        toggle.setDrawerIndicatorEnabled(true);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
@@ -473,7 +526,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_medication) {
             changeFragment(MedicationListFragment.newInstance());
         } else if (id == R.id.nav_settings) {
-            //TODO: fill inn changefragment to settings fragment
             changeFragment(AccountAdministrationFragment.newInstance());
         } else if (id == R.id.nav_guardian_dashboard) {
             changeFragment(new GuardianDashboardFragment());
@@ -496,6 +548,12 @@ public class MainActivity extends AppCompatActivity
     public List<Medication> onGetMedications() {
         return new MySQLiteHelper(this).getMedications();
     }
+
+    @Override
+    public List<Reminder> onGetReminders(){
+        return new MySQLiteHelper(this).getReminders();
+    }
+
 
     @Override
     public void onSaveNewReminder(Reminder r) {
