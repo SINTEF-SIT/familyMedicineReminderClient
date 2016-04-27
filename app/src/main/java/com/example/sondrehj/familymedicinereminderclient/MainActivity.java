@@ -309,70 +309,24 @@ public class MainActivity extends AppCompatActivity
         String notificationAction = intent.getStringExtra("notification-action");
 
         if(notificationAction != null) {
-            if (reminder != null) {
-                System.out.println("--------Notification Pressed--------" + "\n" +
-                                " Notification for reminder: " + reminder.getName());
+            switch (notificationAction) {
+                case "notificationRegular":
+                    notificationScheduler.handleNotificationMainClick(reminder);
+                    break;
+                case "notificationSnooze":
+                    notificationScheduler.handleNotificationSnoozeClick(reminder);
+                    break;
+                case "medicationChanged":
+                    Bundle extras = new Bundle();
+                    extras.putString("notificationType", notificationAction);
+                    extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
-
-                // Check if the user clicked the "snooze" action on the notification.
-                if (notificationAction.equals("snooze")) {
-
-                    // Get user specified snoozeTime from account settings
-                    SharedPreferences prefs = this.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
-                    int snoozeTime = prefs.getInt("snoozeTime", 180000);
-
-                    // Schedule a "new" notification with the given snooze time
-                    notificationScheduler.snoozeNotification(
-                            notificationScheduler.getNotification("", reminder),
-                            reminder,
-                            snoozeTime);
-                    System.out.println(" Snooze - Scheduling new notification");
-                    notificationScheduler.removeNotification(reminder.getReminderId());
-                    Toast.makeText(this, "Snooze activated", Toast.LENGTH_LONG).show();
-
-                }
-                // Check if the user clicked the main notification action or the "take" action
-                else if (notificationAction.equals("regular")) {
-                    // Check if there is a medication "attached" to the notification.
-                    if (reminder.getMedicine() != null) {
-                        System.out.println(
-                                        " Medication attached: " + reminder.getMedicine().getName() + "\n" +
-                                        " Number of medication units: " + reminder.getMedicine().getCount() + "\n" +
-                                        " Reducing by: " + reminder.getDosage());
-
-                        // We reduce the amount of the medication by the given dosage.
-                        reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
-                        System.out.println(" New value: " + reminder.getMedicine().getCount());
-
-                        // Updates MedicationListViewFragment with new data.
-                        List<Medication> meds = new MySQLiteHelper(this).getMedications();
-                        for (int i = 0; i < meds.size(); i++) {
-                            if (meds.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                                meds.set(i, reminder.getMedicine());
-                                MedicationListFragment mlf = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-                                if (mlf != null) {
-                                    mlf.notifyChanged();
-                                }
-                            }
-                        }
-                        // Updates the DB
-                        MySQLiteHelper db = new MySQLiteHelper(this);
-                        db.updateAmountMedication(reminder.getMedicine());
-                        Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
-                    }
-                }
-
-                System.out.println("------------------------------------");
-            } else if (notificationAction.equals("medicationsChanged")) {
-                Bundle extras = new Bundle();
-                extras.putString("notificationType", notificationAction);
-                extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-
-                ContentResolver.requestSync(
-                        MainActivity.getAccount(getApplicationContext()),
-                        "com.example.sondrehj.familymedicinereminderclient.content",
-                        extras);
+                    ContentResolver.requestSync(
+                            MainActivity.getAccount(getApplicationContext()),
+                            "com.example.sondrehj.familymedicinereminderclient.content",
+                            extras);
+                    break;
             }
         }
         setIntent(null);
