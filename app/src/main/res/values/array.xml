@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="unit_items">
-        <item>ml</item>
-        <item>pill(s)</item>
+        <item>pill</item>
         <item>inhalation</item>
+        <item>ml</item>
         <item>mg</item>
         <item>mcg</item>
         <item>g</item>

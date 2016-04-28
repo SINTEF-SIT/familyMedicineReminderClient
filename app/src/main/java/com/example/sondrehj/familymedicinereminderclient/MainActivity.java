@@ -294,8 +294,6 @@ public class MainActivity extends AppCompatActivity
         //change the header to which fragment you are on
         TitleSupplier titleSupplier = (TitleSupplier) fragment;
         setTitle(titleSupplier.getTitle());
-
-
     }
 
     /**

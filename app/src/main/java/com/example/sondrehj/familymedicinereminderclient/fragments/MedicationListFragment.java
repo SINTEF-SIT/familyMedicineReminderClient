@@ -27,6 +27,9 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -38,11 +41,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     //TODO: Create a warning when trying to delete a medication
 
     private Boolean busIsRegistered = false;
-
     private List<Medication> medications = new ArrayList<>();
-
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
     /**
@@ -53,7 +52,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     }
 
     // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static MedicationListFragment newInstance() {
         MedicationListFragment fragment = new MedicationListFragment();
         return fragment;
@@ -92,22 +90,20 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_medication_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.medication_list);
-
+        ButterKnife.bind(this, view);
         // Set the adapter
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
-        }
+        };
+        return view;
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.new_medication_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
-            }
-        });
-    return view;
+    @OnClick(R.id.new_medication_fab)
+    public void onFloatingActionButtonClick() {
+        ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
+
     }
 
     @Override
@@ -142,6 +138,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     @Override
     public void onDetach() {
+        ButterKnife.unbind(this);
         super.onDetach();
         if (busIsRegistered) {
             BusService.getBus().unregister(this);

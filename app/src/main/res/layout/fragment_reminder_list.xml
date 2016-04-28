@@ -2,7 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
-    android:background="#EEEEEE"
+    android:background="#f5f5f5"
     android:paddingBottom="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 

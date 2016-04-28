@@ -3,35 +3,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.MedicationStorageFragment"
-    android:background="#EEEEEE">
+    android:background="#f5f5f5">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#eaeaea">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#DBDBDB"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="7dp" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="43sp"
-            android:background="#fff"
-            android:layout_marginTop="3dp">
+            android:background="#fff">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Medication name"
+                android:text="Name"
                 android:id="@+id/medication_storage_medication_text"
                 android:textSize="20sp"
                 android:layout_marginLeft="10dp"
                 android:textColor="#000000"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="80dp"
                 android:layout_gravity="center" />
 
             <EditText
@@ -96,7 +96,8 @@
             android:layout_width="match_parent"
             android:layout_height="43dp"
             android:clickable="true"
-            android:background="#ffffff">
+            android:background="#ffffff"
+            android:id="@+id/medication_storage_group_unit">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -129,7 +130,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="Save"
             android:id="@+id/medication_storage_save_button"
             android:layout_gravity="center_horizontal" />
