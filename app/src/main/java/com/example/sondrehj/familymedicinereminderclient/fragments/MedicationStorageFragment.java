@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,7 +110,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
             }
         });
 
-        final FrameLayout unitWrapper = (FrameLayout) view.findViewById(R.id.unitWrapper);
+        final LinearLayout unitWrapper = (LinearLayout) view.findViewById(R.id.unitWrapper);
         unitWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

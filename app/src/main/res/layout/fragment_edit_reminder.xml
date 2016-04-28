@@ -11,6 +11,13 @@
     tools:context=".fragments.NewReminderFragment"
     android:id="@+id/newReminderLayout">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REMINDER"
+        android:id="@+id/reminderHeader"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -58,7 +65,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/nameEditText"
             android:inputType="text"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:textAlignment="textEnd"/>
 
     </LinearLayout>
 
