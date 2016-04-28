@@ -22,6 +22,9 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +41,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     private static final String ARG_MEDICATION = "medication";
 
     private Medication mMedication;
+
     public MedicationStorageFragment() {
         // Required empty public constructor
     }
@@ -68,8 +72,9 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_medication, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_medication, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -115,6 +120,10 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                 test.show(fm, "test");
             }
         });
+    }
+
+    @OnClick(R.id.medication_storage_save_button)
+    public void onMedicationStorageSaveButton () {
 
     }
 
@@ -185,6 +194,10 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
     @Override
     public String getTitle() {
-        return "New Medication";
+        if(mMedication == null) {
+            return "New medication";
+        } else {
+            return "Edit medication";
+        }
     }
 }
