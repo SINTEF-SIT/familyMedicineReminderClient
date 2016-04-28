@@ -101,13 +101,12 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                     } else {
                         updateMedication();
                     }
-                    //Ask user if he wants to attach a reminder to this medicine
+                    //Ask user if he wants to attach a reminder to this medicine. If yes, go to NewReminder
                     FragmentManager fm = getActivity().getFragmentManager();
                     AttachReminderDialogFragment attachReminderDialog = new AttachReminderDialogFragment();
                     attachReminderDialog.show(fm, "attachReminderDialog");
                     //Return to MedicationCabinet
                     ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
-
                 }
             }
         });
