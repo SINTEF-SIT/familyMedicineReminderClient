@@ -86,7 +86,7 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
         ButterKnife.bind(this, view); //Binds references to the items in the inflated view.
 
         Account account = MainActivity.getAccount(context); //Gets a reference to the account
-        Log.d("LinkingFragment", "Accountname: " + account.name);
+        Log.d(TAG, "Accountname: " + account.name);
 
         String userRole = AccountManager.get(context).getUserData(account, "userRole"); // Gets the userRole of the specified account.
         Log.d(TAG, "The users role equals: " + userRole +". Hiding elements belonging to the opposite role.");
@@ -255,16 +255,4 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
     public String getTitle() {
         return "Linking";
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
 }

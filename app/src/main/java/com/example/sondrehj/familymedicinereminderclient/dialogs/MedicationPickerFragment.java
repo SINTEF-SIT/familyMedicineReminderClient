@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
@@ -24,7 +25,7 @@ public class MedicationPickerFragment extends DialogFragment {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        final List<Medication> medications = MedicationListFragment.medications;
+        final List<Medication> medications = new MySQLiteHelper(getActivity()).getMedications();
         String[] medicationNames = new String[medications.size()];
         for(int count = 0; count < medicationNames.length; count++) {
             medicationNames[count] = medications.get(count).getName();

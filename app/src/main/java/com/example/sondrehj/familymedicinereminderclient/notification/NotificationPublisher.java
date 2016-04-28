@@ -35,43 +35,38 @@ public class NotificationPublisher extends BroadcastReceiver {
         int[] days = reminder.getDays();
         GregorianCalendar endCal = reminder.getEndDate();
 
-        System.out.println("-------Notification Publisher-------");
-        System.out.println(" Triggered by reminder: " + reminder.getName());
-
-        if(notificationType.equals("snooze")){
-            notificationManager.notify(id, notification);
-            return;
-        }
-
         // Today's date
         Calendar cal = Calendar.getInstance();
         int currentDay = (cal.get(Calendar.DAY_OF_WEEK));
 
+        // Snooze notification
+        if (notificationType.equals("snooze")) {
+            System.out.println("Publishing snooze notification: " + id);
+            notificationManager.notify(id, notification);
+            return;
+        }
         // Checks if the user has specified days for the reminder
         if (days.length == 0) {
             notificationManager.notify(id, notification);
-            System.out.println(" Publishing Notification with ID: " + id);
-        } else {
-            // Cancel the notification if the reminder has expired
-            if (!cal.before(endCal)) {
+            System.out.println("Publishing non-repeating Notification with ID: " + id);
+            return;
+        }
+        // Checks if the reminder should be canceled. End date is before current date.
+        if (!cal.before(endCal)) {
+            notificationManager.notify(id, notification);
+            cancelNotification(id);
+            System.out.println("Notification was canceled. Reminder end date is before current date.");
+            return;
+        }
+        // If the user has specified days, we check if today is one of the days.
+        // The notification is published if true.
+        for (int day : days) {
+            if (day == currentDay) {
                 notificationManager.notify(id, notification);
-                cancelNotification(id);
-                System.out.println(" Notification was canceled. Reminder end date is before current date.");
-            } else {
-                System.out.println(" Today's day of week: " + currentDay);
-                System.out.println(" Scheduled for days: " + Arrays.toString(days));
-                    for (int day : days) {
-                        // If the user has specified days, we check if today is one of
-                        // the days. The notification is published if true.
-                        if (day == currentDay) {
-                            notificationManager.notify(id, notification);
-                            System.out.println(" Publishing Notification with ID: " + id);
-                            break;
-                        }
-                    }
+                System.out.println("Publishing repeating Notification with ID: " + id);
+                break;
             }
         }
-        System.out.println("------------------------------------");
     }
 
     public void cancelNotification(int id) {

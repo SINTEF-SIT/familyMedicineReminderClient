@@ -73,37 +73,44 @@ GUARDIAN/GUARDEE
                 android:layout_height="1dp"
                 android:background="#DBDBDB"/>
 
-            <FrameLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="#fff">
+                android:layout_height="match_parent"
+                android:id="@+id/account_group_personal_year">
 
-                <EditText
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/account_personal_year_input"
-                    android:inputType="number"
-                    android:text="1992"
-                    android:hint="year"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_gravity="right" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#fff">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Year of birth"
-                    android:id="@+id/account_personal_year_text"
-                    android:textSize="20sp"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#000000"
-                    android:layout_gravity="center_vertical" />
-            </FrameLayout>
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/account_personal_year_input"
+                        android:inputType="number"
+                        android:text="1992"
+                        android:hint="year"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_gravity="right" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DBDBDB"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Year of birth"
+                        android:id="@+id/account_personal_year_text"
+                        android:textSize="20sp"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#000000"
+                        android:layout_gravity="center_vertical" />
+                </FrameLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#DBDBDB"/>
+            </LinearLayout>
 
             <Switch
                 android:layout_width="match_parent"
@@ -175,24 +182,23 @@ GUARDIAN/GUARDEE
                     android:layout_gravity="center_vertical" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="23dp"
                     android:layout_height="wrap_content"
-                    android:text="1"
+                    android:text="5"
                     android:layout_gravity="center_vertical|right"
                     android:textSize="20sp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/account_general_snooze_minutes_value" />
+                    android:id="@+id/account_general_snooze_minutes_value"
+                    android:layout_marginLeft="5dp"
+                    android:textAlignment="textEnd" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="46dp"
                     android:layout_height="wrap_content"
-                    android:text="minute"
+                    android:text="mins"
                     android:layout_gravity="center_vertical|right"
                     android:textSize="20sp"
-                    android:layout_marginRight="5dp"
-                    android:id="@+id/account_general_snooze_minutes_text"
-                    android:paddingRight="12dp" />
+                    android:id="@+id/account_general_snooze_minutes_text" />
 
                 <SeekBar
                     android:layout_width="wrap_content"
@@ -200,7 +206,7 @@ GUARDIAN/GUARDEE
                     android:id="@+id/account_general_snooze_seekbar"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="10dp" />
+                    android:paddingLeft="10dp" />
             </LinearLayout>
 
             <View
@@ -214,7 +220,8 @@ GUARDIAN/GUARDEE
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/account_group_guardian">
+            android:id="@+id/account_group_guardian"
+            android:layout_marginBottom="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -244,34 +251,33 @@ GUARDIAN/GUARDEE
                     android:layout_marginLeft="10dp"
                     android:textColor="#000000"
                     android:layout_gravity="center"
-                    android:layout_marginRight="15dp" />
+                    android:layout_marginRight="10dp" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="23dp"
                     android:layout_height="wrap_content"
-                    android:text="1"
-                    android:layout_gravity="center_vertical|right"
+                    android:text="30"
+                    android:layout_gravity="center_vertical"
                     android:textSize="20sp"
                     android:layout_marginRight="5dp"
-                    android:id="@+id/account_guardian_grace_minutes_value" />
+                    android:id="@+id/account_guardian_grace_minutes_value"
+                    android:textAlignment="textEnd" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="46dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|right"
+                    android:layout_gravity="center_vertical"
                     android:textSize="20sp"
-                    android:layout_marginRight="5dp"
                     android:id="@+id/account_guardian_grace_minutes_text"
-                    android:text="minute"
-                    android:paddingRight="12dp" />
+                    android:text="mins" />
 
                 <SeekBar
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:id="@+id/account_guardian_grace_seekbar"
-                    android:layout_marginRight="10dp"
-                    android:layout_gravity="center"
-                    android:paddingLeft="10dp" />
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <View
@@ -295,16 +301,14 @@ GUARDIAN/GUARDEE
             android:layout_height="wrap_content"
             android:text="SAVE"
             android:id="@+id/account_settings_save_button"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp" />
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/account_group_sync"
-            android:layout_marginBottom="20dp">
+            android:layout_marginTop="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -415,7 +419,8 @@ GUARDIAN/GUARDEE
             android:text="ABOUT/CONTACT"
             android:padding="0dp"
             android:layout_marginLeft="10dp"
-            android:id="@+id/account_about_heading" />
+            android:id="@+id/account_about_heading"
+            android:layout_marginTop="20dp" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

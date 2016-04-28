@@ -9,11 +9,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
-import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
-import com.example.sondrehj.familymedicinereminderclient.fragments.ReminderListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
@@ -33,6 +30,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     //Medication table
     public static final String TABLE_MEDICATION = "medication";
     public static final String COLUMN_MED_ID = "med_id";
+    public static final String COLUMN_MED_SERVER_ID = "server_id";
     public static final String COLUMN_OWNER_ID = "owner_id";
     public static final String COLUMN_MED_NAME = "medication_name";
     public static final String COLUMN_MED_COUNT = "count";
@@ -40,7 +38,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     //Medication table creation statement
     private static final String CREATE_TABLE_MEDICATION = "create table "
             + TABLE_MEDICATION + "(" + COLUMN_MED_ID
-            + " integer primary key autoincrement, " + COLUMN_OWNER_ID
+            + " integer primary key autoincrement, " + COLUMN_MED_SERVER_ID
+            + " integer not null, " + COLUMN_OWNER_ID
             + " text not null, " + COLUMN_MED_NAME
             + " text not null, " + COLUMN_MED_COUNT
             + " real, " + COLUMN_MED_UNIT
@@ -104,6 +103,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(COLUMN_MED_SERVER_ID, medication.getServerId());
         values.put(COLUMN_OWNER_ID, medication.getOwnerId());
         values.put(COLUMN_MED_NAME, medication.getName());
         values.put(COLUMN_MED_COUNT, medication.getCount());
@@ -122,6 +122,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         //Prepares the statement
         ContentValues values = new ContentValues();
+        values.put(COLUMN_MED_SERVER_ID, medication.getServerId());
         values.put(COLUMN_MED_NAME, medication.getName());
         values.put(COLUMN_MED_COUNT, medication.getCount());
         values.put(COLUMN_MED_UNIT, medication.getUnit());
@@ -140,11 +141,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(0);
-                String ownerId = "test";
-                String name = cursor.getString(2);
-                Double count = cursor.getDouble(3);
-                String unit = cursor.getString(4);
-                Medication m = new Medication(id, ownerId, name, count, unit);
+                int serverId = cursor.getInt(1);
+                String ownerId = cursor.getString(2);
+                String name = cursor.getString(3);
+                Double count = cursor.getDouble(4);
+                String unit = cursor.getString(5);
+                Medication m = new Medication(id, serverId, ownerId, name, count, unit);
                 data.add(m);
             } while (cursor.moveToNext());
         }
@@ -160,7 +162,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         //Removes the medication from the list content
 
-        MedicationListFragment.medications.remove(medication);   //TODO: Fix deletion now that MedicationListCOntent is removed.
+        //MedicationListFragment.medications.remove(medication);   //TODO: Fix deletion now that MedicationListCOntent is removed.
         db.close();
     }
 
@@ -298,13 +300,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if(medicationId != 0) {
-                    for(Medication med : MedicationListFragment.medications){
+                    for(Medication med : getMedications())//MedicationListFragment.medications){
                         if(med.getMedId() == medicationId){
                             reminder.setMedicine(med);
                             reminder.setDosage(dosage);
                         }
                     }
-                }
                 data.add(reminder);
             } while (cursor.moveToNext());
         }
@@ -317,8 +318,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         // Deletes a reminder
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_REMINDER, "reminder_id=" + reminder.getReminderId(), null);
-        //Removes the reminder from the list content
-        ReminderListFragment.reminders.remove(reminder);
         db.close();
     }
 

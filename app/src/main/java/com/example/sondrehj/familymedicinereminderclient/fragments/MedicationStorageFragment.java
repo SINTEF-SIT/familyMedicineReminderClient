@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -144,6 +146,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
                 0,
+                -1,
                 "786#13%",
                 medicationName.getText().toString(),
                 Double.parseDouble(medicationAmount.getText().toString()),
@@ -151,11 +154,12 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         );
 
         //Adds the new medicine to MedicationListContent
-        MedicationListFragment.medications.add(0, medication);
+        //MedicationListFragment.medications.add(0, medication);
 
         // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         System.out.println("---------Medication Created---------" + "\n" + medication);
         System.out.println("------------------------------------");
 

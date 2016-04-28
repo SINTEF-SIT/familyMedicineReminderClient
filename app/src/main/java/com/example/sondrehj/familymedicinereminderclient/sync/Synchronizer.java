@@ -1,10 +1,12 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
@@ -82,16 +84,35 @@ public class Synchronizer {
             @Override
             public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
                 System.out.println("In sync medications");
-                ArrayList<Reminder> dbMedications = db.getReminders();
-                for (Medication serverMedication : response.body()) {
-                    System.out.println("in add medications");
-                    db.addMedication(serverMedication);
+                ArrayList<Medication> clientMedications = db.getMedications();
+                for (Medication servermedication : response.body()) {
+                    System.out.println(servermedication.getName());
+                    db.addMedication(servermedication);
                 }
+
+                /*for (Medication clientMedication : clientMedications) {
+                    if (clientMedication.getServerId() == -1) {
+                        scheduleUpload(clientMedication);
+                        continue;
+                    }
+                    for (Medication serverMedication : response.body()) {
+                        if(serverMedication.getServerId() == clientMedication.getServerId()) {
+                            clientMedication.setServerId(serverMedication.getServerId());
+                            clientMedication.setName(serverMedication.getName());
+                            clientMedication.setUnit(serverMedication.getUnit());
+                            clientMedication.setCount(serverMedication.getCount());
+                            db.updateMedication(clientMedication);
+                        }
+                    }
+                }
+                */
+
                 System.out.println("Finished db, sending intent");
                 Intent intent = new Intent();
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncMedications");
                 context.sendBroadcast(intent);
+
                 Toast.makeText(context, "Synchronization finished!", Toast.LENGTH_SHORT).show();
             }
 
@@ -102,4 +123,9 @@ public class Synchronizer {
         });
         return true;
     }
+
+    private void scheduleUpload(Medication medication) {
+        System.out.println("Upload scheduled");
+    }
+
 }

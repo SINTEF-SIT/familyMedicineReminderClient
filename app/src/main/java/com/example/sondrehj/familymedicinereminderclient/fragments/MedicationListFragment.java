@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.DividerItemDecoration;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
@@ -19,6 +22,7 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,10 +37,9 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     //TODO: Create a warning when trying to delete a medication
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
+    private Boolean busIsRegistered = false;
 
-    public static List<Medication> medications = new ArrayList<>();
+    private List<Medication> medications = new ArrayList<>();
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -56,13 +59,23 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         return fragment;
     }
 
+    @Subscribe
+    public void handleMedicationsChangedEvent(DataChangedEvent event) {
+        if(event.type.equals(DataChangedEvent.MEDICATIONS)) {
+            System.out.println("In handle data changed event");
+            medications.clear();
+            medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+            MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+            if (fragment != null) {
+                fragment.notifyChanged();
+            }
+        }
+    }
+
     public void notifyChanged() {
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
-
-        // TODO: move this? Causes the application to crash
-        //medications.addAll(mListener.onGetMedications());
-
         if (recView != null) {
+            System.out.println(medications);
             recView.getAdapter().notifyDataSetChanged();
             System.out.println("notifychanged called");
         }
@@ -83,11 +96,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         // Set the adapter
         if (recView != null) {
             Context context = view.getContext();
-            if (mColumnCount <= 1) {
-                recView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
+            recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
         }
 
@@ -104,6 +113,10 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (!busIsRegistered) {
+            BusService.getBus().register(this);
+            busIsRegistered = true;
+        }
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
@@ -115,6 +128,10 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (!busIsRegistered) {
+            BusService.getBus().register(this);
+            busIsRegistered = true;
+        }
         if (activity instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) activity;
         } else {
@@ -126,6 +143,10 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onDetach() {
         super.onDetach();
+        if (busIsRegistered) {
+            BusService.getBus().unregister(this);
+            busIsRegistered = false;
+        }
         mListener = null;
     }
 

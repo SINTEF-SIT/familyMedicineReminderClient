@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -102,9 +101,10 @@ public class MainActivity extends AppCompatActivity
             changeFragment(new WelcomeFragment());
             //disables drawer and navigation when in welcomeFragment.
             //TODO: fix menu issue, not showing when you reopen the app or somethingsomething
-            drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+            //TODO: fix this shit (ask hanna or nikolai)
+            //drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
-            toggle.setDrawerIndicatorEnabled(false);
+            //toggle.setDrawerIndicatorEnabled(false);
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
@@ -116,17 +116,19 @@ public class MainActivity extends AppCompatActivity
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
 
-        // Account settings
+        //Default account settings
         SharedPreferences sharedPrefs = getSharedPreferences("AccountSettings", MODE_PRIVATE);
-        SharedPreferences.Editor ed;
+        SharedPreferences.Editor editor;
         if (!sharedPrefs.contains("initialized")) {
-            ed = sharedPrefs.edit();
+            editor = sharedPrefs.edit();
             // Indicate that the default shared prefs have been set
-            ed.putBoolean("initialized", true);
+            editor.putBoolean("initialized", true);
             // Set default values
-            ed.putInt("yearOfBirth", 2000);
-            ed.putInt("snoozeTime", 180000);
-            ed.apply();
+            editor.putInt("snoozeDelay", 5); // 5 minutes
+            editor.putInt("gracePeriod", 30);// 30 minutes
+            editor.putBoolean("reminderSwitch", true);
+            editor.putBoolean("notificationSwitch", true);
+            editor.apply();
         }
 
         System.out.println(getIntent().toString());
@@ -137,9 +139,6 @@ public class MainActivity extends AppCompatActivity
 
         //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-        //Read and display data from local database. (Flyttes?)
-        MySQLiteHelper db = new MySQLiteHelper(this);
         //TODO: Look more at how database changes can be broadcasted to the system
     }
 
@@ -217,15 +216,6 @@ public class MainActivity extends AppCompatActivity
         linkingDialogFragment.show(fm, "linking_request_fragment");
     }
 
-    @Subscribe
-    public void handleDataChangedEvent(DataChangedEvent event) {
-        System.out.println("In handle data changed event");
-        MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-        if (fragment != null) {
-            System.out.println("Called notifychanged!");
-            fragment.notifyChanged();
-        }
-    }
 
     /**
      * Closes the drawer when the back button is pressed.
@@ -323,71 +313,27 @@ public class MainActivity extends AppCompatActivity
         String notificationAction = intent.getStringExtra("notification-action");
 
         if(notificationAction != null) {
-            if (reminder != null) {
-                System.out.println("--------Notification Pressed--------" + "\n" +
-                                " Notification for reminder: " + reminder.getName());
+            switch (notificationAction) {
+                case "notificationRegular":
+                    notificationScheduler.handleNotificationMainClick(reminder);
+                    break;
+                case "notificationSnooze":
+                    notificationScheduler.handleNotificationSnoozeClick(reminder);
+                    break;
+                case "medicationChanged":
+                    Bundle extras = new Bundle();
+                    extras.putString("notificationType", notificationAction);
+                    extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+                    extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
-
-                // Check if the user clicked the "snooze" action on the notification.
-                if (notificationAction.equals("snooze")) {
-
-                    // Get user specified snoozeTime from account settings
-                    SharedPreferences prefs = this.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
-                    int snoozeTime = prefs.getInt("snoozeTime", 180000);
-
-                    // Schedule a "new" notification with the given snooze time
-                    notificationScheduler.snoozeNotification(
-                            notificationScheduler.getNotification("", reminder),
-                            reminder,
-                            snoozeTime);
-                    System.out.println(" Snooze - Scheduling new notification");
-                    notificationScheduler.removeNotification(reminder.getReminderId());
-                    Toast.makeText(this, "Snooze activated", Toast.LENGTH_LONG).show();
-
-                }
-                // Check if the user clicked the main notification action or the "take" action
-                else if (notificationAction.equals("regular")) {
-                    // Check if there is a medication "attached" to the notification.
-                    if (reminder.getMedicine() != null) {
-                        System.out.println(
-                                        " Medication attached: " + reminder.getMedicine().getName() + "\n" +
-                                        " Number of medication units: " + reminder.getMedicine().getCount() + "\n" +
-                                        " Reducing by: " + reminder.getDosage());
-
-                        // We reduce the amount of the medication by the given dosage.
-                        reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
-                        System.out.println(" New value: " + reminder.getMedicine().getCount());
-
-                        // Updates MedicationListViewFragment with new data.
-                        for (int i = 0; i < MedicationListFragment.medications.size(); i++) {
-                            if (MedicationListFragment.medications.get(i).getMedId() == reminder.getMedicine().getMedId()) {
-                                MedicationListFragment.medications.set(i, reminder.getMedicine());
-                                MedicationListFragment mlf = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-                                if (mlf != null) {
-                                    mlf.notifyChanged();
-                                }
-                            }
-                        }
-                        // Updates the DB
-                        MySQLiteHelper db = new MySQLiteHelper(this);
-                        db.updateAmountMedication(reminder.getMedicine());
-                        Toast.makeText(this, "Registered as taken", Toast.LENGTH_LONG).show();
-                    }
-                }
-
-                System.out.println("------------------------------------");
-            } else if (notificationAction.equals("medicationsChanged")) {
-                Bundle extras = new Bundle();
-                extras.putString("notificationType", notificationAction);
-                extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-                extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-
-                ContentResolver.requestSync(
-                        MainActivity.getAccount(getApplicationContext()),
-                        "com.example.sondrehj.familymedicinereminderclient.content",
-                        extras);
+                    ContentResolver.requestSync(
+                            MainActivity.getAccount(getApplicationContext()),
+                            "com.example.sondrehj.familymedicinereminderclient.content",
+                            extras);
+                    break;
             }
         }
+        setIntent(null);
     }
 
     /**
@@ -420,12 +366,7 @@ public class MainActivity extends AppCompatActivity
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
-        // Clear Medication and Reminder lists
-        ReminderListFragment.reminders.clear();
-        MedicationListFragment.medications.clear();
-
         // TODO: clear all pendingIntents in AlarmManager
-
         // TODO: wipe server data & account manager
     }
 
@@ -455,10 +396,10 @@ public class MainActivity extends AppCompatActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         //Enables drawer and action toggle when user is created
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        toggle.setDrawerIndicatorEnabled(true);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        //toggle.setDrawerIndicatorEnabled(true);
+        //drawer.setDrawerListener(toggle);
+        //toggle.syncState();
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
@@ -569,6 +510,7 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(r);
 
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         changeFragment(ReminderListFragment.newInstance());
     }
 
@@ -617,5 +559,4 @@ public class MainActivity extends AppCompatActivity
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
     }
-
 }
