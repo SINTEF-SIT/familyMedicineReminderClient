@@ -53,6 +53,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     //TODO: Suggestion: If a medication is attached, put name of medication as name. Name is not needed if it's a reminder to take the medicine
     //TODO: Crash if you attach a medicine and there is no medicines to choose from, and press OK
+    //TODO: Remove one of the "reminder is active" switches. There's one in Reminder and one in NewReminder
 
     private LinearLayout newReminderLayout;
     private LinearLayout endDatePickerLayout;

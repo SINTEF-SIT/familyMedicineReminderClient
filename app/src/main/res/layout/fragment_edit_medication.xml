@@ -2,140 +2,125 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.MedicationStorageFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border"
-        android:layout_weight="0.06" >
-
-        <EditText
-            android:layout_marginTop="30dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:id="@+id/editText"
-            android:inputType="textAutoComplete" />
-
-        <TextView
-            android:layout_width="159dp"
-            android:layout_height="38dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:textColor="#000"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medication Name"
-            android:id="@+id/textView2"
-            android:layout_gravity="left|top" />
-    </FrameLayout>
+    tools:context=".fragments.MedicationStorageFragment"
+    android:background="#EEEEEE">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:weightSum="1">
+        android:layout_height="match_parent">
 
-        <FrameLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:layout_weight="0.06">
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="43sp"
+            android:background="#fff"
+            android:layout_marginTop="3dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Medication"
+                android:id="@+id/textView"
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_marginRight="40dp"
+                android:layout_gravity="center" />
 
             <EditText
-                android:layout_marginTop="30dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
                 android:id="@+id/medicationName"
-                android:textColor="#ff888888"
-                android:inputType="textAutoComplete"/>
+                android:inputType="text"
+                android:layout_marginRight="10dp"
+                android:textAlignment="textEnd"/>
 
-            <TextView
-                android:layout_width="159dp"
-                android:layout_height="38dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:textColor="#000"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medication Name"
-                android:id="@+id/textView"
-                android:layout_gravity="left|top" />
-        </FrameLayout>
+        </LinearLayout>
 
-        <FrameLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/border"
-            android:layout_weight="0.06">
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
 
-            <EditText
-                android:layout_marginTop="30dp"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="16dp"
-                android:textColor="#ff888888"
-                android:inputType="numberDecimal"
-                android:id="@+id/medicationAmount" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="43sp"
+            android:background="#fff">
 
             <TextView
-                android:layout_width="159dp"
-                android:layout_height="38dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:textColor="#000"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Amount"
                 android:id="@+id/textView3"
-                android:layout_gravity="left|top" />
-        </FrameLayout>
+                android:textSize="20sp"
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:layout_marginRight="200dp"
+                android:layout_gravity="center" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/unitWrapper"
-            android:background="?attr/selectableItemBackground"
-            android:layout_weight="0.04" >
-
-            <TextView
-                android:layout_marginTop="40dp"
+            <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="16dp"
-                android:layout_marginLeft="20dp"
-                android:textSize="18dp"
+                android:layout_marginRight="10dp"
                 android:textColor="#ff888888"
-                android:text="Click to choose"
-                android:id="@+id/medicationUnit" />
+                android:inputType="numberDecimal"
+                android:id="@+id/medicationAmount"
+                android:textAlignment="textEnd"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:id="@+id/unitWrapper"
+            android:clickable="true"
+            android:background="#ffffff">
 
             <TextView
-                android:layout_width="159dp"
-                android:layout_height="38dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="16dp"
-                android:textColor="#000"
-                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Unit"
                 android:id="@+id/textView5"
-                android:layout_gravity="left|top" />
-        </FrameLayout>
+                android:layout_marginLeft="10dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:layout_gravity="center" />
 
-        <FrameLayout
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Click to choose"
+                android:id="@+id/medicationUnit"
+                android:textSize="18dp"
+                android:textColor="#ff888888"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_gravity="center"
+                android:gravity="right"
+                android:layout_marginRight="15dp"/>
+        </LinearLayout>
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@drawable/border"
-            android:layout_weight="0.06" />
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:text="Save"
             android:id="@+id/saveMedicationBtn"
             android:layout_gravity="center_horizontal" />
