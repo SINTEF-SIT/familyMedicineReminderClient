@@ -35,6 +35,8 @@ import java.util.List;
  */
 public class MedicationListFragment extends android.app.Fragment implements TitleSupplier {
 
+    //TODO: Get pasient name on the header, f.ex. Sondre's Medication
+
     //TODO: Create a warning when trying to delete a medication
 
     private Boolean busIsRegistered = false;

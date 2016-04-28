@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
@@ -62,7 +63,8 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener,
-        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
+        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener,
+        AttachReminderDialogFragment.AttachReminderDialogListener {
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
@@ -558,5 +560,10 @@ public class MainActivity extends AppCompatActivity
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
+    }
+
+    @Override
+    public void onPositiveAttachReminderDialogResult() {
+        changeFragment(NewReminderFragment.newInstance(null));
     }
 }

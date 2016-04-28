@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -99,8 +101,13 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                     } else {
                         updateMedication();
                     }
+                    //Ask user if he wants to attach a reminder to this medicine
+                    FragmentManager fm = getActivity().getFragmentManager();
+                    AttachReminderDialogFragment attachReminderDialog = new AttachReminderDialogFragment();
+                    attachReminderDialog.show(fm, "attachReminderDialog");
                     //Return to MedicationCabinet
                     ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
+
                 }
             }
         });

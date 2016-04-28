@@ -26,6 +26,8 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
  */
 public class GuardianDashboardFragment extends android.app.Fragment implements TitleSupplier {
 
+    //TODO: Implement the logic for this fragment!
+
     private LinearLayout guardianDashboardLayout;
 
     //TODO: Refactor this
