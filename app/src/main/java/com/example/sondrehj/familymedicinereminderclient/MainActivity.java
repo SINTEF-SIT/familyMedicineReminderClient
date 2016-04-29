@@ -114,7 +114,9 @@ public class MainActivity extends AppCompatActivity
             toggle.setDrawerIndicatorEnabled(true);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
+
         }
+
 
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -396,6 +398,16 @@ public class MainActivity extends AppCompatActivity
             System.out.println(newAccount.toString());
             System.out.println(AccountManager.get(getApplicationContext()).getUserData(newAccount, "userRole"));
         }
+
+        //Enables drawer and menu-button
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        toggle.setDrawerIndicatorEnabled(true);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
