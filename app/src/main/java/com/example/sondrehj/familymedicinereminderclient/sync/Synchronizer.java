@@ -16,6 +16,7 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,27 +86,23 @@ public class Synchronizer {
             public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
                 System.out.println("In sync medications");
                 ArrayList<Medication> clientMedications = db.getMedications();
-                for (Medication servermedication : response.body()) {
-                    System.out.println(servermedication.getName());
-                    db.addMedication(servermedication);
-                }
-
-                /*for (Medication clientMedication : clientMedications) {
-                    if (clientMedication.getServerId() == -1) {
-                        scheduleUpload(clientMedication);
-                        continue;
-                    }
-                    for (Medication serverMedication : response.body()) {
+                for (Medication serverMedication : response.body()) {
+                    boolean updated = false;
+                    for (Medication clientMedication : clientMedications) {
                         if(serverMedication.getServerId() == clientMedication.getServerId()) {
+                            System.out.println("Updated med with id " + clientMedication.getServerId());
                             clientMedication.setServerId(serverMedication.getServerId());
                             clientMedication.setName(serverMedication.getName());
                             clientMedication.setUnit(serverMedication.getUnit());
                             clientMedication.setCount(serverMedication.getCount());
                             db.updateMedication(clientMedication);
+                            updated = true;
                         }
                     }
+                    if(!updated) {
+                        db.addMedication(serverMedication);
+                    }
                 }
-                */
 
                 System.out.println("Finished db, sending intent");
                 Intent intent = new Intent();

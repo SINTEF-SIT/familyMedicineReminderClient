@@ -30,12 +30,14 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
-            PollingTask poll = new PollingTask();
-            Future pollingFuture = Executors.newFixedThreadPool(1).submit(poll);
-            while (!pollingFuture.isDone()) {
-                System.out.println("chill");
-                Thread.sleep(1000);
-            }
+            Future pollingFuture = Executors.newFixedThreadPool(1).submit(() -> {
+                    MyCyFAPPServiceAPI api = RestService.createRestService();
+                    Call<Void> call = api.sendPollingRequest();
+                    Boolean result = call.clone().execute().isSuccessful();
+                    System.out.println("Poll result: " + result);
+                    return result;
+            });
+            while (!pollingFuture.isDone());
             Boolean pollingResult = (Boolean) pollingFuture.get();
 
             currentServerStatus = ServiceManager.isNetworkAvailable(context) && pollingResult;
@@ -67,16 +69,5 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
     @Override
     public void setListener(Listener listener) {
         this.listener = listener;
-    }
-
-    private static class PollingTask implements Callable {
-        @Override
-        public Boolean call() throws Exception {
-            MyCyFAPPServiceAPI api = RestService.createRestService();
-            Call<Void> call = api.sendPollingRequest();
-            Boolean result = call.clone().execute().isSuccessful();
-            System.out.println("Poll result: " + result);
-            return result;
-        }
     }
 }

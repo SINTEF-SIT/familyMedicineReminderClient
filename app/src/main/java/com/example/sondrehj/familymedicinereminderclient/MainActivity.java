@@ -121,17 +121,12 @@ public class MainActivity extends AppCompatActivity
 
         //Sets repeating creation of a Job Manager that will check for upload jobs
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //jobManager = getJobManager();
 
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-        //Intent intent = new Intent(this, DataPublisher.class);
-        //PendingIntent jobManagerIntent = PendingIntent.getBroadcast(this, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //Creates a polling service that checks for server health
         Intent serverStatusintent = new Intent(this, ServerStatusChangeReceiver.class);
         PendingIntent pollingIntent = PendingIntent.getBroadcast(this, -2, serverStatusintent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, jobManagerIntent);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, pollingIntent);
 
 

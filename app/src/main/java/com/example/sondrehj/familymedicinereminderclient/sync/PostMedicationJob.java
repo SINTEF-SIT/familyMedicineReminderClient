@@ -47,6 +47,9 @@ public class PostMedicationJob extends Job {
             System.out.println(med);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, med));
         }
+        else {
+            System.out.println("med returned from server was null");
+        }
     }
 
     @Override
