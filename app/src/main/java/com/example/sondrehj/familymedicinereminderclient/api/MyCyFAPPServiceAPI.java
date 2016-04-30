@@ -34,7 +34,7 @@ public interface MyCyFAPPServiceAPI {
     Call<List<Reminder>> getUserReminderList(@Path("userID") String userID);
 
     @POST("user/{userID}/reminder")
-    Call<Reminder> createReminder(@Path("userID") char[] userID, @Body Reminder reminder);
+    Call<Reminder> createReminder(@Path("userID") String userID, @Body Reminder reminder);
 
     @PUT("user/{userID}/reminder/{reminderID}")
     Call<Reminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body Reminder reminder);

@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -22,7 +23,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
@@ -32,6 +36,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialo
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
@@ -40,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -137,7 +141,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
         ButterKnife.bind(this, view);
-        weekDayTextViewArray = new TextView[] {Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday};
+        weekDayTextViewArray = new TextView[]{Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday};
 
         // Hide layouts which are opened with switches.
         chooseMedicationGroup.setVisibility(View.GONE);
@@ -310,41 +314,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 weekDayTextViewArray[i].setTextColor(Color.parseColor("#DDDDDD"));
             }
         }
-
-        /*
-        for(int i : selectedDays) {
-            switch (i){
-                case 0:
-                    Saturday.setTypeface(Saturday.getTypeface(), Typeface.BOLD);
-                    Saturday.setTextColor(Color.DKGRAY);
-                    break;
-                case 1:
-                    Sunday.setTypeface(Sunday.getTypeface(), Typeface.BOLD);
-                    Sunday.setTextColor(Color.DKGRAY);
-                    break;
-                case 2:
-                    Monday.setTypeface(Monday.getTypeface(), Typeface.BOLD);
-                    Monday.setTextColor(Color.DKGRAY);
-                    break;
-                case 3:
-                    Tuesday.setTypeface(Tuesday.getTypeface(), Typeface.BOLD);
-                    Tuesday.setTextColor(Color.DKGRAY);
-                    break;
-                case 4:
-                    Wednesday.setTypeface(Wednesday.getTypeface(), Typeface.BOLD);
-                    Wednesday.setTextColor(Color.DKGRAY);
-                    break;
-                case 5:
-                    Thursday.setTypeface(Thursday.getTypeface(), Typeface.BOLD);
-                    Thursday.setTextColor(Color.DKGRAY);
-                    break;
-                case 6:
-                    Friday.setTypeface(Friday.getTypeface(), Typeface.BOLD);
-                    Friday.setTextColor(Color.DKGRAY);
-                    break;
-            }
-        }
-        */
     }
 
     public void enableDosageField(boolean enable) {
@@ -425,6 +394,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         reminder.setOwnerId("temp");
         reminder.setName(nameInput.getEditableText().toString());
 
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+
+
         // Set start date
         GregorianCalendar cal = Converter.dateStringToCalendar(
                 dateInput.getText().toString(),
@@ -455,7 +427,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             }
         }
         reminder.setIsActive(activeSwitch.isChecked());
-        reminder.setReminderServerId(-1);
+        reminder.setServerId(-1);
 
         System.out.println("----------Reminder Created----------" + "\n" + reminder);
         System.out.println("------------------------------------");
@@ -464,6 +436,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.addReminder(reminder);
         Toast.makeText(getActivity(), "Reminder created", Toast.LENGTH_LONG).show();
+
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
 
         mListener.onSaveNewReminder(reminder);
     }
