@@ -333,8 +333,6 @@ public class MainActivity extends AppCompatActivity
         //change the header to which fragment you are on
         TitleSupplier titleSupplier = (TitleSupplier) fragment;
         setTitle(titleSupplier.getTitle());
-
-
     }
 
     /**
@@ -540,15 +538,10 @@ public class MainActivity extends AppCompatActivity
     public void onSaveNewReminder(Reminder r) {
 
         if (r.getIsActive()) {
-            // Activate the reminder
+            // Schedule the notification
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", r), r);
-            r.setIsActive(true);
         }
-        // Updates the DB
-        MySQLiteHelper db = new MySQLiteHelper(this);
-        db.updateReminder(r);
-
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         changeFragment(ReminderListFragment.newInstance());
     }

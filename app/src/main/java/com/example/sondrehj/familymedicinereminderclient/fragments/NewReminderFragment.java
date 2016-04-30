@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.TypedValue;
@@ -40,6 +41,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 /**
  * A simple {} subclass.
@@ -59,50 +64,42 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     //TODO: Remove one of the "reminder is active" switches. There's one in Reminder and one in NewReminder
 
+    @Bind(R.id.reminder_edit_group_end_date) LinearLayout endDatePickerGroup;
+    @Bind(R.id.reminder_edit_group_choose_days) LinearLayout chooseDaysPickerGroup;
+    @Bind(R.id.reminder_edit_group_choose_medication) LinearLayout chooseMedicationGroup;
+    @Bind(R.id.reminder_edit_group_choose_dosage) LinearLayout chooseDosageGroup;
 
-    private LinearLayout newReminderLayout;
-    private LinearLayout endDatePickerLayout;
-    private LinearLayout repeatLayout;
-    private LinearLayout daysLayout;
-    private LinearLayout daysListLayout;
-    private LinearLayout timePickerLayout;
-    private LinearLayout datePickerLayout;
+    @Bind(R.id.reminder_edit_active_switch) Switch activeSwitch;
+    @Bind(R.id.reminder_edit_medication_switch) Switch attachMedicationSwitch;
+    @Bind(R.id.reminder_edit_repeat_switch) Switch repeatSwitch;
 
+    @Bind(R.id.reminder_edit_name_input) EditText nameInput;
+    @Bind(R.id.reminder_edit_date_input) TextView dateInput;
+    @Bind(R.id.reminder_edit_time_input) TextView timeInput;
+    @Bind(R.id.reminder_edit_chosen_end_date) TextView endDateInput;
+    @Bind(R.id.reminder_edit_chosen_medication) TextView attachedMedicationInput;
+    @Bind(R.id.reminder_edit_dosage_text) TextView dosageText;
+    @Bind(R.id.reminder_edit_dosage_input) EditText dosageInput;
+    @Bind(R.id.reminder_edit_dosage_unit) TextView dosageUnit;
 
-    // ----- MEDICATION ----- //
-    private LinearLayout chooseMedicationWrapper;
-    private TextView chooseDosageText;
-    private EditText dosageTextField;
-    private TextView dosageUnitText;
-    private TextView chooseMedicationText;
-    private TextView chosenMedicationTextView;
-    private View border;
+    //days of the week if you didn't know - cpt. obvious
+    @Bind(R.id.reminder_edit_chosen_chosen_days_2) TextView Monday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_3) TextView Tuesday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_4) TextView Wednesday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_5) TextView Thursday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_6) TextView Friday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_0) TextView Saturday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_1) TextView Sunday;
+    public TextView[] weekDayTextViewArray;
 
-    private TextView endDatePickedText;
-    private TextView endDatePickerText;
-    private TextView dateSetText;
-    private TextView selectDaysText;
-    private TextView daysSelectedFromListText;
-    private TextView timeSetText;
-    private TextView howOftenText;
-    private TextView daysPickedText;
-    private TextView chosenMedicationText;
-    private LinearLayout chooseDosageWrapper;
-    private TextView chosenDosageText;
-    private EditText nameEditText;
-    private Switch repeatSwitch;
-    private Switch reminderSwitch;
-    private Switch medicationSwitch;
-    private Button saveButton;
     private Reminder reminder;
     private Medication medication;
     private int[] selectedDays;
     protected Activity mActivity;
     private String currentStartDate;
-
+    private static final String CONTINUOUS_END_DATE = "Continuous";
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REMINDER_ARGS = "reminder";
-
     private OnNewReminderInteractionListener mListener;
 
     public NewReminderFragment() {
@@ -116,7 +113,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
      * @param reminder The reminder object of the new reminder
      * @return A new instance of fragment NewReminderFragment.
      */
-
     public static NewReminderFragment newInstance(Reminder reminder) {
         NewReminderFragment fragment = new NewReminderFragment();
         if (reminder != null) {
@@ -139,143 +135,20 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
+        ButterKnife.bind(this, view);
+        weekDayTextViewArray = new TextView[] {Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday};
 
-        newReminderLayout = (LinearLayout) view.findViewById(R.id.newReminderLayout);
-        reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
-        nameEditText = (EditText) view.findViewById(R.id.nameEditText);
-        datePickerLayout = (LinearLayout) view.findViewById(R.id.datePickerLayout);
-        dateSetText = (TextView) view.findViewById(R.id.dateSetText);
-        timePickerLayout = (LinearLayout) view.findViewById(R.id.timePickerLayout);
-        timeSetText = (TextView) view.findViewById(R.id.timeSetText);
-        repeatLayout = (LinearLayout) view.findViewById(R.id.repeatLayout);
-        repeatSwitch = (Switch) view.findViewById(R.id.repeatSwitch);
-        medicationSwitch = (Switch) view.findViewById(R.id.medicationSwitch);
-        saveButton = (Button) view.findViewById(R.id.saveButton);
-        // MEDICATION
-        chooseDosageText = (TextView) view.findViewById(R.id.chooseDosage);
-        dosageTextField = (EditText) view.findViewById(R.id.dosage);
-        dosageUnitText = (TextView) view.findViewById(R.id.dosageUnit);
-        chooseMedicationText = (TextView) view.findViewById(R.id.chooseMedication);
-        chosenMedicationTextView = (TextView) view.findViewById(R.id.chosenMedication);
-        chooseMedicationWrapper = (LinearLayout) view.findViewById(R.id.chooseMedicationWrapper);
-        chooseDosageWrapper = (LinearLayout) view.findViewById(R.id.chooseDosageWrapper);
-        border = view.findViewById(R.id.border);
-        chooseDosageWrapper.setVisibility(View.GONE);
-        chooseMedicationWrapper.setVisibility(View.GONE);
-
-        datePickerLayout.setOnClickListener(
-                new LinearLayout.OnClickListener() {
-                    public void onClick(View v) {
-                        //TODO: Valider at man ikke kan sette en dato tilbake i tid? Kan bli kluss
-                        DialogFragment datePickerFragment = new DatePickerFragment();
-                        datePickerFragment.show(getFragmentManager(), "datePicker");
-                    }
-                });
-
-        timePickerLayout.setOnClickListener(
-                new LinearLayout.OnClickListener() {
-                    public void onClick(View v) {
-                        DialogFragment timePickerFragment = new TimePickerFragment();
-                        timePickerFragment.show(getFragmentManager(), "timePicker");
-                    }
-                });
-
-        // ---------- REMINDER ---------- //
-
-        //choose interval layout with number picker
-        daysLayout = new LinearLayout(getActivity());
-        daysLayout.setOrientation(LinearLayout.HORIZONTAL);
-        //converting dp to px, because LayoutParams only takes px
-        int layoutHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
-        LinearLayout.LayoutParams daysLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, layoutHeight);
-        daysLayout.setLayoutParams(daysLayoutParams);
-        int layoutMarginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, getResources().getDisplayMetrics());
-        int layoutMarginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
-        daysLayoutParams.setMargins(layoutMarginLeft, 0, layoutMarginRight, 0);
-
-        howOftenText = new TextView(getActivity());
-        String howOftenString = "How often?";
-        howOftenText.setText(howOftenString);
-        LinearLayout.LayoutParams howOftenParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        howOftenText.setLayoutParams(howOftenParams);
-        howOftenParams.gravity = Gravity.CENTER;
-        howOftenText.setTextSize(22);
-        howOftenText.setTextColor(Color.parseColor("#000000"));
-
-        daysPickedText = new TextView(getActivity());
-        String daysPickedString = "Interval";
-        daysPickedText.setText(daysPickedString);
-        LinearLayout.LayoutParams daysPickedParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        daysPickedText.setLayoutParams(daysPickedParams);
-        daysPickedParams.gravity = Gravity.CENTER;  //layout:gravity
-        daysPickedText.setGravity(Gravity.RIGHT);       //gravity
-        daysPickedText.setTextSize(22);
-        daysPickedText.setTextColor(Color.parseColor("#8a000000"));
-
-        daysLayout.addView(howOftenText);
-        daysLayout.addView(daysPickedText);
-        daysLayout.setVisibility(View.GONE);
-
-        //choose which days layout with list
-        daysListLayout = new LinearLayout(getActivity());
-        daysListLayout.setOrientation(LinearLayout.HORIZONTAL);
-        daysListLayout.setLayoutParams(daysLayoutParams);
-
-        selectDaysText = new TextView(getActivity());
-        final String selectDaysString = "Select days";
-        selectDaysText.setText(selectDaysString);
-        selectDaysText.setLayoutParams(howOftenParams);
-        selectDaysText.setTextSize(18);
-        selectDaysText.setTextColor(Color.parseColor("#000000"));
-
-        daysSelectedFromListText = new TextView(getActivity());
-        String daysSelectedFromListString = "Mo, Tu, We, Th, Fr, Sa, Su";
-        daysSelectedFromListText.setText(daysSelectedFromListString);
-        daysSelectedFromListText.setLayoutParams(daysPickedParams);
-        daysSelectedFromListText.setGravity(Gravity.RIGHT);       //gravity
-        daysSelectedFromListText.setTextSize(14);
-        daysSelectedFromListText.setTextColor(Color.parseColor("#8a000000"));
-
-        daysListLayout.addView(selectDaysText);
-        daysListLayout.addView(daysSelectedFromListText);
-        daysListLayout.setVisibility(View.GONE);
-
-        endDatePickerLayout = new LinearLayout(getActivity());
-        endDatePickerLayout.setOrientation(LinearLayout.HORIZONTAL);
-        endDatePickerLayout.setLayoutParams(daysLayoutParams);
-        endDatePickerLayout.setVisibility(View.GONE);
-
-        endDatePickerText = new TextView(getActivity());
-        String endDatePickerString = "End date";
-        endDatePickerText.setText(endDatePickerString);
-        endDatePickerText.setLayoutParams(howOftenParams);
-        endDatePickerText.setTextSize(18);
-        endDatePickerText.setTextColor(Color.parseColor("#000000"));
-
-        endDatePickedText = new TextView(getActivity());
-        String endDatePickedString = "Continuous";
-        endDatePickedText.setText(endDatePickedString);
-        endDatePickedText.setLayoutParams(daysPickedParams);
-        endDatePickedText.setGravity(Gravity.RIGHT);       //gravity
-        endDatePickedText.setTextSize(14);
-        endDatePickedText.setTextColor(Color.parseColor("#8a000000"));
-
-        endDatePickerLayout.addView(endDatePickerText);
-        endDatePickerLayout.addView(endDatePickedText);
-
-        repeatLayout.addView(daysLayout);
-        repeatLayout.addView(endDatePickerLayout);
-        repeatLayout.addView(daysListLayout);
-
+        // Hide layouts which are opened with switches.
+        chooseMedicationGroup.setVisibility(View.GONE);
+        chooseDosageGroup.setVisibility(View.GONE);
 
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
                         if (isChecked) {
-                            endDatePickerLayout.setVisibility(View.VISIBLE);
-                            endDatePickerLayout.setOnClickListener(
+                            endDatePickerGroup.setVisibility(View.VISIBLE);
+                            endDatePickerGroup.setOnClickListener(
                                     new LinearLayout.OnClickListener() {
                                         public void onClick(View v) {
                                             EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
@@ -283,8 +156,8 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                                         }
                                     });
 
-                            daysListLayout.setVisibility(View.VISIBLE);
-                            daysListLayout.setOnClickListener(new LinearLayout.OnClickListener() {
+                            chooseDaysPickerGroup.setVisibility(View.VISIBLE);
+                            chooseDaysPickerGroup.setOnClickListener(new LinearLayout.OnClickListener() {
                                 public void onClick(View v) {
 
                                     if (selectedDays != null) {
@@ -303,50 +176,57 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                             });
                         } else {
                             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
-                            endDatePickerLayout.setVisibility(View.GONE);
-                            daysLayout.setVisibility(View.GONE);
-                            daysListLayout.setVisibility(View.GONE);
+                            endDatePickerGroup.setVisibility(View.GONE);
+                            chooseDaysPickerGroup.setVisibility(View.GONE);
                         }
                     }
                 }
         );
 
-        medicationSwitch.setOnCheckedChangeListener(
+        attachMedicationSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
                         if (isChecked) {
-                            chooseMedicationWrapper.setVisibility(View.VISIBLE);
-                            chooseDosageWrapper.setVisibility(View.VISIBLE);
-                            border.setVisibility(View.VISIBLE);
+                            chooseMedicationGroup.setVisibility(View.VISIBLE);
+                            chooseDosageGroup.setVisibility(View.VISIBLE);
+                            chooseDosageGroup.setEnabled(true);
                             enableMedicationField(true);
                             if (medication != null) {
                                 enableDosageField(true);
                             }
                         } else {
-                            chooseMedicationWrapper.setVisibility(View.GONE);
-                            chooseDosageWrapper.setVisibility(View.GONE);
-                            border.setVisibility(View.GONE);
+                            chooseMedicationGroup.setVisibility(View.GONE);
                             enableMedicationField(false);
                             enableDosageField(false);
                         }
                     }
                 }
         );
-
-        saveButton.setOnClickListener(new Button.OnClickListener() {
-            public void onClick(View v) {
-
-                if (reminder == null) {
-                    if (validateName() && validateDateAndTime() && validateMedication() && validateEndDate())
-                        createReminder();
-                } else {
-                    if (validateName() && validateDateAndTime() && validateMedication() && validateEndDate())
-                        updateReminder();
-                }
-            }
-        });
         fillFields();
         return view;
+    }
+
+    @OnClick(R.id.reminder_edit_group_date)
+    public void onChooseDateGroupClick() {
+        DialogFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.show(getFragmentManager(), "datePicker");
+    }
+
+    @OnClick(R.id.reminder_edit_group_time)
+    public void onChooseTimeGroupClick() {
+        DialogFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.show(getFragmentManager(), "timePicker");
+    }
+
+    @OnClick(R.id.reminder_edit_save_button)
+    public void onSaveButtonClick() {
+        if (reminder == null) {
+            if (validateName() && validateDateAndTime() && validateMedication() && validateEndDate())
+                createReminder();
+        } else {
+            if (validateName() && validateDateAndTime() && validateMedication() && validateEndDate())
+                updateReminder();
+        }
     }
 
     public void fillFields() {
@@ -354,16 +234,15 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         final Calendar c;
         // Checks if a reminder is passed to the fragment
         if (getArguments() != null) {
-            reminderSwitch.setChecked(reminder.getIsActive());
-            nameEditText.setText(reminder.getName());
+            activeSwitch.setChecked(reminder.getIsActive());
+            nameInput.setText(reminder.getName());
             c = reminder.getDate();
 
             // Set the repeat fields if the reminder is repeating.
             if (reminder.getDays().length >= 1) {
                 repeatSwitch.setChecked(true);
-                daysSelectedFromListText.setText(
-                        Html.fromHtml(Converter.daysArrayToSelectedDaysText(reminder.getDays())));
                 selectedDays = reminder.getDays();
+                setBoldOnSelectedDays(selectedDays);
 
                 GregorianCalendar endCal = reminder.getEndDate();
                 int year = endCal.get(Calendar.YEAR);
@@ -372,34 +251,35 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
                 // Checks if the reminder is Continuous
                 if (year == 9998) {
-                    endDatePickedText.setText("Continuous");
+                    endDateInput.setText(CONTINUOUS_END_DATE);
                 } else {
                     String date = String.format("%02d.%02d.%4d", day, month, year);
-                    endDatePickedText.setText(date);
+                    endDateInput.setText(date);
                 }
 
             } else {
                 selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
-                daysSelectedFromListText.setText(
-                        Html.fromHtml(Converter.daysArrayToSelectedDaysText(new int[]{0, 1, 2, 3, 4, 5, 6})));
+                setBoldOnSelectedDays(selectedDays);
+                repeatSwitch.setChecked(false);
+                endDatePickerGroup.setVisibility(View.GONE);
+                chooseDaysPickerGroup.setVisibility(View.GONE);
             }
             // Set the medicine fields if the reminder got a medicine attached.
             if (reminder.getMedicine() != null) {
                 medication = reminder.getMedicine();
-                medicationSwitch.setChecked(true);
-                chosenMedicationTextView.setText(reminder.getMedicine().getName());
-                dosageTextField.setText(reminder.getDosage().toString());
-                dosageUnitText.setText(reminder.getMedicine().getUnit());
+                attachMedicationSwitch.setChecked(true);
+                attachedMedicationInput.setText(reminder.getMedicine().getName());
+                dosageInput.setText(reminder.getDosage().toString());
+                dosageUnit.setText(reminder.getMedicine().getUnit());
                 enableDosageField(true);
             }
-
-        }
-        // Set today's date and time as default if a reminder is not provided
-        else {
+        } else { // Set today's date and time as default if a reminder is not provided
             c = Calendar.getInstance();
             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
-            daysSelectedFromListText.setText(
-                    Html.fromHtml(Converter.daysArrayToSelectedDaysText(new int[]{0, 1, 2, 3, 4, 5, 6})));
+            setBoldOnSelectedDays(selectedDays);
+            repeatSwitch.setChecked(false);
+            endDatePickerGroup.setVisibility(View.GONE);
+            chooseDaysPickerGroup.setVisibility(View.GONE);
         }
 
         int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -410,56 +290,106 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         String time = String.format("%02d:%02d", hour, minute);
         String date = String.format("%02d.%02d.%4d", day, month, year);
         currentStartDate = date;
-        timeSetText.setText(time);
-        dateSetText.setText(date);
+        dateInput.setText(date);
+        timeInput.setText(time);
+    }
+
+    public void setBoldOnSelectedDays(int[] selectedDays) {
+
+        for(int i = 0; i < 7; i ++) {
+            boolean inList = false;
+            for (int day : selectedDays) {
+                if (i == day) {
+                    inList = true;
+                    weekDayTextViewArray[i].setTypeface(null, Typeface.BOLD);
+                    weekDayTextViewArray[i].setTextColor(Color.GRAY);
+                    break;
+                }
+            } if(!inList) {
+                weekDayTextViewArray[i].setTypeface(null, Typeface.NORMAL);
+                weekDayTextViewArray[i].setTextColor(Color.parseColor("#DDDDDD"));
+            }
+        }
+
+        /*
+        for(int i : selectedDays) {
+            switch (i){
+                case 0:
+                    Saturday.setTypeface(Saturday.getTypeface(), Typeface.BOLD);
+                    Saturday.setTextColor(Color.DKGRAY);
+                    break;
+                case 1:
+                    Sunday.setTypeface(Sunday.getTypeface(), Typeface.BOLD);
+                    Sunday.setTextColor(Color.DKGRAY);
+                    break;
+                case 2:
+                    Monday.setTypeface(Monday.getTypeface(), Typeface.BOLD);
+                    Monday.setTextColor(Color.DKGRAY);
+                    break;
+                case 3:
+                    Tuesday.setTypeface(Tuesday.getTypeface(), Typeface.BOLD);
+                    Tuesday.setTextColor(Color.DKGRAY);
+                    break;
+                case 4:
+                    Wednesday.setTypeface(Wednesday.getTypeface(), Typeface.BOLD);
+                    Wednesday.setTextColor(Color.DKGRAY);
+                    break;
+                case 5:
+                    Thursday.setTypeface(Thursday.getTypeface(), Typeface.BOLD);
+                    Thursday.setTextColor(Color.DKGRAY);
+                    break;
+                case 6:
+                    Friday.setTypeface(Friday.getTypeface(), Typeface.BOLD);
+                    Friday.setTextColor(Color.DKGRAY);
+                    break;
+            }
+        }
+        */
     }
 
     public void enableDosageField(boolean enable) {
-
-        if (!enable) {
-            chooseDosageText.setTextColor(Color.parseColor("#dddddd"));
-            dosageTextField.setTextColor(Color.parseColor("#dddddd"));
-            dosageTextField.setEnabled(false);
-            dosageUnitText.setTextColor(Color.parseColor("#dddddd"));
+        if (enable) {
+            chooseDosageGroup.setVisibility(View.VISIBLE);
+            dosageInput.setEnabled(true);
+            dosageInput.setTextColor(Color.GRAY);
+            dosageUnit.setTextColor(Color.GRAY);
+            dosageText.setTextColor(Color.BLACK);
         } else {
-            chooseDosageText.setTextColor(Color.parseColor("#000000"));
-            dosageTextField.setTextColor(Color.parseColor("#8a000000"));
-            dosageUnitText.setTextColor(Color.parseColor("#8a000000"));
-            dosageTextField.setEnabled(true);
+            chooseDosageGroup.setVisibility(View.GONE);
+            dosageInput.setEnabled(false);
+            dosageInput.setTextColor(Color.parseColor("#DDDDDD"));
+            dosageText.setTextColor(Color.parseColor("#DDDDDD"));
+            dosageUnit.setTextColor(Color.parseColor("#DDDDDD"));
         }
-
     }
 
     public void enableMedicationField(boolean enable) {
 
         if (enable) {
-            chooseMedicationText.setTextColor(Color.parseColor("#000000"));
-            chosenMedicationTextView.setTextColor(Color.parseColor("#8a000000"));
-            chooseMedicationWrapper.setOnClickListener(new LinearLayout.OnClickListener() {
+            chooseMedicationGroup.setVisibility(View.VISIBLE);
+            chooseMedicationGroup.setOnClickListener(new LinearLayout.OnClickListener() {
                 public void onClick(View v) {
                     MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
                     medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
                 }
             });
         } else {
-            chooseMedicationText.setTextColor(Color.parseColor("#dddddddd"));
-            chosenMedicationTextView.setTextColor(Color.parseColor("#dddddddd"));
-            chooseMedicationWrapper.setOnClickListener(null);
+            chooseMedicationGroup.setOnClickListener(null);
+            chooseMedicationGroup.setVisibility(View.GONE);
         }
-
     }
 
     public void setDateOnLayout(int year, int month, int day) {
         month = month + 1;  //month is 0-indexed
         String dateSet = String.format("%02d.%02d.%4d", day, month, year);
-        dateSetText.setText(dateSet);
+        dateInput.setText(dateSet);
         currentStartDate = dateSet;
     }
 
     public void setEndDateOnLayout(int year, int month, int day) {
         month = month + 1;  //month is 0-indexed
         String dateSet = String.format("%02d.%02d.%4d", day, month, year);
-        endDatePickedText.setText(dateSet);
+        endDateInput.setText(dateSet);
     }
 
     public void setReminder(Reminder reminder) {
@@ -468,19 +398,18 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     public void setMedicationOnLayout(Medication med) {
         this.medication = med;
-        chosenMedicationTextView.setText(med.getName());
-        dosageTextField.setText("");
-        dosageUnitText.setText(med.getUnit());
+        attachedMedicationInput.setText(med.getName());
+        dosageInput.setText("");
+        dosageUnit.setText(med.getUnit());
         enableDosageField(true);
     }
 
     public void setTimeOnLayout(int hour, int minute) {
         String timeSet = String.format("%02d:%02d", hour, minute);
-        timeSetText.setText(timeSet);
+        timeInput.setText(timeSet);
     }
 
     public void setDaysOnLayout(ArrayList selectedItems) {
-
         selectedDays = new int[selectedItems.size()];
 
         // Convert to the expected format for GregorianCalendar
@@ -488,50 +417,45 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             selectedDays[i] = ((Integer) selectedItems.get(i) + 2) % 7;
         }
         Arrays.sort(selectedDays);
-        daysSelectedFromListText.setText(
-                Html.fromHtml(Converter.daysArrayToSelectedDaysText(selectedDays)));
+        setBoldOnSelectedDays(selectedDays);
     }
 
     public void createReminder() {
         Reminder reminder = new Reminder();
         reminder.setOwnerId("temp");
-        reminder.setName(nameEditText.getEditableText().toString());
+        reminder.setName(nameInput.getEditableText().toString());
 
         // Set start date
         GregorianCalendar cal = Converter.dateStringToCalendar(
-                dateSetText.getText().toString(),
-                timeSetText.getText().toString());
+                dateInput.getText().toString(),
+                timeInput.getText().toString());
         reminder.setDate(cal);
 
         // Attach medication
-        if (medicationSwitch.isChecked() && medication != null && !dosageTextField.getText().toString().equals("")) {
+        if (attachMedicationSwitch.isChecked() && medication != null && !dosageInput.getText().toString().equals("")) {
             reminder.setMedicine(medication);
-            reminder.setDosage(Double.parseDouble(dosageTextField.getText().toString()));
+            reminder.setDosage(Double.parseDouble(dosageInput.getText().toString()));
         }
 
         // Non-repeating
         if (!repeatSwitch.isChecked()) {
             reminder.setDays(new int[]{});
-        }
-        // Repeating
-        else {
+        } else { // Repeating
             if (selectedDays.length > 0) {
                 reminder.setDays(selectedDays);
             }
-            if (endDatePickedText.getText().toString().equals("Continuous")) {
+            if (endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
                 reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
-            } else if (!endDatePickedText.getText().toString().equals("Continuous")) {
-
+            } else {
                 // Set end date
                 GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDatePickedText.getText().toString(),
-                        timeSetText.getText().toString());
+                        endDateInput.getText().toString(),
+                        timeInput.getText().toString());
                 reminder.setEndDate(endCal);
             }
         }
-        reminder.setIsActive(reminderSwitch.isChecked());
+        reminder.setIsActive(activeSwitch.isChecked());
         reminder.setReminderServerId(-1);
-
 
         System.out.println("----------Reminder Created----------" + "\n" + reminder);
         System.out.println("------------------------------------");
@@ -539,22 +463,23 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         //Add reminder to database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.addReminder(reminder);
+        Toast.makeText(getActivity(), "Reminder created", Toast.LENGTH_LONG).show();
 
         mListener.onSaveNewReminder(reminder);
     }
 
     public void updateReminder() {
         //Updates an existing Reminder object
-        reminder.setName(nameEditText.getText().toString());
+        reminder.setName(nameInput.getText().toString());
 
         // Set start date
         GregorianCalendar cal = Converter.dateStringToCalendar(
-                dateSetText.getText().toString(),
-                timeSetText.getText().toString());
+                dateInput.getText().toString(),
+                timeInput.getText().toString());
         reminder.setDate(cal);
 
         // Set active
-        reminder.setIsActive(reminderSwitch.isChecked());
+        reminder.setIsActive(activeSwitch.isChecked());
 
         // Non-repeating
         if (!repeatSwitch.isChecked()) {
@@ -573,23 +498,23 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             } else {
                 reminder.setDays(selectedDays);
             }
-            if (endDatePickedText.getText().toString().equals("Continuous")) {
+            if (endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
                 // Set end date far into the future
                 reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
-            } else if (!endDatePickedText.getText().toString().equals("Continuous")) {
+            } else if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
                 // Set end date
                 GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDatePickedText.getText().toString(),
-                        timeSetText.getText().toString());
+                        endDateInput.getText().toString(),
+                        timeInput.getText().toString());
                 reminder.setEndDate(endCal);
             }
         }
 
         // Medication
-        if (medication != null && medicationSwitch.isChecked() && !dosageTextField.getText().toString().equals("")) {
+        if (medication != null && attachMedicationSwitch.isChecked() && !dosageInput.getText().toString().equals("")) {
             reminder.setMedicine(medication);
-            reminder.setDosage(Double.parseDouble(dosageTextField.getText().toString()));
-        } else if (!medicationSwitch.isChecked() && medication != null) {
+            reminder.setDosage(Double.parseDouble(dosageInput.getText().toString()));
+        } else if (!attachMedicationSwitch.isChecked() && medication != null) {
             reminder.setMedicine(null);
             reminder.setDosage(null);
         }
@@ -600,17 +525,18 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         // Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.updateReminder(reminder);
+        Toast.makeText(getActivity(), "Reminder was updated", Toast.LENGTH_LONG).show();
 
         mListener.onSaveNewReminder(reminder);
     }
 
     private boolean validateDateAndTime() {
 
-        if (!dateSetText.getText().toString().equals("")) {
+        if (!dateInput.getText().toString().equals("")) {
 
             GregorianCalendar setDate = Converter.dateStringToCalendar(
-                    dateSetText.getText().toString(),
-                    timeSetText.getText().toString()
+                    dateInput.getText().toString(),
+                    timeInput.getText().toString()
             );
             //TODO: If you want to edit something on a reminder, this validation deny you from saving it, if the date is back in time
             Calendar currentDate = Calendar.getInstance();
@@ -629,18 +555,18 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     private boolean validateEndDate() {
         if (repeatSwitch.isChecked()) {
-            if (!endDatePickedText.getText().toString().equals("Continuous")) {
+            if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
 
                 // End date
                 GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDatePickedText.getText().toString(),
-                        timeSetText.getText().toString()
+                        endDateInput.getText().toString(),
+                        timeInput.getText().toString()
                 );
 
                 // Start date
                 GregorianCalendar setDate = Converter.dateStringToCalendar(
-                        dateSetText.getText().toString(),
-                        timeSetText.getText().toString()
+                        dateInput.getText().toString(),
+                        timeInput.getText().toString()
                 );
 
                 if (endCal.before(setDate)) {
@@ -656,7 +582,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     private boolean validateName() {
-        if (nameEditText.getText().toString().equals("")) {
+        if (nameInput.getText().toString().equals("")) {
             Toast toast = Toast.makeText(getActivity(), "Please enter a reminder name", Toast.LENGTH_LONG);
             toast.show();
             return false;
@@ -665,14 +591,13 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     private boolean validateMedication() {
-
-        if (medicationSwitch.isChecked()) {
-            if (chosenMedicationTextView.getText().toString().equals("Click to choose")) {
+        if (attachMedicationSwitch.isChecked()) {
+            if (attachedMedicationInput.getText().toString().equals("Click to choose")) {
                 Toast toast = Toast.makeText(getActivity(), "Please choose a medication", Toast.LENGTH_LONG);
                 toast.show();
                 return false;
             } else {
-                if (dosageTextField.getText().toString().equals("")) {
+                if (dosageInput.getText().toString().equals("")) {
                     Toast toast = Toast.makeText(getActivity(), "Please enter a dosage", Toast.LENGTH_LONG);
                     toast.show();
                     return false;
@@ -713,6 +638,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     @Override
     public void onDetach() {
         super.onDetach();
+        ButterKnife.unbind(this);
         mListener = null;
     }
 

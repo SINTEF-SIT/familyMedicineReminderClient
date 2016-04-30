@@ -37,7 +37,7 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // Today's date
         Calendar cal = Calendar.getInstance();
-        int currentDay = (cal.get(Calendar.DAY_OF_WEEK));
+        int currentDay = (cal.get(Calendar.DAY_OF_WEEK)) - 1;
 
         // Snooze notification
         if (notificationType.equals("snooze")) {

@@ -31,7 +31,7 @@ GUARDIAN/GUARDEE
     tools:context=".fragments.AccountAdministrationFragment"
     android:fillViewport="true"
     android:focusableInTouchMode="false"
-    android:background="#EEEEEE">
+    android:background="#f5f5f5">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"

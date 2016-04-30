@@ -15,6 +15,9 @@ public final class Converter {
         String[] dateArray = date.split("\\W+");
         String[] timeArray = time.split(":");
 
+        System.out.println(Arrays.toString(dateArray));
+        System.out.println(Arrays.toString(timeArray));
+
         // Set start date and time
         GregorianCalendar cal = new GregorianCalendar(
                 Integer.parseInt(dateArray[2]),      //Year
@@ -137,7 +140,7 @@ public final class Converter {
     public static String dayIndexToDayString(int i) {
         //TODO: Index out of bounds exception here
         String[] days = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
-        return days[i];
+        return days[i - 1];
     }
 
     public static String monthIndexToMonthString(int i){

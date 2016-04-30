@@ -21,30 +21,16 @@ public class SelectUnitDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Set the dialog title
-        builder.setTitle("Select Unit")
+        builder.setTitle("Select unit")
                 // Set choice items to unit_items array
-                .setSingleChoiceItems(R.array.unit_items, -1, new DialogInterface.OnClickListener() {
+                .setItems(R.array.unit_items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         selectedItem = arg1;
-                    }
-                })
-                        // Set the action buttons
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Set unit TextView to the selected list item
                         mListener.onPositiveUnitDialogResult(selectedItem);
-                        System.out.println(selectedItem);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-
+                        getDialog().dismiss();
                     }
                 });
-
         // Create the AlertDialog object and return it
         return builder.create();
     }
@@ -76,5 +62,4 @@ public class SelectUnitDialogFragment extends DialogFragment {
     public interface OnUnitDialogResultListener {
         void onPositiveUnitDialogResult(int unit);
     }
-
 }

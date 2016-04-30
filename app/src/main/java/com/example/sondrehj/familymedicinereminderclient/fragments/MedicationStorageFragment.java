@@ -29,6 +29,10 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,8 +47,15 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_MEDICATION = "medication";
-
     private Medication mMedication;
+
+    @Bind(R.id.medication_storage_medication_input)
+    EditText medicationNameInput;
+    @Bind(R.id.medication_storage_amount_input)
+    EditText medicationAmountInput;
+    @Bind(R.id.medication_storage_unit_input)
+    TextView medicationUnitInput;
+
     public MedicationStorageFragment() {
         // Required empty public constructor
     }
@@ -75,93 +86,65 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_medication, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit_medication, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-
-        if (mMedication != null){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (mMedication != null) {
             fillTextFields();
+            getActivity().setTitle("Edit medication");
         }
-
-        Button saveMedicationBtn = (Button) view.findViewById(R.id.saveMedicationBtn);
-        saveMedicationBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
-                EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
-                TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
-
-                //TODO: Shouldn't be forced to set amount and unit
-                if (medicationName.getText().toString().equals("") || medicationAmount.getText().toString().equals("")
-                        ||  medicationUnit.getText().toString().equals("Click to choose")) {
-                    Toast toast = Toast.makeText(getActivity(), "All fields must be entered!", Toast.LENGTH_LONG);
-                    toast.show();
-
-                } else {
-                    if (mMedication == null) {
-                        createNewMedication();
-                    } else {
-                        updateMedication();
-                    }
-                    //Ask user if he wants to attach a reminder to this medicine. If yes, go to NewReminder
-                    FragmentManager fm = getActivity().getFragmentManager();
-                    AttachReminderDialogFragment attachReminderDialog = new AttachReminderDialogFragment();
-                    attachReminderDialog.show(fm, "attachReminderDialog");
-                    //Return to MedicationCabinet
-                    ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
-                }
-            }
-        });
-
-        final LinearLayout unitWrapper = (LinearLayout) view.findViewById(R.id.unitWrapper);
-        unitWrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                FragmentManager fm = getActivity().getFragmentManager();
-                SelectUnitDialogFragment test = new SelectUnitDialogFragment();
-                test.show(fm, "test");
-            }
-        });
-
     }
 
-    public void setUnitText(String unit){
-        TextView unitText = (TextView) getActivity().findViewById(R.id.medicationUnit);
-        unitText.setText(unit);
+    @OnClick(R.id.medication_storage_group_unit)
+    public void onUnitGroupClick() {
+        FragmentManager fm = getActivity().getFragmentManager();
+        SelectUnitDialogFragment selectUnitDialogFragment = new SelectUnitDialogFragment();
+        selectUnitDialogFragment.show(fm, "test");
+    }
+
+    @OnClick(R.id.medication_storage_save_button)
+    public void onMedicationStorageSaveButton() {
+        if (medicationNameInput.getText().toString().equals("")
+                || medicationAmountInput.getText().toString().equals("")
+                || medicationUnitInput.getText().toString().equals("Click to choose")) {
+            Toast toast = Toast.makeText(getActivity(), "All fields must be entered!", Toast.LENGTH_LONG);
+            toast.show();
+        } else {
+            if (mMedication == null) {
+                createNewMedication();
+            } else {
+                updateMedication();
+            }
+            //Return to MedicationCabinet
+            ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
+        }
     }
 
 
-    public void fillTextFields(){
+    public void setUnitText(String unit) {
+        medicationUnitInput.setText(unit);
+    }
 
+    public void fillTextFields() {
         //Fills the TextFields with data from the given medicine object
-        EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
-        EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
-        TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
-
-        medicationName.setText(mMedication.getName());
-        medicationAmount.setText(Double.toString(mMedication.getCount()));
-        medicationUnit.setText(mMedication.getUnit());
+        medicationNameInput.setText(mMedication.getName());
+        medicationAmountInput.setText(Double.toString(mMedication.getCount()));
+        medicationUnitInput.setText(mMedication.getUnit());
     }
 
-    public void createNewMedication(){
-
-        //MedicationStorage input-fields
-        EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
-        EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
-        TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
-
+    public void createNewMedication() {
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
                 0,
                 -1,
                 "786#13%",
-                medicationName.getText().toString(),
-                Double.parseDouble(medicationAmount.getText().toString()),
-                medicationUnit.getText().toString()
+                medicationNameInput.getText().toString(),
+                Double.parseDouble(medicationAmountInput.getText().toString()),
+                medicationUnitInput.getText().toString()
         );
 
         // Adds the medicine to the DB
@@ -180,14 +163,10 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     public void updateMedication() {
-        EditText medicationName = (EditText) getActivity().findViewById(R.id.medicationName);
-        EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
-        TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
-
         //Updates an existing Medication object
-        mMedication.setName(medicationName.getText().toString());
-        mMedication.setCount(Double.parseDouble(medicationAmount.getText().toString()));
-        mMedication.setUnit(medicationUnit.getText().toString());
+        mMedication.setName(medicationNameInput.getText().toString());
+        mMedication.setCount(Double.parseDouble(medicationAmountInput.getText().toString()));
+        mMedication.setUnit(medicationUnitInput.getText().toString());
 
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
@@ -199,6 +178,6 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
     @Override
     public String getTitle() {
-        return "New Medication";
+        return "New medication";
     }
 }

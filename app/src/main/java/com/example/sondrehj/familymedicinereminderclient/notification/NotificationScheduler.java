@@ -59,7 +59,7 @@ public class NotificationScheduler {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
-
+        System.out.println("Scheduling: " + reminder);
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -122,7 +122,8 @@ public class NotificationScheduler {
 
         Calendar currentTime = new GregorianCalendar();
 
-        Long time = currentTime.getTimeInMillis() + snoozeTime;
+        System.out.println(snoozeTime);
+        Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
         Intent notificationIntent = new Intent(activity, NotificationPublisher.class);
 
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
@@ -174,7 +175,7 @@ public class NotificationScheduler {
 
         // Get user specified snoozeTime from account settings
         SharedPreferences prefs = activity.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
-        int snoozeTime = prefs.getInt("snoozeTime", 180000);
+        int snoozeTime = prefs.getInt("snoozeDelay", 5);
 
         // Schedule a "new" notification with the given snooze time
         this.snoozeNotification(
@@ -184,7 +185,10 @@ public class NotificationScheduler {
         this.removeNotification(reminder.getReminderId());
 
         // Display toaster
-        Toast.makeText(activity, "Snooze activated", Toast.LENGTH_LONG).show();
+        String toastText = "Snoozing for " + snoozeTime + " minutes";
+        if(snoozeTime == 1)
+            toastText = "Snoozing for " + snoozeTime + " minute";
+        Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();
     }
 
     /**

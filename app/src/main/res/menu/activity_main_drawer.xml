@@ -9,7 +9,7 @@
         <item
             android:id="@+id/nav_medication"
             android:icon="@drawable/android_pill"
-            android:title="Medication" />
+            android:title="Medications" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/android_settings"

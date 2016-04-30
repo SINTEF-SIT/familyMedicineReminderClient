@@ -13,7 +13,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/selectableItemBackground">
+        android:background="#fff">
 
         <TextView
             android:id="@+id/med_content"
@@ -21,13 +21,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="0dp"
             android:layout_weight="0.7"
             android:fontFamily="sans-serif-light"
             android:hint="Paracetemole"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="#9E9E9E"
-            android:textSize="26sp" />
+            android:textSize="26sp"
+            android:layout_marginTop="3dp" />
 
         <ImageView
             android:layout_width="36dp"
@@ -44,10 +44,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="50dp"
             android:layout_marginTop="13dp"
             android:fontFamily="sans-serif-light"
-            android:text="Amount:"
+            android:text="Remaining:"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="#9E9E9E"
             android:textSize="22sp" />
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="150dp"
+            android:layout_marginLeft="170dp"
             android:layout_marginTop="13dp"
             android:fontFamily="sans-serif-light"
             android:text="20 inhalations"

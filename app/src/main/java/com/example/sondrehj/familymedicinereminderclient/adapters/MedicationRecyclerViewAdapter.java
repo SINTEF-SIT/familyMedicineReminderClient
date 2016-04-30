@@ -49,18 +49,31 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
 
         // Set the amount.
         if (mValues.get(position).getCount() % 1 == 0) {
-            int i = mValues.get(position).getCount().intValue();
-            String amount = Integer.toString(i) + " " + mValues.get(position).getUnit();
-            holder.mMedAmountView.setText(amount);
+            if (mValues.get(position).getCount() > 1.0) {
+                int i = mValues.get(position).getCount().intValue();
+                String amount = Integer.toString(i) + " " + mValues.get(position).getUnit() + "s";
+                holder.mMedAmountView.setText(amount);
+            } else {
+                int i = mValues.get(position).getCount().intValue();
+                String amount = Integer.toString(i) + " " + mValues.get(position).getUnit();
+                holder.mMedAmountView.setText(amount);
+            }
+
         } else {
-            String amount = Double.toString(mValues.get(position).getCount())
-                    + " " + mValues.get(position).getUnit();
-            holder.mMedAmountView.setText(amount);
+            if (mValues.get(position).getCount() > 1.0){
+                String amount = Double.toString(mValues.get(position).getCount())
+                        + " " + mValues.get(position).getUnit() + "s";
+                holder.mMedAmountView.setText(amount);
+            } else {
+                String amount = Double.toString(mValues.get(position).getCount())
+                        + " " + mValues.get(position).getUnit();
+                holder.mMedAmountView.setText(amount);
+            }
         }
 
         // Set the icon
         switch (holder.mItem.getUnit()) {
-            case "mg":case "pill(s)": case "mcg":case "g":
+            case "mg":case "pill": case "mcg":case "g":
                 holder.mMedIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_pill));
                 break;
             case "inhalation":
