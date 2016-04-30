@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.AccountManager;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+
+import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -33,6 +36,10 @@ import com.path.android.jobqueue.config.Configuration;
  * create an instance of this fragment.
  */
 public class MedicationStorageFragment extends android.app.Fragment implements TitleSupplier {
+
+    //TODO: Not really clear for the user that this is a cabinet where you list how many pills you possess in total
+
+    //TODO: When you add a medicine, ask the user if they want to set a reminder and set them to NewReminder
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_MEDICATION = "medication";
@@ -87,6 +94,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                 EditText medicationAmount = (EditText) getActivity().findViewById(R.id.medicationAmount);
                 TextView medicationUnit = (TextView) getActivity().findViewById(R.id.medicationUnit);
 
+                //TODO: Shouldn't be forced to set amount and unit
                 if (medicationName.getText().toString().equals("") || medicationAmount.getText().toString().equals("")
                         ||  medicationUnit.getText().toString().equals("Click to choose")) {
                     Toast toast = Toast.makeText(getActivity(), "All fields must be entered!", Toast.LENGTH_LONG);
@@ -98,13 +106,17 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                     } else {
                         updateMedication();
                     }
+                    //Ask user if he wants to attach a reminder to this medicine. If yes, go to NewReminder
+                    FragmentManager fm = getActivity().getFragmentManager();
+                    AttachReminderDialogFragment attachReminderDialog = new AttachReminderDialogFragment();
+                    attachReminderDialog.show(fm, "attachReminderDialog");
                     //Return to MedicationCabinet
                     ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
                 }
             }
         });
 
-        final FrameLayout unitWrapper = (FrameLayout) view.findViewById(R.id.unitWrapper);
+        final LinearLayout unitWrapper = (LinearLayout) view.findViewById(R.id.unitWrapper);
         unitWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

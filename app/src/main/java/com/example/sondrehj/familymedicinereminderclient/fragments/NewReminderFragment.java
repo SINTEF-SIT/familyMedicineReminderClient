@@ -51,22 +51,32 @@ import java.util.GregorianCalendar;
  */
 public class NewReminderFragment extends android.app.Fragment implements TitleSupplier {
 
+    //TODO: Suggestion: If a medication is attached, put name of medication as name. Name is not needed if it's a reminder to take the medicine
+
+    //TODO: When you get sent to NewReminder from the dialog after creating a medicine, the medicine should be attached
+
+    //TODO: Crash if you attach a medicine and there is no medicines to choose from, and press OK
+
+    //TODO: Remove one of the "reminder is active" switches. There's one in Reminder and one in NewReminder
+
+
     private LinearLayout newReminderLayout;
     private LinearLayout endDatePickerLayout;
     private LinearLayout repeatLayout;
     private LinearLayout daysLayout;
     private LinearLayout daysListLayout;
-    private FrameLayout timePickerLayout;
-    private FrameLayout datePickerLayout;
+    private LinearLayout timePickerLayout;
+    private LinearLayout datePickerLayout;
 
 
     // ----- MEDICATION ----- //
-    private FrameLayout chooseMedicationWrapper;
+    private LinearLayout chooseMedicationWrapper;
     private TextView chooseDosageText;
     private EditText dosageTextField;
     private TextView dosageUnitText;
     private TextView chooseMedicationText;
     private TextView chosenMedicationTextView;
+    private View border;
 
     private TextView endDatePickedText;
     private TextView endDatePickerText;
@@ -77,12 +87,12 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     private TextView howOftenText;
     private TextView daysPickedText;
     private TextView chosenMedicationText;
+    private LinearLayout chooseDosageWrapper;
     private TextView chosenDosageText;
     private EditText nameEditText;
     private Switch repeatSwitch;
     private Switch reminderSwitch;
     private Switch medicationSwitch;
-    private NumberPicker numberPicker;
     private Button saveButton;
     private Reminder reminder;
     private Medication medication;
@@ -135,9 +145,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         newReminderLayout = (LinearLayout) view.findViewById(R.id.newReminderLayout);
         reminderSwitch = (Switch) view.findViewById(R.id.reminderSwitch);
         nameEditText = (EditText) view.findViewById(R.id.nameEditText);
-        datePickerLayout = (FrameLayout) view.findViewById(R.id.datePickerLayout);
+        datePickerLayout = (LinearLayout) view.findViewById(R.id.datePickerLayout);
         dateSetText = (TextView) view.findViewById(R.id.dateSetText);
-        timePickerLayout = (FrameLayout) view.findViewById(R.id.timePickerLayout);
+        timePickerLayout = (LinearLayout) view.findViewById(R.id.timePickerLayout);
         timeSetText = (TextView) view.findViewById(R.id.timeSetText);
         repeatLayout = (LinearLayout) view.findViewById(R.id.repeatLayout);
         repeatSwitch = (Switch) view.findViewById(R.id.repeatSwitch);
@@ -149,7 +159,11 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         dosageUnitText = (TextView) view.findViewById(R.id.dosageUnit);
         chooseMedicationText = (TextView) view.findViewById(R.id.chooseMedication);
         chosenMedicationTextView = (TextView) view.findViewById(R.id.chosenMedication);
-        chooseMedicationWrapper = (FrameLayout) view.findViewById(R.id.chooseMedicationWrapper);
+        chooseMedicationWrapper = (LinearLayout) view.findViewById(R.id.chooseMedicationWrapper);
+        chooseDosageWrapper = (LinearLayout) view.findViewById(R.id.chooseDosageWrapper);
+        border = view.findViewById(R.id.border);
+        chooseDosageWrapper.setVisibility(View.GONE);
+        chooseMedicationWrapper.setVisibility(View.GONE);
 
         datePickerLayout.setOnClickListener(
                 new LinearLayout.OnClickListener() {
@@ -200,18 +214,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         daysPickedText.setTextSize(22);
         daysPickedText.setTextColor(Color.parseColor("#8a000000"));
 
-        numberPicker = new NumberPicker(getActivity());
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(30);
-        numberPicker.setValue(1);
-        LinearLayout.LayoutParams numberPickerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        numberPicker.setLayoutParams(numberPickerParams);
-        numberPickerParams.gravity = Gravity.CENTER;
-
         daysLayout.addView(howOftenText);
         daysLayout.addView(daysPickedText);
         daysLayout.setVisibility(View.GONE);
-        numberPicker.setVisibility(View.GONE);
 
         //choose which days layout with list
         daysListLayout = new LinearLayout(getActivity());
@@ -260,45 +265,15 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         endDatePickerLayout.addView(endDatePickerText);
         endDatePickerLayout.addView(endDatePickedText);
 
-        newReminderLayout.addView(daysLayout, 8);
-        newReminderLayout.addView(numberPicker, 9);
-        newReminderLayout.addView(endDatePickerLayout, 10);
-        newReminderLayout.addView(daysListLayout, 11);
+        repeatLayout.addView(daysLayout);
+        repeatLayout.addView(endDatePickerLayout);
+        repeatLayout.addView(daysListLayout);
 
 
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
                         if (isChecked) {
-
-                            /*
-                            daysLayout.setVisibility(View.VISIBLE);
-                            daysLayout.setOnClickListener(new LinearLayout.OnClickListener() {
-                                public void onClick(View v) {
-                                    if (numberPicker.getVisibility() == View.GONE) {
-                                        numberPicker.setVisibility(View.VISIBLE);
-                                        String everyDay = "Every day";
-                                        daysPickedText.setText(everyDay);
-
-                                        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-                                            @Override
-                                            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                                                if (newVal == 1) {
-                                                    String newValString = "Every day";
-                                                    daysPickedText.setText(newValString);
-                                                } else {
-
-                                                    String newValString = "Every " + newVal + " day";
-                                                    daysPickedText.setText(newValString);
-                                                }
-                                            }
-                                        });
-                                    } else if (numberPicker.getVisibility() == View.VISIBLE) {
-                                        numberPicker.setVisibility(View.GONE);
-                                    }
-                                }
-                            }); */
-
                             endDatePickerLayout.setVisibility(View.VISIBLE);
                             endDatePickerLayout.setOnClickListener(
                                     new LinearLayout.OnClickListener() {
@@ -330,7 +305,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
                             endDatePickerLayout.setVisibility(View.GONE);
                             daysLayout.setVisibility(View.GONE);
-                            numberPicker.setVisibility(View.GONE);
                             daysListLayout.setVisibility(View.GONE);
                         }
                     }
@@ -339,19 +313,26 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
         medicationSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
+                    public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
                         if (isChecked) {
+                            chooseMedicationWrapper.setVisibility(View.VISIBLE);
+                            chooseDosageWrapper.setVisibility(View.VISIBLE);
+                            border.setVisibility(View.VISIBLE);
                             enableMedicationField(true);
                             if (medication != null) {
                                 enableDosageField(true);
                             }
                         } else {
+                            chooseMedicationWrapper.setVisibility(View.GONE);
+                            chooseDosageWrapper.setVisibility(View.GONE);
+                            border.setVisibility(View.GONE);
                             enableMedicationField(false);
                             enableDosageField(false);
                         }
                     }
                 }
         );
+
         saveButton.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
 
@@ -631,7 +612,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                     dateSetText.getText().toString(),
                     timeSetText.getText().toString()
             );
-
+            //TODO: If you want to edit something on a reminder, this validation deny you from saving it, if the date is back in time
             Calendar currentDate = Calendar.getInstance();
             if (setDate.before(currentDate)) {
                 Toast toast = Toast.makeText(getActivity(), "Chosen date and time is before today's date", Toast.LENGTH_LONG);

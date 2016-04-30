@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
@@ -70,7 +71,8 @@ public class MainActivity extends AppCompatActivity
         ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
         TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener,
-        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener {
+        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener,
+        AttachReminderDialogFragment.AttachReminderDialogListener {
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
@@ -107,15 +109,20 @@ public class MainActivity extends AppCompatActivity
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
             changeFragment(new WelcomeFragment());
-            //disables drawer and navigation when in welcomeFragment.
-            //TODO: fix this shit (ask hanna or nikolai)
-            //drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+            //disables drawer and navigation in welcomeFragment.
+            drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
-            //toggle.setDrawerIndicatorEnabled(false);
+            toggle.setDrawerIndicatorEnabled(false);
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
             changeFragment(new MedicationListFragment());
+            //Enables drawer and menu-button
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            toggle.setDrawerIndicatorEnabled(true);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
+
         }
 
         //Sets repeating creation of a Job Manager that will check for upload jobs
@@ -422,15 +429,16 @@ public class MainActivity extends AppCompatActivity
             System.out.println(newAccount.toString());
             System.out.println(AccountManager.get(getApplicationContext()).getUserData(newAccount, "userRole"));
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        //Enables drawer and menu-button
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        //Enables drawer and action toggle when user is created
-        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-        //toggle.setDrawerIndicatorEnabled(true);
-        //drawer.setDrawerListener(toggle);
-        //toggle.syncState();
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        toggle.setDrawerIndicatorEnabled(true);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
         ContentResolver.setIsSyncable(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", 1);
         ContentResolver.setSyncAutomatically(newAccount, "com.example.sondrehj.familymedicinereminderclient.content", true);
 
@@ -589,5 +597,10 @@ public class MainActivity extends AppCompatActivity
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
+    }
+
+    @Override
+    public void onPositiveAttachReminderDialogResult() {
+        changeFragment(NewReminderFragment.newInstance(null));
     }
 }

@@ -81,7 +81,7 @@ public class MedicationPickerFragment extends DialogFragment {
             mListener = (OnMedicationPickerDialogResultListener) activity;
         } else {
             throw new RuntimeException(activity.toString()
-                    + " must implement OnUnitDialogResultListener");
+                    + " must implement AttachReminderDialogListener");
         }
     }
 

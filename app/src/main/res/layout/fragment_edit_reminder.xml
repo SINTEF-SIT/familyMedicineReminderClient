@@ -1,154 +1,244 @@
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#EEEEEE">
 
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context=".fragments.NewReminderFragment"
-    android:id="@+id/newReminderLayout"
-    android:divider="@drawable/horizontal_divider"
-    android:showDividers="middle">
+    android:id="@+id/newReminderLayout">
 
-    <Switch
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Active"
-        android:id="@+id/reminderSwitch"
-        android:checked="true"
-        android:textSize="18sp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REMINDER"
+        android:id="@+id/reminderHeader"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="8dp"/>
 
-    <FrameLayout
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="65dp">
+        android:layout_height="43sp"
+        android:layout_gravity="center_horizontal"
+        android:background="#fff"
+        android:layout_marginTop="2dp">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Active"
+            android:id="@+id/reminderSwitch"
+            android:checked="true"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="43sp"
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
-            android:layout_marginTop="5dp"
             android:id="@+id/nameText"
-            android:textSize="18sp"
-            android:layout_marginLeft="16dp"
-            android:textColor="#000000" />
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:layout_marginRight="70dp"
+            android:layout_gravity="center" />
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/nameEditText"
             android:inputType="text"
-            android:layout_marginTop="24dp"
-            android:layout_marginLeft="16dp"
-            android:textSize="14sp"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="10dp"
+            android:textAlignment="textEnd"/>
 
-    </FrameLayout>
+    </LinearLayout>
 
-    <FrameLayout
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DATE &amp; TIME"
+        android:id="@+id/dateAndTimeHeader"
+        android:layout_marginLeft="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="43dp"
         android:id="@+id/datePickerLayout"
         android:clickable="true"
-        android:background="?attr/selectableItemBackground">
-
-        <TextView
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Date"
-            android:id="@+id/dateText"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Click to choose"
-            android:id="@+id/dateSetText"
-            android:textSize="14sp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="32dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:id="@+id/timePickerLayout"
-        android:clickable="true"
-        android:layout_marginRight="0dp"
-        android:background="?attr/selectableItemBackground">
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Date"
+            android:id="@+id/dateText"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:layout_gravity="center"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="22.12.2018"
+            android:id="@+id/dateSetText"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:gravity="right"
+            android:layout_marginRight="15dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="43dp"
+        android:id="@+id/timePickerLayout"
+        android:clickable="true"
+        android:layout_marginRight="0dp"
+        android:background="#fff">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Time"
             android:id="@+id/timeText"
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="16dp"
-            android:textSize="18sp" />
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:layout_gravity="center" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/timeSetText"
-            android:textSize="14sp"
-            android:text="Click to choose"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="32dp" />
-    </FrameLayout>
+            android:layout_gravity="center"
+            android:textSize="20sp"
+            android:text="12:44"
+            android:layout_marginRight="15dp"
+            android:gravity="right" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/repeatLayout"
+        android:background="#fff">
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:text="Repeat"
+            android:id="@+id/repeatSwitch"
+            android:checked="false"
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MEDICATION"
+        android:id="@+id/medicationHeader"
+        android:layout_marginLeft="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:id="@+id/linearLayout"
-        android:clickable="true"
-        android:layout_marginRight="0dp"
-        android:background="?attr/selectableItemBackground" >
+        android:layout_height="43sp"
+        android:layout_gravity="center_horizontal"
+        android:background="#fff">
 
         <Switch
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:text="Attach medication"
             android:id="@+id/medicationSwitch"
             android:checked="false"
-            android:textSize="22sp"
-            android:textColor="#03A9F4"
+            android:textSize="20sp"
+            android:textColor="#000000"
             android:padding="10dp" />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
 
-    <FrameLayout
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="43dp"
         android:id="@+id/chooseMedicationWrapper"
-        android:clickable="true">
+        android:clickable="true"
+        android:background="#ffffff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Medication"
             android:id="@+id/chooseMedication"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"
-            android:textColor="#DDDD"
-            android:textSize="18sp" />
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:layout_gravity="center" />
 
         <TextView
             android:layout_width="match_parent"
@@ -156,70 +246,67 @@
             android:text="Click to choose"
             android:id="@+id/chosenMedication"
             android:textSize="14sp"
-            android:layout_marginLeft="18dp"
-            android:layout_marginTop="32dp"
             android:textColor="#DDDD"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </FrameLayout>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_gravity="center"
+            android:gravity="right"
+            android:layout_marginRight="15dp"/>
+    </LinearLayout>
 
-    <FrameLayout
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"/>
+
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:id="@+id/chooseDosageWrapper">
+        android:layout_height="43dp"
+        android:id="@+id/chooseDosageWrapper"
+        android:background="#ffffff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dosage"
-            android:layout_marginTop="5dp"
             android:id="@+id/chooseDosage"
             android:textSize="18sp"
             android:layout_marginLeft="16dp"
-            android:textColor="#DDDD" />
+            android:textColor="#DDDD"
+            android:layout_gravity="center"/>
 
         <EditText
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:id="@+id/dosage"
             android:inputType="numberDecimal"
-            android:layout_marginTop="24dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="130dp"
             android:textSize="14sp"
-            android:layout_marginRight="16dp"
             android:enabled="false"
-            android:textColor="#DDDD" />
+            android:textColor="#DDDD"
+            android:layout_gravity="center"
+            android:gravity="right"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="35dp"
             android:id="@+id/dosageUnit"
             android:textSize="14sp"
             android:textColor="#DDDD"
-            android:layout_marginLeft="78dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:id="@+id/repeatLayout">
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Repeat"
-            android:id="@+id/repeatSwitch"
-            android:checked="false"
-            android:textSize="22sp"
-            android:textColor="#03A9F4"
-            android:padding="10dp" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center"
+            android:gravity="right"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DBDBDB"
+        android:id="@+id/border"
+        android:visibility="gone"/>
 
     <Button
         android:layout_width="wrap_content"
