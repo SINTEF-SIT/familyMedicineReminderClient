@@ -6,34 +6,27 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Html;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.EndDatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
+import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputValidator;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputActions;
 
 
 import java.util.ArrayList;
@@ -67,13 +60,12 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     @Bind(R.id.reminder_edit_group_end_date) LinearLayout endDatePickerGroup;
     @Bind(R.id.reminder_edit_group_choose_days) LinearLayout chooseDaysPickerGroup;
     @Bind(R.id.reminder_edit_group_choose_medication) LinearLayout chooseMedicationGroup;
-    @Bind(R.id.reminder_edit_group_choose_dosage) LinearLayout chooseDosageGroup;
+    @Bind(R.id.reminder_edit_group_choose_dosage)LinearLayout chooseDosageGroup;
 
-    @Bind(R.id.reminder_edit_active_switch) Switch activeSwitch;
-    @Bind(R.id.reminder_edit_medication_switch) Switch attachMedicationSwitch;
-    @Bind(R.id.reminder_edit_repeat_switch) Switch repeatSwitch;
-
-    @Bind(R.id.reminder_edit_name_input) EditText nameInput;
+    @Bind(R.id.reminder_edit_active_switch)Switch activeSwitch;
+    @Bind(R.id.reminder_edit_medication_switch)Switch attachMedicationSwitch;
+    @Bind(R.id.reminder_edit_repeat_switch)Switch repeatSwitch;
+    @Bind(R.id.reminder_edit_name_input)EditText nameInput;
     @Bind(R.id.reminder_edit_date_input) TextView dateInput;
     @Bind(R.id.reminder_edit_time_input) TextView timeInput;
     @Bind(R.id.reminder_edit_chosen_end_date) TextView endDateInput;
@@ -82,7 +74,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     @Bind(R.id.reminder_edit_dosage_input) EditText dosageInput;
     @Bind(R.id.reminder_edit_dosage_unit) TextView dosageUnit;
 
-    //days of the week if you didn't know - cpt. obvious
+    //days of the week
     @Bind(R.id.reminder_edit_chosen_chosen_days_2) TextView Monday;
     @Bind(R.id.reminder_edit_chosen_chosen_days_3) TextView Tuesday;
     @Bind(R.id.reminder_edit_chosen_chosen_days_4) TextView Wednesday;
@@ -98,6 +90,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     protected Activity mActivity;
     private String currentStartDate;
     private static final String CONTINUOUS_END_DATE = "Continuous";
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REMINDER_ARGS = "reminder";
     private OnNewReminderInteractionListener mListener;
@@ -137,43 +130,42 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
         ButterKnife.bind(this, view);
-        weekDayTextViewArray = new TextView[] {Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday};
+        weekDayTextViewArray = new TextView[]{Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
 
         // Hide layouts which are opened with switches.
         chooseMedicationGroup.setVisibility(View.GONE);
         chooseDosageGroup.setVisibility(View.GONE);
+
+        endDatePickerGroup.setOnClickListener(
+                new LinearLayout.OnClickListener() {
+                    public void onClick(View v) {
+                        EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
+                        endDate.show(getFragmentManager(), "endDatePicker");
+                    }
+                });
+
+        chooseDaysPickerGroup.setOnClickListener(new LinearLayout.OnClickListener() {
+            public void onClick(View v) {
+
+                if (selectedDays != null) {
+                    // Finds the corresponding list index of each item in selectedDays
+                    int[] selectedItems = Converter.selectedDaysToSelectedItems(selectedDays);
+                    // Creates a new SelectDaysDialogFragment where the selected days are checked.
+                    SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
+                    selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                } else {
+                    SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
+                    selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                }
+            }
+        });
 
         repeatSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
                         if (isChecked) {
                             endDatePickerGroup.setVisibility(View.VISIBLE);
-                            endDatePickerGroup.setOnClickListener(
-                                    new LinearLayout.OnClickListener() {
-                                        public void onClick(View v) {
-                                            EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
-                                            endDate.show(getFragmentManager(), "endDatePicker");
-                                        }
-                                    });
-
                             chooseDaysPickerGroup.setVisibility(View.VISIBLE);
-                            chooseDaysPickerGroup.setOnClickListener(new LinearLayout.OnClickListener() {
-                                public void onClick(View v) {
-
-                                    if (selectedDays != null) {
-
-                                        // Finds the corresponding list index of each item in selectedDays
-                                        int[] selectedItems = Converter.selectedDaysToSelectedItems(selectedDays);
-
-                                        // Creates a new SelectDaysDialogFragment where the selected days are checked.
-                                        SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
-                                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
-                                    } else {
-                                        SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
-                                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
-                                    }
-                                }
-                            });
                         } else {
                             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
                             endDatePickerGroup.setVisibility(View.GONE);
@@ -220,12 +212,68 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     @OnClick(R.id.reminder_edit_save_button)
     public void onSaveButtonClick() {
+
+        NewReminderInputValidator inputValidator = new NewReminderInputValidator(
+                getActivity(), nameInput, dateInput, timeInput, attachMedicationSwitch,
+                attachMedicationSwitch, dosageInput, repeatSwitch, endDateInput);
+
         if (reminder == null) {
-            if (validateName() && validateDateAndTime() && validateMedication() && validateEndDate())
+            if (inputValidator.validateAllFields())
                 createReminder();
         } else {
-            if (validateName() && validateDateAndTime() && validateMedication() && validateEndDate())
+            if (inputValidator.validateAllFields())
                 updateReminder();
+        }
+    }
+
+    public void setReminder(Reminder reminder) {
+        this.reminder = reminder;
+    }
+
+    public void createReminder() {
+
+        NewReminderInputActions vr = new NewReminderInputActions(getActivity());
+        Reminder reminder = vr.CreateReminderFromInput(
+                nameInput, dateInput, timeInput,
+                medication, attachMedicationSwitch,
+                dosageInput, repeatSwitch, selectedDays,
+                endDateInput, activeSwitch);
+
+        //Add reminder to database
+        vr.executeDatabaseReminderAction(reminder, NewReminderInputActions.REMINDER_INSERT);
+        mListener.onSaveNewReminder(reminder);
+    }
+
+    public void updateReminder() {
+
+        NewReminderInputActions vr = new NewReminderInputActions(getActivity());
+        reminder = vr.UpdateReminderFromInput(
+                nameInput, dateInput, timeInput,
+                medication, attachMedicationSwitch,
+                dosageInput, repeatSwitch, selectedDays,
+                endDateInput, activeSwitch, reminder);
+
+        // Update existing reminder in database
+        vr.executeDatabaseReminderAction(reminder, NewReminderInputActions.REMINDER_UPDATE);
+        mListener.onSaveNewReminder(reminder);
+    }
+
+    public void setBoldOnSelectedDays(int[] selectedDays) {
+
+        for (int i = 0; i < 7; i++) {
+            boolean inList = false;
+            for (int day : selectedDays) {
+                if (i == day) {
+                    inList = true;
+                    weekDayTextViewArray[i].setTypeface(null, Typeface.BOLD);
+                    weekDayTextViewArray[i].setTextColor(Color.GRAY);
+                    break;
+                }
+            }
+            if (!inList) {
+                weekDayTextViewArray[i].setTypeface(null, Typeface.NORMAL);
+                weekDayTextViewArray[i].setTextColor(Color.parseColor("#DDDDDD"));
+            }
         }
     }
 
@@ -294,59 +342,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         timeInput.setText(time);
     }
 
-    public void setBoldOnSelectedDays(int[] selectedDays) {
-
-        for(int i = 0; i < 7; i ++) {
-            boolean inList = false;
-            for (int day : selectedDays) {
-                if (i == day) {
-                    inList = true;
-                    weekDayTextViewArray[i].setTypeface(null, Typeface.BOLD);
-                    weekDayTextViewArray[i].setTextColor(Color.GRAY);
-                    break;
-                }
-            } if(!inList) {
-                weekDayTextViewArray[i].setTypeface(null, Typeface.NORMAL);
-                weekDayTextViewArray[i].setTextColor(Color.parseColor("#DDDDDD"));
-            }
-        }
-
-        /*
-        for(int i : selectedDays) {
-            switch (i){
-                case 0:
-                    Saturday.setTypeface(Saturday.getTypeface(), Typeface.BOLD);
-                    Saturday.setTextColor(Color.DKGRAY);
-                    break;
-                case 1:
-                    Sunday.setTypeface(Sunday.getTypeface(), Typeface.BOLD);
-                    Sunday.setTextColor(Color.DKGRAY);
-                    break;
-                case 2:
-                    Monday.setTypeface(Monday.getTypeface(), Typeface.BOLD);
-                    Monday.setTextColor(Color.DKGRAY);
-                    break;
-                case 3:
-                    Tuesday.setTypeface(Tuesday.getTypeface(), Typeface.BOLD);
-                    Tuesday.setTextColor(Color.DKGRAY);
-                    break;
-                case 4:
-                    Wednesday.setTypeface(Wednesday.getTypeface(), Typeface.BOLD);
-                    Wednesday.setTextColor(Color.DKGRAY);
-                    break;
-                case 5:
-                    Thursday.setTypeface(Thursday.getTypeface(), Typeface.BOLD);
-                    Thursday.setTextColor(Color.DKGRAY);
-                    break;
-                case 6:
-                    Friday.setTypeface(Friday.getTypeface(), Typeface.BOLD);
-                    Friday.setTextColor(Color.DKGRAY);
-                    break;
-            }
-        }
-        */
-    }
-
     public void enableDosageField(boolean enable) {
         if (enable) {
             chooseDosageGroup.setVisibility(View.VISIBLE);
@@ -379,21 +374,16 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         }
     }
 
-    public void setDateOnLayout(int year, int month, int day) {
-        month = month + 1;  //month is 0-indexed
-        String dateSet = String.format("%02d.%02d.%4d", day, month, year);
-        dateInput.setText(dateSet);
-        currentStartDate = dateSet;
-    }
+    public void setDaysOnLayout(ArrayList selectedItems) {
+        selectedDays = new int[selectedItems.size()];
 
-    public void setEndDateOnLayout(int year, int month, int day) {
-        month = month + 1;  //month is 0-indexed
-        String dateSet = String.format("%02d.%02d.%4d", day, month, year);
-        endDateInput.setText(dateSet);
-    }
-
-    public void setReminder(Reminder reminder) {
-        this.reminder = reminder;
+        // Convert to the expected format for GregorianCalendar
+        for (int i = 0; i < selectedItems.size(); i++) {
+            selectedDays[i] = ((Integer) selectedItems.get(i) + 1) % 7;
+        }
+        Arrays.sort(selectedDays);
+        System.out.println("Hello: " + Arrays.toString(selectedDays));
+        setBoldOnSelectedDays(selectedDays);
     }
 
     public void setMedicationOnLayout(Medication med) {
@@ -409,206 +399,18 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         timeInput.setText(timeSet);
     }
 
-    public void setDaysOnLayout(ArrayList selectedItems) {
-        selectedDays = new int[selectedItems.size()];
-
-        // Convert to the expected format for GregorianCalendar
-        for (int i = 0; i < selectedItems.size(); i++) {
-            selectedDays[i] = ((Integer) selectedItems.get(i) + 2) % 7;
-        }
-        Arrays.sort(selectedDays);
-        setBoldOnSelectedDays(selectedDays);
+    public void setDateOnLayout(int year, int month, int day) {
+        month = month + 1;  //month is 0-indexed
+        String dateSet = String.format("%02d.%02d.%4d", day, month, year);
+        dateInput.setText(dateSet);
+        currentStartDate = dateSet;
     }
 
-    public void createReminder() {
-        Reminder reminder = new Reminder();
-        reminder.setOwnerId("temp");
-        reminder.setName(nameInput.getEditableText().toString());
-
-        // Set start date
-        GregorianCalendar cal = Converter.dateStringToCalendar(
-                dateInput.getText().toString(),
-                timeInput.getText().toString());
-        reminder.setDate(cal);
-
-        // Attach medication
-        if (attachMedicationSwitch.isChecked() && medication != null && !dosageInput.getText().toString().equals("")) {
-            reminder.setMedicine(medication);
-            reminder.setDosage(Double.parseDouble(dosageInput.getText().toString()));
-        }
-
-        // Non-repeating
-        if (!repeatSwitch.isChecked()) {
-            reminder.setDays(new int[]{});
-        } else { // Repeating
-            if (selectedDays.length > 0) {
-                reminder.setDays(selectedDays);
-            }
-            if (endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
-                reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
-            } else {
-                // Set end date
-                GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDateInput.getText().toString(),
-                        timeInput.getText().toString());
-                reminder.setEndDate(endCal);
-            }
-        }
-        reminder.setIsActive(activeSwitch.isChecked());
-        reminder.setReminderServerId(-1);
-
-        System.out.println("----------Reminder Created----------" + "\n" + reminder);
-        System.out.println("------------------------------------");
-
-        //Add reminder to database
-        MySQLiteHelper db = new MySQLiteHelper(mActivity);
-        db.addReminder(reminder);
-        Toast.makeText(getActivity(), "Reminder created", Toast.LENGTH_LONG).show();
-
-        mListener.onSaveNewReminder(reminder);
+    public void setEndDateOnLayout(int year, int month, int day) {
+        month = month + 1;  //month is 0-indexed
+        String dateSet = String.format("%02d.%02d.%4d", day, month, year);
+        endDateInput.setText(dateSet);
     }
-
-    public void updateReminder() {
-        //Updates an existing Reminder object
-        reminder.setName(nameInput.getText().toString());
-
-        // Set start date
-        GregorianCalendar cal = Converter.dateStringToCalendar(
-                dateInput.getText().toString(),
-                timeInput.getText().toString());
-        reminder.setDate(cal);
-
-        // Set active
-        reminder.setIsActive(activeSwitch.isChecked());
-
-        // Non-repeating
-        if (!repeatSwitch.isChecked()) {
-            reminder.setDays(new int[]{});
-            reminder.setEndDate(null);
-        }
-
-        if (selectedDays == null && reminder.getDays().length == 0) {
-            reminder.setDays(new int[]{});
-        }
-
-        // Repeating
-        if (repeatSwitch.isChecked()) {
-            if (selectedDays == null && reminder.getDays().length > 1) {
-                reminder.setDays(reminder.getDays());
-            } else {
-                reminder.setDays(selectedDays);
-            }
-            if (endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
-                // Set end date far into the future
-                reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
-            } else if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
-                // Set end date
-                GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDateInput.getText().toString(),
-                        timeInput.getText().toString());
-                reminder.setEndDate(endCal);
-            }
-        }
-
-        // Medication
-        if (medication != null && attachMedicationSwitch.isChecked() && !dosageInput.getText().toString().equals("")) {
-            reminder.setMedicine(medication);
-            reminder.setDosage(Double.parseDouble(dosageInput.getText().toString()));
-        } else if (!attachMedicationSwitch.isChecked() && medication != null) {
-            reminder.setMedicine(null);
-            reminder.setDosage(null);
-        }
-
-        System.out.println("----------Reminder Updated----------" + "\n" + reminder);
-        System.out.println("------------------------------------");
-
-        // Update existing reminder in database
-        MySQLiteHelper db = new MySQLiteHelper(mActivity);
-        db.updateReminder(reminder);
-        Toast.makeText(getActivity(), "Reminder was updated", Toast.LENGTH_LONG).show();
-
-        mListener.onSaveNewReminder(reminder);
-    }
-
-    private boolean validateDateAndTime() {
-
-        if (!dateInput.getText().toString().equals("")) {
-
-            GregorianCalendar setDate = Converter.dateStringToCalendar(
-                    dateInput.getText().toString(),
-                    timeInput.getText().toString()
-            );
-            //TODO: If you want to edit something on a reminder, this validation deny you from saving it, if the date is back in time
-            Calendar currentDate = Calendar.getInstance();
-            if (setDate.before(currentDate)) {
-                Toast toast = Toast.makeText(getActivity(), "Chosen date and time is before today's date", Toast.LENGTH_LONG);
-                toast.show();
-                return false;
-            } else {
-                return true;
-            }
-        }
-        Toast toast = Toast.makeText(getActivity(), "Date field is empty", Toast.LENGTH_LONG);
-        toast.show();
-        return false;
-    }
-
-    private boolean validateEndDate() {
-        if (repeatSwitch.isChecked()) {
-            if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
-
-                // End date
-                GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDateInput.getText().toString(),
-                        timeInput.getText().toString()
-                );
-
-                // Start date
-                GregorianCalendar setDate = Converter.dateStringToCalendar(
-                        dateInput.getText().toString(),
-                        timeInput.getText().toString()
-                );
-
-                if (endCal.before(setDate)) {
-                    Toast toast = Toast.makeText(getActivity(), "Chosen end date is before start date", Toast.LENGTH_LONG);
-                    toast.show();
-                    return false;
-                }
-            } else {
-                return true;
-            }
-        }
-        return true;
-    }
-
-    private boolean validateName() {
-        if (nameInput.getText().toString().equals("")) {
-            Toast toast = Toast.makeText(getActivity(), "Please enter a reminder name", Toast.LENGTH_LONG);
-            toast.show();
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateMedication() {
-        if (attachMedicationSwitch.isChecked()) {
-            if (attachedMedicationInput.getText().toString().equals("Click to choose")) {
-                Toast toast = Toast.makeText(getActivity(), "Please choose a medication", Toast.LENGTH_LONG);
-                toast.show();
-                return false;
-            } else {
-                if (dosageInput.getText().toString().equals("")) {
-                    Toast toast = Toast.makeText(getActivity(), "Please enter a dosage", Toast.LENGTH_LONG);
-                    toast.show();
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }
-        return true;
-    }
-
 
     //API Level >= 23
     @Override
@@ -647,16 +449,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         return "New Reminders";
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnNewReminderInteractionListener {
         void onSaveNewReminder(Reminder r);
     }

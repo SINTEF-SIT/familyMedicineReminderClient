@@ -56,9 +56,6 @@ public class SelectDaysDialogFragment extends DialogFragment {
             }
         }
 
-        System.out.println(Arrays.toString(daysAlreadySelected));
-
-
         // Set the dialog title
         builder.setTitle("Select Days")
                 // Set choice items to unit_items array
@@ -80,7 +77,6 @@ public class SelectDaysDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // Set unit TextView to the selected list item
                         mListener.onPositiveDaysDialogResult(selectedItems);
-                        System.out.println(selectedItems);
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -60,6 +60,8 @@ public class NotificationPublisher extends BroadcastReceiver {
         }
         // If the user has specified days, we check if today is one of the days.
         // The notification is published if true.
+        System.out.println(currentDay);
+        System.out.println(Arrays.toString(days));
         for (int day : days) {
             if (day == currentDay) {
                 notificationManager.notify(id, notification);
