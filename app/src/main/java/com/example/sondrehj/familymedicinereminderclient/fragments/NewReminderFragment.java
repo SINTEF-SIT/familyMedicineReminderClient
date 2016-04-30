@@ -74,6 +74,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     @Bind(R.id.reminder_edit_time_input) TextView timeInput;
     @Bind(R.id.reminder_edit_chosen_end_date) TextView endDateInput;
     @Bind(R.id.reminder_edit_chosen_medication) TextView attachedMedicationInput;
+    @Bind(R.id.reminder_edit_dosage_text) TextView dosageText;
     @Bind(R.id.reminder_edit_dosage_input) EditText dosageInput;
     @Bind(R.id.reminder_edit_dosage_unit) TextView dosageUnit;
 
@@ -85,6 +86,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     @Bind(R.id.reminder_edit_chosen_chosen_days_6) TextView Friday;
     @Bind(R.id.reminder_edit_chosen_chosen_days_0) TextView Saturday;
     @Bind(R.id.reminder_edit_chosen_chosen_days_1) TextView Sunday;
+    public TextView[] weekDayTextViewArray;
 
 
     private Reminder reminder;
@@ -92,7 +94,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     private int[] selectedDays;
     protected Activity mActivity;
     private String currentStartDate;
-
+    private static final String CONTINUOUS_END_DATE = "Continuous";
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REMINDER_ARGS = "reminder";
     private OnNewReminderInteractionListener mListener;
@@ -132,6 +134,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
         ButterKnife.bind(this, view);
+        weekDayTextViewArray = new TextView[] {Saturday, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday};
 
         // Hide layouts which are opened with switches.
         chooseMedicationGroup.setVisibility(View.GONE);
@@ -183,13 +186,13 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                         if (isChecked) {
                             chooseMedicationGroup.setVisibility(View.VISIBLE);
                             chooseDosageGroup.setVisibility(View.VISIBLE);
+                            chooseDosageGroup.setEnabled(true);
                             enableMedicationField(true);
                             if (medication != null) {
                                 enableDosageField(true);
                             }
                         } else {
                             chooseMedicationGroup.setVisibility(View.GONE);
-                            chooseDosageGroup.setVisibility(View.GONE);
                             enableMedicationField(false);
                             enableDosageField(false);
                         }
@@ -245,7 +248,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
                 // Checks if the reminder is Continuous
                 if (year == 9998) {
-                    endDateInput.setText("Continuous");
+                    endDateInput.setText(CONTINUOUS_END_DATE);
                 } else {
                     String date = String.format("%02d.%02d.%4d", day, month, year);
                     endDateInput.setText(date);
@@ -254,6 +257,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             } else {
                 selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
                 setBoldOnSelectedDays(selectedDays);
+                repeatSwitch.setChecked(false);
+                endDatePickerGroup.setVisibility(View.GONE);
+                chooseDaysPickerGroup.setVisibility(View.GONE);
             }
             // Set the medicine fields if the reminder got a medicine attached.
             if (reminder.getMedicine() != null) {
@@ -268,6 +274,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             c = Calendar.getInstance();
             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
             setBoldOnSelectedDays(selectedDays);
+            repeatSwitch.setChecked(false);
+            endDatePickerGroup.setVisibility(View.GONE);
+            chooseDaysPickerGroup.setVisibility(View.GONE);
         }
 
         int hour = c.get(Calendar.HOUR_OF_DAY);
@@ -283,6 +292,23 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     public void setBoldOnSelectedDays(int[] selectedDays) {
+
+        for(int i = 0; i < 7; i ++) {
+            boolean inList = false;
+            for (int day : selectedDays) {
+                if (i == day) {
+                    inList = true;
+                    weekDayTextViewArray[i].setTypeface(null, Typeface.BOLD);
+                    weekDayTextViewArray[i].setTextColor(Color.GRAY);
+                    break;
+                }
+            } if(!inList) {
+                weekDayTextViewArray[i].setTypeface(null, Typeface.NORMAL);
+                weekDayTextViewArray[i].setTextColor(Color.parseColor("#DDDDDD"));
+            }
+        }
+
+        /*
         for(int i : selectedDays) {
             switch (i){
                 case 0:
@@ -315,13 +341,22 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                     break;
             }
         }
+        */
     }
 
     public void enableDosageField(boolean enable) {
         if (enable) {
             chooseDosageGroup.setVisibility(View.VISIBLE);
+            dosageInput.setEnabled(true);
+            dosageInput.setTextColor(Color.GRAY);
+            dosageUnit.setTextColor(Color.GRAY);
+            dosageText.setTextColor(Color.BLACK);
         } else {
             chooseDosageGroup.setVisibility(View.GONE);
+            dosageInput.setEnabled(false);
+            dosageInput.setTextColor(Color.parseColor("#DDDDDD"));
+            dosageText.setTextColor(Color.parseColor("#DDDDDD"));
+            dosageUnit.setTextColor(Color.parseColor("#DDDDDD"));
         }
     }
 
@@ -406,10 +441,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             if (selectedDays.length > 0) {
                 reminder.setDays(selectedDays);
             }
-            if (endDateInput.getText().toString().equals("Continuous")) {
+            if (endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
                 reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
-            } else if (!endDateInput.getText().toString().equals("Continuous")) {
-
+            } else {
                 // Set end date
                 GregorianCalendar endCal = Converter.dateStringToCalendar(
                         endDateInput.getText().toString(),
@@ -426,6 +460,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         //Add reminder to database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.addReminder(reminder);
+        Toast.makeText(getActivity(), "Reminder created", Toast.LENGTH_LONG).show();
 
         mListener.onSaveNewReminder(reminder);
     }
@@ -460,10 +495,10 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             } else {
                 reminder.setDays(selectedDays);
             }
-            if (endDateInput.getText().toString().equals("Continuous")) {
+            if (endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
                 // Set end date far into the future
                 reminder.setEndDate(new GregorianCalendar(9999, 0, 0));
-            } else if (!endDateInput.getText().toString().equals("Continuous")) {
+            } else if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
                 // Set end date
                 GregorianCalendar endCal = Converter.dateStringToCalendar(
                         endDateInput.getText().toString(),
@@ -487,6 +522,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         // Update existing reminder in database
         MySQLiteHelper db = new MySQLiteHelper(mActivity);
         db.updateReminder(reminder);
+        Toast.makeText(getActivity(), "Reminder was updated", Toast.LENGTH_LONG).show();
 
         mListener.onSaveNewReminder(reminder);
     }
@@ -516,7 +552,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     private boolean validateEndDate() {
         if (repeatSwitch.isChecked()) {
-            if (!endDateInput.getText().toString().equals("Continuous")) {
+            if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
 
                 // End date
                 GregorianCalendar endCal = Converter.dateStringToCalendar(

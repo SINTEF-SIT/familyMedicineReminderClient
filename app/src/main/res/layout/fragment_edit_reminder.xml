@@ -67,8 +67,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/reminder_edit_name_input"
             android:inputType="text"
-            android:layout_marginRight="10dp"
-            android:textAlignment="textEnd"/>
+            android:layout_marginRight="10dp" />
 
     </LinearLayout>
 
@@ -215,10 +214,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Continous"
+                android:text="Continuous"
                 android:id="@+id/reminder_edit_chosen_end_date"
-                android:textSize="14sp"
-                android:textColor="#DDDD"
+                android:textSize="18sp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="15dp" />
@@ -243,7 +241,7 @@
             android:text="Which days"
             android:textSize="18sp"
             android:layout_marginLeft="16dp"
-            android:textColor="#DDDD"
+            android:textColor="#000"
             android:layout_gravity="center"/>
 
         <View
@@ -256,8 +254,7 @@
             android:layout_height="wrap_content"
             android:text="Mo, "
             android:id="@+id/reminder_edit_chosen_chosen_days_2"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right" />
 
@@ -266,8 +263,7 @@
             android:layout_height="wrap_content"
             android:text="Tu, "
             android:id="@+id/reminder_edit_chosen_chosen_days_3"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right" />
 
@@ -276,8 +272,7 @@
             android:layout_height="wrap_content"
             android:text="We, "
             android:id="@+id/reminder_edit_chosen_chosen_days_4"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right" />
 
@@ -286,8 +281,7 @@
             android:layout_height="wrap_content"
             android:text="Th, "
             android:id="@+id/reminder_edit_chosen_chosen_days_5"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right" />
 
@@ -296,8 +290,7 @@
             android:layout_height="wrap_content"
             android:text="Fr, "
             android:id="@+id/reminder_edit_chosen_chosen_days_6"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right" />
 
@@ -306,8 +299,7 @@
             android:layout_height="wrap_content"
             android:text="Sa, "
             android:id="@+id/reminder_edit_chosen_chosen_days_0"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right" />
 
@@ -316,8 +308,7 @@
             android:layout_height="wrap_content"
             android:text="Su"
             android:id="@+id/reminder_edit_chosen_chosen_days_1"
-            android:textSize="14sp"
-            android:textColor="#DDDD"
+            android:textSize="16sp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_gravity="center_vertical|right"
             android:layout_marginRight="15dp" />
@@ -395,8 +386,7 @@
                 android:layout_height="wrap_content"
                 android:text="Click to choose"
                 android:id="@+id/reminder_edit_chosen_medication"
-                android:textSize="14sp"
-                android:textColor="#DDDD"
+                android:textSize="16sp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="15dp" />
@@ -421,26 +411,31 @@
             android:text="Dosage"
             android:textSize="18sp"
             android:layout_marginLeft="16dp"
+            android:id="@+id/reminder_edit_dosage_text"
             android:textColor="#DDDD"
             android:layout_gravity="center"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
         <EditText
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:id="@+id/reminder_edit_dosage_input"
             android:inputType="numberDecimal"
-            android:layout_marginLeft="130dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:enabled="false"
             android:textColor="#DDDD"
             android:layout_gravity="center"
-            android:gravity="right"/>
+            android:gravity="center_vertical|right"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/reminder_edit_dosage_unit"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:textColor="#DDDD"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_marginRight="15dp"
