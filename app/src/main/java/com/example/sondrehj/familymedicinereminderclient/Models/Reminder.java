@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
  */
 public class Reminder implements Serializable {
     int reminderId;
-    int reminderServerId;
+    int serverId;
     String ownerId;
     String name;
     GregorianCalendar date;
@@ -43,11 +43,11 @@ public class Reminder implements Serializable {
     }
 
     public int getServerId(){
-        return reminderServerId;
+        return serverId;
     }
 
     public void setServerId(int id) {
-        this.reminderServerId = id;
+        this.serverId = id;
     }
 
     public String getOwnerId() {
@@ -103,6 +103,7 @@ public class Reminder implements Serializable {
     public int[] getDays() { return days; }
 
     public String getDateString(){
+        System.out.println(date);
         int hour = date.get(Calendar.HOUR_OF_DAY);
         int minute = date.get(Calendar.MINUTE);
         int year = date.get(Calendar.YEAR);
@@ -132,6 +133,7 @@ public class Reminder implements Serializable {
     public String toString() {
 
         String reminder_string =
+                "ServerID: " + getServerId() + "\n" +
                 " Name: " + getName() + "\n" +
                 " Date: " + getDateString()  + "\n" +
                 " End-date: " + getEndDateString() + "\n" +
@@ -142,5 +144,10 @@ public class Reminder implements Serializable {
                     " Dosage: " + getDosage() + "\n";
         }
         return reminder_string;
+    }
+
+    public void updateFromTransportReminder(TransportReminder transportReminder) {
+        this.serverId = transportReminder.serverId;
+        //Add other things as necessary
     }
 }

@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.api;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ public interface MyCyFAPPServiceAPI {
     Call<List<Reminder>> getUserReminderList(@Path("userID") String userID);
 
     @POST("user/{userID}/reminder")
-    Call<Reminder> createReminder(@Path("userID") String userID, @Body Reminder reminder);
+    Call<TransportReminder> createReminder(@Path("userID") String userID, @Body TransportReminder reminder);
 
     @PUT("user/{userID}/reminder/{reminderID}")
     Call<Reminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body Reminder reminder);

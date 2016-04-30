@@ -243,11 +243,19 @@ public class MainActivity extends AppCompatActivity
     public void handleMedicationPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
             Medication medication = (Medication) event.data;
-            System.out.println("Medication about to be saved: " + medication.toString());
+            System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
         }
     }
 
+    @Subscribe
+    public void handleReminderPostedRequest(DataChangedEvent event) {
+        if (event.type.equals(DataChangedEvent.REMINDERSENT)) {
+            Reminder reminder = (Reminder) event.data;
+            System.out.println("Reminder about to be saved: " + reminder);
+            new MySQLiteHelper(this).updateReminder(reminder);
+        }
+    }
 
     /**
      * Closes the drawer when the back button is pressed.

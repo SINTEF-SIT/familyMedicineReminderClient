@@ -8,6 +8,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -21,7 +22,6 @@ public class PostReminderJob extends Job {
 
     private Reminder reminder;
     private String userId;
-
 
     public PostReminderJob(Reminder reminder, String userId) {
         // This job requires network connectivity,
@@ -38,6 +38,7 @@ public class PostReminderJob extends Job {
     @Override
     public void onAdded() {
         System.out.println("In reminder job's onAdded");
+        System.out.println(reminder);
         // Job has been saved to disk. This means that the job is persisted and the application can fail without
         // consequence for the job queue.
     }
@@ -46,22 +47,22 @@ public class PostReminderJob extends Job {
     public void onRun() throws Throwable {
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Call<Reminder> call = api.createReminder(userId, reminder);
-        Reminder reminder = call.execute().body(); //medication retrieved from server
-        if(reminder != null) {
-            System.out.println(reminder);
-            reminder.setServerId(reminder.getServerId());  //To retain the reference to this medication, we add the server id to it
-            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, reminder));
+        Call<TransportReminder> call = api.createReminder(userId, new TransportReminder(reminder));
+        TransportReminder transportReminder = call.execute().body();
+        if(transportReminder != null) {
+            System.out.println(transportReminder);
+            reminder.updateFromTransportReminder(transportReminder);
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERSENT, reminder));
         }
         else {
-            System.out.println("med returned from server was null");
+            System.out.println("reminder returned from server was null");
         }
     }
 
     @Override
     protected void onCancel() {
         //Here we would normally cancel the request if completion was impossible, but we do not do this
-        //Insted we persist the request and try to run it again when the
+        //Instead we persist the request and try to run it again when the
 
     }
 

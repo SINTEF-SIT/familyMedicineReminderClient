@@ -37,6 +37,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.sync.PostReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
@@ -444,7 +445,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         db.addReminder(reminder);
         Toast.makeText(getActivity(), "Reminder created", Toast.LENGTH_LONG).show();
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, userId));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
 
         mListener.onSaveNewReminder(reminder);

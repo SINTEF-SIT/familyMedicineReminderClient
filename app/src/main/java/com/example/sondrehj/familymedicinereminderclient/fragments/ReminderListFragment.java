@@ -35,6 +35,8 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
 
     //TODO: Animation is not triggering when you go to reminder view
 
+    //TODO: On Android 4.1, frequency days are showing even when the reminder is one-time
+
     private OnReminderListFragmentInteractionListener mListener;
 
     private Boolean busIsRegistered = false;
