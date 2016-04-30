@@ -205,7 +205,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
-        values.put(COLUMN_REMINDER_SERVER_ID, reminder.getReminderServerId());
+        values.put(COLUMN_REMINDER_SERVER_ID, reminder.getServerId());
         // We store the medicationId as a reference if a medication is attached.
         if(reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
@@ -297,7 +297,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 reminder.setIsActive(isActive);
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
-                reminder.setReminderServerId(serverId);
+                reminder.setServerId(serverId);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if(medicationId != 0) {

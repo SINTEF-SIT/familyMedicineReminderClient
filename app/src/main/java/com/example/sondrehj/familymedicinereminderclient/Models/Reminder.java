@@ -42,11 +42,11 @@ public class Reminder implements Serializable {
         this.reminderId = id;
     }
 
-    public int getReminderServerId(){
+    public int getServerId(){
         return reminderServerId;
     }
 
-    public void setReminderServerId(int id) {
+    public void setServerId(int id) {
         this.reminderServerId = id;
     }
 

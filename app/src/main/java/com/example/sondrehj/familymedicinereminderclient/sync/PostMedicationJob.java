@@ -23,13 +23,13 @@ public class PostMedicationJob extends Job {
         super(new Params(PRIORITY)
                 .requireNetwork()
                 .persist());
-        System.out.println("New job posted");
+        System.out.println("New medication job posted");
         this.medication = medication;
         this.userId = userId;
     }
     @Override
     public void onAdded() {
-        System.out.println("Medication added");
+        System.out.println("In medication job's onAdded");
 
         // Job has been saved to disk.
         // This is a good place to dispatch a UI event to indicate the job will eventually run.
@@ -37,8 +37,7 @@ public class PostMedicationJob extends Job {
     }
     @Override
     public void onRun() throws Throwable {
-        System.out.println("In onRun!");
-        System.out.println(Thread.currentThread().toString());
+        System.out.println("In medication onRun!");
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
         Call<Medication> call = api.createMedication(userId, medication);
