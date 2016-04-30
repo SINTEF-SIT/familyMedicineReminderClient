@@ -205,12 +205,13 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 chooseMedicationGroup.setVisibility(View.VISIBLE);
                 chooseDosageGroup.setVisibility(View.VISIBLE);
                 chooseDosageGroup.setEnabled(true);
-                enableMedicationField(true);
+                if (medication != null) {
+                    enableDosageField(true);
+                }
             } else {
                 chooseMedicationGroup.setVisibility(View.GONE);
-                chooseDosageGroup.setVisibility(View.GONE);
-                chooseDosageGroup.setEnabled(false);
                 enableMedicationField(false);
+                enableDosageField(false);
             }
         });
         fillFields();
