@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.accounts.AccountManager;
+import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,11 +18,16 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
-import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
+
+import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.path.android.jobqueue.JobManager;
+import com.path.android.jobqueue.config.Configuration;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,9 +49,12 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     private static final String ARG_MEDICATION = "medication";
     private Medication mMedication;
 
-    @Bind(R.id.medication_storage_medication_input) EditText medicationNameInput;
-    @Bind(R.id.medication_storage_amount_input) EditText medicationAmountInput;
-    @Bind(R.id.medication_storage_unit_input) TextView medicationUnitInput;
+    @Bind(R.id.medication_storage_medication_input)
+    EditText medicationNameInput;
+    @Bind(R.id.medication_storage_amount_input)
+    EditText medicationAmountInput;
+    @Bind(R.id.medication_storage_unit_input)
+    TextView medicationUnitInput;
 
     public MedicationStorageFragment() {
         // Required empty public constructor
@@ -82,7 +92,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         if (mMedication != null) {
             fillTextFields();
             getActivity().setTitle("Edit medication");
@@ -97,7 +107,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     @OnClick(R.id.medication_storage_save_button)
-    public void onMedicationStorageSaveButton () {
+    public void onMedicationStorageSaveButton() {
         if (medicationNameInput.getText().toString().equals("")
                 || medicationAmountInput.getText().toString().equals("")
                 || medicationUnitInput.getText().toString().equals("Click to choose")) {
@@ -114,18 +124,19 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         }
     }
 
-    public void setUnitText(String unit){
+
+    public void setUnitText(String unit) {
         medicationUnitInput.setText(unit);
     }
 
-    public void fillTextFields(){
+    public void fillTextFields() {
         //Fills the TextFields with data from the given medicine object
         medicationNameInput.setText(mMedication.getName());
         medicationAmountInput.setText(Double.toString(mMedication.getCount()));
         medicationUnitInput.setText(mMedication.getUnit());
     }
 
-    public void createNewMedication(){
+    public void createNewMedication() {
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
                 0,
@@ -136,13 +147,16 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                 medicationUnitInput.getText().toString()
         );
 
-        //Adds the new medicine to MedicationListContent
-        //MedicationListFragment.medications.add(0, medication);
-
         // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
+
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        System.out.println("USERID: " + userId);
+
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+
         System.out.println("---------Medication Created---------" + "\n" + medication);
         System.out.println("------------------------------------");
 
@@ -163,5 +177,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     @Override
-    public String getTitle() { return "New medication"; }
+    public String getTitle() {
+        return "New medication";
+    }
 }

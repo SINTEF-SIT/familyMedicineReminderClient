@@ -37,9 +37,17 @@
         </activity>
 
         <receiver android:name=".notification.NotificationPublisher" />
+        <receiver android:name=".sync.DataPublisher" />
 
         <!-- Network connectivity requirement -->
         <receiver android:name=".sync.NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Server connectivity poller -->
+        <receiver android:name=".sync.ServerStatusChangeReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>

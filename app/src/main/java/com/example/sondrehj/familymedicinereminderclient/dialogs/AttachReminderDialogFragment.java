@@ -8,12 +8,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
-import com.example.sondrehj.familymedicinereminderclient.R;
+public class AttachReminderDialogFragment extends DialogFragment {
 
-public class SelectUnitDialogFragment extends DialogFragment {
-
-    private OnUnitDialogResultListener mListener;
-    int selectedItem;
+    private AttachReminderDialogListener mListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -21,16 +18,21 @@ public class SelectUnitDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Set the dialog title
-        builder.setTitle("Select unit")
-                // Set choice items to unit_items array
-                .setItems(R.array.unit_items, new DialogInterface.OnClickListener() {
+        builder.setMessage("Do you want to set a reminder for this medicine?")
+                // Set the action buttons
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        selectedItem = arg1;
-                        mListener.onPositiveUnitDialogResult(selectedItem);
-                        getDialog().dismiss();
+                    public void onClick(DialogInterface dialog, int id) {
+                        mListener.onPositiveAttachReminderDialogResult();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        //nothing happens
                     }
                 });
+
         // Create the AlertDialog object and return it
         return builder.create();
     }
@@ -39,8 +41,8 @@ public class SelectUnitDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnUnitDialogResultListener) {
-            mListener = (OnUnitDialogResultListener) context;
+        if (context instanceof AttachReminderDialogListener) {
+            mListener = (AttachReminderDialogListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -51,15 +53,18 @@ public class SelectUnitDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (activity instanceof OnUnitDialogResultListener) {
-            mListener = (OnUnitDialogResultListener) activity;
+        if (activity instanceof AttachReminderDialogListener) {
+            mListener = (AttachReminderDialogListener) activity;
         } else {
             throw new RuntimeException(activity.toString()
                     + " must implement AttachReminderDialogListener");
         }
     }
 
-    public interface OnUnitDialogResultListener {
-        void onPositiveUnitDialogResult(int unit);
+    public interface AttachReminderDialogListener {
+        void onPositiveAttachReminderDialogResult();
     }
+
 }
+    
+
