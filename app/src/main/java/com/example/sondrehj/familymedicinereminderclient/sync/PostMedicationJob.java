@@ -42,10 +42,11 @@ public class PostMedicationJob extends Job {
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
         Call<Medication> call = api.createMedication(userId, medication);
-        Medication med = call.execute().body();
+        Medication med = call.execute().body(); //medication retrieved from server
         if(med != null) {
             System.out.println(med);
-            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, med));
+            medication.setServerId(med.getServerId());  //To retain the reference to this medication, we add the server id to it
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
         }
         else {
             System.out.println("med returned from server was null");

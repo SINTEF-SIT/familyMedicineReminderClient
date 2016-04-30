@@ -119,6 +119,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
     public void updateMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
+        System.out.println("In update medication SQL " + medication);
 
         //Prepares the statement
         ContentValues values = new ContentValues();

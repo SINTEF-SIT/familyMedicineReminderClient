@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity
     private SyncReceiver syncReceiver;
     NotificationManager manager;
     private NotificationScheduler notificationScheduler;
-    private JobManager jobManager;
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -272,6 +271,13 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public JobManager getJobManager() {
+        Configuration configuration = new Configuration.Builder(this)
+                .networkUtil(new ServerStatusChangeReceiver())
+                .build();
+        return new JobManager(this, configuration);
+    }
+
     /**
      * Handle action bar item clicks here. The action bar will
      * automatically handle clicks on the Home/Up button, so long
@@ -395,14 +401,6 @@ public class MainActivity extends AppCompatActivity
         // TODO: clear all pendingIntents in AlarmManager
         // TODO: wipe server data & account manager
     }
-
-    public JobManager getJobManager() {
-        Configuration configuration = new Configuration.Builder(this)
-                .networkUtil(new ServerStatusChangeReceiver())
-                .build();
-        return new JobManager(this, configuration);
-    }
-
 
     /**
      * Function called by WelcomeFragment to save/add account to the AccountManager and

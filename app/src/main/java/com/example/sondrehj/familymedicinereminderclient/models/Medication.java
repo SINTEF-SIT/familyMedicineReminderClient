@@ -72,7 +72,8 @@ public class Medication implements Serializable {
 
 
     public String toString() {
-        return "ServerID: " + this.serverId + "\n" +
+        return "Med id: " + this.medId + "\n" +
+                "ServerID: " + this.serverId + "\n" +
                 " Name: " + this.name + "\n" +
                 " Count: " + this.count + "\n" +
                 " Unit: " + this.unit;

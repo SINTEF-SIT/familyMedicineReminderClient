@@ -41,13 +41,15 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
             Boolean pollingResult = (Boolean) pollingFuture.get();
 
             currentServerStatus = ServiceManager.isNetworkAvailable(context) && pollingResult;
+            System.out.println("Previous server status: " + previousServerStatus);
+            System.out.println("Current server status: " + currentServerStatus);
         }
         catch (Exception e) {
             System.out.println("Exception " + e.toString());
             currentServerStatus = false;
         }
 
-        if(currentServerStatus != previousServerStatus) {
+        if(currentServerStatus &&  !previousServerStatus) {
             System.out.println("HELLO WORLD");
             Configuration configuration = new Configuration.Builder(context)
                     .networkUtil(this)
@@ -56,8 +58,6 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
 
             listener.onNetworkChange(currentServerStatus);
         }
-        System.out.println("Previous server status: " + previousServerStatus);
-        System.out.println("Current server status: " + currentServerStatus);
         previousServerStatus = currentServerStatus;
     }
 
