@@ -9,6 +9,14 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
+import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
+import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.path.android.jobqueue.network.NetworkEventProvider;
+import com.path.android.jobqueue.network.NetworkUtil;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 /**
  * Created by nikolai on 08/04/16.
@@ -23,15 +31,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 
     // Content provider authority
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient.content";
-    /**
-     * onReceive is triggered when network state changes, it is configured in the AndroidManifest.xml.
-     * When change is noticed, it should trigger a sync in the SyncAdapter framework.
-     * @param context
-     * @param intent
-     */
 
-    //TODO: Fix bug that appears when turning internet on and off (in welcomefragment, but possibly everywhere)
-    @Override
     public void onReceive(Context context, Intent intent) {
         if (ServiceManager.isNetworkAvailable(context)) {
             try {

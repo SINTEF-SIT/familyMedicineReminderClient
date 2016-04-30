@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.accounts.AccountManager;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -17,12 +18,16 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
-import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
+
 import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.path.android.jobqueue.JobManager;
+import com.path.android.jobqueue.config.Configuration;
 
 
 /**
@@ -165,7 +170,13 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
+
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        System.out.println("USERID: " + userId);
+
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+
         System.out.println("---------Medication Created---------" + "\n" + medication);
         System.out.println("------------------------------------");
 

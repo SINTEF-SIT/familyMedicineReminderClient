@@ -2,9 +2,11 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -48,13 +50,19 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.sync.DataPublisher;
+import com.example.sondrehj.familymedicinereminderclient.sync.NetworkChangeReceiver;
+import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.path.android.jobqueue.JobManager;
+import com.path.android.jobqueue.config.Configuration;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -117,8 +125,16 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-
+        //Sets repeating creation of a Job Manager that will check for upload jobs
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+
+        //Creates a polling service that checks for server health
+        Intent serverStatusintent = new Intent(this, ServerStatusChangeReceiver.class);
+        PendingIntent pollingIntent = PendingIntent.getBroadcast(this, -2, serverStatusintent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, pollingIntent);
+
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
@@ -223,6 +239,15 @@ public class MainActivity extends AppCompatActivity
         linkingDialogFragment.show(fm, "linking_request_fragment");
     }
 
+    @Subscribe
+    public void handleMedicationPostedRequest(DataChangedEvent event) {
+        if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
+            Medication medication = (Medication) event.data;
+            System.out.println("Medication about to be saved: " + medication.toString());
+            new MySQLiteHelper(this).updateMedication(medication);
+        }
+    }
+
 
     /**
      * Closes the drawer when the back button is pressed.
@@ -251,6 +276,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    public JobManager getJobManager() {
+        Configuration configuration = new Configuration.Builder(this)
+                .networkUtil(new ServerStatusChangeReceiver())
+                .build();
+        return new JobManager(this, configuration);
     }
 
     /**
@@ -376,7 +408,6 @@ public class MainActivity extends AppCompatActivity
         // TODO: clear all pendingIntents in AlarmManager
         // TODO: wipe server data & account manager
     }
-
 
     /**
      * Function called by WelcomeFragment to save/add account to the AccountManager and
