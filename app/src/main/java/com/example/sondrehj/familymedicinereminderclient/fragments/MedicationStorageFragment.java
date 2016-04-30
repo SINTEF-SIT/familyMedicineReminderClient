@@ -164,9 +164,6 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                 medicationUnit.getText().toString()
         );
 
-        //Adds the new medicine to MedicationListContent
-        //MedicationListFragment.medications.add(0, medication);
-
         // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);

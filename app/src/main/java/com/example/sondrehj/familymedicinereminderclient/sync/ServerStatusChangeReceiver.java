@@ -24,8 +24,8 @@ import retrofit2.Call;
 public class ServerStatusChangeReceiver extends BroadcastReceiver implements NetworkUtil, NetworkEventProvider {
 
     public NetworkEventProvider.Listener listener;
-    private static Boolean previousServerStatus;
-    private static Boolean currentServerStatus;
+    private static Boolean previousServerStatus = false;
+    private static Boolean currentServerStatus = false;
 
     @Override
     public void onReceive(Context context, Intent intent) {
