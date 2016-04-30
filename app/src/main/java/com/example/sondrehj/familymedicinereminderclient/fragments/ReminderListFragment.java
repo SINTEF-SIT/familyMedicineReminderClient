@@ -45,8 +45,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ReminderListFragment() {
-    }
+    public ReminderListFragment() { }
 
 
     @SuppressWarnings("unused")
@@ -73,11 +72,8 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, reminders, mListener));
         }
 
-        view.findViewById(R.id.reminder_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null));
-            }
+        view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->  {
+            ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null));
         });
         return view;
     }

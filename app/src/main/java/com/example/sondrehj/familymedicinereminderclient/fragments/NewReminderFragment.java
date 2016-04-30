@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -68,32 +69,54 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     //TODO: Remove one of the "reminder is active" switches. There's one in Reminder and one in NewReminder
 
-    @Bind(R.id.reminder_edit_group_end_date) LinearLayout endDatePickerGroup;
-    @Bind(R.id.reminder_edit_group_choose_days) LinearLayout chooseDaysPickerGroup;
-    @Bind(R.id.reminder_edit_group_choose_medication) LinearLayout chooseMedicationGroup;
-    @Bind(R.id.reminder_edit_group_choose_dosage) LinearLayout chooseDosageGroup;
+    @Bind(R.id.reminder_edit_group_end_date)
+    LinearLayout endDatePickerGroup;
+    @Bind(R.id.reminder_edit_group_choose_days)
+    LinearLayout chooseDaysPickerGroup;
+    @Bind(R.id.reminder_edit_group_choose_medication)
+    LinearLayout chooseMedicationGroup;
+    @Bind(R.id.reminder_edit_group_choose_dosage)
+    LinearLayout chooseDosageGroup;
 
-    @Bind(R.id.reminder_edit_active_switch) Switch activeSwitch;
-    @Bind(R.id.reminder_edit_medication_switch) Switch attachMedicationSwitch;
-    @Bind(R.id.reminder_edit_repeat_switch) Switch repeatSwitch;
+    @Bind(R.id.reminder_edit_active_switch)
+    Switch activeSwitch;
+    @Bind(R.id.reminder_edit_medication_switch)
+    Switch attachMedicationSwitch;
+    @Bind(R.id.reminder_edit_repeat_switch)
+    Switch repeatSwitch;
 
-    @Bind(R.id.reminder_edit_name_input) EditText nameInput;
-    @Bind(R.id.reminder_edit_date_input) TextView dateInput;
-    @Bind(R.id.reminder_edit_time_input) TextView timeInput;
-    @Bind(R.id.reminder_edit_chosen_end_date) TextView endDateInput;
-    @Bind(R.id.reminder_edit_chosen_medication) TextView attachedMedicationInput;
-    @Bind(R.id.reminder_edit_dosage_text) TextView dosageText;
-    @Bind(R.id.reminder_edit_dosage_input) EditText dosageInput;
-    @Bind(R.id.reminder_edit_dosage_unit) TextView dosageUnit;
+    @Bind(R.id.reminder_edit_name_input)
+    EditText nameInput;
+    @Bind(R.id.reminder_edit_date_input)
+    TextView dateInput;
+    @Bind(R.id.reminder_edit_time_input)
+    TextView timeInput;
+    @Bind(R.id.reminder_edit_chosen_end_date)
+    TextView endDateInput;
+    @Bind(R.id.reminder_edit_chosen_medication)
+    TextView attachedMedicationInput;
+    @Bind(R.id.reminder_edit_dosage_text)
+    TextView dosageText;
+    @Bind(R.id.reminder_edit_dosage_input)
+    EditText dosageInput;
+    @Bind(R.id.reminder_edit_dosage_unit)
+    TextView dosageUnit;
 
     //days of the week if you didn't know - cpt. obvious
-    @Bind(R.id.reminder_edit_chosen_chosen_days_2) TextView Monday;
-    @Bind(R.id.reminder_edit_chosen_chosen_days_3) TextView Tuesday;
-    @Bind(R.id.reminder_edit_chosen_chosen_days_4) TextView Wednesday;
-    @Bind(R.id.reminder_edit_chosen_chosen_days_5) TextView Thursday;
-    @Bind(R.id.reminder_edit_chosen_chosen_days_6) TextView Friday;
-    @Bind(R.id.reminder_edit_chosen_chosen_days_0) TextView Saturday;
-    @Bind(R.id.reminder_edit_chosen_chosen_days_1) TextView Sunday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_2)
+    TextView Monday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_3)
+    TextView Tuesday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_4)
+    TextView Wednesday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_5)
+    TextView Thursday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_6)
+    TextView Friday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_0)
+    TextView Saturday;
+    @Bind(R.id.reminder_edit_chosen_chosen_days_1)
+    TextView Sunday;
     public TextView[] weekDayTextViewArray;
 
     private Reminder reminder;
@@ -147,65 +170,50 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         chooseMedicationGroup.setVisibility(View.GONE);
         chooseDosageGroup.setVisibility(View.GONE);
 
-        repeatSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
-                        if (isChecked) {
-                            endDatePickerGroup.setVisibility(View.VISIBLE);
-                            endDatePickerGroup.setOnClickListener(
-                                    new LinearLayout.OnClickListener() {
-                                        public void onClick(View v) {
-                                            EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
-                                            endDate.show(getFragmentManager(), "endDatePicker");
-                                        }
-                                    });
+        repeatSwitch.setOnCheckedChangeListener((CompoundButton repeatButton, boolean isChecked) -> {
+            if (isChecked) {
+                endDatePickerGroup.setVisibility(View.VISIBLE);
+                endDatePickerGroup.setOnClickListener((View v) -> {
+                    EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
+                    endDate.show(getFragmentManager(), "endDatePicker");
+                });
+                chooseDaysPickerGroup.setVisibility(View.VISIBLE);
+                chooseDaysPickerGroup.setOnClickListener((View v) -> {
+                    if (selectedDays != null) {
 
-                            chooseDaysPickerGroup.setVisibility(View.VISIBLE);
-                            chooseDaysPickerGroup.setOnClickListener(new LinearLayout.OnClickListener() {
-                                public void onClick(View v) {
+                        // Finds the corresponding list index of each item in selectedDays
+                        int[] selectedItems = Converter.selectedDaysToSelectedItems(selectedDays);
 
-                                    if (selectedDays != null) {
-
-                                        // Finds the corresponding list index of each item in selectedDays
-                                        int[] selectedItems = Converter.selectedDaysToSelectedItems(selectedDays);
-
-                                        // Creates a new SelectDaysDialogFragment where the selected days are checked.
-                                        SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
-                                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
-                                    } else {
-                                        SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
-                                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
-                                    }
-                                }
-                            });
-                        } else {
-                            selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
-                            endDatePickerGroup.setVisibility(View.GONE);
-                            chooseDaysPickerGroup.setVisibility(View.GONE);
-                        }
+                        // Creates a new SelectDaysDialogFragment where the selected days are checked.
+                        SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
+                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                    } else {
+                        SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
+                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
                     }
-                }
-        );
+                });
+            } else {
+                selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
+                endDatePickerGroup.setVisibility(View.GONE);
+                chooseDaysPickerGroup.setVisibility(View.GONE);
+            }
+        });
 
-        attachMedicationSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
-                        if (isChecked) {
-                            chooseMedicationGroup.setVisibility(View.VISIBLE);
-                            chooseDosageGroup.setVisibility(View.VISIBLE);
-                            chooseDosageGroup.setEnabled(true);
-                            enableMedicationField(true);
-                            if (medication != null) {
-                                enableDosageField(true);
-                            }
-                        } else {
-                            chooseMedicationGroup.setVisibility(View.GONE);
-                            enableMedicationField(false);
-                            enableDosageField(false);
-                        }
-                    }
+        attachMedicationSwitch.setOnCheckedChangeListener((CompoundButton medicationSwitch, boolean isChecked) -> {
+            if (isChecked) {
+                chooseMedicationGroup.setVisibility(View.VISIBLE);
+                chooseDosageGroup.setVisibility(View.VISIBLE);
+                chooseDosageGroup.setEnabled(true);
+                enableMedicationField(true);
+                if (medication != null) {
+                    enableDosageField(true);
                 }
-        );
+            } else {
+                chooseMedicationGroup.setVisibility(View.GONE);
+                enableMedicationField(false);
+                enableDosageField(false);
+            }
+        });
         fillFields();
         return view;
     }
@@ -300,7 +308,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     public void setBoldOnSelectedDays(int[] selectedDays) {
 
-        for(int i = 0; i < 7; i ++) {
+        for (int i = 0; i < 7; i++) {
             boolean inList = false;
             for (int day : selectedDays) {
                 if (i == day) {
@@ -309,7 +317,8 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                     weekDayTextViewArray[i].setTextColor(Color.GRAY);
                     break;
                 }
-            } if(!inList) {
+            }
+            if (!inList) {
                 weekDayTextViewArray[i].setTypeface(null, Typeface.NORMAL);
                 weekDayTextViewArray[i].setTextColor(Color.parseColor("#DDDDDD"));
             }
@@ -336,11 +345,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
         if (enable) {
             chooseMedicationGroup.setVisibility(View.VISIBLE);
-            chooseMedicationGroup.setOnClickListener(new LinearLayout.OnClickListener() {
-                public void onClick(View v) {
-                    MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
-                    medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
-                }
+            chooseMedicationGroup.setOnClickListener((View v) -> {
+                MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
+                medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
             });
         } else {
             chooseMedicationGroup.setOnClickListener(null);
@@ -627,7 +634,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
