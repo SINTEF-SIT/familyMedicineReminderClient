@@ -9,6 +9,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
+
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -63,6 +64,7 @@ public class PostReminderJob extends Job {
     protected void onCancel() {
         //Here we would normally cancel the request if completion was impossible, but we do not do this
         //Instead we persist the request and try to run it again when the
+
 
     }
 

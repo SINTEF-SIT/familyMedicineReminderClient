@@ -205,14 +205,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 chooseMedicationGroup.setVisibility(View.VISIBLE);
                 chooseDosageGroup.setVisibility(View.VISIBLE);
                 chooseDosageGroup.setEnabled(true);
-                enableMedicationField(true);
-                if (medication != null) {
-                    enableDosageField(true);
-                }
-            } else {
-                chooseMedicationGroup.setVisibility(View.GONE);
-                enableMedicationField(false);
-                enableDosageField(false);
             }
         });
         fillFields();
@@ -346,9 +338,14 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
         if (enable) {
             chooseMedicationGroup.setVisibility(View.VISIBLE);
-            chooseMedicationGroup.setOnClickListener((View v) -> {
-                MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
-                medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
+
+            //TODO: Medication field lacks onClickListener
+            chooseMedicationGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
+                    medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
+                }
             });
         } else {
             chooseMedicationGroup.setOnClickListener(null);
@@ -401,7 +398,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         Reminder reminder = new Reminder();
         reminder.setOwnerId("temp");
         reminder.setName(nameInput.getEditableText().toString());
-
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
 
 
