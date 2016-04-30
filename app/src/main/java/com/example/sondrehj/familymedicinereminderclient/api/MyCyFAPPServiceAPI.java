@@ -5,12 +5,16 @@ import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
+import org.json.JSONArray;
+
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HEAD;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -30,7 +34,7 @@ public interface MyCyFAPPServiceAPI {
     Call<List<Reminder>> getUserReminderList(@Path("userID") String userID);
 
     @POST("user/{userID}/reminder")
-    Call<Reminder> createReminder(@Path("userID") String userID, @Body Reminder reminder);
+    Call<Reminder> createReminder(@Path("userID") char[] userID, @Body Reminder reminder);
 
     @PUT("user/{userID}/reminder/{reminderID}")
     Call<Reminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body Reminder reminder);
@@ -84,4 +88,10 @@ public interface MyCyFAPPServiceAPI {
 
     @POST("user/{userID}/linkingresponse/{response}")
     Call<Message> responseToLinkingRequest(@Path("userID") String userID, @Path("response") String response);
+
+    /**
+     * POLLING REQUESTS
+     */
+    @HEAD("api/polling")
+    Call<Void> sendPollingRequest();
 }

@@ -18,7 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-public class MySQLiteHelper extends SQLiteOpenHelper {
+public class MySQLiteHelper extends SQLiteOpenHelper{
 
     //Database information
     SQLiteDatabase db;

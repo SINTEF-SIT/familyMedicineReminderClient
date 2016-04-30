@@ -2,9 +2,11 @@ package com.example.sondrehj.familymedicinereminderclient;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,13 +49,19 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.sync.DataPublisher;
+import com.example.sondrehj.familymedicinereminderclient.sync.NetworkChangeReceiver;
+import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.path.android.jobqueue.JobManager;
+import com.path.android.jobqueue.config.Configuration;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -68,6 +76,7 @@ public class MainActivity extends AppCompatActivity
     private SyncReceiver syncReceiver;
     NotificationManager manager;
     private NotificationScheduler notificationScheduler;
+    private JobManager jobManager;
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -110,7 +119,21 @@ public class MainActivity extends AppCompatActivity
             changeFragment(new MedicationListFragment());
         }
 
+        //Sets repeating creation of a Job Manager that will check for upload jobs
         manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        //jobManager = getJobManager();
+
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        //Intent intent = new Intent(this, DataPublisher.class);
+        //PendingIntent jobManagerIntent = PendingIntent.getBroadcast(this, -1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //Creates a polling service that checks for server health
+        Intent serverStatusintent = new Intent(this, ServerStatusChangeReceiver.class);
+        PendingIntent pollingIntent = PendingIntent.getBroadcast(this, -2, serverStatusintent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, jobManagerIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, pollingIntent);
+
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
@@ -213,6 +236,15 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fm = getSupportFragmentManager();
         LinkingDialogFragment linkingDialogFragment = new LinkingDialogFragment();
         linkingDialogFragment.show(fm, "linking_request_fragment");
+    }
+
+    @Subscribe
+    public void handleMedicationPostedRequest(DataChangedEvent event) {
+        if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
+            Medication medication = (Medication) event.data;
+            System.out.println("Medication about to be saved: " + medication.toString());
+            new MySQLiteHelper(this).updateMedication(medication);
+        }
     }
 
 
@@ -367,6 +399,13 @@ public class MainActivity extends AppCompatActivity
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
         // TODO: clear all pendingIntents in AlarmManager
         // TODO: wipe server data & account manager
+    }
+
+    public JobManager getJobManager() {
+        Configuration configuration = new Configuration.Builder(this)
+                .networkUtil(new ServerStatusChangeReceiver())
+                .build();
+        return new JobManager(this, configuration);
     }
 
 

@@ -135,6 +135,7 @@ public final class Converter {
     }
 
     public static String dayIndexToDayString(int i) {
+        //TODO: Index out of bounds exception here
         String[] days = {"sun", "mon", "tue", "wed", "thu", "fri", "sat"};
         return days[i];
     }
