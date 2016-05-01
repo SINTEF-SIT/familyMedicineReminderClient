@@ -43,6 +43,47 @@ public class TransportReminder implements Serializable {
         this.days = Converter.daysArrayToDatabaseString(reminder.getDays());
     }
 
+    public int getReminderId() { return reminderId; }
+
+    public void setReminderId(int reminderId) { this.reminderId = reminderId; }
+
+    public int getServerId() { return serverId; }
+
+    public String getOwnerId() { return ownerId; }
+
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
+
+    public String getDate() { return date; }
+
+    public void setDate(String date) { this.date = date; }
+
+    public String getEndDate() { return endDate; }
+
+    public void setEndDate(String endDate) { this.endDate = endDate; }
+
+    public int getMedicine() { return medicine; }
+
+    public void setMedicine(int medicine) { this.medicine = medicine; }
+
+    public Double getDosage() { return dosage; }
+
+    public void setDosage(Double dosage) { this.dosage = dosage; }
+
+    public Boolean getActive() { return isActive; }
+
+    public void setActive(Boolean active) { isActive = active; }
+
+    public String getDays() { return days; }
+
+    public void setDays(String days) { this.days = days; }
+
+
+
+
     public String toString() {
         return  " Transportreminder: " + "\n" +
                 " ServerID: " + serverId + "\n" +

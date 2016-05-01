@@ -1,5 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -32,6 +35,19 @@ public class Reminder implements Serializable {
         setDate(date);
         setIsActive(isActive);
         setDays(days);
+    }
+
+    public Reminder(TransportReminder transportReminder, Medication med) {
+        setServerId(transportReminder.getServerId());
+        setOwnerId(transportReminder.getOwnerId());
+        setName(transportReminder.getName());
+        setDate(Converter.databaseDateStringToCalendar(transportReminder.getDate()));
+        setIsActive(transportReminder.getActive());
+        setDays(Converter.serverDayStringToDayArray(transportReminder.getDays()));
+        if (med != null) {
+            setMedicine(med);
+            setDosage(transportReminder.getDosage());
+        }
     }
 
     public int getReminderId(){

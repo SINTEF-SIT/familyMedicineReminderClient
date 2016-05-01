@@ -50,7 +50,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
         GregorianCalendar cal = mValues.get(position).getDate();
         int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1;
+        int month = cal.get(Calendar.MONTH);
         int date = cal.get(Calendar.DATE);
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int min = cal.get(Calendar.MINUTE);

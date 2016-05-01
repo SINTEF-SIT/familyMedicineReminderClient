@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.utility;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -73,6 +74,26 @@ public final class Converter {
             dayString += day;
         }
         return dayString;
+    }
+
+    public static int[] serverDayStringToDayArray(String dayString) {
+        char[] splitString = dayString.toCharArray();
+        int daysCount = 0;
+        for (char c : splitString) {
+            if (c == '1') daysCount++;
+        }
+        int[] returnArray = new int[daysCount];
+        int currentIndex = 0;
+        for (int i = 0; i <= splitString.length-1; i++) {
+            if (splitString[i] == 1) returnArray[currentIndex++] = i;
+        }
+        return returnArray;
+    }
+
+    public static String dayArrayToServerDayString(int[] dayArray) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i : dayArray) stringBuilder.append(i);
+        return stringBuilder.toString();
     }
 
     public static int[] selectedDaysToSelectedItems(int[] selectedDays) {

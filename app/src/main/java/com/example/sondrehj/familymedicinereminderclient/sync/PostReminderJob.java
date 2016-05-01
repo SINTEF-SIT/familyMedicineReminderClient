@@ -54,6 +54,7 @@ public class PostReminderJob extends Job {
         TransportReminder transportReminder = call.execute().body();
         if(transportReminder != null) {
             reminder.updateFromTransportReminder(transportReminder);
+            System.out.println(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERSENT, reminder));
         }
         else {

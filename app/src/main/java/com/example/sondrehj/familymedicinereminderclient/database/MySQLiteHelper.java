@@ -236,6 +236,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
         // Prepares the statement
         ContentValues values = new ContentValues();
+        values.put(COLUMN_REMINDER_SERVER_ID, reminder.getServerId());
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
         values.put(COLUMN_REMINDER_DATE, dateString);
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
@@ -313,6 +314,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         cursor.close();
         db.close();
         return data;
+    }
+
+    public Medication getSingleMedication(int medId) {
+        String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_ID + " = " + medId;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            int serverId = cursor.getInt(1);
+            String ownerId = cursor.getString(2);
+            String name = cursor.getString(3);
+            Double count = cursor.getDouble(4);
+            String unit = cursor.getString(5);
+            return new Medication(id, serverId, ownerId, name, count, unit);
+        }
+        return null;
     }
 
     public void deleteReminder(Reminder reminder) {

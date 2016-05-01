@@ -32,16 +32,16 @@ public interface MyCyFAPPServiceAPI {
      *
      **/
     @GET("user/{userID}/reminder")
-    Call<List<Reminder>> getUserReminderList(@Path("userID") String userID);
+    Call<List<TransportReminder>> getUserReminderList(@Path("userID") String userID);
 
     @POST("user/{userID}/reminder")
     Call<TransportReminder> createReminder(@Path("userID") String userID, @Body TransportReminder reminder);
 
     @PUT("user/{userID}/reminder/{reminderID}")
-    Call<Reminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body Reminder reminder);
+    Call<TransportReminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body TransportReminder reminder);
 
     @DELETE("user/{userID}/reminder/{reminderID}")
-    Call<Reminder> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
+    Call<TransportReminder> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
 
     /**
      *

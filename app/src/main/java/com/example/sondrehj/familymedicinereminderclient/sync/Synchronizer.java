@@ -3,14 +3,19 @@ package com.example.sondrehj.familymedicinereminderclient.sync;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
@@ -40,39 +45,61 @@ public class Synchronizer {
     }
 
     public Boolean syncReminders() {
-        Call<List<Reminder>> call = restApi.getUserReminderList(userToSync);
-        call.enqueue(new Callback<List<Reminder>>() {
+        Call<List<TransportReminder>> call = restApi.getUserReminderList(userToSync);
+        call.enqueue(new Callback<List<TransportReminder>>() {
             @Override
-            public void onResponse(Call<List<Reminder>> call, Response<List<Reminder>> response) {
+            public void onResponse(Call<List<TransportReminder>> call, Response<List<TransportReminder>> response) {
                 System.out.println("In syncreminders");
                 ArrayList<Reminder> dbReminders = db.getReminders();
-                for (Reminder serverReminder : response.body()) {
+                for (TransportReminder serverReminder : response.body()) {
 
-                    System.out.println("in add reminder");
-                    db.addReminder(serverReminder);
-
-                    /*boolean changed = false;
+                    Boolean updated = false;
                     for (Reminder dbReminder : dbReminders) {
+                        System.out.println("DBReminder serverID: " + dbReminder.getServerId());
+                        System.out.println("Server reminder ID: " + serverReminder.getServerId());
 
                         // If the two have the same server ID, we know they are the same, and we request
                         // an update. If we made a change, we want to move on to the next serverReminder.
-                        if (serverReminder.getReminderServerId() == dbReminder.getReminderServerId()) {
+                        if (serverReminder.getServerId() == dbReminder.getServerId()) {
+                            System.out.println("Comparing" + serverReminder.getServerId() + " : " + dbReminder.getServerId());
+                            dbReminder.updateFromTransportReminder(serverReminder);
                             dbReminder.setName(serverReminder.getName());
-                            dbReminder.setDate(Converter.databaseDateStringToCalendar(serverReminder.getDateString()));
-                            dbReminder.setEndDate(Converter.databaseDateStringToCalendar(serverReminder.getEndDateString()));
-                            dbReminder.setMedicine(serverReminder.getMedicine());
+                            dbReminder.setDate(Converter.databaseDateStringToCalendar(serverReminder.getDate()));
+                            System.out.println("ENd date: " + serverReminder.getEndDate());
+                            if(! serverReminder.getEndDate().equals("0")) {
+                                dbReminder.setEndDate(Converter.databaseDateStringToCalendar(serverReminder.getEndDate()));
+                            } else {
+                                dbReminder.setEndDate(null);
+                            }
+                            dbReminder.setMedicine(new MySQLiteHelper(context).getSingleMedication(serverReminder.getReminderId()));
                             dbReminder.setDosage(serverReminder.getDosage());
-                            dbReminder.setIsActive(serverReminder.getIsActive());
+                            dbReminder.setIsActive(serverReminder.getActive());
                             db.updateReminder(dbReminder);
-                            changed = true;
+                            updated = true;
                         }
-                        if (changed) continue;
-                    }*/
+                    }
+                    if(!updated) {
+                        System.out.println("not updated ");
+                        Medication med = null;
+                        if (serverReminder.getMedicine() <= 0) {
+                            med = db.getSingleMedication(serverReminder.getMedicine());
+                        }
+                        db.addReminder(new Reminder(serverReminder, med));
+                    }
                 }
+
+                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+                System.out.println("Finished db, sending intent");
+                Intent intent = new Intent();
+                intent.setAction("mycyfapp");
+                intent.putExtra("action", "syncReminders");
+                context.sendBroadcast(intent);
+
+                Toast.makeText(context, "Synchronization finished!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onFailure(Call<List<Reminder>> call, Throwable t) {
+            public void onFailure(Call<List<TransportReminder>> call, Throwable t) {
                 System.out.println("Could not retrieve reminders: " + t.getMessage());
             }
         });
