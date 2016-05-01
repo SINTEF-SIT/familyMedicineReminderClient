@@ -2,6 +2,7 @@ package com.example.sondrehj.familymedicinereminderclient.models;
 
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class TransportReminder implements Serializable {
 
@@ -40,5 +41,17 @@ public class TransportReminder implements Serializable {
         }
         this.isActive = reminder.isActive;
         this.days = Converter.daysArrayToDatabaseString(reminder.getDays());
+    }
+
+    public String toString() {
+        return  " Transportreminder: " + "\n" +
+                " ServerID: " + serverId + "\n" +
+                " Name: " + name + "\n" +
+                " Date: " + date  + "\n" +
+                " End-date: " + endDate + "\n" +
+                " Days: " + days + "\n" +
+                " Active: " + isActive + "\n" +
+                " Medication: " + medicine + "\n" +
+                " Dosage: " + dosage + "\n";
     }
 }

@@ -48,10 +48,11 @@ public class PostReminderJob extends Job {
     public void onRun() throws Throwable {
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Call<TransportReminder> call = api.createReminder(userId, new TransportReminder(reminder));
+        TransportReminder transReminder = new TransportReminder(reminder);
+        System.out.println(transReminder);
+        Call<TransportReminder> call = api.createReminder(userId, transReminder);
         TransportReminder transportReminder = call.execute().body();
         if(transportReminder != null) {
-            System.out.println(transportReminder);
             reminder.updateFromTransportReminder(transportReminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERSENT, reminder));
         }
