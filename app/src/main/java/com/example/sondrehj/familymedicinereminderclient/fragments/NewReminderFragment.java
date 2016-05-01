@@ -14,8 +14,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.EndDatePickerFragment;
@@ -26,7 +28,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputValidator;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
-import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputActions;
+import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputConverter;
 
 
 import java.util.ArrayList;
@@ -89,6 +91,8 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     private int[] selectedDays;
     protected Activity mActivity;
     private String currentStartDate;
+    public static final String REMINDER_UPDATE = "reminder-update";
+    public static final String REMINDER_INSERT = "reminder-insert";
     private static final String CONTINUOUS_END_DATE = "Continuous";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -232,7 +236,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     public void createReminder() {
 
-        NewReminderInputActions vr = new NewReminderInputActions(getActivity());
+        NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         Reminder reminder = vr.CreateReminderFromInput(
                 nameInput, dateInput, timeInput,
                 medication, attachMedicationSwitch,
@@ -240,13 +244,13 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 endDateInput, activeSwitch);
 
         //Add reminder to database
-        vr.executeDatabaseReminderAction(reminder, NewReminderInputActions.REMINDER_INSERT);
+        executeDatabaseReminderAction(reminder, REMINDER_INSERT);
         mListener.onSaveNewReminder(reminder);
     }
 
     public void updateReminder() {
 
-        NewReminderInputActions vr = new NewReminderInputActions(getActivity());
+        NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         reminder = vr.UpdateReminderFromInput(
                 nameInput, dateInput, timeInput,
                 medication, attachMedicationSwitch,
@@ -254,7 +258,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 endDateInput, activeSwitch, reminder);
 
         // Update existing reminder in database
-        vr.executeDatabaseReminderAction(reminder, NewReminderInputActions.REMINDER_UPDATE);
+        executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
         mListener.onSaveNewReminder(reminder);
     }
 
@@ -340,6 +344,26 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         currentStartDate = date;
         dateInput.setText(date);
         timeInput.setText(time);
+    }
+
+    public boolean executeDatabaseReminderAction(Reminder r, String action){
+
+        MySQLiteHelper db = new MySQLiteHelper(getActivity());
+        String toastText;
+        switch (action){
+            case REMINDER_INSERT:
+                db.addReminder(r);
+                toastText = "Reminder created";
+                break;
+            case REMINDER_UPDATE:
+                db.updateReminder(r);
+                toastText = "Reminder updated";
+                break;
+            default:
+                return false;
+        }
+        Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+        return true;
     }
 
     public void enableDosageField(boolean enable) {

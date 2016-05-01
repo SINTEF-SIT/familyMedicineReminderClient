@@ -16,14 +16,12 @@ import java.util.GregorianCalendar;
 /**
  * Created by sondre on 30/04/2016.
  */
-public class NewReminderInputActions {
+public class NewReminderInputConverter {
 
     private static final String CONTINUOUS_END_DATE = "Continuous";
-    public static final String REMINDER_UPDATE = "reminder-update";
-    public static final String REMINDER_INSERT = "reminder-insert";
     Activity activity;
 
-    public NewReminderInputActions(Activity activity){
+    public NewReminderInputConverter(Activity activity){
         this.activity = activity;
     }
 
@@ -133,27 +131,4 @@ public class NewReminderInputActions {
 
         return reminder;
     }
-
-
-    public boolean executeDatabaseReminderAction(Reminder r, String action){
-
-        MySQLiteHelper db = new MySQLiteHelper(activity);
-        String toastText;
-        switch (action){
-            case REMINDER_INSERT:
-                db.addReminder(r);
-                toastText = "Reminder created";
-                break;
-            case REMINDER_UPDATE:
-                db.updateReminder(r);
-                toastText = "Reminder updated";
-                break;
-            default:
-                return false;
-        }
-        Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();
-        return true;
-    }
-
-
 }
