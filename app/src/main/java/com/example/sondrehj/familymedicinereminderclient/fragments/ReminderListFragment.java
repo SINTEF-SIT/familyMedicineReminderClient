@@ -61,7 +61,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        reminders.addAll(mListener.onGetReminders());
+        reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
     }
 
     @Override
@@ -187,6 +187,5 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         void onReminderListItemClicked(Reminder reminder);
         void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
-        List<Reminder> onGetReminders();
     }
 }

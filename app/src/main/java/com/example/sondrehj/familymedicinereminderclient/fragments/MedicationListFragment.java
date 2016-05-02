@@ -83,7 +83,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        medications.addAll(mListener.onGetMedications());
+        medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
     }
 
     @Override
@@ -184,6 +184,5 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     public interface OnListFragmentInteractionListener {
         void onMedicationListFragmentInteraction(Medication medication);
-        List<Medication> onGetMedications();
     }
 }

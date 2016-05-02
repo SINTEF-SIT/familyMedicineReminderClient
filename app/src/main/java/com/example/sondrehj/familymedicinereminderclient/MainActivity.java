@@ -532,17 +532,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public List<Medication> onGetMedications() {
-        return new MySQLiteHelper(this).getMedications();
-    }
-
-    @Override
-    public List<Reminder> onGetReminders(){
-        return new MySQLiteHelper(this).getReminders();
-    }
-
-
-    @Override
     public void onSaveNewReminder(Reminder r) {
 
         if (r.getIsActive()) {
