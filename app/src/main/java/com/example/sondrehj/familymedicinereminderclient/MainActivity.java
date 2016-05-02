@@ -65,13 +65,19 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity
+        extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         NewReminderFragment.OnNewReminderInteractionListener,
-        ReminderListFragment.OnReminderListFragmentInteractionListener, MedicationListFragment.OnListFragmentInteractionListener,
-        TimePickerFragment.TimePickerListener, DatePickerFragment.DatePickerListener, SelectUnitDialogFragment.OnUnitDialogResultListener,
+        ReminderListFragment.OnReminderListFragmentInteractionListener,
+        MedicationListFragment.OnListFragmentInteractionListener,
+        WelcomeFragment.OnWelcomeListener,
+        TimePickerFragment.TimePickerListener,
+        DatePickerFragment.DatePickerListener,
+        SelectUnitDialogFragment.OnUnitDialogResultListener,
         SelectDaysDialogFragment.OnDaysDialogResultListener,
-        EndDatePickerFragment.EndDatePickerListener, MedicationPickerFragment.OnMedicationPickerDialogResultListener, WelcomeFragment.OnWelcomeListener,
+        EndDatePickerFragment.EndDatePickerListener,
+        MedicationPickerFragment.OnMedicationPickerDialogResultListener,
         AttachReminderDialogFragment.AttachReminderDialogListener {
 
     private static String TAG = "MainActivity";
@@ -82,10 +88,10 @@ public class MainActivity extends AppCompatActivity
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
      * layout activity_main in res. The fragment container which resides in the contentView is
-     * changed to "MediciationListFragment()" with the changeFragment() function call.
-     * <p/>
+     * changed to "MedicationListFragment()" with the changeFragment() function call.
+     *
      * In addition, the Sidebar/Drawer is instantiated.
-     * <p/>
+     *
      * Portrait mode is enforced because if the screen is rotated you loose a lot of references
      * when the instance is redrawn.
      *
@@ -536,7 +542,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onSaveNewReminder(Reminder r) {
-
         if (r.getIsActive()) {
             // Schedule the notification
             notificationScheduler.scheduleNotification(

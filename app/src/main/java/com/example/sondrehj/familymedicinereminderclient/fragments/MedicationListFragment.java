@@ -105,7 +105,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
         ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
-
     }
 
     @Override

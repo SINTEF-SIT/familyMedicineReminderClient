@@ -7,18 +7,19 @@ import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import retrofit2.Call;
 
-public class PostMedicationJob extends Job {
-    private static String TAG = "PostMedicationJob";
+public class PutSettingsJob extends Job {
+    private static String TAG = "PutSettingsJob";
     private static final int PRIORITY = 1;
-    private Medication medication;
+    private String gracePeriod;
     private String userId;
 
-    public PostMedicationJob(Medication medication, String userId) {
+    public PutSettingsJob(String userId, String gracePeriod) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
 
@@ -26,13 +27,12 @@ public class PostMedicationJob extends Job {
                 .requireNetwork()
                 .persist());
         Log.d(TAG, "New Job posted.");
-        this.medication = medication;
         this.userId = userId;
+        this.gracePeriod = gracePeriod;
     }
 
     @Override
     public void onAdded() {
-        Log.d(TAG, "Medication added.");
 
         // Job has been saved to disk.
         // This is a good place to dispatch a UI event to indicate the job will eventually run.
@@ -45,16 +45,8 @@ public class PostMedicationJob extends Job {
         Log.d(TAG, Thread.currentThread().toString());
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Call<Medication> call = api.createMedication(userId, medication);
-        Medication med = call.execute().body(); //medication retrieved from server
-        if(med != null) {
-            System.out.println(med);
-            medication.setServerId(med.getServerId());  //To retain the reference to this medication, we add the server id to it
-            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
-        }
-        else {
-            Log.d(TAG, "Medication returned from the server was null.");
-        }
+        Call<User> call = api.setGracePeriod(userId, gracePeriod);
+        call.execute(); //synchronous call
     }
 
     @Override
@@ -70,5 +62,4 @@ public class PostMedicationJob extends Job {
     protected void onCancel() {
         // Job has exceeded retry attempts or shouldReRunOnThrowable() has returned false.
     }
-
 }
