@@ -268,7 +268,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         if (cursor.moveToFirst()) {
             do {
                 int id = cursor.getInt(0);
-                String ownerId = "test";
+                String ownerId = cursor.getString(1);
                 String name = cursor.getString(2);
                 String dateString = cursor.getString(3);
                 boolean isActive = cursor.getInt(4) > 0;
@@ -316,8 +316,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         return data;
     }
 
-    public Medication getSingleMedication(int medId) {
-        String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_ID + " = " + medId;
+    public Medication getSingleMedicationByServerID(int medId) {
+        String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {

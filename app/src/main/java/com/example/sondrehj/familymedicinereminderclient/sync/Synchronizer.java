@@ -53,6 +53,17 @@ public class Synchronizer {
                 ArrayList<Reminder> dbReminders = db.getReminders();
                 for (TransportReminder serverReminder : response.body()) {
 
+                    //If a reminder is attached to an unsynced medication, we request that the user sync medications first
+                    System.out.println("Getting med dependency: " + serverReminder.getMedicine());
+                    Medication medDependency = new MySQLiteHelper(context).getSingleMedicationByServerID(serverReminder.getMedicine());
+                    System.out.println("Got med dependency: " + medDependency);
+                    if(medDependency == null) {
+                        Toast.makeText(context, "Some of the reminders need medications that are not yet synchronized. " +
+                                "Please synchronize medcations first", Toast.LENGTH_SHORT).show();
+                        //We do not return, but merely continue to the next reminder
+                        continue;
+                    }
+
                     Boolean updated = false;
                     for (Reminder dbReminder : dbReminders) {
                         System.out.println("DBReminder serverID: " + dbReminder.getServerId());
@@ -61,6 +72,7 @@ public class Synchronizer {
                         // If the two have the same server ID, we know they are the same, and we request
                         // an update. If we made a change, we want to move on to the next serverReminder.
                         if (serverReminder.getServerId() == dbReminder.getServerId()) {
+                            dbReminder.setMedicine(medDependency);
                             System.out.println("Comparing" + serverReminder.getServerId() + " : " + dbReminder.getServerId());
                             dbReminder.updateFromTransportReminder(serverReminder);
                             dbReminder.setName(serverReminder.getName());
@@ -71,7 +83,7 @@ public class Synchronizer {
                             } else {
                                 dbReminder.setEndDate(null);
                             }
-                            dbReminder.setMedicine(new MySQLiteHelper(context).getSingleMedication(serverReminder.getReminderId()));
+
                             dbReminder.setDosage(serverReminder.getDosage());
                             dbReminder.setIsActive(serverReminder.getActive());
                             db.updateReminder(dbReminder);
@@ -80,11 +92,7 @@ public class Synchronizer {
                     }
                     if(!updated) {
                         System.out.println("not updated ");
-                        Medication med = null;
-                        if (serverReminder.getMedicine() <= 0) {
-                            med = db.getSingleMedication(serverReminder.getMedicine());
-                        }
-                        db.addReminder(new Reminder(serverReminder, med));
+                        db.addReminder(new Reminder(serverReminder, medDependency));
                     }
                 }
 
@@ -95,7 +103,7 @@ public class Synchronizer {
                 intent.putExtra("action", "syncReminders");
                 context.sendBroadcast(intent);
 
-                Toast.makeText(context, "Synchronization finished!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Reminders synchronized!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -103,7 +111,7 @@ public class Synchronizer {
                 System.out.println("Could not retrieve reminders: " + t.getMessage());
             }
         });
-        return false;
+        return true;
     }
 
     public Boolean syncMedications() {
@@ -137,7 +145,7 @@ public class Synchronizer {
                 intent.putExtra("action", "syncMedications");
                 context.sendBroadcast(intent);
 
-                Toast.makeText(context, "Synchronization finished!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Medications synchronized!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -147,9 +155,4 @@ public class Synchronizer {
         });
         return true;
     }
-
-    private void scheduleUpload(Medication medication) {
-        System.out.println("Upload scheduled");
-    }
-
 }
