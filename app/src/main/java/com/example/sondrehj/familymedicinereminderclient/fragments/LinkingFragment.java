@@ -253,6 +253,6 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
 
     @Override
     public String getTitle() {
-        return "Linking";
+        return "Settings";
     }
 }
