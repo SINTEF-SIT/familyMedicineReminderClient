@@ -64,7 +64,7 @@ public class NewReminderInputConverter {
             }
         }
         reminder.setIsActive(activeSwitch.isChecked());
-        reminder.setReminderServerId(-1);
+        reminder.setServerId(-1);
         System.out.println("----------Reminder Created----------" + "\n" + reminder);
         System.out.println("------------------------------------");
         return reminder;

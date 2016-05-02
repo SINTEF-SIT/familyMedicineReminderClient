@@ -49,6 +49,12 @@ public class SyncReceiver extends BroadcastReceiver {
                 System.out.println("posted datachanged event");
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
             }
+
+            if (action.equals("syncReminders")) {
+                System.out.println("posted datachanged event");
+                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+            }
+
             if (action.equals("medicationSent")) {
                 System.out.println("posted medication");
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT));

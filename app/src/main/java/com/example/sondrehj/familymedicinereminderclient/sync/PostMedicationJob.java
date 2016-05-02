@@ -33,7 +33,6 @@ public class PostMedicationJob extends Job {
     @Override
     public void onAdded() {
         Log.d(TAG, "Medication added.");
-
         // Job has been saved to disk.
         // This is a good place to dispatch a UI event to indicate the job will eventually run.
         // In this example, it would be good to update the UI with the newly posted tweet.
@@ -70,5 +69,4 @@ public class PostMedicationJob extends Job {
     protected void onCancel() {
         // Job has exceeded retry attempts or shouldReRunOnThrowable() has returned false.
     }
-
 }

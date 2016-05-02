@@ -249,11 +249,19 @@ public class MainActivity
     public void handleMedicationPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
             Medication medication = (Medication) event.data;
-            System.out.println("Medication about to be saved: " + medication.toString());
+            System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
         }
     }
 
+    @Subscribe
+    public void handleReminderPostedRequest(DataChangedEvent event) {
+        if (event.type.equals(DataChangedEvent.REMINDERSENT)) {
+            Reminder reminder = (Reminder) event.data;
+            System.out.println("Reminder about to be saved: " + reminder);
+            new MySQLiteHelper(this).updateReminder(reminder);
+        }
+    }
 
     /**
      * Closes the drawer when the back button is pressed.
@@ -528,17 +536,6 @@ public class MainActivity
         Fragment fragment = MedicationStorageFragment.newInstance(medication);
         changeFragment(fragment);
     }
-
-    @Override
-    public List<Medication> onGetMedications() {
-        return new MySQLiteHelper(this).getMedications();
-    }
-
-    @Override
-    public List<Reminder> onGetReminders(){
-        return new MySQLiteHelper(this).getReminders();
-    }
-
 
     @Override
     public void onSaveNewReminder(Reminder r) {

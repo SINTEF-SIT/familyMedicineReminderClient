@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -16,7 +17,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
@@ -25,6 +29,8 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPicke
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.sync.PostReminderJob;
+
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputValidator;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
@@ -136,65 +142,50 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         // Hide layouts which are opened with switches.
         chooseMedicationGroup.setVisibility(View.GONE);
         chooseDosageGroup.setVisibility(View.GONE);
+        repeatSwitch.setOnCheckedChangeListener((CompoundButton repeatButton, boolean isChecked) -> {
+            if (isChecked) {
+                endDatePickerGroup.setVisibility(View.VISIBLE);
+                endDatePickerGroup.setOnClickListener((View v) -> {
+                    EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
+                    endDate.show(getFragmentManager(), "endDatePicker");
+                });
+                chooseDaysPickerGroup.setVisibility(View.VISIBLE);
+                chooseDaysPickerGroup.setOnClickListener((View v) -> {
+                    if (selectedDays != null) {
 
-        endDatePickerGroup.setOnClickListener(
-                new LinearLayout.OnClickListener() {
-                    public void onClick(View v) {
-                        EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
-                        endDate.show(getFragmentManager(), "endDatePicker");
+                        // Finds the corresponding list index of each item in selectedDays
+                        int[] selectedItems = Converter.selectedDaysToSelectedItems(selectedDays);
+
+                        // Creates a new SelectDaysDialogFragment where the selected days are checked.
+                        SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
+                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                    } else {
+                        SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
+                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
                     }
                 });
-
-        chooseDaysPickerGroup.setOnClickListener(new LinearLayout.OnClickListener() {
-            public void onClick(View v) {
-
-                if (selectedDays != null) {
-                    // Finds the corresponding list index of each item in selectedDays
-                    int[] selectedItems = Converter.selectedDaysToSelectedItems(selectedDays);
-                    // Creates a new SelectDaysDialogFragment where the selected days are checked.
-                    SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
-                    selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
-                } else {
-                    SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
-                    selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
-                }
+            } else {
+                selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
+                endDatePickerGroup.setVisibility(View.GONE);
+                chooseDaysPickerGroup.setVisibility(View.GONE);
             }
         });
 
-        repeatSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton repeatButton, boolean isChecked) {
-                        if (isChecked) {
-                            endDatePickerGroup.setVisibility(View.VISIBLE);
-                            chooseDaysPickerGroup.setVisibility(View.VISIBLE);
-                        } else {
-                            selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
-                            endDatePickerGroup.setVisibility(View.GONE);
-                            chooseDaysPickerGroup.setVisibility(View.GONE);
-                        }
-                    }
+        attachMedicationSwitch.setOnCheckedChangeListener((CompoundButton medicationSwitch, boolean isChecked) -> {
+            if (isChecked) {
+                chooseMedicationGroup.setVisibility(View.VISIBLE);
+                chooseDosageGroup.setVisibility(View.VISIBLE);
+                chooseDosageGroup.setEnabled(true);
+                enableMedicationField(true);
+                if (medication != null) {
+                    enableDosageField(true);
                 }
-        );
-
-        attachMedicationSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    public void onCheckedChanged(CompoundButton medicationSwitch, boolean isChecked) {
-                        if (isChecked) {
-                            chooseMedicationGroup.setVisibility(View.VISIBLE);
-                            chooseDosageGroup.setVisibility(View.VISIBLE);
-                            chooseDosageGroup.setEnabled(true);
-                            enableMedicationField(true);
-                            if (medication != null) {
-                                enableDosageField(true);
-                            }
-                        } else {
-                            chooseMedicationGroup.setVisibility(View.GONE);
-                            enableMedicationField(false);
-                            enableDosageField(false);
-                        }
-                    }
-                }
-        );
+            } else {
+                chooseMedicationGroup.setVisibility(View.GONE);
+                enableMedicationField(false);
+                enableDosageField(false);
+            }
+        });
         fillFields();
         return view;
     }
@@ -361,6 +352,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         }
         Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
         return true;
+
     }
 
     public void enableDosageField(boolean enable) {
@@ -383,7 +375,10 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
         if (enable) {
             chooseMedicationGroup.setVisibility(View.VISIBLE);
-            chooseMedicationGroup.setOnClickListener(new LinearLayout.OnClickListener() {
+
+            //TODO: Medication field lacks onClickListener
+            chooseMedicationGroup.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View v) {
                     MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
                     medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
@@ -418,6 +413,66 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public void setTimeOnLayout(int hour, int minute) {
         String timeSet = String.format("%02d:%02d", hour, minute);
         timeInput.setText(timeSet);
+    }
+
+    private boolean validateDateAndTime() {
+
+        if (!dateInput.getText().toString().equals("")) {
+
+            GregorianCalendar setDate = Converter.dateStringToCalendar(
+                    dateInput.getText().toString(),
+                    timeInput.getText().toString()
+            );
+            //TODO: If you want to edit something on a reminder, this validation deny you from saving it, if the date is back in time
+            Calendar currentDate = Calendar.getInstance();
+            if (setDate.before(currentDate)) {
+                Toast toast = Toast.makeText(getActivity(), "Chosen date and time is before today's date", Toast.LENGTH_LONG);
+                toast.show();
+                return false;
+            } else {
+                return true;
+            }
+        }
+        Toast toast = Toast.makeText(getActivity(), "Date field is empty", Toast.LENGTH_LONG);
+        toast.show();
+        return false;
+    }
+
+    private boolean validateEndDate() {
+        if (repeatSwitch.isChecked()) {
+            if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
+
+                // End date
+                GregorianCalendar endCal = Converter.dateStringToCalendar(
+                        endDateInput.getText().toString(),
+                        timeInput.getText().toString()
+                );
+
+                // Start date
+                GregorianCalendar setDate = Converter.dateStringToCalendar(
+                        dateInput.getText().toString(),
+                        timeInput.getText().toString()
+                );
+
+                if (endCal.before(setDate)) {
+                    Toast toast = Toast.makeText(getActivity(), "Chosen end date is before start date", Toast.LENGTH_LONG);
+                    toast.show();
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        }
+        return true;
+    }
+
+    private boolean validateName() {
+        if (nameInput.getText().toString().equals("")) {
+            Toast toast = Toast.makeText(getActivity(), "Please enter a reminder name", Toast.LENGTH_LONG);
+            toast.show();
+            return false;
+        }
+        return true;
     }
 
     public void setDateOnLayout(int year, int month, int day) {
