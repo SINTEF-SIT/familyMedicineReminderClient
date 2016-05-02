@@ -1,6 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
@@ -17,10 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
@@ -29,7 +25,6 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPicke
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.sync.PostReminderJob;
 
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputValidator;

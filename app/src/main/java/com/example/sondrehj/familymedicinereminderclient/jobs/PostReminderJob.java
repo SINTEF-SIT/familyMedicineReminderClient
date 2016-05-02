@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.sync;
+package com.example.sondrehj.familymedicinereminderclient.jobs;
 
 import android.renderscript.RenderScript;
 
