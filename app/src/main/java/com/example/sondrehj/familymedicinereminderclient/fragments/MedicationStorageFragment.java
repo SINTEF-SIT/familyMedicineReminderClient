@@ -1,16 +1,13 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.AccountManager;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,15 +16,11 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 
-import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
-import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
-import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.config.Configuration;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -137,11 +130,13 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     public void createNewMedication() {
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+
         //Creates a new Medication object with the values of the input-fields
         Medication medication = new Medication(
                 0,
                 -1,
-                "786#13%",
+                userId, //TODO: Changed from hardcoded value, check for bugs.
                 medicationNameInput.getText().toString(),
                 Double.parseDouble(medicationAmountInput.getText().toString()),
                 medicationUnitInput.getText().toString()
@@ -150,9 +145,6 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
-
-        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
-        System.out.println("USERID: " + userId);
 
         ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));

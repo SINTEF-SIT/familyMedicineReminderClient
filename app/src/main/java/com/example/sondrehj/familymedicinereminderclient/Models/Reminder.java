@@ -1,5 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -10,7 +13,7 @@ import java.util.GregorianCalendar;
  */
 public class Reminder implements Serializable {
     int reminderId;
-    int reminderServerId;
+    int serverId;
     String ownerId;
     String name;
     GregorianCalendar date;
@@ -34,6 +37,19 @@ public class Reminder implements Serializable {
         setDays(days);
     }
 
+    public Reminder(TransportReminder transportReminder, Medication med) {
+        setServerId(transportReminder.getServerId());
+        setOwnerId(transportReminder.getOwnerId());
+        setName(transportReminder.getName());
+        setDate(Converter.databaseDateStringToCalendar(transportReminder.getDate()));
+        setIsActive(transportReminder.getActive());
+        setDays(Converter.serverDayStringToDayArray(transportReminder.getDays()));
+        if (med != null) {
+            setMedicine(med);
+            setDosage(transportReminder.getDosage());
+        }
+    }
+
     public int getReminderId(){
         return reminderId;
     }
@@ -42,12 +58,12 @@ public class Reminder implements Serializable {
         this.reminderId = id;
     }
 
-    public int getReminderServerId(){
-        return reminderServerId;
+    public int getServerId(){
+        return serverId;
     }
 
-    public void setReminderServerId(int id) {
-        this.reminderServerId = id;
+    public void setServerId(int id) {
+        this.serverId = id;
     }
 
     public String getOwnerId() {
@@ -103,6 +119,7 @@ public class Reminder implements Serializable {
     public int[] getDays() { return days; }
 
     public String getDateString(){
+        System.out.println(date);
         int hour = date.get(Calendar.HOUR_OF_DAY);
         int minute = date.get(Calendar.MINUTE);
         int year = date.get(Calendar.YEAR);
@@ -132,6 +149,7 @@ public class Reminder implements Serializable {
     public String toString() {
 
         String reminder_string =
+                "ServerID: " + getServerId() + "\n" +
                 " Name: " + getName() + "\n" +
                 " Date: " + getDateString()  + "\n" +
                 " End-date: " + getEndDateString() + "\n" +
@@ -142,5 +160,10 @@ public class Reminder implements Serializable {
                     " Dosage: " + getDosage() + "\n";
         }
         return reminder_string;
+    }
+
+    public void updateFromTransportReminder(TransportReminder transportReminder) {
+        this.serverId = transportReminder.serverId;
+        //Add other things as necessary
     }
 }
