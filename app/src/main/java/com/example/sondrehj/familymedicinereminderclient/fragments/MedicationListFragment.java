@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
+
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -109,7 +110,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
         ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
-
     }
 
     @Override

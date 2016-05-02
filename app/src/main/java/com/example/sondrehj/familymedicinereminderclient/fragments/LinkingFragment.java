@@ -124,6 +124,7 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
         Account account = MainActivity.getAccount(context); //Fetches the user account
 
         Log.d(TAG, "sendlinkingrequest userID: " + account.name);
+
         Call<Message> call = api.sendLinkingRequest(account.name, idToLinkWith);
         call.enqueue(new Callback<Message>() {
             /**

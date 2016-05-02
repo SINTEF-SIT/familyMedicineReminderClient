@@ -32,30 +32,23 @@ import butterknife.OnClick;
 import retrofit2.Call;
 
 import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.sync.PutSettingsJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
-
-
-/**
- * TODO: Send user preferences to the server.
- *
- */
 public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
 
     //private boolean busIsRegistered;
     private static String TAG = "AccountAdministrationFragment";
     private Context context;
 
-    @Bind(R.id.account_group_personal) LinearLayout personalGroup;
     @Bind(R.id.account_group_personal_year) LinearLayout personalYearGroup;
-    @Bind(R.id.account_group_general) LinearLayout generalGroup;
     @Bind(R.id.account_group_guardian) LinearLayout guardianGroup;
     @Bind(R.id.account_group_sync) LinearLayout syncGroup;
 
-    @Bind(R.id.account_personal_year_input) EditText yearInput;
     @Bind(R.id.account_personal_reminder_switch) Switch reminderSwitch;
-
     @Bind(R.id.account_general_notification_switch) Switch notificationSwitch;
+
     @Bind(R.id.account_general_snooze_minutes_value) TextView snoozeMinuteValue;
     @Bind(R.id.account_general_snooze_minutes_text) TextView snoozeMinuteText;
     @Bind(R.id.account_general_snooze_seekbar) SeekBar snoozeSeekBar;
@@ -63,9 +56,6 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
     @Bind(R.id.account_guardian_grace_minutes_value) TextView graceMinuteValue;
     @Bind(R.id.account_guardian_grace_minutes_text) TextView graceMinuteText;
     @Bind(R.id.account_guardian_grace_seekbar) SeekBar graceSeekBar;
-
-    @Bind(R.id.account_settings_save_button) Button saveButton;
-    @Bind(R.id.account_delete_data_button) Button deleteDataButton;
 
     public AccountAdministrationFragment() {
         // Required empty public constructor
@@ -88,17 +78,15 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account_administration, container, false);
         ButterKnife.bind(this, view);
-
 
         Account account = MainActivity.getAccount(context); //Gets a reference to the account.
         String userRole = AccountManager.get(context)
                 .getUserData(account, "userRole"); // Gets the userRole of the specified account.
 
-        Log.d(TAG, "The users (" + account.name + ") role equals: " + userRole +
+        Log.d(TAG, "The user (" + account.name + ") role equals: " + userRole +
                 ". Hiding elements belonging to the opposite role.");
 
         snoozeSeekBar.setMax(29); //set maximum value of seek bar.
@@ -170,23 +158,35 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
         daf.show(fm, "delete");
     }
 
+    /**
+     * Persist user settings in SharedPreferences and add a Job that guarantees that the gracePeriod
+     * will be sent to the server sometime when there is internet.
+     *
+     * @return boolean
+     */
     public boolean updateAccountInformation() {
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("AccountSettings",
                 Context.MODE_PRIVATE).edit();
         editor.putBoolean("reminderSwitch", reminderSwitch.isChecked()) ;
         editor.putBoolean("notificationSwitch", notificationSwitch.isChecked());
         editor.putInt("snoozeDelay", Integer.parseInt(snoozeMinuteValue.getText().toString()));
-        Log.d("t", "" + Integer.parseInt(snoozeMinuteValue.getText().toString()));
-        if (graceMinuteValue.getVisibility() == View.GONE){
+        if (!(guardianGroup.getVisibility() == View.GONE)){
+            Account account = MainActivity.getAccount(getActivity());
             editor.putInt("gracePeriod", Integer.parseInt(graceMinuteValue.getText().toString()));
-            MyCyFAPPServiceAPI api = RestService.createRestService();
-            Call<User> call = api.setGracePeriod(MainActivity.getAccount(context).name,
-                    graceMinuteValue.getText().toString());
+            ((MainActivity) getActivity())
+                    .getJobManager()
+                    .addJobInBackground( //guarantees that this job will be done sometime when there is internet.
+                            new PutSettingsJob(account.name, graceMinuteValue.getText().toString())
+                    );
         }
-        editor.apply();
+        editor.apply(); //save shared preferences
         return true;
     }
 
+    /**
+     * Fills the field with the settings from SharedPreferences. Default settings are
+     * set in MainActivity.
+     */
     public void fillTextFields() {
         SharedPreferences prefs = getActivity().getSharedPreferences("AccountSettings",
                 Context.MODE_PRIVATE);
@@ -251,6 +251,6 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
 
     @Override
     public String getTitle() {
-        return "Linking";
+        return "Settings";
     }
 }
