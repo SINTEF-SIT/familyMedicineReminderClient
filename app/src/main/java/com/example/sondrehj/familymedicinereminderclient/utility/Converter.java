@@ -67,11 +67,11 @@ public final class Converter {
 
     public static String daysArrayToDatabaseString(int[] days){
         if (days.length == 0) {
-            return "0000000";
+            return "0;0;0;0;0;0;0";
         }
         String dayString = "";
         for (int day : days) {
-            dayString += day;
+            dayString += day + ";";
         }
         return dayString;
     }
@@ -102,25 +102,25 @@ public final class Converter {
         for (int i = 0; i < selectedDays.length; i++) {
             switch (selectedDays[i]) {
                 case 0:
-                    selectedItems[i] = 5;
-                    break;
-                case 1:
                     selectedItems[i] = 6;
                     break;
-                case 2:
+                case 1:
                     selectedItems[i] = 0;
                     break;
-                case 3:
+                case 2:
                     selectedItems[i] = 1;
                     break;
-                case 4:
+                case 3:
                     selectedItems[i] = 2;
                     break;
-                case 5:
+                case 4:
                     selectedItems[i] = 3;
                     break;
-                case 6:
+                case 5:
                     selectedItems[i] = 4;
+                    break;
+                case 6:
+                    selectedItems[i] = 5;
                     break;
             }
         }
@@ -128,7 +128,7 @@ public final class Converter {
     }
 
     public static String daysArrayToSelectedDaysText(int[] reminder_days) {
-        String[] days_abb = new String[]{"Sa", "Su", "Mo", "Tu", "We", "Th", "Fr"};
+        String[] days_abb = new String[]{"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
         String[] reminder_days_abb = new String[reminder_days.length];
         String s = "";
         if (reminder_days.length >= 1) {

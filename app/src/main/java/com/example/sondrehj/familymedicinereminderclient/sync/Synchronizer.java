@@ -83,9 +83,9 @@ public class Synchronizer {
                             } else {
                                 dbReminder.setEndDate(null);
                             }
-
                             dbReminder.setDosage(serverReminder.getDosage());
                             dbReminder.setIsActive(serverReminder.getActive());
+                            dbReminder.setDays(Converter.serverDayStringToDayArray(serverReminder.getDays()));
                             db.updateReminder(dbReminder);
                             updated = true;
                         }
