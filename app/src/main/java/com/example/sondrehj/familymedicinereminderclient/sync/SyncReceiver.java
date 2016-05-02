@@ -39,6 +39,11 @@ public class SyncReceiver extends BroadcastReceiver {
                 BusService.getBus().post(new LinkingRequestEvent());
             }
             if (action.equals("notifyPositiveResultToLinkingFragment")) {
+                String patientID = extras.getString("patientID");
+
+                //TODO: Alias-dialog.
+                //TODO: Save patientID to Database.
+
                 BusService.getBus().post(new LinkingResponseEvent("positiveResponse"));
             }
             if (action.equals("notifyNegativeResultToLinkingFragment")) {

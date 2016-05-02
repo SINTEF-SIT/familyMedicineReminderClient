@@ -46,7 +46,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-
 /**
  * A simple {} subclass.
  * Activities that contain this fragment must implement the
@@ -187,6 +186,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             }
         });
         fillFields();
+        if (reminder != null) {
+            getActivity().setTitle("Edit reminder");
+        }
         return view;
     }
 
@@ -522,7 +524,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     @Override
     public String getTitle() {
-        return "New Reminders";
+        return "New reminder";
     }
 
     public interface OnNewReminderInteractionListener {
