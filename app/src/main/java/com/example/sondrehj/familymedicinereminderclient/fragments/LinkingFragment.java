@@ -125,6 +125,8 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
 
         Log.d(TAG, "sendlinkingrequest userID: " + account.name);
 
+
+
         Call<Message> call = api.sendLinkingRequest(account.name, idToLinkWith);
         call.enqueue(new Callback<Message>() {
             /**
@@ -179,6 +181,8 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
             statusText.setText("The patient have successfully been linked to this guardian account!");
             int color = Color.parseColor("#388E3C");
             statusIcon.setColorFilter(color);
+
+
         } else {
             statusText.setText("The patient has denied the linking request.");
             int color = Color.parseColor("#FFBF360C");
@@ -254,6 +258,6 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
 
     @Override
     public String getTitle() {
-        return "Linking";
+        return "Settings";
     }
 }

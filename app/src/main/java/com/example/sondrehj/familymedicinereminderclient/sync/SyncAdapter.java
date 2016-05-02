@@ -48,6 +48,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(TAG, "Sync is performing");
 
         String notificationType = extras.getString("notificationType");
+        String optionalData = extras.getString("optionalData");
         MyCyFAPPServiceAPI api = RestService.createRestService();
         MySQLiteHelper db = new MySQLiteHelper(getContext());
 
@@ -73,6 +74,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     Intent intent1 = new Intent();
                     intent1.setAction("mycyfapp");
                     intent1.putExtra("action", "notifyPositiveResultToLinkingFragment");
+                    intent1.putExtra("patientID", optionalData);
                     context.sendBroadcast(intent1);
                     break;
                 case "negativeLinkingResponse":
