@@ -69,7 +69,7 @@ public interface MyCyFAPPServiceAPI {
     @PUT("user/{userID}/token/{token}")
     Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);
 
-    @PUT("user/{userID}/guardian/{gracePeriod}")
+    @PUT("user/{userID}/settings/{gracePeriod}")
     Call<User> setGracePeriod(@Path("userID") String userID, @Path("gracePeriod") String gracePeriod);
 
 
