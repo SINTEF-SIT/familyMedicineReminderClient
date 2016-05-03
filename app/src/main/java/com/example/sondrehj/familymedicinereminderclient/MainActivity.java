@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity
             editor.putInt("gracePeriod", 30);// 30 minutes
             editor.putBoolean("reminderSwitch", true);
             editor.putBoolean("notificationSwitch", true);
+            editor.putString("create_user_secret", "createSecretToChangeLater");
             editor.apply();
         }
 
@@ -424,7 +425,7 @@ public class MainActivity extends AppCompatActivity
      */
 
     @Override
-    public void OnNewAccountCreated(String userId, String password, String userRole) {
+    public void OnNewAccountCreated(String userId, String password, String userRole, String jwtToken) {
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
         AccountManager manager = AccountManager.get(this);
         boolean saved = manager.addAccountExplicitly(newAccount, password, null);
@@ -432,8 +433,8 @@ public class MainActivity extends AppCompatActivity
             manager.setUserData(newAccount, "passtoken", password);
             manager.setUserData(newAccount, "userId", userId);
             manager.setUserData(newAccount, "userRole", userRole);
-            System.out.println(newAccount.toString());
-            System.out.println(AccountManager.get(getApplicationContext()).getUserData(newAccount, "userRole"));
+            manager.setUserData(newAccount, "authToken", jwtToken);
+            Log.d(TAG, "New account" + newAccount.toString());
         }
 
         //Enables drawer and menu-button

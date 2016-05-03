@@ -1,9 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.accounts.AccountManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.path.android.jobqueue.JobManager;
@@ -27,11 +29,15 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
     private static Boolean previousServerStatus = false;
     private static Boolean currentServerStatus = false;
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+
         try {
             Future pollingFuture = Executors.newFixedThreadPool(1).submit(() -> {
-                    MyCyFAPPServiceAPI api = RestService.createRestService();
+                    MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
                     Call<Void> call = api.sendPollingRequest();
                     Boolean result = call.clone().execute().isSuccessful();
                     System.out.println("Poll result: " + result);

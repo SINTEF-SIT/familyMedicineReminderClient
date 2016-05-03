@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -9,6 +10,7 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -47,11 +49,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         Log.d(TAG, "Sync is performing");
 
+
+        String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         String notificationType = extras.getString("notificationType");
-        MyCyFAPPServiceAPI api = RestService.createRestService();
         MySQLiteHelper db = new MySQLiteHelper(getContext());
 
         Synchronizer synchronizer = new Synchronizer(account.name, api, db, context);
+        Intent intent = new Intent();
         if (notificationType != null) {
             switch (notificationType) {
                 case "remindersChanged":
@@ -63,24 +68,21 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 case "linkingRequest":
                     Log.d(TAG, "in switch -> linkingRequest");
                     //incoming linking request from push notification
-                    Intent intent = new Intent();
                     intent.setAction("mycyfapp"); //not action, but filter.
                     intent.putExtra("action", "open_dialog");
                     context.sendBroadcast(intent);
                     break;
                 case "positiveLinkingResponse":
                     Log.d(TAG, "in switch -> positiveLinkingResponse");
-                    Intent intent1 = new Intent();
-                    intent1.setAction("mycyfapp");
-                    intent1.putExtra("action", "notifyPositiveResultToLinkingFragment");
-                    context.sendBroadcast(intent1);
+                    intent.setAction("mycyfapp");
+                    intent.putExtra("action", "notifyPositiveResultToLinkingFragment");
+                    context.sendBroadcast(intent);
                     break;
                 case "negativeLinkingResponse":
                     Log.d(TAG, "in switch -> negativeLinkingResponse");
-                    Intent intent2 = new Intent();
-                    intent2.setAction("mycyfapp");
-                    intent2.putExtra("action", "notifyNegativeResultToLinkingFragment");
-                    context.sendBroadcast(intent2);
+                    intent.setAction("mycyfapp");
+                    intent.putExtra("action", "notifyNegativeResultToLinkingFragment");
+                    context.sendBroadcast(intent);
                     break;
             }
         } else {

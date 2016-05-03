@@ -42,7 +42,6 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     private OnReminderListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
     private List<Reminder> reminders = new ArrayList<>();
-    private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
     private SwipeRefreshLayout swipeContainer;
 
     /**
