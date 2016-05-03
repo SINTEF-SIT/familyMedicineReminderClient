@@ -22,8 +22,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
+import android.view.View;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
@@ -47,6 +51,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialo
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -55,13 +60,17 @@ import com.example.sondrehj.familymedicinereminderclient.sync.NetworkChangeRecei
 import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.example.sondrehj.familymedicinereminderclient.utility.UserSpinnerToggle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.squareup.otto.Subscribe;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -78,6 +87,8 @@ public class MainActivity extends AppCompatActivity
     private SyncReceiver syncReceiver;
     NotificationManager manager;
     private NotificationScheduler notificationScheduler;
+    private User2 currentUser;
+    public UserSpinnerToggle userSpinnerToggle;
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -105,7 +116,6 @@ public class MainActivity extends AppCompatActivity
         //get the accountmanager
         Account account = MainActivity.getAccount(this);
 
-
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
             changeFragment(new WelcomeFragment());
@@ -122,7 +132,8 @@ public class MainActivity extends AppCompatActivity
             toggle.setDrawerIndicatorEnabled(true);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
-
+            String id = AccountManager.get(this).getUserData(getAccount(this), "userId");
+            currentUser = new User2(id, "Test user");
         }
 
         //Sets repeating creation of a Job Manager that will check for upload jobs
@@ -134,7 +145,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, ServerStatusChangeReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, -2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, pendingIntent);
-
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
@@ -154,11 +164,17 @@ public class MainActivity extends AppCompatActivity
             editor.apply();
         }
 
-        System.out.println(getIntent().toString());
-
         // The items inside the grey area of the drawer.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Some test data for userSpinner
+        MySQLiteHelper db = new MySQLiteHelper(this);
+        db.addUser(new User2("#002", "Test user 2"));
+
+        // Toggles the select user spinner in drawer_header.xml
+        Spinner userSpinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.menu_user_spinner);
+        this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);
 
         //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -203,6 +219,8 @@ public class MainActivity extends AppCompatActivity
         IntentFilter intentFilter = new IntentFilter("mycyfapp");
         registerReceiver(syncReceiver, intentFilter);
     }
+
+
 
     /**
      * Unregister the activity from the bus.
@@ -275,6 +293,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        TextView menuUserTextView = (TextView) menu.findItem(R.id.action_user).getActionView().findViewById(R.id.menu_user_text);
+        userSpinnerToggle.setUserActioBarTextView(menuUserTextView);
+        userSpinnerToggle.toggle();
         return true;
     }
 
@@ -298,7 +319,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_user) {
             return true;
         }
 
@@ -451,6 +472,13 @@ public class MainActivity extends AppCompatActivity
         changeFragment(new MedicationListFragment());
     }
 
+    public void setCurrentUser(User2 user){
+        this.currentUser = user;
+    }
+    public User2 getCurrentUser(){
+        return this.currentUser;
+    }
+
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
         NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
@@ -532,7 +560,6 @@ public class MainActivity extends AppCompatActivity
     public List<Reminder> onGetReminders(){
         return new MySQLiteHelper(this).getReminders();
     }
-
 
     @Override
     public void onSaveNewReminder(Reminder r) {

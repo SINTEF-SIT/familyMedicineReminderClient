@@ -61,10 +61,18 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     @Subscribe
     public void handleMedicationsChangedEvent(DataChangedEvent event) {
+
         if(event.type.equals(DataChangedEvent.MEDICATIONS)) {
-            System.out.println("In handle data changed event");
             medications.clear();
             medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+            MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+            if (fragment != null) {
+                fragment.notifyChanged();
+            }
+        }
+        if (event.type.equals(DataChangedEvent.MEDICATIONS_BY_OWNERID)) {
+            medications.clear();
+            medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
             if (fragment != null) {
                 fragment.notifyChanged();

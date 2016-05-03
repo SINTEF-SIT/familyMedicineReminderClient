@@ -16,6 +16,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
@@ -241,7 +242,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 nameInput, dateInput, timeInput,
                 medication, attachMedicationSwitch,
                 dosageInput, repeatSwitch, selectedDays,
-                endDateInput, activeSwitch);
+                endDateInput, activeSwitch, ((MainActivity) getActivity()).getCurrentUser());
 
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
@@ -255,7 +256,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 nameInput, dateInput, timeInput,
                 medication, attachMedicationSwitch,
                 dosageInput, repeatSwitch, selectedDays,
-                endDateInput, activeSwitch, reminder);
+                endDateInput, activeSwitch, reminder, ((MainActivity) getActivity()).getCurrentUser());
 
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);

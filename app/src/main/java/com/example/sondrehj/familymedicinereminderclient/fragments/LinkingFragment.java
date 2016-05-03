@@ -178,6 +178,7 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
             statusText.setText("The patient have successfully been linked to this guardian account!");
             int color = Color.parseColor("#388E3C");
             statusIcon.setColorFilter(color);
+            //TODO: Add patient to database
         } else {
             statusText.setText("The patient has denied the linking request.");
             int color = Color.parseColor("#FFBF360C");

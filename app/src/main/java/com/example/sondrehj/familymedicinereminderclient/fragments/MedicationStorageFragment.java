@@ -138,10 +138,14 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
     public void createNewMedication() {
         //Creates a new Medication object with the values of the input-fields
+
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        System.out.println("USERID: " + userId);
+
         Medication medication = new Medication(
                 0,
                 -1,
-                "786#13%",
+                ((MainActivity)getActivity()).getCurrentUser().getUserId(),
                 medicationNameInput.getText().toString(),
                 Double.parseDouble(medicationAmountInput.getText().toString()),
                 medicationUnitInput.getText().toString()
@@ -151,11 +155,8 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
 
-        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
-        System.out.println("USERID: " + userId);
-
         ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS_BY_OWNERID));
 
         System.out.println("---------Medication Created---------" + "\n" + medication);
         System.out.println("------------------------------------");
