@@ -29,7 +29,7 @@ public class MyGcmListenerService extends GcmListenerService {
         String optionalData = data.getString("data");
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Notification type: " + notificationType);
-        Log.d(TAG, "Data (optional)" + data);
+        Log.d(TAG, "Data (optional): " + optionalData);
 
 
         final Intent notificationIntent = new Intent(this, MainActivity.class);
