@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.jobs;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
@@ -15,8 +16,9 @@ public class PostMedicationJob extends Job {
 
     private Medication medication;
     private String userId;
+    private String authToken;
 
-    public PostMedicationJob(Medication medication, String userId) {
+    public PostMedicationJob(Medication medication, String userId, String authToken) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
 
@@ -26,6 +28,7 @@ public class PostMedicationJob extends Job {
         System.out.println("New medication job posted");
         this.medication = medication;
         this.userId = userId;
+        this.authToken = authToken;
     }
     @Override
     public void onAdded() {
@@ -39,7 +42,7 @@ public class PostMedicationJob extends Job {
     public void onRun() throws Throwable {
         System.out.println("In medication onRun!");
 
-        MyCyFAPPServiceAPI api = RestService.createRestService();
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         Call<Medication> call = api.createMedication(userId, medication);
         Medication med = call.execute().body(); //medication retrieved from server
         if(med != null) {
