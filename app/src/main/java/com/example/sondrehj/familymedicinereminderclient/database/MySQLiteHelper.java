@@ -219,20 +219,24 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
     }
 
     public void updateReminder(Reminder reminder) {
+        System.out.println("In updatereminder");
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Converts the reminder date to a string on the format year;month;day;hour;min
         String dateString = Converter.calendarToDatabaseString(reminder.getDate());
+        System.out.println("Datestring: " + dateString);
 
         // Converts the reminder int[] days to a string on the format day1;day2;..;
         String dayString = Converter.daysArrayToDatabaseString(reminder.getDays());
+        System.out.println("Daystring: " + dayString);
 
         // Converts the reminder endDate to a string on the format year;month;day;hour;min
         String endDateString = "0";
         if(reminder.getEndDate() != null) {
             endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
         }
+        System.out.println("EndDateString: " + endDateString);
 
         // Prepares the statement
         ContentValues values = new ContentValues();
@@ -242,6 +246,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
+        System.out.println("Values: " + values);
         // We store the medicationId as a reference if a medication is attached.
         if(reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());

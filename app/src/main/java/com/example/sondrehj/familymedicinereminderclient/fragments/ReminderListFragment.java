@@ -80,9 +80,9 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, reminders, mListener));
         }
 
-        view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->  {
-            ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null));
-        });
+        view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->
+            ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null))
+        );
         return view;
     }
 
@@ -94,10 +94,10 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
             if (fragment != null) {
-                fragment.notifyChanged();
-            }
-            if (swipeContainer != null) {
-                swipeContainer.setRefreshing(false);
+                getActivity().runOnUiThread(() -> {
+                    fragment.notifyChanged();
+                    swipeContainer.setRefreshing(false);
+                });
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.sync;
+package com.example.sondrehj.familymedicinereminderclient.jobs;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;

@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient.sync;
+package com.example.sondrehj.familymedicinereminderclient.jobs;
 
 import android.renderscript.RenderScript;
 
@@ -6,6 +6,7 @@ import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
@@ -18,14 +19,14 @@ import retrofit2.Call;
 /**
  * Created by Eirik on 30.04.2016.
  */
-public class PostReminderJob extends Job {
+public class UpdateReminderJob extends Job {
     private static final int PRIORITY = 1;
 
     private Reminder reminder;
     private String userId;
-    private String authToken;
+    private TransportReminder preSendTransportReminder;
 
-    public PostReminderJob(Reminder reminder, String userId, String authToken) {
+    public UpdateReminderJob(Reminder reminder, String userId) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
 
@@ -35,13 +36,13 @@ public class PostReminderJob extends Job {
         System.out.println("New reminder job posted");
         this.reminder = reminder;
         this.userId = userId;
-        this.authToken = authToken;
+        this.preSendTransportReminder = new TransportReminder(reminder);
+
     }
 
     @Override
     public void onAdded() {
         System.out.println("In reminder job's onAdded");
-        System.out.println(reminder);
         // Job has been saved to disk. This means that the job is persisted and the application can fail without
         // consequence for the job queue.
     }
@@ -49,12 +50,12 @@ public class PostReminderJob extends Job {
     @Override
     public void onRun() throws Throwable {
 
-        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
-        TransportReminder transReminder = new TransportReminder(reminder);
-        System.out.println(transReminder);
-        Call<TransportReminder> call = api.createReminder(userId, transReminder);
+        MyCyFAPPServiceAPI api = RestService.createRestService();
+        System.out.println("Transreminder before sending: " + preSendTransportReminder);
+        Call<TransportReminder> call = api.updateReminder(userId, String.valueOf(preSendTransportReminder.getServerId()), preSendTransportReminder);
         TransportReminder transportReminder = call.execute().body();
         if(transportReminder != null) {
+            System.out.println("Received transportreminder: " + transportReminder);
             reminder.updateFromTransportReminder(transportReminder);
             System.out.println(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERSENT, reminder));

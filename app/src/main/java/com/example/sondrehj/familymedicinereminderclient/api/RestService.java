@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -23,6 +22,7 @@ public class RestService {
     private static Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create());
+
 
     /**
      * Create an instance of the retrofit class which is instantiated with

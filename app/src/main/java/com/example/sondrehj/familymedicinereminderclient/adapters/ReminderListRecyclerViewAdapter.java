@@ -22,7 +22,6 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Reminder} and makes a call to the
  * specified {@link OnReminderListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<ReminderListRecyclerViewAdapter.ViewHolder> {
 
@@ -47,6 +46,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         holder.mReminder = mValues.get(position);
         holder.mNameView.setText(mValues.get(position).getName());
         holder.mSwitch.setChecked(mValues.get(position).getIsActive());
+        holder.mServerIdText.setText(mValues.get(position).getServerId()+"");
 
         GregorianCalendar cal = mValues.get(position).getDate();
         int year = cal.get(Calendar.YEAR);
@@ -64,7 +64,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
                         + ". " + Converter.monthIndexToMonthString(month) + ".";
 
         // Text for a repeating reminder
-        if(holder.mReminder.getDays().length > 0){
+        if(holder.mReminder.getDays().length > 0) {
             if(holder.mReminder.getEndDate().get((Calendar.YEAR)) == 9998) {
                 holder.mDateText.setText("Continuous");
             } else {
@@ -81,34 +81,23 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         }
 
 
-        holder.mSwitch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (null != mListener) {
-                    mListener.onReminderListSwitchClicked(holder.mReminder);
-                }
+        holder.mSwitch.setOnClickListener((View v) -> {
+            if (null != mListener) {
+                mListener.onReminderListSwitchClicked(holder.mReminder);
             }
         });
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onReminderListItemClicked(holder.mReminder);
-                }
+        holder.mView.setOnClickListener((View v) -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onReminderListItemClicked(holder.mReminder);
             }
         });
 
-        holder.mDeleteWrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                remove(holder.getAdapterPosition());
-                mListener.onReminderDeleteButtonClicked(holder.mReminder);
-            }
+        holder.mDeleteWrapper.setOnClickListener((View v) -> {
+            remove(holder.getAdapterPosition());
+            mListener.onReminderDeleteButtonClicked(holder.mReminder);
         });
     }
 
@@ -122,7 +111,6 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         notifyItemRemoved(position);
     }
 
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mNameView;
@@ -131,6 +119,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         public final TextView mDateText;
         public final FrameLayout mDeleteWrapper;
         public final TextView mDaysText;
+        public final TextView mServerIdText;
         public Reminder mReminder;
 
         public ViewHolder(View view) {
@@ -142,6 +131,8 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             mDateText = (TextView) view.findViewById(R.id.reminder_item_date_text);
             mDeleteWrapper = (FrameLayout) view.findViewById(R.id.delete_wrapper);
             mDaysText = (TextView) view.findViewById(R.id.days_text);
+            mServerIdText = (TextView) view.findViewById(R.id.server_id_text);
+
         }
 
         @Override
