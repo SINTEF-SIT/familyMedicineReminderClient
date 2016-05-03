@@ -87,6 +87,12 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         return view;
     }
 
+    public void deleteReminder(Reminder reminder, int position){
+        reminders.remove(reminder);
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
+        recView.getAdapter().notifyItemRemoved(position);
+    }
+
     @Subscribe
     public void handleRemindersChangedEvent(DataChangedEvent event) {
         if(event.type.equals(DataChangedEvent.REMINDERS)) {

@@ -26,6 +26,8 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.RowSetEvent;
+
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -105,6 +107,12 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
         }
         return view;
+    }
+
+    public void deleteMedcation(Medication med, int position){
+        medications.remove(med);
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
+        recView.getAdapter().notifyItemRemoved(position);
     }
 
     @OnClick(R.id.new_medication_fab)

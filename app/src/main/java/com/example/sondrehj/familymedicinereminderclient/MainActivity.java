@@ -24,12 +24,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
@@ -50,8 +51,6 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.sync.DataPublisher;
-import com.example.sondrehj.familymedicinereminderclient.sync.NetworkChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
@@ -63,7 +62,6 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 public class MainActivity
         extends AppCompatActivity
@@ -78,7 +76,9 @@ public class MainActivity
         SelectDaysDialogFragment.OnDaysDialogResultListener,
         EndDatePickerFragment.EndDatePickerListener,
         MedicationPickerFragment.OnMedicationPickerDialogResultListener,
-        AttachReminderDialogFragment.AttachReminderDialogListener {
+        AttachReminderDialogFragment.AttachReminderDialogListener,
+        DeleteMedicationDialogFragment.DeleteMedicationDialogListener,
+        DeleteReminderDialogFragment.DeleteReminderDialogListener {
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
@@ -597,5 +597,21 @@ public class MainActivity
     @Override
     public void onPositiveAttachReminderDialogResult() {
         changeFragment(NewReminderFragment.newInstance(null));
+    }
+
+    @Override
+    public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
+        new MySQLiteHelper(this).deleteMedication(medication);
+        MedicationListFragment medicationListFragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+        medicationListFragment.deleteMedcation(medication, position);
+
+        //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+    }
+
+    @Override
+    public void onPositiveDeleteReminderDialogResult(Reminder reminder, int position) {
+        new MySQLiteHelper(this).deleteReminder(reminder);
+        ReminderListFragment reminderListFragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
+        reminderListFragment.deleteReminder(reminder, position);
     }
 }
