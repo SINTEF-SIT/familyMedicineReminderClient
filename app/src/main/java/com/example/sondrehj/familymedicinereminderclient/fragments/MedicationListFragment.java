@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 
+import android.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
