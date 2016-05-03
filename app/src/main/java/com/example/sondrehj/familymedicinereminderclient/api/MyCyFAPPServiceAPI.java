@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.api;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import org.json.JSONArray;
@@ -26,26 +27,23 @@ import retrofit2.http.Path;
  */
 public interface MyCyFAPPServiceAPI {
     /**
-     *
      * REMINDER REQUESTS
-     *
      **/
     @GET("user/{userID}/reminder")
-    Call<List<Reminder>> getUserReminderList(@Path("userID") String userID);
+    Call<List<TransportReminder>> getUserReminderList(@Path("userID") String userID);
 
     @POST("user/{userID}/reminder")
-    Call<Reminder> createReminder(@Path("userID") char[] userID, @Body Reminder reminder);
+    Call<TransportReminder> createReminder(@Path("userID") String userID, @Body TransportReminder reminder);
 
     @PUT("user/{userID}/reminder/{reminderID}")
-    Call<Reminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body Reminder reminder);
+    Call<TransportReminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body TransportReminder reminder);
 
     @DELETE("user/{userID}/reminder/{reminderID}")
-    Call<Reminder> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
+    Call<TransportReminder> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
+
 
     /**
-     *
      * MEDICATION REQUESTS
-     *
      **/
     @GET("user/{userID}/medication")
     Call<List<Medication>>getUserMedicationList(@Path("userID") String userID);
@@ -59,12 +57,9 @@ public interface MyCyFAPPServiceAPI {
     @DELETE("user/{userID}/medication/{medicationID}")
     Call<Medication> deleteMedication(@Path("userID") String userID, @Path("medicationID") String medicationID);
 
-    //https://developers.google.com/cloud-messaging/network-manager#schedule_a_persistent_task
 
     /**
-     *
      * USER REQUESTS
-     *
      **/
     @GET("user/{userID}/children")
     Call<User> getChildren(@Path("userID") String userID);
@@ -72,22 +67,22 @@ public interface MyCyFAPPServiceAPI {
     @POST("user")
     Call<User> createUser(@Body User user);
 
-    @POST("user/{userID}/token/{token}")
+    @PUT("user/{userID}/token/{token}")
     Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);
 
-    @PUT("user/{userID}/guardian/{gracePeriod}")
+    @PUT("user/{userID}/settings/{gracePeriod}")
     Call<User> setGracePeriod(@Path("userID") String userID, @Path("gracePeriod") String gracePeriod);
 
+
     /**
-     *
      * LINKING REQUESTS
-     *
      */
     @POST("user/{userID}/linking/{withID}")
     Call<Message> sendLinkingRequest(@Path("userID") String userID, @Path("withID") String withID);
 
     @POST("user/{userID}/linkingresponse/{response}")
     Call<Message> responseToLinkingRequest(@Path("userID") String userID, @Path("response") String response);
+
 
     /**
      * POLLING REQUESTS

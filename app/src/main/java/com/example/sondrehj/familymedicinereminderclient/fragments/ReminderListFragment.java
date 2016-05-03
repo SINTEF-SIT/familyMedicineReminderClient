@@ -1,9 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,22 +33,23 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.
  */
-public class ReminderListFragment extends android.app.Fragment implements TitleSupplier {
+public class ReminderListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Animation is not triggering when you go to reminder view
 
+    //TODO: On Android 4.1, frequency days are showing even when the reminder is one-time
+
     private OnReminderListFragmentInteractionListener mListener;
-
     private Boolean busIsRegistered = false;
-
     private List<Reminder> reminders = new ArrayList<>();
+    private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
+    private SwipeRefreshLayout swipeContainer;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ReminderListFragment() {
-    }
+    public ReminderListFragment() { }
 
 
     @SuppressWarnings("unused")
@@ -58,26 +61,28 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        reminders.addAll(mListener.onGetReminders());
+        reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.reminder_refresh_layout);
+
+        // Set listener for swipe refresh
+        swipeContainer.setOnRefreshListener(this);
+
+
         // Set the adapter
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
-            //recView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, reminders, mListener));
         }
 
-        view.findViewById(R.id.reminder_fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null));
-            }
+        view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->  {
+            ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null));
         });
         return view;
     }
@@ -91,6 +96,9 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
             if (fragment != null) {
                 fragment.notifyChanged();
+            }
+            if (swipeContainer != null) {
+                swipeContainer.setRefreshing(false);
             }
         }
     }
@@ -115,8 +123,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         if (context instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
         }
     }
 
@@ -131,8 +138,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         if (activity instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) activity;
         } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(activity.toString() + " must implement OnListFragmentInteractionListener");
         }
     }
 
@@ -151,6 +157,21 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         return "Reminders";
     }
 
+    @Override
+    public void onRefresh() {
+        Bundle extras = new Bundle();
+        extras.putString("notificationType", "remindersChanged");
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+
+        ContentResolver.requestSync(
+                MainActivity.getAccount(getActivity()),
+                "com.example.sondrehj.familymedicinereminderclient.content",
+                extras);
+
+        swipeContainer.setRefreshing(false);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -166,7 +187,5 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         void onReminderListItemClicked(Reminder reminder);
         void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
-        List<Reminder> onGetReminders();
-
     }
 }

@@ -1,10 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.GridLayoutManager;
+
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,14 +15,12 @@ import android.view.ViewGroup;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.utility.DividerItemDecoration;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ import butterknife.OnClick;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MedicationListFragment extends android.app.Fragment implements TitleSupplier {
+public class MedicationListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Get pasient name on the header, f.ex. Sondre's Medication
 
@@ -45,6 +44,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     private Boolean busIsRegistered = false;
     private List<Medication> medications = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
+    private SwipeRefreshLayout swipeContainer;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -55,8 +55,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     // TODO: Customize parameter initialization
     public static MedicationListFragment newInstance() {
-        MedicationListFragment fragment = new MedicationListFragment();
-        return fragment;
+        return new MedicationListFragment();
     }
 
     @Subscribe
@@ -68,6 +67,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
             if (fragment != null) {
                 fragment.notifyChanged();
+                swipeContainer.setRefreshing(false);
             }
         }
         if (event.type.equals(DataChangedEvent.MEDICATIONS_BY_OWNERID)) {
@@ -92,28 +92,32 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        medications.addAll(mListener.onGetMedications());
+        medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_medication_list, container, false);
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.medication_refresh_layout);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.medication_list);
         ButterKnife.bind(this, view);
+
+        // Set listener for swipe refresh
+        swipeContainer.setOnRefreshListener(this);
+
         // Set the adapter
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
-        };
+        }
         return view;
     }
 
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
         ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
-
     }
 
     @Override
@@ -126,8 +130,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
         }
     }
 
@@ -138,11 +141,11 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
             BusService.getBus().register(this);
             busIsRegistered = true;
         }
+
         if (activity instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) activity;
         } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(activity.toString() + " must implement OnListFragmentInteractionListener");
         }
     }
 
@@ -162,6 +165,20 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         return "Medications";
     }
 
+    @Override
+    public void onRefresh() {
+        System.out.println("Called onRefresh");
+        Bundle extras = new Bundle();
+        extras.putString("notificationType", "medicationsChanged");
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+
+        ContentResolver.requestSync(
+                MainActivity.getAccount(getActivity()),
+                "com.example.sondrehj.familymedicinereminderclient.content",
+                extras);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -175,6 +192,5 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     public interface OnListFragmentInteractionListener {
         void onMedicationListFragmentInteraction(Medication medication);
-        List<Medication> onGetMedications();
-        }
     }
+}

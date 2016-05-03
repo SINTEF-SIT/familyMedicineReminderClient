@@ -221,12 +221,12 @@
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="15dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DBDBDB"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -391,12 +391,12 @@
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="15dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DBDBDB"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"

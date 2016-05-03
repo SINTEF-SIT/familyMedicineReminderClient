@@ -1,16 +1,13 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.AccountManager;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,15 +16,11 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 
-import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
-import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
-import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.config.Configuration;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -137,8 +130,8 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     public void createNewMedication() {
-        //Creates a new Medication object with the values of the input-fields
 
+        //Creates a new Medication object with the values of the input-fields
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         System.out.println("USERID: " + userId);
 

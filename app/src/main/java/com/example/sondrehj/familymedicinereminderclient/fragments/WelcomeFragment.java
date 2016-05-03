@@ -36,6 +36,8 @@ import retrofit2.Response;
  * Use the {@link WelcomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+// TODO: Remove welcomeFragment from the back stack after first-time use to deny the user navigating back to it
 public class WelcomeFragment extends android.app.Fragment implements TitleSupplier {
 
     private final String TAG = "WelcomeFragment";

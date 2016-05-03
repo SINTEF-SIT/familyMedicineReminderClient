@@ -245,7 +245,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
-        values.put(COLUMN_REMINDER_SERVER_ID, reminder.getReminderServerId());
+        values.put(COLUMN_REMINDER_SERVER_ID, reminder.getServerId());
         // We store the medicationId as a reference if a medication is attached.
         if(reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
@@ -276,6 +276,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
         // Prepares the statement
         ContentValues values = new ContentValues();
+        values.put(COLUMN_REMINDER_SERVER_ID, reminder.getServerId());
         values.put(COLUMN_REMINDER_NAME, reminder.getName());
         values.put(COLUMN_REMINDER_DATE, dateString);
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
@@ -337,7 +338,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 reminder.setIsActive(isActive);
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
-                reminder.setReminderServerId(serverId);
+                reminder.setServerId(serverId);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if(medicationId != 0) {
@@ -356,13 +357,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
     }
 
     // Could be integrated with getReminders()
-    public ArrayList<Reminder> getRemindersByOwnerId(String ownerId){
+    public ArrayList<Reminder> getRemindersByOwnerId(String ownerId) {
 
         // Retrieve Reminders
         String selectQuery =
                 "SELECT  *" +
-                " FROM " + TABLE_REMINDER +
-                " WHERE " + COLUMN_REMINDER_OWNER_ID + "='" + ownerId+"'";
+                        " FROM " + TABLE_REMINDER +
+                        " WHERE " + COLUMN_REMINDER_OWNER_ID + "='" + ownerId + "'";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         ArrayList<Reminder> data = new ArrayList<>();
@@ -389,7 +390,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
                 // Converting endDateString to GregorianCalendar
                 GregorianCalendar endCal = new GregorianCalendar();
-                if(!endDateString.equals("0")) {
+                if (!endDateString.equals("0")) {
                     endCal = Converter.databaseDateStringToCalendar(endDateString);
                 }
 
@@ -401,12 +402,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 reminder.setIsActive(isActive);
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
-                reminder.setReminderServerId(serverId);
+                reminder.setServerId(serverId);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
-                if(medicationId != 0) {
-                    for(Medication med : getMedications())//MedicationListFragment.medications){
-                        if(med.getMedId() == medicationId){
+                if (medicationId != 0) {
+                    for (Medication med : getMedications())//MedicationListFragment.medications){
+                        if (med.getMedId() == medicationId) {
                             reminder.setMedicine(med);
                             reminder.setDosage(dosage);
                         }
@@ -417,6 +418,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         cursor.close();
         db.close();
         return data;
+    }
+
+    public Medication getSingleMedicationByServerID(int medId) {
+        String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            int serverId = cursor.getInt(1);
+            String ownerId = cursor.getString(2);
+            String name = cursor.getString(3);
+            Double count = cursor.getDouble(4);
+            String unit = cursor.getString(5);
+            return new Medication(id, serverId, ownerId, name, count, unit);
+        }
+        return null;
     }
 
     public void deleteReminder(Reminder reminder) {

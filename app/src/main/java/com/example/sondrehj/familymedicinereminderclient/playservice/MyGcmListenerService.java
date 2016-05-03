@@ -14,8 +14,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 public class MyGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
-    // Content provider authority
-    public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient.content";
+    private static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient.content";
 
     /**
      * Called when message is received.
@@ -27,8 +26,10 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String notificationType = data.getString("notification-action");
+        String optionalData = data.getString("data");
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Notification type: " + notificationType);
+        Log.d(TAG, "Data (optional): " + optionalData);
 
 
         final Intent notificationIntent = new Intent(this, MainActivity.class);
@@ -41,6 +42,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);
+        extras.putString("optionalData", optionalData);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 

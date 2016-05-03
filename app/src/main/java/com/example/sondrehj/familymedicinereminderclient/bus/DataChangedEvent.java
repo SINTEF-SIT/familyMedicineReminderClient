@@ -9,6 +9,7 @@ public class DataChangedEvent {
     public static String MEDICATIONS = "medications";
     public static String MEDICATIONS_BY_OWNERID = "medicationsByOwnerId";
     public static String MEDICATIONSENT = "medicationSent";
+    public static String REMINDERSENT = "reminderSent";
 
     public String type;
     public Object data;
