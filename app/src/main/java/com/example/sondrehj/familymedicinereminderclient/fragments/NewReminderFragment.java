@@ -224,6 +224,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     public void createReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         Reminder reminder = vr.CreateReminderFromInput(
@@ -235,13 +236,14 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, userId));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, userId, authToken));
 
         mListener.onSaveNewReminder(reminder);
     }
 
     public void updateReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
         System.out.println("In newreminder update: " + reminder);
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
@@ -257,7 +259,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
 
         mListener.onSaveNewReminder(reminder);
     }

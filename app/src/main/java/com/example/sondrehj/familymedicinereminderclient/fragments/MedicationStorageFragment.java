@@ -159,6 +159,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     public void updateMedication() {
         //Fetches the userId
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
 
         //Updates an existing Medication object
         mMedication.setName(medicationNameInput.getText().toString());
@@ -169,7 +170,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.updateMedication(mMedication);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateMedicationJob(mMedication, userId));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateMedicationJob(mMedication, userId, authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
         System.out.println("---------Medication Updated---------" + "\n" + mMedication);

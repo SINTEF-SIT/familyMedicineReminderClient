@@ -25,8 +25,9 @@ public class UpdateReminderJob extends Job {
     private Reminder reminder;
     private String userId;
     private TransportReminder preSendTransportReminder;
+    private String authToken;
 
-    public UpdateReminderJob(Reminder reminder, String userId) {
+    public UpdateReminderJob(Reminder reminder, String userId, String authToken) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
 
@@ -37,6 +38,8 @@ public class UpdateReminderJob extends Job {
         this.reminder = reminder;
         this.userId = userId;
         this.preSendTransportReminder = new TransportReminder(reminder);
+        this.authToken = authToken;
+
 
     }
 
@@ -50,7 +53,7 @@ public class UpdateReminderJob extends Job {
     @Override
     public void onRun() throws Throwable {
 
-        MyCyFAPPServiceAPI api = RestService.createRestService();
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         System.out.println("Transreminder before sending: " + preSendTransportReminder);
         Call<TransportReminder> call = api.updateReminder(userId, String.valueOf(preSendTransportReminder.getServerId()), preSendTransportReminder);
         TransportReminder transportReminder = call.execute().body();

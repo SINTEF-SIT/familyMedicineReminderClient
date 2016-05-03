@@ -1,5 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,7 +34,12 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+        Account acct = MainActivity.getAccount(context);
+        if(acct == null) {
+            previousServerStatus = currentServerStatus = false;
+            return;
+        }
+        String authToken = AccountManager.get(context).getUserData(acct,"authToken");
 
         try {
             Future pollingFuture = Executors.newFixedThreadPool(1).submit(() -> {

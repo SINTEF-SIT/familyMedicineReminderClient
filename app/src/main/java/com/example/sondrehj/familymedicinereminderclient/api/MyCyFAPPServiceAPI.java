@@ -74,7 +74,7 @@ public interface MyCyFAPPServiceAPI {
     @POST("user")
     Call<User> createUser(@Header("create_secret") String createSecret, @Body User user);
 
-    @POST("user/{userID}/token/{token}")
+    @PUT("user/{userID}/token/{token}")
     Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);
 
     @PUT("user/{userID}/guardian/{gracePeriod}")

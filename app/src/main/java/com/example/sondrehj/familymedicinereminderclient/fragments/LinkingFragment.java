@@ -120,7 +120,8 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
     }
 
     public void linkWithAccount(String idToLinkWith){
-        MyCyFAPPServiceAPI api = RestService.createRestService(); //Creates a rest service and save the reference.
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken); //Creates a rest service and save the reference.
         Account account = MainActivity.getAccount(context); //Fetches the user account
 
         Log.d(TAG, "sendlinkingrequest userID: " + account.name);

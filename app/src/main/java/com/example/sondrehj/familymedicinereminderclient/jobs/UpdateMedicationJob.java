@@ -19,8 +19,9 @@ public class UpdateMedicationJob extends Job {
 
         private Medication medication;
         private String userId;
+        private String authToken;
 
-        public UpdateMedicationJob(Medication medication, String userId) {
+        public UpdateMedicationJob(Medication medication, String userId, String authToken) {
             // This job requires network connectivity,
             // and should be persisted in case the application exits before job is completed.
 
@@ -30,6 +31,7 @@ public class UpdateMedicationJob extends Job {
             System.out.println("New medication job posted");
             this.medication = medication;
             this.userId = userId;
+            this.authToken = authToken;
         }
         @Override
         public void onAdded() {
@@ -43,7 +45,7 @@ public class UpdateMedicationJob extends Job {
         public void onRun() throws Throwable {
             System.out.println("In medication onRun!");
 
-            MyCyFAPPServiceAPI api = RestService.createRestService();
+            MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
             Call<Medication> call = api.updateMedication(userId, String.valueOf(medication.getServerId()), medication);
             Medication med = call.execute().body(); //medication retrieved from server
             if(med != null) {
