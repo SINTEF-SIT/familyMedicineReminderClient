@@ -39,11 +39,6 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
 
     //TODO: On Android 4.1, frequency days are showing even when the reminder is one-time
 
-    /*TODO: Urgent! Upon completion of a create-reminder request, these changes are not propagated to the +
-      list. This means that a user may try to update a reminder that does not yet have a serverID.
-
-      */
-
     private OnReminderListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
     private List<Reminder> reminders = new ArrayList<>();
