@@ -111,10 +111,13 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
                 Log.d(TAG, "response: password: " + password);
                 Log.d(TAG, "response: userRole: " + userRole);
                 progress.dismiss();
-                User2 dbUser = new User2(userId, userId);
+                User2 dbUser = new User2(userId, "Me");
                 new MySQLiteHelper(getActivity()).addUser(dbUser);
                 ((MainActivity) getActivity()).setCurrentUser(dbUser);
+                ((MainActivity) getActivity()).userSpinnerToggle.updateSpinnerContent();
+                ((MainActivity) getActivity()).userSpinnerToggle.updateUserActionBarTextView();
                 ((MainActivity) getActivity()).userSpinnerToggle.toggle();
+
                 //TODO: Update with password != null as well
                 if (mListener != null) {
                     if (userId != null) {

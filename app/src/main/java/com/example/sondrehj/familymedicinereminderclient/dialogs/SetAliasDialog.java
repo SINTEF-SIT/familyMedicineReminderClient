@@ -8,32 +8,58 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 public class SetAliasDialog extends DialogFragment {
 
     private OnSetAliasDialogListener mListener;
-   // int selectedItem;
+
+
+    private String userId;
+    private static final String USER_ID_ARG = "userId";
+
+    public static SetAliasDialog newInstance(String userId) {
+        SetAliasDialog fragment = new SetAliasDialog();
+        if (userId != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(USER_ID_ARG, userId);
+            fragment.setArguments(bundle);
+            fragment.setUserId(userId);
+        }
+        return fragment;
+    }
+
+    public void setUserId(String userId){
+        this.userId = userId;
+    }
+
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.alias_dialog, null);
+
+        EditText alias_edit_text = (EditText) view.findViewById(R.id.alias_dialog_set_alias);
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        builder.setView(inflater.inflate(R.layout.alias_dialog, null))
+        builder.setView(view)
                 // Add action buttons
                 .setPositiveButton("Set alias", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-
+                        mListener.onPositiveSetAliasDialog(alias_edit_text.getText().toString(), userId);
                     }
                 })
                 .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
+                        mListener.onPositiveSetAliasDialog(alias_edit_text.getText().toString(), userId);
                     }
                 });
         return builder.create();
@@ -64,6 +90,6 @@ public class SetAliasDialog extends DialogFragment {
     }
 
     public interface OnSetAliasDialogListener {
-        void onPositiveUnitDialogResult(int unit);
+        void onPositiveSetAliasDialog(String alias, String userId);
     }
 }

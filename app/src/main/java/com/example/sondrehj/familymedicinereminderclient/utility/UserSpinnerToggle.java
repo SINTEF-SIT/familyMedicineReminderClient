@@ -50,7 +50,6 @@ public class UserSpinnerToggle {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedUser = users.get(position);
                 ((MainActivity) activity).setCurrentUser(selectedUser);
-                System.out.println("hello");
                 Toast.makeText(activity, "User changed to " + selectedUser.getAlias(), Toast.LENGTH_SHORT).show();
                 userActionBarTextView.setText(selectedUser.getAlias());
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS_BY_OWNERID));
@@ -63,7 +62,14 @@ public class UserSpinnerToggle {
         });
     }
 
+    public void updateUserActionBarTextView(){
+        userActionBarTextView.setText(((MainActivity) activity).getCurrentUser().getAlias());
+    }
+
     public void updateSpinnerContent() {
+
+        MySQLiteHelper db = new MySQLiteHelper(activity);
+        this.users = db.getUsers();
 
         usersAlias = new String[users.size()];
         for (int userIndex = 0; userIndex < users.size(); userIndex++) {

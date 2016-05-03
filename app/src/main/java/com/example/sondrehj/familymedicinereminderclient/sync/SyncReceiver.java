@@ -44,13 +44,6 @@ public class SyncReceiver extends BroadcastReceiver {
             }
             if (action.equals("notifyPositiveResultToLinkingFragment")) {
                 String patientID = extras.getString("patientID");
-
-                //TODO: Alias-dialog.
-                //TODO: Save patientID to Database.
-                FragmentManager fm = ((MainActivity) context).getFragmentManager();
-                SetAliasDialog bd = new SetAliasDialog();
-                bd.show(fm, "jalkd");
-
                 BusService.getBus().post(new LinkingResponseEvent("positiveResponse", patientID));
             }
             if (action.equals("notifyNegativeResultToLinkingFragment")) {

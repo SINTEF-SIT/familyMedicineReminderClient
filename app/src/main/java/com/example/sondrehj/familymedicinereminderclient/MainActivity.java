@@ -140,8 +140,9 @@ public class MainActivity
             toggle.setDrawerIndicatorEnabled(true);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
+            //TODO: get main account from database
             String id = AccountManager.get(this).getUserData(getAccount(this), "userId");
-            currentUser = new User2(id, "Test user");
+            currentUser = new User2(id, "User");
         }
 
         //Sets repeating creation of a Job Manager that will check for upload jobs
@@ -178,7 +179,6 @@ public class MainActivity
 
         // Some test data for userSpinner
         MySQLiteHelper db = new MySQLiteHelper(this);
-        db.addUser(new User2("#002", "Test user 2"));
 
         // Toggles the select user spinner in drawer_header.xml
         Spinner userSpinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.menu_user_spinner);
@@ -627,5 +627,18 @@ public class MainActivity
     @Override
     public void onPositiveAttachReminderDialogResult() {
         changeFragment(NewReminderFragment.newInstance(null));
+    }
+
+    @Override
+    public void onPositiveSetAliasDialog(String alias, String userId) {
+
+        User2 user;
+        if(!alias.equals("")) {
+            user = new User2(userId, alias);
+        } else {
+            user = new User2(userId, userId);
+        }
+        new MySQLiteHelper(this).addUser(user);
+        userSpinnerToggle.updateSpinnerContent();
     }
 }

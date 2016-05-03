@@ -3,6 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.fragments;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
@@ -25,6 +26,7 @@ import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
@@ -180,15 +182,13 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
     public void handleLinkingResultByNotification(LinkingResponseEvent event){
         if (event.getMessage().equals("positiveResponse")) {
             statusText.setText("The patient have successfully been linked to this guardian account!");
-            int color = Color.parseColor("#388E3C");
-            statusIcon.setColorFilter(color);
-
-            //TODO: open dialog
-
+            statusIcon.setColorFilter(Color.parseColor("#388E3C"));
+            // Opens set alias dialog
+            SetAliasDialog bd = SetAliasDialog.newInstance(event.getPatientID());
+            bd.show(getActivity().getFragmentManager(), "SetAliasDialog");
         } else {
             statusText.setText("The patient has denied the linking request.");
-            int color = Color.parseColor("#FFBF360C");
-            statusIcon.setColorFilter(color);
+            statusIcon.setColorFilter(Color.parseColor("#FFBF360C"));
         }
         clearStatusTextAfterSeconds(5);
     }
