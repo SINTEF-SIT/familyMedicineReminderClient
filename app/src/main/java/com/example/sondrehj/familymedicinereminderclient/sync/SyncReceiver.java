@@ -1,15 +1,18 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 
 /**
  * Created by nikolai on 20/04/16.
@@ -44,8 +47,11 @@ public class SyncReceiver extends BroadcastReceiver {
 
                 //TODO: Alias-dialog.
                 //TODO: Save patientID to Database.
+                FragmentManager fm = ((MainActivity) context).getFragmentManager();
+                SetAliasDialog bd = new SetAliasDialog();
+                bd.show(fm, "jalkd");
 
-                BusService.getBus().post(new LinkingResponseEvent("positiveResponse"));
+                BusService.getBus().post(new LinkingResponseEvent("positiveResponse", patientID));
             }
             if (action.equals("notifyNegativeResultToLinkingFragment")) {
                 BusService.getBus().post(new LinkingResponseEvent("negativeResponse"));

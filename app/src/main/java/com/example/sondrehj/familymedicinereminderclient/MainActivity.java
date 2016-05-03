@@ -34,6 +34,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
@@ -87,7 +88,8 @@ public class MainActivity
         SelectDaysDialogFragment.OnDaysDialogResultListener,
         EndDatePickerFragment.EndDatePickerListener,
         MedicationPickerFragment.OnMedicationPickerDialogResultListener,
-        AttachReminderDialogFragment.AttachReminderDialogListener {
+        AttachReminderDialogFragment.AttachReminderDialogListener,
+        SetAliasDialog.OnSetAliasDialogListener{
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;

@@ -5,13 +5,27 @@ package com.example.sondrehj.familymedicinereminderclient.bus;
  */
 public class LinkingResponseEvent {
     private String message;
+    private String patientID;
 
     public LinkingResponseEvent() {
 
     }
 
     public LinkingResponseEvent(String s) {
-        message = s;
+        this.message = s;
+    }
+
+    public LinkingResponseEvent(String s, String patientID) {
+        this.message = s;
+        this.patientID = patientID;
+    }
+
+    public String getPatientID() {
+        return patientID;
+    }
+
+    public void setPatientID(String patientID) {
+        this.patientID = patientID;
     }
 
     public void setMessage(String s) {
