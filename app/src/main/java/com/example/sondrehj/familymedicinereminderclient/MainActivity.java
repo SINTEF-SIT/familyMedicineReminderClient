@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity
             Medication medication = (Medication) event.data;
             System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
-            //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         }
     }
 
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity
             Reminder reminder = (Reminder) event.data;
             System.out.println("Reminder about to be saved: " + reminder);
             new MySQLiteHelper(this).updateReminder(reminder);
-            //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         }
     }
 
@@ -541,8 +541,8 @@ public class MainActivity extends AppCompatActivity
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", r), r);
         }
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         changeFragment(ReminderListFragment.newInstance());
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
     }
 
     @Override

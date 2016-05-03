@@ -65,7 +65,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
                         + ". " + Converter.monthIndexToMonthString(month) + ".";
 
         // Text for a repeating reminder
-        if(holder.mReminder.getDays().length > 0){
+        if(holder.mReminder.getDays().length > 0) {
             if(holder.mReminder.getEndDate().get((Calendar.YEAR)) == 9998) {
                 holder.mDateText.setText("Continuous");
             } else {

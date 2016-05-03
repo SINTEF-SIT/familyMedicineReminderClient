@@ -65,8 +65,10 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
             medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
             if (fragment != null) {
-                fragment.notifyChanged();
-                swipeContainer.setRefreshing(false);
+                getActivity().runOnUiThread(() -> {
+                    fragment.notifyChanged();
+                    swipeContainer.setRefreshing(false);
+                });
             }
         }
     }
