@@ -146,9 +146,9 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
                         statusText.setText("Could not send linking request to patient.");
                         int color = Color.parseColor("#FF5252");
                         statusIcon.setColorFilter(color);
+                        clearStatusTextAfterSeconds(5);
                     }
                     //TODO: persist linked status to the device.??
-                    clearStatusTextAfterSeconds(5);
                 } else { //on received message object FAIL.
                     Log.d(TAG, "unsuccessful linking.");
                     int color = Color.parseColor("#FF5252");
