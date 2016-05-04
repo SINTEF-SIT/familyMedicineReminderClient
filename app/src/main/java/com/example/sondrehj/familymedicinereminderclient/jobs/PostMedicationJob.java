@@ -1,7 +1,6 @@
-package com.example.sondrehj.familymedicinereminderclient.sync;
-
+package com.example.sondrehj.familymedicinereminderclient.jobs;
 import android.util.Log;
-
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
@@ -17,8 +16,9 @@ public class PostMedicationJob extends Job {
     private static final int PRIORITY = 1;
     private Medication medication;
     private String userId;
+    private String authToken;
 
-    public PostMedicationJob(Medication medication, String userId) {
+    public PostMedicationJob(Medication medication, String userId, String authToken) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
 
@@ -28,6 +28,7 @@ public class PostMedicationJob extends Job {
         Log.d(TAG, "New Job posted.");
         this.medication = medication;
         this.userId = userId;
+        this.authToken = authToken;
     }
 
     @Override
@@ -42,12 +43,11 @@ public class PostMedicationJob extends Job {
     public void onRun() throws Throwable {
         Log.d(TAG, "Job is running in background.");
         Log.d(TAG, Thread.currentThread().toString());
-
-        MyCyFAPPServiceAPI api = RestService.createRestService();
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         Call<Medication> call = api.createMedication(userId, medication);
         Medication med = call.execute().body(); //medication retrieved from server
         if(med != null) {
-            System.out.println(med);
+            System.out.println(med.getServerId());
             medication.setServerId(med.getServerId());  //To retain the reference to this medication, we add the server id to it
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
         }

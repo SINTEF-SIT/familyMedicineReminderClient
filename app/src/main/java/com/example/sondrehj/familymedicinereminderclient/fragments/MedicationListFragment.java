@@ -67,11 +67,14 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
         if(event.type.equals(DataChangedEvent.MEDICATIONS)) {
             medications.clear();
-            medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+            //medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+            medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
             if (fragment != null) {
-                fragment.notifyChanged();
-                swipeContainer.setRefreshing(false);
+                getActivity().runOnUiThread(() -> {
+                    fragment.notifyChanged();
+                    swipeContainer.setRefreshing(false);
+                });
             }
         }
         if (event.type.equals(DataChangedEvent.MEDICATIONS_BY_OWNERID)) {
