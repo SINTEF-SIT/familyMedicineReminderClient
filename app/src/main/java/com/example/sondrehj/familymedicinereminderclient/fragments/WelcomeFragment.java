@@ -12,10 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServiceManager;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
@@ -108,6 +111,12 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
                 Log.d(TAG, "response: password: " + password);
                 Log.d(TAG, "response: userRole: " + userRole);
                 progress.dismiss();
+                User2 dbUser = new User2(userId, "Me");
+                new MySQLiteHelper(getActivity()).addUser(dbUser);
+                ((MainActivity) getActivity()).setCurrentUser(dbUser);
+                ((MainActivity) getActivity()).userSpinnerToggle.updateSpinnerContent();
+                ((MainActivity) getActivity()).userSpinnerToggle.updateUserActionBarTextView();
+                ((MainActivity) getActivity()).userSpinnerToggle.toggle();
 
                 //TODO: Update with password != null as well
                 if (mListener != null) {

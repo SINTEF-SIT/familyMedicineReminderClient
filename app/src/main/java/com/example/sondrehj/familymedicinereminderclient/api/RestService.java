@@ -10,7 +10,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by nikolai on 05/04/16.
  */
 public class RestService {
-    private static final String BASE_URL = "http://10.22.43.94:1337";
+
+    private static final String BASE_URL = "http://10.22.33.12:1337";
 
     /**
      * Create an instance of the retrofit class which is instantiated with

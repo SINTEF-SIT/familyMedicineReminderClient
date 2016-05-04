@@ -75,6 +75,7 @@ public class Medication implements Serializable {
         return "Med id: " + this.medId + "\n" +
                 "ServerID: " + this.serverId + "\n" +
                 " Name: " + this.name + "\n" +
+                " OwnerId: " + this.ownerId + "\n" +
                 " Count: " + this.count + "\n" +
                 " Unit: " + this.unit;
     }
