@@ -66,9 +66,6 @@ public final class Converter {
     }
 
     public static String daysArrayToDatabaseString(int[] days){
-        if (days.length == 0) {
-            return "0;0;0;0;0;0;0";
-        }
         String dayString = "";
         for (int day : days) {
             dayString += day + ";";

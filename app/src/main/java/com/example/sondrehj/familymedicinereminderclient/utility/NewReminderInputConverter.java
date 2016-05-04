@@ -6,10 +6,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.NewReminderFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
 import java.util.GregorianCalendar;
 
@@ -28,10 +30,10 @@ public class NewReminderInputConverter {
     public Reminder CreateReminderFromInput(EditText nameInput, TextView dateInput, TextView timeInput,
                                             Medication medication, Switch attachMedicationSwitch,
                                             EditText dosageInput, Switch repeatSwitch, int[] selectedDays,
-                                            TextView endDateInput, Switch activeSwitch) {
+                                            TextView endDateInput, Switch activeSwitch, User2 currentUser) {
 
         Reminder reminder = new Reminder();
-        reminder.setOwnerId("temp");
+        reminder.setOwnerId(currentUser.getUserId());
         reminder.setName(nameInput.getEditableText().toString());
 
         // Set start date
@@ -74,10 +76,11 @@ public class NewReminderInputConverter {
     public Reminder UpdateReminderFromInput(EditText nameInput, TextView dateInput, TextView timeInput,
                                             Medication medication, Switch attachMedicationSwitch,
                                             EditText dosageInput, Switch repeatSwitch, int[] selectedDays,
-                                            TextView endDateInput, Switch activeSwitch, Reminder reminder) {
+                                            TextView endDateInput, Switch activeSwitch, Reminder reminder, User2 currentUser) {
 
         //Updates an existing Reminder object
         reminder.setName(nameInput.getText().toString());
+        reminder.setOwnerId(currentUser.getUserId());
 
         // Set start date
         GregorianCalendar cal = Converter.dateStringToCalendar(

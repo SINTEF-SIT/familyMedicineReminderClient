@@ -62,6 +62,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
+        System.out.println(new MySQLiteHelper(getActivity()).getReminders());
     }
 
     @Override
