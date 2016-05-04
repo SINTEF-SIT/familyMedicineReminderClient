@@ -67,7 +67,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/reminder_edit_name_input"
             android:inputType="text"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:maxLength="18"/>
 
     </LinearLayout>
 
