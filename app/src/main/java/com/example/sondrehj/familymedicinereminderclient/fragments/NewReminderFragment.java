@@ -233,6 +233,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 dosageInput, repeatSwitch, selectedDays,
                 endDateInput, activeSwitch, ((MainActivity) getActivity()).getCurrentUser());
 
+
+        System.out.println(reminder);
+
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
         mListener.onSaveNewReminder(reminder);

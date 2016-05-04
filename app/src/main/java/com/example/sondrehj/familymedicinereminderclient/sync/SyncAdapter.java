@@ -9,9 +9,11 @@ import android.content.SyncResult;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
 /**
  * Created by nikolai on 07/04/16.
@@ -33,6 +35,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      *
      * @param account
      * @param extras
+     * @param currentUser
      * @param authority
      * @param provider
      * @param syncResult
@@ -49,8 +52,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         String notificationType = extras.getString("notificationType");
         String optionalData = extras.getString("optionalData");
+        String currentUserId = extras.getString("currentUserId");
         MyCyFAPPServiceAPI api = RestService.createRestService();
         MySQLiteHelper db = new MySQLiteHelper(getContext());
+        System.out.println(currentUserId);
 
         Synchronizer synchronizer = new Synchronizer(account.name, api, db, context);
         if (notificationType != null) {

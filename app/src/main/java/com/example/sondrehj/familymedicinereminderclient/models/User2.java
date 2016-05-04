@@ -1,9 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import java.io.Serializable;
+
 /**
  * Created by sondre on 01/05/2016.
  */
-public class User2 {
+public class User2 implements Serializable {
 
     String userId; //6 digit alphanumerical
     String alias;

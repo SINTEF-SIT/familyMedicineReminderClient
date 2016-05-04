@@ -174,6 +174,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         extras.putString("notificationType", "medicationsChanged");
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        extras.putString("currentUserId", ((MainActivity) getActivity()).getCurrentUser().getUserId());
 
         ContentResolver.requestSync(
                 MainActivity.getAccount(getActivity()),
