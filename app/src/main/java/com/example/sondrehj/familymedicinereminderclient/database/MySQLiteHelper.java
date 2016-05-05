@@ -61,6 +61,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_REMINDER_SERVER_ID = "reminder_server_id";
     public static final String COLUMN_REM_MEDICATION_ID = "reminder_medication_id";
     public static final String COLUMN_REM_MEDICATION_DOSAGE = "medication_dosage";
+    public static final String COLUMN_REMINDER_TIME_TAKEN= "time_taken";
     // Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
@@ -73,7 +74,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " text, " + COLUMN_REMINDER_SERVER_ID
             + " integer, " + COLUMN_REM_MEDICATION_ID
             + " integer, " + COLUMN_REM_MEDICATION_DOSAGE
-            + " real);";
+            + " real, " + COLUMN_REMINDER_TIME_TAKEN
+            + " string);";
 
     // User table
     public static final String TABLE_USER = "user";
@@ -252,6 +254,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
         }
 
+        // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
+        String timeTakenString = "0";
+        if(reminder.getTimeTaken() != null){
+            timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
+        }
+
         // Converts the reminder days array to a string on the format day1;day2;..;
         String dayString = Converter.daysArrayToDatabaseString(reminder.getDays());
 
@@ -264,6 +272,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
         values.put(COLUMN_REMINDER_SERVER_ID, reminder.getServerId());
+        values.put(COLUMN_REMINDER_TIME_TAKEN, timeTakenString);
         // We store the medicationId as a reference if a medication is attached.
         if (reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
@@ -277,24 +286,26 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void updateReminder(Reminder reminder) {
-        System.out.println("In updatereminder");
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         // Converts the reminder date to a string on the format year;month;day;hour;min
         String dateString = Converter.calendarToDatabaseString(reminder.getDate());
-        System.out.println("Datestring: " + dateString);
 
         // Converts the reminder int[] days to a string on the format day1;day2;..;
         String dayString = Converter.daysArrayToDatabaseString(reminder.getDays());
-        System.out.println("Daystring: " + dayString);
 
         // Converts the reminder endDate to a string on the format year;month;day;hour;min
         String endDateString = "0";
         if (reminder.getEndDate() != null) {
             endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
         }
-        System.out.println("EndDateString: " + endDateString);
+
+        // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
+        String timeTakenString = "0";
+        if(reminder.getTimeTaken() != null){
+            timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
+        }
 
         // Prepares the statement
         ContentValues values = new ContentValues();
@@ -304,7 +315,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
-        System.out.println("Values: " + values);
+        values.put(COLUMN_REMINDER_TIME_TAKEN, timeTakenString);
         // We store the medicationId as a reference if a medication is attached.
         if (reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
@@ -340,6 +351,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 int serverId = cursor.getInt(7);
                 int medicationId = cursor.getInt(8);
                 Double dosage = cursor.getDouble(9);
+                String timeTakenString = cursor.getString(10);
 
                 // Converting daysString to an int[] containing all the days.
                 int[] days = Converter.databaseDayStringToArray(dayString);
@@ -353,6 +365,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     endCal = Converter.databaseDateStringToCalendar(endDateString);
                 }
 
+                // Converting timeTakenString to GregorianCalendar
+                GregorianCalendar timeTaken = new GregorianCalendar();
+                if (!timeTakenString.equals("0")) {
+                    timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
+                }
+
                 Reminder reminder = new Reminder();
                 reminder.setReminderId(id);
                 reminder.setOwnerId(ownerId);
@@ -362,6 +380,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
                 reminder.setServerId(serverId);
+                reminder.setTimeTaken(timeTaken);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if (medicationId != 0) {
@@ -371,6 +390,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                             reminder.setDosage(dosage);
                         }
                 }
+
                 data.add(reminder);
             } while (cursor.moveToNext());
         }
@@ -404,6 +424,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 int serverId = cursor.getInt(7);
                 int medicationId = cursor.getInt(8);
                 Double dosage = cursor.getDouble(9);
+                String timeTakenString = cursor.getString(10);
 
                 // Converting daysString to an int[] containing all the days.
                 int[] days = Converter.databaseDayStringToArray(dayString);
@@ -417,6 +438,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                     endCal = Converter.databaseDateStringToCalendar(endDateString);
                 }
 
+                // Converting timeTakenString to GregorianCalendar
+                GregorianCalendar timeTaken = new GregorianCalendar();
+                if (!timeTakenString.equals("0")) {
+                    timeTaken = Converter.databaseDateStringToCalendar(endDateString);
+                }
+
                 Reminder reminder = new Reminder();
                 reminder.setReminderId(id);
                 reminder.setOwnerId(owner);
@@ -426,6 +453,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
                 reminder.setServerId(serverId);
+                reminder.setTimeTaken(timeTaken);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if (medicationId != 0) {
@@ -441,6 +469,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return data;
+    }
+
+    public void setReminderTimeTaken(Reminder reminder) {
+
+        // Update existing medication
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
+        String timeTakenString = "0";
+        if(reminder.getTimeTaken() != null){
+            timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
+        }
+
+        //Prepares the statement
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_REMINDER_TIME_TAKEN, timeTakenString);
+
+        db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
+        db.close(); // Closing database connection
     }
 
     public ArrayList<Reminder> getTodaysReminders() {

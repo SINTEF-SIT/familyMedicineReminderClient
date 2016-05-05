@@ -22,7 +22,7 @@ public class Reminder implements Serializable {
     Double dosage;
     Boolean isActive;
     int[] days;
-
+    GregorianCalendar timeTaken;
 
     public Reminder() {
 
@@ -117,6 +117,16 @@ public class Reminder implements Serializable {
     public void setDays(int[] days){ this.days = days; }
 
     public int[] getDays() { return days; }
+
+    public GregorianCalendar getTimeTaken() {
+        return timeTaken;
+    }
+
+    public void setTimeTaken(GregorianCalendar timeTaken) {
+        this.timeTaken = timeTaken;
+    }
+
+
 
     public String getDateString(){
         System.out.println(date);

@@ -32,7 +32,9 @@ public final class Converter {
 
     public static GregorianCalendar databaseDateStringToCalendar(String dateString) {
 
+        System.out.println(dateString);
         String[] dateArray = dateString.split(";");
+        System.out.println(Arrays.toString(dateArray));
         GregorianCalendar cal = new GregorianCalendar(
                 Integer.parseInt(dateArray[0]), //Year
                 Integer.parseInt(dateArray[1]), //Month
