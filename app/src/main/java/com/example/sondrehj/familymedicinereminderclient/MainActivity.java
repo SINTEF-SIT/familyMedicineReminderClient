@@ -179,9 +179,6 @@ public class MainActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Some test data for userSpinner
-        MySQLiteHelper db = new MySQLiteHelper(this);
-
         // Toggles the select user spinner in drawer_header.xml
         Spinner userSpinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.menu_user_spinner);
         this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);

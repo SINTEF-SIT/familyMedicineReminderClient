@@ -172,5 +172,19 @@ public final class Converter {
         return months[i];
     }
 
+    public static Boolean isSameDate (GregorianCalendar cal, GregorianCalendar cal2){
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        int year2 = cal2.get(Calendar.YEAR);
+        int month2 = cal2.get(Calendar.MONTH);
+        int date2 = cal2.get(Calendar.DATE);
+
+        return year == year2 && month == month2 && date == date2;
+    }
+
+
+
+
 
 }

@@ -78,6 +78,7 @@ public class UserSpinnerToggle {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_item, usersAlias);
+
         userSpinner.setAdapter(adapter);
 
     }
