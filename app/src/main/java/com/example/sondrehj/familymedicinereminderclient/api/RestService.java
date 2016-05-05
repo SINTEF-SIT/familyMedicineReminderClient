@@ -1,8 +1,11 @@
 package com.example.sondrehj.familymedicinereminderclient.api;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -13,26 +16,42 @@ public class RestService {
 
     private static final String BASE_URL = "http://10.22.33.12:1337";
 
+    private static OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder()
+        .readTimeout(5, TimeUnit.SECONDS)
+        .connectTimeout(5, TimeUnit.SECONDS);
+
+    private static Retrofit.Builder builder = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create());
+
     /**
      * Create an instance of the retrofit class which is instantiated with
      * the MyCyFAPPServiceAPI. This serviceApi is then returned.
      *
      * @return MyCyFAPPServiceAPI
      */
+    public static MyCyFAPPServiceAPI createRestService(final String authToken) {
+
+        if (authToken != null) {
+            httpBuilder.addInterceptor((Interceptor.Chain chain) -> {
+                Request original = chain.request();
+
+                // Request customization: add request headers
+                Request.Builder requestBuilder = original.newBuilder()
+                        .header("access_token", authToken)
+                        .method(original.method(), original.body());
+
+                Request request = requestBuilder.build();
+                return chain.proceed(request);
+            });
+        }
+
+        OkHttpClient httpClient = httpBuilder.build();
+        Retrofit retrofit = builder.client(httpClient).build();
+        return retrofit.create(MyCyFAPPServiceAPI.class);
+    }
+
     public static MyCyFAPPServiceAPI createRestService() {
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .readTimeout(5, TimeUnit.SECONDS)
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MyCyFAPPServiceAPI serviceAPI = retrofit.create(MyCyFAPPServiceAPI.class);
-
-        return serviceAPI;
+        return createRestService(null);
     }
 }

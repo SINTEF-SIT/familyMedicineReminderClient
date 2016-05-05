@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
@@ -35,7 +36,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      *
      * @param account
      * @param extras
-     * @param currentUser
      * @param authority
      * @param provider
      * @param syncResult
@@ -50,14 +50,18 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         Log.d(TAG, "Sync is performing");
 
+
+        String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         String notificationType = extras.getString("notificationType");
         String optionalData = extras.getString("optionalData");
         String currentUserId = extras.getString("currentUserId");
-        MyCyFAPPServiceAPI api = RestService.createRestService();
+
         MySQLiteHelper db = new MySQLiteHelper(getContext());
         System.out.println(currentUserId);
 
-        Synchronizer synchronizer = new Synchronizer(account.name, api, db, context);
+        Synchronizer synchronizer = new Synchronizer(currentUserId, api, db, context);
+        Intent intent = new Intent();
         if (notificationType != null) {
             switch (notificationType) {
                 case "remindersChanged":
@@ -69,7 +73,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 case "linkingRequest":
                     Log.d(TAG, "in switch -> linkingRequest");
                     //incoming linking request from push notification
-                    Intent intent = new Intent();
                     intent.setAction("mycyfapp"); //not action, but filter.
                     intent.putExtra("action", "open_dialog");
                     context.sendBroadcast(intent);
@@ -84,10 +87,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     break;
                 case "negativeLinkingResponse":
                     Log.d(TAG, "in switch -> negativeLinkingResponse");
-                    Intent intent2 = new Intent();
-                    intent2.setAction("mycyfapp");
-                    intent2.putExtra("action", "notifyNegativeResultToLinkingFragment");
-                    context.sendBroadcast(intent2);
+                    intent.setAction("mycyfapp");
+                    intent.putExtra("action", "notifyNegativeResultToLinkingFragment");
+                    context.sendBroadcast(intent);
                     break;
             }
         } else {

@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -98,7 +99,8 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
 
         MyCyFAPPServiceAPI service = RestService.createRestService();
         User user = new User(role);
-        Call<User> call = service.createUser(user);
+        Call<User> call = service.createUser("myfirstsecret", user);
+        Log.d(TAG, call.request().toString());
         progress.show();
 
         call.enqueue(new Callback<User>() {
@@ -107,9 +109,13 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
                 String userId = user.body().getUserID();
                 String password = user.body().getPassword();
                 String userRole = user.body().getUserRole();
+                String jwtToken = user.headers().get("access_token");
                 Log.d(TAG, "response: userID: " + userId);
                 Log.d(TAG, "response: password: " + password);
                 Log.d(TAG, "response: userRole: " + userRole);
+                Log.d(TAG, "response: userRole: " + userRole);
+                Log.d(TAG, "response: accessToken: " + jwtToken);
+
                 progress.dismiss();
                 User2 dbUser = new User2(userId, "Me");
                 new MySQLiteHelper(getActivity()).addUser(dbUser);
@@ -121,7 +127,7 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
                 //TODO: Update with password != null as well
                 if (mListener != null) {
                     if (userId != null) {
-                        mListener.OnNewAccountCreated(userId, password, userRole);
+                        mListener.OnNewAccountCreated(userId, password, userRole, jwtToken);
                     }
                 }
             }
@@ -130,7 +136,7 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
             public void onFailure(Call<User> call, Throwable t) {
                 progress.dismiss();
                 failureToast.show();
-                    System.out.println("Could not create user: " + t.getMessage());
+                System.out.println("Could not create user: " + t.getMessage());
             }
         });
         return true;
@@ -179,6 +185,6 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnWelcomeListener {
-        void OnNewAccountCreated(String userId, String password, String userRole);
+        void OnNewAccountCreated(String userId, String password, String userRole, String jwtToken);
     }
 }

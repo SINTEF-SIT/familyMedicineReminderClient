@@ -32,7 +32,7 @@ import butterknife.OnClick;
 import retrofit2.Call;
 
 import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.sync.PutSettingsJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 

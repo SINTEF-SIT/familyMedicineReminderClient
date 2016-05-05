@@ -17,10 +17,12 @@ import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class MySQLiteHelper extends SQLiteOpenHelper{
+public class MySQLiteHelper extends SQLiteOpenHelper {
 
     //Database information
     SQLiteDatabase db;
@@ -59,6 +61,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
     public static final String COLUMN_REMINDER_SERVER_ID = "reminder_server_id";
     public static final String COLUMN_REM_MEDICATION_ID = "reminder_medication_id";
     public static final String COLUMN_REM_MEDICATION_DOSAGE = "medication_dosage";
+    public static final String COLUMN_REMINDER_TIME_TAKEN= "time_taken";
     // Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
@@ -71,7 +74,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
             + " text, " + COLUMN_REMINDER_SERVER_ID
             + " integer, " + COLUMN_REM_MEDICATION_ID
             + " integer, " + COLUMN_REM_MEDICATION_DOSAGE
-            + " real);";
+            + " real, " + COLUMN_REMINDER_TIME_TAKEN
+            + " string);";
 
     // User table
     public static final String TABLE_USER = "user";
@@ -173,8 +177,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         //Retrieve medications
         String selectQuery =
                 "SELECT  *" +
-                " FROM " + TABLE_MEDICATION +
-                " WHERE " + COLUMN_OWNER_ID + "='" + ownerId + "'";
+                        " FROM " + TABLE_MEDICATION +
+                        " WHERE " + COLUMN_OWNER_ID + "='" + ownerId + "'";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         ArrayList<Medication> data = new ArrayList<Medication>();
@@ -207,7 +211,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         db.close();
     }
 
-    public void updateAmountMedication(Medication medication){
+    public void updateAmountMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -217,6 +221,22 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
         db.update(TABLE_MEDICATION, values, "med_id=" + medication.getMedId(), null);
         db.close(); // Closing database connection
+    }
+
+    public Medication getSingleMedicationByServerID(int medId) {
+        String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            int serverId = cursor.getInt(1);
+            String ownerId = cursor.getString(2);
+            String name = cursor.getString(3);
+            Double count = cursor.getDouble(4);
+            String unit = cursor.getString(5);
+            return new Medication(id, serverId, ownerId, name, count, unit);
+        }
+        return null;
     }
 
     // ----- REMINDERS ----- //
@@ -230,8 +250,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
         // Converts the reminder end date to a string on the format year;month;date;hour;min
         String endDateString = "0";
-        if(reminder.getEndDate() != null) {
+        if (reminder.getEndDate() != null) {
             endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
+        }
+
+        // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
+        String timeTakenString = "0";
+        if(reminder.getTimeTaken() != null){
+            timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
         // Converts the reminder days array to a string on the format day1;day2;..;
@@ -246,8 +272,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
         values.put(COLUMN_REMINDER_SERVER_ID, reminder.getServerId());
+        values.put(COLUMN_REMINDER_TIME_TAKEN, timeTakenString);
         // We store the medicationId as a reference if a medication is attached.
-        if(reminder.getMedicine() != null) {
+        if (reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
             values.put(COLUMN_REM_MEDICATION_DOSAGE, reminder.getDosage());
         }
@@ -270,8 +297,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
         // Converts the reminder endDate to a string on the format year;month;day;hour;min
         String endDateString = "0";
-        if(reminder.getEndDate() != null) {
+        if (reminder.getEndDate() != null) {
             endDateString = Converter.calendarToDatabaseString(reminder.getEndDate());
+        }
+
+        // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
+        String timeTakenString = "0";
+        if(reminder.getTimeTaken() != null){
+            timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
         // Prepares the statement
@@ -282,8 +315,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         values.put(COLUMN_REMINDER_ACTIVE, reminder.getIsActive());
         values.put(COLUMN_REMINDER_DAYS, dayString);
         values.put(COLUMN_REMINDER_END_DATE, endDateString);
+        values.put(COLUMN_REMINDER_TIME_TAKEN, timeTakenString);
         // We store the medicationId as a reference if a medication is attached.
-        if(reminder.getMedicine() != null) {
+        if (reminder.getMedicine() != null) {
             values.put(COLUMN_REM_MEDICATION_ID, reminder.getMedicine().getMedId());
             values.put(COLUMN_REM_MEDICATION_DOSAGE, reminder.getDosage());
         } else {
@@ -317,6 +351,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 int serverId = cursor.getInt(7);
                 int medicationId = cursor.getInt(8);
                 Double dosage = cursor.getDouble(9);
+                String timeTakenString = cursor.getString(10);
 
                 // Converting daysString to an int[] containing all the days.
                 int[] days = Converter.databaseDayStringToArray(dayString);
@@ -326,8 +361,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
 
                 // Converting endDateString to GregorianCalendar
                 GregorianCalendar endCal = new GregorianCalendar();
-                if(!endDateString.equals("0")) {
+                if (!endDateString.equals("0")) {
                     endCal = Converter.databaseDateStringToCalendar(endDateString);
+                }
+
+                // Converting timeTakenString to GregorianCalendar
+                GregorianCalendar timeTaken = new GregorianCalendar();
+                if (!timeTakenString.equals("0")) {
+                    timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
                 }
 
                 Reminder reminder = new Reminder();
@@ -339,15 +380,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
                 reminder.setServerId(serverId);
+                reminder.setTimeTaken(timeTaken);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
-                if(medicationId != 0) {
-                    for(Medication med : getMedications())//MedicationListFragment.medications){
-                        if(med.getMedId() == medicationId){
+                if (medicationId != 0) {
+                    for (Medication med : getMedications())//MedicationListFragment.medications){
+                        if (med.getMedId() == medicationId) {
                             reminder.setMedicine(med);
                             reminder.setDosage(dosage);
                         }
-                    }
+                }
+
                 data.add(reminder);
             } while (cursor.moveToNext());
         }
@@ -381,6 +424,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 int serverId = cursor.getInt(7);
                 int medicationId = cursor.getInt(8);
                 Double dosage = cursor.getDouble(9);
+                String timeTakenString = cursor.getString(10);
 
                 // Converting daysString to an int[] containing all the days.
                 int[] days = Converter.databaseDayStringToArray(dayString);
@@ -394,6 +438,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                     endCal = Converter.databaseDateStringToCalendar(endDateString);
                 }
 
+                // Converting timeTakenString to GregorianCalendar
+                GregorianCalendar timeTaken = new GregorianCalendar();
+                if (!timeTakenString.equals("0")) {
+                    timeTaken = Converter.databaseDateStringToCalendar(endDateString);
+                }
+
                 Reminder reminder = new Reminder();
                 reminder.setReminderId(id);
                 reminder.setOwnerId(owner);
@@ -403,6 +453,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 reminder.setDays(days);
                 reminder.setEndDate(endCal);
                 reminder.setServerId(serverId);
+                reminder.setTimeTaken(timeTaken);
                 // Attaches a referenced medication to the reminder object if set.
                 // "Join"-operation
                 if (medicationId != 0) {
@@ -420,20 +471,48 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         return data;
     }
 
-    public Medication getSingleMedicationByServerID(int medId) {
-        String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        if (cursor.moveToFirst()) {
-            int id = cursor.getInt(0);
-            int serverId = cursor.getInt(1);
-            String ownerId = cursor.getString(2);
-            String name = cursor.getString(3);
-            Double count = cursor.getDouble(4);
-            String unit = cursor.getString(5);
-            return new Medication(id, serverId, ownerId, name, count, unit);
+    public void setReminderTimeTaken(Reminder reminder) {
+
+        // Update existing medication
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
+        String timeTakenString = "0";
+        if(reminder.getTimeTaken() != null){
+            timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
-        return null;
+
+        //Prepares the statement
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_REMINDER_TIME_TAKEN, timeTakenString);
+
+        db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
+        db.close(); // Closing database connection
+    }
+
+    public ArrayList<Reminder> getTodaysReminders() {
+
+        GregorianCalendar todaysDate = new GregorianCalendar();
+        int currentDay = todaysDate.get(Calendar.DAY_OF_WEEK) - 1;
+        ArrayList<Reminder> allReminders = getReminders();
+        ArrayList<Reminder> todaysReminders = new ArrayList<>();
+
+        outerLoop:
+        for (Reminder reminder : allReminders) {
+            // Repeating
+            if (reminder.getDays().length > 0 && todaysDate.before(reminder.getEndDate())) {
+                for (int day : reminder.getDays()) {
+                    if (day == currentDay) {
+                        todaysReminders.add(reminder);
+                        continue outerLoop;
+                    }
+                }
+                // Non-repeating
+            } else if (reminder.getDays().length == 0 && Converter.isSameDate(todaysDate, reminder.getDate())) {
+                todaysReminders.add(reminder);
+            }
+        }
+        return todaysReminders;
     }
 
     public void deleteReminder(Reminder reminder) {

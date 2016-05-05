@@ -19,17 +19,17 @@ import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.EndDatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PostReminderJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.sync.PostReminderJob;
 
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputValidator;
@@ -225,6 +225,8 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     public void createReminder() {
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         Reminder reminder = vr.CreateReminderFromInput(
@@ -238,10 +240,16 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
+
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, userId, authToken));
+
         mListener.onSaveNewReminder(reminder);
     }
 
     public void updateReminder() {
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
+        System.out.println("In newreminder update: " + reminder);
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         reminder = vr.UpdateReminderFromInput(
@@ -250,8 +258,14 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 dosageInput, repeatSwitch, selectedDays,
                 endDateInput, activeSwitch, reminder, ((MainActivity) getActivity()).getCurrentUser());
 
+        System.out.println("In newreminder update (after converter): " + reminder);
+
+
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
+
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+
         mListener.onSaveNewReminder(reminder);
     }
 

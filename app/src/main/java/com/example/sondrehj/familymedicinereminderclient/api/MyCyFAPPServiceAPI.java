@@ -16,6 +16,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HEAD;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -65,7 +66,7 @@ public interface MyCyFAPPServiceAPI {
     Call<User> getChildren(@Path("userID") String userID);
 
     @POST("user")
-    Call<User> createUser(@Body User user);
+    Call<User> createUser(@Header("create_secret") String createSecret, @Body User user);
 
     @PUT("user/{userID}/token/{token}")
     Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);

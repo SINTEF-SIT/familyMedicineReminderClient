@@ -22,7 +22,7 @@ public class Reminder implements Serializable {
     Double dosage;
     Boolean isActive;
     int[] days;
-
+    GregorianCalendar timeTaken;
 
     public Reminder() {
 
@@ -118,6 +118,16 @@ public class Reminder implements Serializable {
 
     public int[] getDays() { return days; }
 
+    public GregorianCalendar getTimeTaken() {
+        return timeTaken;
+    }
+
+    public void setTimeTaken(GregorianCalendar timeTaken) {
+        this.timeTaken = timeTaken;
+    }
+
+
+
     public String getDateString(){
         System.out.println(date);
         int hour = date.get(Calendar.HOUR_OF_DAY);
@@ -164,6 +174,18 @@ public class Reminder implements Serializable {
 
     public void updateFromTransportReminder(TransportReminder transportReminder) {
         this.serverId = transportReminder.serverId;
-        //Add other things as necessary
+        this.name = transportReminder.getName();
+        this.date = Converter.databaseDateStringToCalendar(transportReminder.getDate());
+        if(transportReminder.getEndDate().equals("0")) {   //TODO: Fix this
+            this.endDate = null;
+        }
+        else if(transportReminder.getEndDate().equals("continuous")) {
+            this.endDate = new GregorianCalendar(9998,11,31,0,0);
+        }
+        else {
+            this.endDate = Converter.databaseDateStringToCalendar(transportReminder.getEndDate());
+        }
+        this.days = Converter.serverDayStringToDayArray(transportReminder.getDays());
+        this.isActive = transportReminder.getActive();
     }
 }
