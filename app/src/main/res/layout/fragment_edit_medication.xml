@@ -40,7 +40,8 @@
                 android:id="@+id/medication_storage_medication_input"
                 android:inputType="text"
                 android:layout_marginRight="10dp"
-                android:textAlignment="textEnd"/>
+                android:textAlignment="textEnd"
+                android:maxLength="18"/>
 
         </LinearLayout>
 

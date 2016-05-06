@@ -46,7 +46,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-
 /**
  * A simple {} subclass.
  * Activities that contain this fragment must implement the
@@ -187,6 +186,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
             }
         });
         fillFields();
+        if (reminder != null) {
+            getActivity().setTitle("Edit reminder");
+        }
         return view;
     }
 
@@ -231,7 +233,10 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 nameInput, dateInput, timeInput,
                 medication, attachMedicationSwitch,
                 dosageInput, repeatSwitch, selectedDays,
-                endDateInput, activeSwitch);
+                endDateInput, activeSwitch, ((MainActivity) getActivity()).getCurrentUser());
+
+
+        System.out.println(reminder);
 
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
@@ -251,7 +256,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 nameInput, dateInput, timeInput,
                 medication, attachMedicationSwitch,
                 dosageInput, repeatSwitch, selectedDays,
-                endDateInput, activeSwitch, reminder);
+                endDateInput, activeSwitch, reminder, ((MainActivity) getActivity()).getCurrentUser());
 
         System.out.println("In newreminder update (after converter): " + reminder);
 
@@ -536,7 +541,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     @Override
     public String getTitle() {
-        return "New Reminders";
+        return "New reminder";
     }
 
     public interface OnNewReminderInteractionListener {

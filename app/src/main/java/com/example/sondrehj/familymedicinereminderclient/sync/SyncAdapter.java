@@ -14,6 +14,7 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
 /**
  * Created by nikolai on 07/04/16.
@@ -51,9 +52,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
-        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         String notificationType = extras.getString("notificationType");
+        String optionalData = extras.getString("optionalData");
+        String currentUserId = extras.getString("currentUserId");
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         MySQLiteHelper db = new MySQLiteHelper(getContext());
+        System.out.println(currentUserId);
 
         Synchronizer synchronizer = new Synchronizer(account.name, api, db, context);
         Intent intent = new Intent();
@@ -76,6 +80,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     Log.d(TAG, "in switch -> positiveLinkingResponse");
                     intent.setAction("mycyfapp");
                     intent.putExtra("action", "notifyPositiveResultToLinkingFragment");
+                    intent.putExtra("patientID", optionalData);
                     context.sendBroadcast(intent);
                     break;
                 case "negativeLinkingResponse":

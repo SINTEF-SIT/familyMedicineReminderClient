@@ -67,7 +67,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/reminder_edit_name_input"
             android:inputType="text"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:maxLength="18"/>
 
     </LinearLayout>
 
@@ -221,12 +222,12 @@
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="15dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DBDBDB"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -391,12 +392,12 @@
                 android:layout_gravity="center_vertical|right"
                 android:layout_marginRight="15dp" />
         </LinearLayout>
-    </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#DBDBDB"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DBDBDB"/>
+    </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"

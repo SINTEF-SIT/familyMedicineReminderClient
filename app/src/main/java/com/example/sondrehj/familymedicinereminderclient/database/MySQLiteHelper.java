@@ -13,6 +13,8 @@ import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.util.ArrayList;
@@ -71,6 +73,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
             + " integer, " + COLUMN_REM_MEDICATION_DOSAGE
             + " real);";
 
+    // User table
+    public static final String TABLE_USER = "user";
+    public static final String COLUMN_USER_USER_ID = "user_id";
+    public static final String COLUMN_USER_ALIAS = "alias";
+
+    private static final String CREATE_TABLE_USER = "create table "
+            + TABLE_USER + "(" + COLUMN_USER_USER_ID
+            + " text primary key, " + COLUMN_USER_ALIAS
+            + " text not null)";
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -81,6 +92,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(CREATE_TABLE_MEDICATION);
         database.execSQL(CREATE_TABLE_REMINDER);
+        database.execSQL(CREATE_TABLE_USER);
         System.out.println("DATABASE CREATED");
     }
 
@@ -91,6 +103,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_MEDICATION);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_REMINDER);
+        db.execSQL("DOP TABLE IF EXISTS " + TABLE_USER);
         onCreate(db);
     }
 
@@ -148,6 +161,33 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
                 Double count = cursor.getDouble(4);
                 String unit = cursor.getString(5);
                 Medication m = new Medication(id, serverId, ownerId, name, count, unit);
+                data.add(m);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return data;
+    }
+
+    public ArrayList<Medication> getMedicationsByOwnerId(String ownerId) {
+        //Retrieve medications
+        String selectQuery =
+                "SELECT  *" +
+                " FROM " + TABLE_MEDICATION +
+                " WHERE " + COLUMN_OWNER_ID + "='" + ownerId + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        ArrayList<Medication> data = new ArrayList<Medication>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                int serverId = cursor.getInt(1);
+                String owner = cursor.getString(2);
+                String name = cursor.getString(3);
+                Double count = cursor.getDouble(4);
+                String unit = cursor.getString(5);
+                Medication m = new Medication(id, serverId, owner, name, count, unit);
                 data.add(m);
             } while (cursor.moveToNext());
         }
@@ -321,6 +361,70 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         return data;
     }
 
+    // Could be integrated with getReminders()
+    public ArrayList<Reminder> getRemindersByOwnerId(String ownerId) {
+
+        // Retrieve Reminders
+        String selectQuery =
+                "SELECT  *" +
+                        " FROM " + TABLE_REMINDER +
+                        " WHERE " + COLUMN_REMINDER_OWNER_ID + "='" + ownerId + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        ArrayList<Reminder> data = new ArrayList<>();
+
+        // Loop through the retrieved data. Generates instances of the the reminder class.
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(0);
+                String owner = cursor.getString(1);
+                String name = cursor.getString(2);
+                String dateString = cursor.getString(3);
+                boolean isActive = cursor.getInt(4) > 0;
+                String dayString = cursor.getString(5);
+                String endDateString = cursor.getString(6);
+                int serverId = cursor.getInt(7);
+                int medicationId = cursor.getInt(8);
+                Double dosage = cursor.getDouble(9);
+
+                // Converting daysString to an int[] containing all the days.
+                int[] days = Converter.databaseDayStringToArray(dayString);
+
+                // Converting dateString to GregorianCalendar
+                GregorianCalendar date = Converter.databaseDateStringToCalendar(dateString);
+
+                // Converting endDateString to GregorianCalendar
+                GregorianCalendar endCal = new GregorianCalendar();
+                if (!endDateString.equals("0")) {
+                    endCal = Converter.databaseDateStringToCalendar(endDateString);
+                }
+
+                Reminder reminder = new Reminder();
+                reminder.setReminderId(id);
+                reminder.setOwnerId(owner);
+                reminder.setName(name);
+                reminder.setDate(date);
+                reminder.setIsActive(isActive);
+                reminder.setDays(days);
+                reminder.setEndDate(endCal);
+                reminder.setServerId(serverId);
+                // Attaches a referenced medication to the reminder object if set.
+                // "Join"-operation
+                if (medicationId != 0) {
+                    for (Medication med : getMedications())//MedicationListFragment.medications){
+                        if (med.getMedId() == medicationId) {
+                            reminder.setMedicine(med);
+                            reminder.setDosage(dosage);
+                        }
+                }
+                data.add(reminder);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return data;
+    }
+
     public Medication getSingleMedicationByServerID(int medId) {
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -344,6 +448,58 @@ public class MySQLiteHelper extends SQLiteOpenHelper{
         db.close();
     }
 
+    // ----- USERS ----- //
+
+    public ArrayList<User2> getUsers() {
+
+        // Retrieve Users
+        String selectQuery = "SELECT  * FROM " + TABLE_USER;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        ArrayList<User2> data = new ArrayList<>();
+        // Loop through the retrieved data. Generates instances of the the user class.
+        if (cursor.moveToFirst()) {
+            do {
+                String userId = cursor.getString(0);
+                String alias = cursor.getString(1);
+                User2 user = new User2(userId, alias);
+                data.add(user);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return data;
+    }
+
+    public void addUser(User2 user) {
+        // Add new user
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Prepares the statement
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_USER_ID, user.getUserId());
+        values.put(COLUMN_USER_ALIAS, user.getAlias());
+        // Inserting Row
+        db.insert(TABLE_USER, null, values);
+        db.close(); // Closing database connection
+    }
+
+    public void updateUser(User2 user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Prepares the statement
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_USER_ID, user.getUserId());
+        values.put(COLUMN_USER_ALIAS, user.getAlias());
+        // Executes the query
+        db.update(TABLE_USER, values, "user_id='" + user.getUserId() + "'", null);
+        db.close(); // Closing database connection
+    }
+
+    public void deleteUser(String userId) {
+        //Deletes a medication
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_USER, "user_id='" + userId + "'", null);
+        db.close();
+    }
 
     public static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {

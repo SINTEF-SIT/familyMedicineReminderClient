@@ -1,8 +1,6 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
@@ -63,14 +61,15 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         guardianDashboardLayout.setDividerDrawable(getResources().getDrawable(R.drawable.horizontal_divider));
         guardianDashboardLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
         LinearLayout pasientLayout = addPasientToView();
-        addDefaultMedicineIcon(pasientLayout);
-        addDefaultMedicineIcon(pasientLayout);
-        addDefaultMedicineIcon(pasientLayout);
-        addDefaultMedicineIcon(pasientLayout);
+        addDefaultReminderIcon(pasientLayout);
+        addDefaultReminderIcon(pasientLayout);
+        addDefaultReminderIcon(pasientLayout);
+        addDefaultReminderIcon(pasientLayout);
 
         return view;
     }
-    //TODO: Comments is gone? RIP
+
+    //Adds and returns a layout for a pasient to the view, including a layout for reminders
     public LinearLayout addPasientToView() {
         LinearLayout pasientLayout = new LinearLayout(getActivity());
         pasientLayout.setOrientation(LinearLayout.VERTICAL);
@@ -95,19 +94,6 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         pasientNameParams.setMargins(0, pasientNameMarginTop, 0, pasientNameMarginBottom);
         pasientLayout.addView(pasientNameText);
 
-        /*
-        LinearLayout medicineLayout = new LinearLayout(getActivity());
-        medicineLayout.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams medicineLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        medicineLayout.setLayoutParams(medicineLayoutParams);
-        medicineLayoutParams.gravity = Gravity.CENTER;
-        medicineLayout.setGravity(Gravity.CENTER);
-        //converting dp to px, because LayoutParams only takes px
-        int layoutMarginLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
-        int layoutMarginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
-        medicineLayoutParams.setMargins(layoutMarginLeft, 0, layoutMarginRight, 0);
-        pasientLayout.addView(medicineLayout);
-        */
         GridLayout gridLayout = new GridLayout(getActivity());
         LinearLayout.LayoutParams gridLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         gridLayout.setLayoutParams(gridLayoutParams);
@@ -120,7 +106,8 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         return pasientLayout;
     }
 
-    public void addDefaultMedicineIcon(LinearLayout pasientLayout) {
+    //adds a questionmarkicon to the layout passed in
+    public void addDefaultReminderIcon(LinearLayout pasientLayout) {
         Button medicineButton = new Button(getActivity());
         medicineButton.setBackgroundResource(R.drawable.questionmark);
         String questionmark = "?";
@@ -143,6 +130,7 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         medicineLayout.addView(medicineButton);
     }
 
+    //adds a green checkmarkicon to the layout passed in
     public void addCheckMarkIcon(LinearLayout pasientLayout) {
         Button medicineButton = new Button(getActivity());
         medicineButton.setBackgroundResource(R.drawable.green_checkmark);
@@ -163,6 +151,7 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         medicineLayout.addView(medicineButton);
     }
 
+    //adds a redXicon to the layout passed in
     public void addRedXIcon(LinearLayout pasientLayout) {
         Button medicineButton = new Button(getActivity());
         medicineButton.setBackgroundResource(R.drawable.red_x);

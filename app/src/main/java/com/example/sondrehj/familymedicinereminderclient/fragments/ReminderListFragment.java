@@ -61,6 +61,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
+        System.out.println(new MySQLiteHelper(getActivity()).getReminders());
     }
 
     @Override
@@ -84,6 +85,12 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null))
         );
         return view;
+    }
+
+    public void deleteReminder(Reminder reminder, int position){
+        reminders.remove(reminder);
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
+        recView.getAdapter().notifyItemRemoved(position);
     }
 
     @Subscribe

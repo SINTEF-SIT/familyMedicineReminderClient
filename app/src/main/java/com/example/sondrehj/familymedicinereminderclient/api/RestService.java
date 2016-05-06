@@ -13,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by nikolai on 05/04/16.
  */
 public class RestService {
+
     private static final String BASE_URL = "http://10.0.0.178:1337";
 
     private static OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder()
@@ -22,7 +23,6 @@ public class RestService {
     private static Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create());
-
 
     /**
      * Create an instance of the retrofit class which is instantiated with

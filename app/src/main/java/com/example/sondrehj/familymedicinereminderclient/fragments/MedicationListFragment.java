@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
+
+import android.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.adapters.MedicationRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
@@ -24,6 +27,8 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.RowSetEvent;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -59,8 +64,8 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     @Subscribe
     public void handleMedicationsChangedEvent(DataChangedEvent event) {
+
         if(event.type.equals(DataChangedEvent.MEDICATIONS)) {
-            System.out.println("In handle data changed event");
             medications.clear();
             medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
@@ -69,6 +74,14 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
                     fragment.notifyChanged();
                     swipeContainer.setRefreshing(false);
                 });
+            }
+        }
+        if (event.type.equals(DataChangedEvent.MEDICATIONS_BY_OWNERID)) {
+            medications.clear();
+            medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
+            MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+            if (fragment != null) {
+                fragment.notifyChanged();
             }
         }
     }
@@ -108,10 +121,15 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         return view;
     }
 
+    public void deleteMedcation(Medication med, int position){
+        medications.remove(med);
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
+        recView.getAdapter().notifyItemRemoved(position);
+    }
+
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
         ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
-
     }
 
     @Override
@@ -166,6 +184,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         extras.putString("notificationType", "medicationsChanged");
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        extras.putString("currentUserId", ((MainActivity) getActivity()).getCurrentUser().getUserId());
 
         ContentResolver.requestSync(
                 MainActivity.getAccount(getActivity()),

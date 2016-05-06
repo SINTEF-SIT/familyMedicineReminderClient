@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -11,6 +13,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.ReminderListFragment.OnReminderListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
@@ -96,8 +99,10 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         });
 
         holder.mDeleteWrapper.setOnClickListener((View v) -> {
-            remove(holder.getAdapterPosition());
-            mListener.onReminderDeleteButtonClicked(holder.mReminder);
+            Reminder reminder = holder.mReminder;
+            FragmentManager fm = ((Activity) context).getFragmentManager();
+            DeleteReminderDialogFragment deleteReminderDialogFragment = DeleteReminderDialogFragment.newInstance(reminder, holder.getAdapterPosition());
+            deleteReminderDialogFragment.show(fm, "warningdialog");
         });
     }
 

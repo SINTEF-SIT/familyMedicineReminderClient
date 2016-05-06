@@ -131,14 +131,17 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     public void createNewMedication() {
+
+        //Creates a new Medication object with the values of the input-fields
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
 
-        //Creates a new Medication object with the values of the input-fields
+        System.out.println("USERID: " + userId);
+
         Medication medication = new Medication(
                 0,
                 -1,
-                userId, //TODO: Changed from hardcoded value, check for bugs.
+                ((MainActivity)getActivity()).getCurrentUser().getUserId(),
                 medicationNameInput.getText().toString(),
                 Double.parseDouble(medicationAmountInput.getText().toString()),
                 medicationUnitInput.getText().toString()
@@ -149,7 +152,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         db.addMedication(medication);
 
         ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId, authToken));
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS_BY_OWNERID));
 
         System.out.println("---------Medication Created---------" + "\n" + medication);
         System.out.println("------------------------------------");

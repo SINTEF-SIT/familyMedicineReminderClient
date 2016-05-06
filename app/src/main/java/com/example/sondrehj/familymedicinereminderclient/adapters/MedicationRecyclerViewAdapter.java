@@ -1,6 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment.OnListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
@@ -96,7 +99,12 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    remove(holder.getAdapterPosition());
+                    Medication medication = holder.mItem;
+                    FragmentManager fm = ((Activity) context).getFragmentManager();
+                    DeleteMedicationDialogFragment deleteMedicationDialogFragment = DeleteMedicationDialogFragment.newInstance(medication, holder.getAdapterPosition());
+                    deleteMedicationDialogFragment.show(fm, "warningdialog");
+
+                    //remove(holder.getAdapterPosition());
 
                     //TODO: remove medication from database (handle notification conflict if medication is attached to reminder)
                     //mListener.onMedicationListFragmentInteraction(holder.mItem);
@@ -104,6 +112,7 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
