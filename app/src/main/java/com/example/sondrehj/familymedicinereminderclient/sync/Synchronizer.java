@@ -57,7 +57,7 @@ public class Synchronizer {
                     System.out.println("Getting med dependency: " + serverReminder.getMedicine());
                     Medication medDependency = new MySQLiteHelper(context).getSingleMedicationByServerID(serverReminder.getMedicine());
                     System.out.println("Got med dependency: " + medDependency);
-                    if(medDependency == null) {
+                    if(medDependency == null && serverReminder.getDosage() != 0) {
                         Toast.makeText(context, "Some of the reminders need medications that are not yet synchronized. " +
                                 "Please synchronize medcations first", Toast.LENGTH_SHORT).show();
                         //We do not return, but merely continue to the next reminder

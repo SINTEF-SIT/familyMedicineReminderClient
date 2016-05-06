@@ -98,7 +98,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         if(event.type.equals(DataChangedEvent.REMINDERS)) {
             System.out.println("In handle data changed event");
             reminders.clear();
-            reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
+            reminders.addAll(new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
@@ -169,6 +169,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         extras.putString("notificationType", "remindersChanged");
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        extras.putString("currentUserId", ((MainActivity) getActivity()).getCurrentUser().getUserId());
 
         ContentResolver.requestSync(
                 MainActivity.getAccount(getActivity()),
