@@ -206,12 +206,16 @@ public class NotificationScheduler {
 
             // We reduce the amount of the medication by the given dosage.
             reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
+            GregorianCalendar currentTime = new GregorianCalendar();
+            reminder.setTimeTaken(currentTime);
 
             // Updates the DB
             MySQLiteHelper db = new MySQLiteHelper(activity);
             db.updateAmountMedication(reminder.getMedicine());
+            db.setReminderTimeTaken(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
+            System.out.println(currentTime.getTime().toString());
             // Display toaster
             Toast.makeText(activity, "Registered as taken", Toast.LENGTH_LONG).show();
         }

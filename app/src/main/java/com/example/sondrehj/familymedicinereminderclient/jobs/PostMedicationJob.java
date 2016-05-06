@@ -1,7 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.jobs;
 
 import android.util.Log;
-
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
+import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
@@ -44,12 +45,11 @@ public class PostMedicationJob extends Job {
     public void onRun() throws Throwable {
         Log.d(TAG, "Job is running in background.");
         Log.d(TAG, Thread.currentThread().toString());
-
         MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         Call<Medication> call = api.createMedication(userId, medication);
         Medication med = call.execute().body(); //medication retrieved from server
         if(med != null) {
-            System.out.println(med);
+            System.out.println(med.getServerId());
             medication.setServerId(med.getServerId());  //To retain the reference to this medication, we add the server id to it
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
         }

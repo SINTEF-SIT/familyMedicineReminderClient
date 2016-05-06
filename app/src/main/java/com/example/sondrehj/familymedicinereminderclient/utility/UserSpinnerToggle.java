@@ -52,7 +52,8 @@ public class UserSpinnerToggle {
                 ((MainActivity) activity).setCurrentUser(selectedUser);
                 Toast.makeText(activity, "User changed to " + selectedUser.getAlias(), Toast.LENGTH_SHORT).show();
                 userActionBarTextView.setText(selectedUser.getAlias());
-                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS_BY_OWNERID));
+                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
             }
 
             @Override
@@ -78,6 +79,7 @@ public class UserSpinnerToggle {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
                 android.R.layout.simple_spinner_item, usersAlias);
+
         userSpinner.setAdapter(adapter);
 
     }

@@ -32,7 +32,9 @@ public final class Converter {
 
     public static GregorianCalendar databaseDateStringToCalendar(String dateString) {
 
+        System.out.println(dateString);
         String[] dateArray = dateString.split(";");
+        System.out.println(Arrays.toString(dateArray));
         GregorianCalendar cal = new GregorianCalendar(
                 Integer.parseInt(dateArray[0]), //Year
                 Integer.parseInt(dateArray[1]), //Month
@@ -171,6 +173,20 @@ public final class Converter {
         String[] months = {"jan", "feb", "mar", "apr", "may", "june", "jul", "aug", "sep", "oct", "nov", "des"};
         return months[i];
     }
+
+    public static Boolean isSameDate (GregorianCalendar cal, GregorianCalendar cal2){
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        int year2 = cal2.get(Calendar.YEAR);
+        int month2 = cal2.get(Calendar.MONTH);
+        int date2 = cal2.get(Calendar.DATE);
+
+        return year == year2 && month == month2 && date == date2;
+    }
+
+
+
 
 
 }

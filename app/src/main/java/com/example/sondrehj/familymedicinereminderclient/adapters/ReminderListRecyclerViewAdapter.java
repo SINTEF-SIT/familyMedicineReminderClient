@@ -98,6 +98,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             }
         });
 
+
         holder.mDeleteWrapper.setOnClickListener((View v) -> {
             Reminder reminder = holder.mReminder;
             FragmentManager fm = ((Activity) context).getFragmentManager();
