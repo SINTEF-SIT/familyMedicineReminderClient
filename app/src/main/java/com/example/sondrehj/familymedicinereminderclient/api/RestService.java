@@ -26,9 +26,14 @@ public class RestService {
 
     /**
      * Create an instance of the retrofit class which is instantiated with
-     * the MyCyFAPPServiceAPI. This serviceApi is then returned.
+     * the MyCyFAPPServiceAPI. This serviceApi is then returned. This instance is
+     * used for requests to the server that require an authentication token. An interceptor
+     * intercepts every request that is going to be sent and adds the authentication
+     * token to its
      *
-     * @return MyCyFAPPServiceAPI
+     * @param authToken             The access token to be used for authenticating the user on the server.
+     *
+     * @return MyCyFAPPServiceAPI   A retrofit instance built from the MyCyFAPPServiceAPI
      */
     public static MyCyFAPPServiceAPI createRestService(final String authToken) {
 
@@ -50,6 +55,15 @@ public class RestService {
         Retrofit retrofit = builder.client(httpClient).build();
         return retrofit.create(MyCyFAPPServiceAPI.class);
     }
+
+    /**
+     * Create an instance of the retrofit class which is instantiated with
+     * the MyCyFAPPServiceAPI. This serviceApi is then returned. Use this method
+     * when making requests that do not require authentication on the server,
+     * like creating a new user
+     *
+     * @return MyCyFAPPServiceAPI   A retrofit instance built from the MyCyFAPPServiceAPI
+     */
 
     public static MyCyFAPPServiceAPI createRestService() {
         return createRestService(null);
