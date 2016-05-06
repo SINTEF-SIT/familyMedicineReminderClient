@@ -1,6 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.jobs;
+
 import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
+import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;

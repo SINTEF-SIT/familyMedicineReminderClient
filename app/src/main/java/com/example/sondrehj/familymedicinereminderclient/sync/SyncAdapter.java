@@ -52,11 +52,11 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
-        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         String notificationType = extras.getString("notificationType");
         String optionalData = extras.getString("optionalData");
         String currentUserId = extras.getString("currentUserId");
 
+        MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         MySQLiteHelper db = new MySQLiteHelper(getContext());
         System.out.println(currentUserId);
 
@@ -79,11 +79,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     break;
                 case "positiveLinkingResponse":
                     Log.d(TAG, "in switch -> positiveLinkingResponse");
-                    Intent intent1 = new Intent();
-                    intent1.setAction("mycyfapp");
-                    intent1.putExtra("action", "notifyPositiveResultToLinkingFragment");
-                    intent1.putExtra("patientID", optionalData);
-                    context.sendBroadcast(intent1);
+                    intent.setAction("mycyfapp");
+                    intent.putExtra("action", "notifyPositiveResultToLinkingFragment");
+                    intent.putExtra("patientID", optionalData);
+                    context.sendBroadcast(intent);
                     break;
                 case "negativeLinkingResponse":
                     Log.d(TAG, "in switch -> negativeLinkingResponse");

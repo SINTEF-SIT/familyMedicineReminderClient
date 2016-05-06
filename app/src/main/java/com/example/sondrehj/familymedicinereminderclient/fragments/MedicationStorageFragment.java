@@ -134,6 +134,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
+
         System.out.println("USERID: " + userId);
 
         Medication medication = new Medication(
@@ -148,7 +149,6 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         // Adds the medicine to the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
-
 
         ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
