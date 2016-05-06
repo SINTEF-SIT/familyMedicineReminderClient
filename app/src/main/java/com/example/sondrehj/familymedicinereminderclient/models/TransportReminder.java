@@ -18,10 +18,10 @@ public class TransportReminder implements Serializable {
     String days;
 
     public TransportReminder(Reminder reminder) {
-        this.reminderId = reminder.reminderId;
-        this.serverId = reminder.serverId;
-        this.ownerId = reminder.ownerId;
-        this.name = reminder.name;
+        this.reminderId = reminder.getReminderId();
+        this.serverId = reminder.getServerId();
+        this.ownerId = reminder.getOwnerId();
+        this.name = reminder.getName();
         this.date = Converter.calendarToDatabaseString(reminder.getDate());
 
         //End date may be null if the reminder is one-time or continuous
@@ -40,7 +40,7 @@ public class TransportReminder implements Serializable {
             this.dosage = 0.0;
         }
         this.isActive = reminder.isActive;
-        this.days = Converter.daysArrayToDatabaseString(reminder.getDays());
+        this.days = Converter.dayArrayToServerDayString(reminder.getDays());
     }
 
     public int getReminderId() { return reminderId; }

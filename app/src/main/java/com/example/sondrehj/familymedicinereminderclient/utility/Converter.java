@@ -82,14 +82,17 @@ public final class Converter {
         int[] returnArray = new int[daysCount];
         int currentIndex = 0;
         for (int i = 0; i <= splitString.length-1; i++) {
-            if (splitString[i] == 1) returnArray[currentIndex++] = i;
+            if (splitString[i] == '1') returnArray[currentIndex++] = i;
         }
         return returnArray;
     }
 
     public static String dayArrayToServerDayString(int[] dayArray) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i : dayArray) stringBuilder.append(i);
+        StringBuilder stringBuilder = new StringBuilder("0000000");
+        for (int i : dayArray) {
+            stringBuilder.replace(i,i+1,"1");
+            System.out.println(stringBuilder.toString());
+        }
         return stringBuilder.toString();
     }
 

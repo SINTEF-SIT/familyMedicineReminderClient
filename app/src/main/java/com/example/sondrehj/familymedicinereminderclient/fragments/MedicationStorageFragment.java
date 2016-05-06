@@ -17,9 +17,10 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.sync.PostMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 import butterknife.Bind;
@@ -133,6 +134,8 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
         //Creates a new Medication object with the values of the input-fields
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
+
         System.out.println("USERID: " + userId);
 
         Medication medication = new Medication(
@@ -148,7 +151,7 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId, authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS_BY_OWNERID));
 
         System.out.println("---------Medication Created---------" + "\n" + medication);
@@ -157,6 +160,10 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     }
 
     public void updateMedication() {
+        //Fetches the userId
+        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
+        String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
+
         //Updates an existing Medication object
         mMedication.setName(medicationNameInput.getText().toString());
         mMedication.setCount(Double.parseDouble(medicationAmountInput.getText().toString()));
@@ -165,6 +172,9 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.updateMedication(mMedication);
+
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateMedicationJob(mMedication, userId, authToken));
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
         System.out.println("---------Medication Updated---------" + "\n" + mMedication);
         System.out.println("------------------------------------");

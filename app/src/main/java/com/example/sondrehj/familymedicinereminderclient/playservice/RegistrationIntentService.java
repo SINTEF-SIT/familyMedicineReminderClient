@@ -49,9 +49,13 @@ public class RegistrationIntentService extends IntentService {
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             // [END get_token]
             Log.i(TAG, "GCM Registration Token: " + token);
-
             // pass along this data
-            sendRegistrationToServer(token);
+            AccountManager manager = AccountManager.get(getApplicationContext());
+            Account account = MainActivity.getAccount(getApplicationContext());
+            String userID = manager.getUserData(account, "userId");
+            String authToken = manager.getUserData(account, "authToken");
+
+            sendRegistrationToServer(token, userID, authToken);
             sharedPreferences.edit().putBoolean(PlayservicePreferences.SENT_TOKEN_TO_SERVER, true).apply();
 
     } catch (IOException e) {
@@ -69,9 +73,9 @@ public class RegistrationIntentService extends IntentService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
-        MyCyFAPPServiceAPI apiService = RestService.createRestService();
-        Call<User> call = apiService.associateToken(MainActivity.getAccount(getApplicationContext()).name, token);
+    private void sendRegistrationToServer(String token, String userID, String authToken) {
+        MyCyFAPPServiceAPI apiService = RestService.createRestService(authToken);
+        Call<User> call = apiService.associateToken(userID, token);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -87,7 +91,7 @@ public class RegistrationIntentService extends IntentService {
             @Override
             public void onFailure(Call<User> call, Throwable t) {
                 Log.d(TAG, "failure in token registration.");
-        }
+            }
         });
     }
 }

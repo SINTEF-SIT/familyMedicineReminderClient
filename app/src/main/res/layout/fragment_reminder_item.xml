@@ -29,6 +29,19 @@
             android:textColor="#9E9E9E"
             android:textSize="26sp" />
 
+        <TextView
+            android:id="@+id/server_id_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginLeft="150dp"
+            android:layout_marginTop="0dp"
+            android:layout_weight="0.2"
+            android:fontFamily="sans-serif-light"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="#9E9E9E"
+            android:textSize="26sp" />
+
         <ImageView
             android:layout_width="36dp"
             android:layout_height="36dp"
