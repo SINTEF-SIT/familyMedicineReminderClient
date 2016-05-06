@@ -41,7 +41,7 @@
                 android:inputType="text"
                 android:layout_marginRight="10dp"
                 android:textAlignment="textEnd"
-                android:maxLength="18"/>
+                android:maxLength="21"/>
 
         </LinearLayout>
 

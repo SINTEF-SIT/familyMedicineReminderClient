@@ -14,11 +14,12 @@ import android.view.ViewGroup;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.adapters.DashboardRecyclerViewAdapter;
-import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
+import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +28,14 @@ public class DashboardListFragment extends android.app.Fragment implements Title
 
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
-    private List<Reminder> reminders = new ArrayList<>();
+    private List<Reminder> todaysReminders = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
     private SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
+        todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
         System.out.println(new MySQLiteHelper(getActivity()).getReminders());
     }
 
@@ -52,10 +53,33 @@ public class DashboardListFragment extends android.app.Fragment implements Title
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
-            recView.setAdapter(new DashboardRecyclerViewAdapter(context, reminders, mListener));
+            recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysReminders, mListener));
         }
 
         return view;
+    }
+
+    @Subscribe
+    public void handleDashboardChangedEvent(DataChangedEvent event) {
+
+        if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+            todaysReminders.clear();
+            //medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+            todaysReminders.addAll((new MySQLiteHelper(getActivity()).getTodaysReminders()));
+            System.out.println();
+            DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
+            if (fragment != null) {
+                fragment.notifyChanged();
+            }
+        }
+    }
+
+    public void notifyChanged() {
+        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.dashboard_list);
+        if (recView != null) {
+            recView.getAdapter().notifyDataSetChanged();
+            System.out.println("notifychanged called");
+        }
     }
 
     //API Level >= 23
@@ -100,7 +124,7 @@ public class DashboardListFragment extends android.app.Fragment implements Title
 
     @Override
     public String getTitle() {
-        return "Dashboard";
+        return "Today's reminders";
     }
 
 

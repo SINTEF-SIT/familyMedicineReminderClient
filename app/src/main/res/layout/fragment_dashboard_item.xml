@@ -49,23 +49,6 @@
             android:textColor="#9E9E9E"
             android:textSize="32sp" />
 
-        <FrameLayout
-            android:id="@+id/delete_wrapper"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="right">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:text="x"
-                android:layout_marginLeft="20dp"
-                android:textColor="#9E9E9E"
-                android:textSize="22sp"
-                android:layout_gravity="top|right" />
-        </FrameLayout>
-
         <Button
             android:id="@+id/taken_button"
             android:layout_width="90dp"

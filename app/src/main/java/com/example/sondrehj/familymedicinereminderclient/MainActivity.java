@@ -131,7 +131,7 @@ public class MainActivity
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
-            changeFragment(new MedicationListFragment());
+            changeFragment(new DashboardListFragment());
             //Enables drawer and menu-button
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             toggle.setDrawerIndicatorEnabled(true);
@@ -616,9 +616,12 @@ public class MainActivity
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
+
+
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override

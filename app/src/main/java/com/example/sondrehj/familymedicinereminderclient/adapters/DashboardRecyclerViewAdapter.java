@@ -39,47 +39,73 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.mReminder = mValues.get(position);
-        if (holder.mReminder.getIsActive()) {
-            holder.mNameView.setText(mValues.get(position).getName());
+        holder.mNameView.setText(mValues.get(position).getName());
 
-            GregorianCalendar cal = mValues.get(position).getDate();
-            int year = cal.get(Calendar.YEAR);
-            int month = cal.get(Calendar.MONTH);
-            int date = cal.get(Calendar.DATE);
-            int hour = cal.get(Calendar.HOUR_OF_DAY);
-            int min = cal.get(Calendar.MINUTE);
-            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        GregorianCalendar cal = mValues.get(position).getDate();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date = cal.get(Calendar.DATE);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int min = cal.get(Calendar.MINUTE);
+        int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
-            String timeString = String.format("%02d:%02d", hour, min);
-            holder.mDateTimeView.setText(timeString);
+        String timeString = String.format("%02d:%02d", hour, min);
+        holder.mDateTimeView.setText(timeString);
 
-            //set medicineicon if medicine is attached
-            if (holder.mReminder.getMedicine() != null) {
-                // Set the icon
-                switch (holder.mReminder.getMedicine().getUnit()) {
-                    case "mg":case "pill":case "mcg":case "g":
-                        holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_pill));
-                        break;
-                    case "inhalation":
-                        holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_lungs));
-                        break;
-                    case "ml":case "unit":
-                        holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_bottle));
-                        break;
-                }
-            } else {
-                holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_appointment_reminder));
+        //set medicineicon if medicine is attached
+        if (holder.mReminder.getMedicine() != null) {
+            // Set the icon
+            switch (holder.mReminder.getMedicine().getUnit()) {
+                case "mg":
+                case "pill":
+                case "mcg":
+                case "g":
+                    holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_pill));
+                    break;
+                case "inhalation":
+                    holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_lungs));
+                    break;
+                case "ml":
+                case "unit":
+                    holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_bottle));
+                    break;
             }
-            //if reminder is not active
+        } else {
+            holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_appointment_reminder));
         }
+
+        //if reminder is not active
 //        else {
 //            mValues.remove(position);
 //            notifyItemRemoved(position);
 //        }
 
-        if (holder.mReminder.getMedicine() == null) {
+        //if a medication is attached display "taken button"
+        if (holder.mReminder.getMedicine() != null) {
+            //timeTaken is 0 if it's not taken
+            if (holder.mReminder.getTimeTaken().equals("0")) {
+                Calendar calendar = holder.mReminder.getTimeTaken();
+                int hours = calendar.get(Calendar.HOUR_OF_DAY);
+                int minutes = calendar.get(Calendar.MINUTE);
+                holder.mButton.setText("✓ Taken \n" + hours + ":" + minutes);
+            } else {
+                holder.mButton.setText("Mark as taken");
+                holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+            }
+        } else {
             holder.mButton.setVisibility(View.GONE);
         }
+
+        holder.mButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                GregorianCalendar gregorianCalendar = new GregorianCalendar();
+                holder.mReminder.setTimeTaken(gregorianCalendar);
+                int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
+                int minute = gregorianCalendar.get(Calendar.MINUTE);
+                holder.mButton.setText("✓ Taken \n" + hour + ":" + minute);
+                holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+            }
+        });
 
     }
 
@@ -88,7 +114,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
         return mValues.size();
     }
 
-    public void remove(int position){
+    public void remove(int position) {
         mValues.remove(position);
         notifyItemRemoved(position);
     }
@@ -100,7 +126,6 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
         public final TextView mDateTimeView;
         public final ImageView mDashboardIcon;
         public final Button mButton;
-        public final FrameLayout mDeleteWrapper;
         public Reminder mReminder;
 
         public ViewHolder(View view) {
@@ -110,7 +135,6 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
             mDateTimeView = (TextView) view.findViewById(R.id.datetime_text);
             mDashboardIcon = (ImageView) view.findViewById(R.id.dashboard_icon);
             mButton = (Button) view.findViewById(R.id.taken_button);
-            mDeleteWrapper = (FrameLayout) view.findViewById(R.id.delete_wrapper);
         }
 
         @Override
