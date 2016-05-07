@@ -87,7 +87,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
         if (account.name.equals(holder.mReminder.getOwnerId())) { //this account owns the reminders.
             if (holder.mReminder.getTimeTaken() == null) {
                 if (holder.mReminder.getMedicine() == null) {
-                    holder.mButton.setText("Mark as done");
+                    holder.mButton.setText("Mark as \n done");
                     holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
                 } else {
                     holder.mButton.setText("Mark as taken");
