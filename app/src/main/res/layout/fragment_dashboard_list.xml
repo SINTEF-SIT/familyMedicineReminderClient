@@ -10,32 +10,20 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/reminder_refresh_layout">
+        android:id="@+id/dashboard_refresh_layout">
 
         <android.support.v7.widget.RecyclerView
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/reminder_list"
-            android:name="com.example.sondrehj.familymedicinereminderclient.ReminderListFragment"
+            android:id="@+id/dashboard_list"
+            android:name="com.example.sondrehj.familymedicinereminderclient.DashboardListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="LinearLayoutManager"
-            tools:context=".fragments.ReminderListFragment"
-            tools:listitem="@layout/fragment_reminder_item" />
+            tools:context=".fragments.DashboardListFragment"
+            tools:listitem="@layout/fragment_dashboard_item" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/reminder_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        app:backgroundTint="#FF8C00"
-        android:tint="#ffff"
-        android:src="@android:drawable/ic_input_add" />
 
 </android.support.design.widget.CoordinatorLayout>

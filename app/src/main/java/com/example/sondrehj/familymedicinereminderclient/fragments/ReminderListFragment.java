@@ -129,7 +129,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         if (context instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnReminderListFragmentInteractionListener");
         }
     }
 
@@ -144,7 +144,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         if (activity instanceof OnReminderListFragmentInteractionListener) {
             mListener = (OnReminderListFragmentInteractionListener) activity;
         } else {
-            throw new RuntimeException(activity.toString() + " must implement OnListFragmentInteractionListener");
+            throw new RuntimeException(activity.toString() + " must implement OnReminderListFragmentInteractionListener");
         }
     }
 

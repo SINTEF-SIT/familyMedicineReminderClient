@@ -16,10 +16,12 @@ import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
+import com.example.sondrehj.familymedicinereminderclient.utility.ReminderComparator;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
@@ -366,7 +368,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 }
 
                 // Converting timeTakenString to GregorianCalendar
-                GregorianCalendar timeTaken = new GregorianCalendar();
+                GregorianCalendar timeTaken = null;
                 if (!timeTakenString.equals("0")) {
                     timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
                 }
@@ -495,10 +497,17 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         GregorianCalendar todaysDate = new GregorianCalendar();
         int currentDay = todaysDate.get(Calendar.DAY_OF_WEEK) - 1;
         ArrayList<Reminder> allReminders = getReminders();
+        ArrayList<Reminder> activeReminders = new ArrayList<>();
         ArrayList<Reminder> todaysReminders = new ArrayList<>();
 
+        for(Reminder r : allReminders){
+            if(r.getIsActive()){
+                activeReminders.add(r);
+            }
+        }
+
         outerLoop:
-        for (Reminder reminder : allReminders) {
+        for (Reminder reminder : activeReminders) {
             // Repeating
             if (reminder.getDays().length > 0 && todaysDate.before(reminder.getEndDate())) {
                 for (int day : reminder.getDays()) {
@@ -512,6 +521,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 todaysReminders.add(reminder);
             }
         }
+
+        Collections.sort(todaysReminders, new ReminderComparator());
+
         return todaysReminders;
     }
 
