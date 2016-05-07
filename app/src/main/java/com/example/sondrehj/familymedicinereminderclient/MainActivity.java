@@ -22,13 +22,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
-import android.view.View;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -39,7 +35,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicatio
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationStorageFragment;
@@ -68,10 +64,7 @@ import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.squareup.otto.Subscribe;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.GregorianCalendar;
 
 public class MainActivity
@@ -200,7 +193,6 @@ public class MainActivity
      *
      * @return
      */
-
     public static Account getAccount(Context context) {
         Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
         if (accountArray.length >= 1) {
@@ -320,26 +312,6 @@ public class MainActivity
     }
 
     /**
-     * Handle action bar item clicks here. The action bar will
-     * automatically handle clicks on the Home/Up button, so long
-     * as you specify a parent activity in AndroidManifest.xml.
-     *
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_user) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
@@ -430,9 +402,10 @@ public class MainActivity
         return true;
     }
 
-
+    /**
+     * Deletes local application data.
+     */
     public void deleteAllApplicationData(){
-
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
@@ -448,7 +421,6 @@ public class MainActivity
      * @param password
      * @param userRole
      */
-
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole, String jwtToken) {
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
@@ -481,13 +453,13 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-
         changeFragment(new MedicationListFragment());
     }
 
     public void setCurrentUser(User2 user){
         this.currentUser = user;
     }
+
     public User2 getCurrentUser(){
         return this.currentUser;
     }
@@ -548,11 +520,10 @@ public class MainActivity
         } else if (id == R.id.nav_settings) {
             changeFragment(AccountAdministrationFragment.newInstance());
         } else if (id == R.id.nav_guardian_dashboard) {
-            changeFragment(new GuardianDashboardFragment());
+            changeFragment(DashboardFragment.newInstance());
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -604,18 +575,17 @@ public class MainActivity
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
-
             // Cancel the scheduled reminder
             notificationScheduler.cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
         } else {
-
             // Activate the reminder
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
+
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);

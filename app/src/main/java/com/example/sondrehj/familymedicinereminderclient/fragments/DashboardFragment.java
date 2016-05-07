@@ -19,18 +19,17 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * Use the {@link GuardianDashboardFragment#newInstance} factory method to
+ * Use the {@link DashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GuardianDashboardFragment extends android.app.Fragment implements TitleSupplier {
-
-    //TODO: Implement the logic for this fragment!
+public class DashboardFragment extends android.app.Fragment implements TitleSupplier {
 
     private LinearLayout guardianDashboardLayout;
 
     //TODO: Refactor this
+    //TODO: Implement the logic for this fragment!
 
-    public GuardianDashboardFragment() {
+    public DashboardFragment() {
         // Required empty public constructor
     }
 
@@ -38,13 +37,10 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GuardianDashboardFragment.
+     * @return A new instance of fragment DashboardFragment.
      */
-
-    public static GuardianDashboardFragment newInstance(String param1, String param2) {
-        GuardianDashboardFragment fragment = new GuardianDashboardFragment();
+    public static DashboardFragment newInstance() {
+        DashboardFragment fragment = new DashboardFragment();
         return fragment;
     }
 
@@ -101,7 +97,6 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         gridLayout.setColumnCount(5);
         gridLayout.setRowCount(2);
         pasientLayout.addView(gridLayout);
-
 
         return pasientLayout;
     }
@@ -174,6 +169,6 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
 
     @Override
     public String getTitle() {
-        return "Guardian Dashboard";
+        return "Dashboard";
     }
 }
