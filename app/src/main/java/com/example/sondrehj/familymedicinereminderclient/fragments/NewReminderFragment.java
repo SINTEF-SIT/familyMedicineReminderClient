@@ -206,11 +206,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
     @OnClick(R.id.reminder_edit_save_button)
     public void onSaveButtonClick() {
-
         NewReminderInputValidator inputValidator = new NewReminderInputValidator(
                 getActivity(), nameInput, dateInput, timeInput, attachMedicationSwitch,
                 attachMedicationSwitch, dosageInput, repeatSwitch, endDateInput);
-
         if (reminder == null) {
             if (inputValidator.validateAllFields())
                 createReminder();
@@ -265,7 +263,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     public void setBoldOnSelectedDays(int[] selectedDays) {
-
         for (int i = 0; i < 7; i++) {
             boolean inList = false;
             for (int day : selectedDays) {
@@ -284,7 +281,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     public void fillFields() {
-
         final Calendar c;
         // Checks if a reminder is passed to the fragment
         if (getArguments() != null) {
@@ -349,7 +345,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     public boolean executeDatabaseReminderAction(Reminder r, String action){
-
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         String toastText;
         switch (action){
@@ -386,10 +381,8 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     }
 
     public void enableMedicationField(boolean enable) {
-
         if (enable) {
             chooseMedicationGroup.setVisibility(View.VISIBLE);
-
             //TODO: Medication field lacks onClickListener
             chooseMedicationGroup.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -427,66 +420,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
     public void setTimeOnLayout(int hour, int minute) {
         String timeSet = String.format("%02d:%02d", hour, minute);
         timeInput.setText(timeSet);
-    }
-
-    private boolean validateDateAndTime() {
-
-        if (!dateInput.getText().toString().equals("")) {
-
-            GregorianCalendar setDate = Converter.dateStringToCalendar(
-                    dateInput.getText().toString(),
-                    timeInput.getText().toString()
-            );
-            //TODO: If you want to edit something on a reminder, this validation deny you from saving it, if the date is back in time
-            Calendar currentDate = Calendar.getInstance();
-            if (setDate.before(currentDate)) {
-                Toast toast = Toast.makeText(getActivity(), "Chosen date and time is before today's date", Toast.LENGTH_LONG);
-                toast.show();
-                return false;
-            } else {
-                return true;
-            }
-        }
-        Toast toast = Toast.makeText(getActivity(), "Date field is empty", Toast.LENGTH_LONG);
-        toast.show();
-        return false;
-    }
-
-    private boolean validateEndDate() {
-        if (repeatSwitch.isChecked()) {
-            if (!endDateInput.getText().toString().equals(CONTINUOUS_END_DATE)) {
-
-                // End date
-                GregorianCalendar endCal = Converter.dateStringToCalendar(
-                        endDateInput.getText().toString(),
-                        timeInput.getText().toString()
-                );
-
-                // Start date
-                GregorianCalendar setDate = Converter.dateStringToCalendar(
-                        dateInput.getText().toString(),
-                        timeInput.getText().toString()
-                );
-
-                if (endCal.before(setDate)) {
-                    Toast toast = Toast.makeText(getActivity(), "Chosen end date is before start date", Toast.LENGTH_LONG);
-                    toast.show();
-                    return false;
-                }
-            } else {
-                return true;
-            }
-        }
-        return true;
-    }
-
-    private boolean validateName() {
-        if (nameInput.getText().toString().equals("")) {
-            Toast toast = Toast.makeText(getActivity(), "Please enter a reminder name", Toast.LENGTH_LONG);
-            toast.show();
-            return false;
-        }
-        return true;
     }
 
     public void setDateOnLayout(int year, int month, int day) {

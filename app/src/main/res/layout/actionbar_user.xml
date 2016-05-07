@@ -6,21 +6,18 @@
     android:layout_marginRight="10dp"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/menu_user_text"
-        android:paddingLeft="5dp"
-        android:gravity="center_vertical|right"
-        android:textSize="18sp"
-        android:textColor="#fff"
-        android:text=""/>
+    <Spinner
+        android:layout_width="wrap_content"
+        android:id="@+id/action_user_spinner"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="-6dp"
+        android:layout_height="wrap_content"/>
 
     <ImageView
         android:layout_width="38dp"
         android:layout_height="38dp"
         android:paddingLeft="5dp"
-        android:paddingRight="5dp"
+        android:paddingRight="2dp"
         android:layout_marginTop="9dp"
         android:layout_marginRight="10dp"
         android:gravity="center_vertical|center_horizontal"

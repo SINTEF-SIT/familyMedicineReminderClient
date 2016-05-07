@@ -179,10 +179,6 @@ public class MainActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Toggles the select user spinner in drawer_header.xml
-        Spinner userSpinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.menu_user_spinner);
-        this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);
-
         //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //TODO: Look more at how database changes can be broadcasted to the system
@@ -309,8 +305,8 @@ public class MainActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        TextView menuUserTextView = (TextView) menu.findItem(R.id.action_user).getActionView().findViewById(R.id.menu_user_text);
-        userSpinnerToggle.setUserActioBarTextView(menuUserTextView);
+        Spinner userSpinner = (Spinner) menu.findItem(R.id.action_user).getActionView().findViewById(R.id.action_user_spinner);
+        this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);
         userSpinnerToggle.toggle();
         return true;
     }
@@ -619,6 +615,7 @@ public class MainActivity
         }
         new MySQLiteHelper(this).addUser(user);
         userSpinnerToggle.updateSpinnerContent();
+        userSpinnerToggle.toggle();
     }
 
     public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
