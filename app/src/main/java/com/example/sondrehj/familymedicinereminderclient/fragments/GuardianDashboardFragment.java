@@ -24,11 +24,10 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
  */
 public class GuardianDashboardFragment extends android.app.Fragment implements TitleSupplier {
 
-    //TODO: Implement the logic for this fragment!
-
     private LinearLayout guardianDashboardLayout;
 
     //TODO: Refactor this
+    //TODO: Implement the logic for this fragment!
 
     public GuardianDashboardFragment() {
         // Required empty public constructor
@@ -38,12 +37,9 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment GuardianDashboardFragment.
      */
-
-    public static GuardianDashboardFragment newInstance(String param1, String param2) {
+    public static GuardianDashboardFragment newInstance() {
         GuardianDashboardFragment fragment = new GuardianDashboardFragment();
         return fragment;
     }
@@ -65,7 +61,7 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         addDefaultReminderIcon(pasientLayout);
         addDefaultReminderIcon(pasientLayout);
         addDefaultReminderIcon(pasientLayout);
-
+        
         return view;
     }
 

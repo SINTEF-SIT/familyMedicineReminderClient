@@ -321,7 +321,7 @@ public class MainActivity
                 .build();
         return new JobManager(this, configuration);
     }
-    
+
     /**
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
@@ -413,9 +413,10 @@ public class MainActivity
         return true;
     }
 
-
+    /**
+     * Deletes local application data.
+     */
     public void deleteAllApplicationData(){
-
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
@@ -431,7 +432,6 @@ public class MainActivity
      * @param password
      * @param userRole
      */
-
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole, String jwtToken) {
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
@@ -464,13 +464,13 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-
         changeFragment(new MedicationListFragment());
     }
 
     public void setCurrentUser(User2 user){
         this.currentUser = user;
     }
+
     public User2 getCurrentUser(){
         return this.currentUser;
     }
@@ -531,11 +531,10 @@ public class MainActivity
         } else if (id == R.id.nav_settings) {
             changeFragment(AccountAdministrationFragment.newInstance());
         } else if (id == R.id.nav_guardian_dashboard) {
-            changeFragment(new GuardianDashboardFragment());
+            changeFragment(GuardianDashboardFragment.newInstance());
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
