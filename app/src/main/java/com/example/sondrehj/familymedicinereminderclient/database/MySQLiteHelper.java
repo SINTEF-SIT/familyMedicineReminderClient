@@ -443,7 +443,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 // Converting timeTakenString to GregorianCalendar
                 GregorianCalendar timeTaken = new GregorianCalendar();
                 if (!timeTakenString.equals("0")) {
-                    timeTaken = Converter.databaseDateStringToCalendar(endDateString);
+                    timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
                 }
 
                 Reminder reminder = new Reminder();

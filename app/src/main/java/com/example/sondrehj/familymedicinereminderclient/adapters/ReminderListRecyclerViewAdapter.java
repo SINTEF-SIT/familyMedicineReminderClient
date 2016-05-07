@@ -98,17 +98,12 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             }
         });
 
-        holder.mDeleteWrapper.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Reminder reminder = holder.mReminder;
-                FragmentManager fm = ((Activity) context).getFragmentManager();
-                DeleteReminderDialogFragment deleteReminderDialogFragment = DeleteReminderDialogFragment.newInstance(reminder, holder.getAdapterPosition());
-                deleteReminderDialogFragment.show(fm, "warningdialog");
 
-                //remove(holder.getAdapterPosition());
-                //mListener.onReminderDeleteButtonClicked(holder.mReminder);
-            }
+        holder.mDeleteWrapper.setOnClickListener((View v) -> {
+            Reminder reminder = holder.mReminder;
+            FragmentManager fm = ((Activity) context).getFragmentManager();
+            DeleteReminderDialogFragment deleteReminderDialogFragment = DeleteReminderDialogFragment.newInstance(reminder, holder.getAdapterPosition());
+            deleteReminderDialogFragment.show(fm, "warningdialog");
         });
     }
 

@@ -235,14 +235,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 dosageInput, repeatSwitch, selectedDays,
                 endDateInput, activeSwitch, ((MainActivity) getActivity()).getCurrentUser());
 
-
-        System.out.println(reminder);
-
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
-
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, userId, authToken));
-
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         mListener.onSaveNewReminder(reminder);
     }
 
@@ -264,7 +259,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 
         mListener.onSaveNewReminder(reminder);
     }

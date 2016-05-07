@@ -31,7 +31,6 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Notification type: " + notificationType);
         Log.d(TAG, "Data (optional): " + optionalData);
 
-
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setAction("mycyfapp");
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -43,6 +42,7 @@ public class MyGcmListenerService extends GcmListenerService {
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);
         extras.putString("optionalData", optionalData);
+        extras.putString("currentUserId", optionalData);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
 
