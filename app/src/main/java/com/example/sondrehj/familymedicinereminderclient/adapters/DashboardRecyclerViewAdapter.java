@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment.OnDashboardListFragmentInteractionListener;
@@ -61,56 +64,79 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
                 case "pill":
                 case "mcg":
                 case "g":
-                    holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_pill));
+                    holder.mDashboardIcon.setImageDrawable(
+                            context.getResources().getDrawable(R.drawable.android_pill));
                     break;
                 case "inhalation":
-                    holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_lungs));
+                    holder.mDashboardIcon.setImageDrawable(
+                            context.getResources().getDrawable(R.drawable.android_lungs));
                     break;
                 case "ml":
                 case "unit":
-                    holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_bottle));
+                    holder.mDashboardIcon.setImageDrawable(
+                            context.getResources().getDrawable(R.drawable.android_bottle));
                     break;
             }
         } else {
-            holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_appointment_reminder));
+            holder.mDashboardIcon.setImageDrawable(
+                    context.getResources().getDrawable(R.drawable.android_appointment_reminder));
         }
 
+        Account account = MainActivity.getAccount(context);
 
-        //timeTaken is null if it's not taken
-        if (holder.mReminder.getTimeTaken() == null) {
-            if (holder.mReminder.getMedicine() == null) {
-                holder.mButton.setText("Mark as done");
-            } else {
-                holder.mButton.setText("Mark as taken");
-                holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
-                System.out.println("not taken");
-            }
-        } else {
-            System.out.println("taken");
-            Calendar calendar = holder.mReminder.getTimeTaken();
-            int hours = calendar.get(Calendar.HOUR_OF_DAY);
-            int minutes = calendar.get(Calendar.MINUTE);
-            String time = String.format("%02d:%02d", hours, minutes);
-            holder.mButton.setText("✓ Taken \n" + time);
-        }
-
-        holder.mButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                GregorianCalendar gregorianCalendar = new GregorianCalendar();
-                holder.mReminder.setTimeTaken(gregorianCalendar);
-                int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
-                int minute = gregorianCalendar.get(Calendar.MINUTE);
-                String time = String.format("%02d:%02d", hour, minute);
+        if (account.name.equals(holder.mReminder.getOwnerId())) { //this account owns the reminders.
+            if (holder.mReminder.getTimeTaken() == null) {
                 if (holder.mReminder.getMedicine() == null) {
-                    holder.mButton.setText("✓ Done \n" + time);
+                    holder.mButton.setText("Mark as done");
+                    holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                } else {
+                    holder.mButton.setText("Mark as taken");
+                    holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
                 }
+            } else {
+                System.out.println("taken");
+                Calendar calendar = holder.mReminder.getTimeTaken();
+                int hours = calendar.get(Calendar.HOUR_OF_DAY);
+                int minutes = calendar.get(Calendar.MINUTE);
+                String time = String.format("%02d:%02d", hours, minutes);
                 holder.mButton.setText("✓ Taken \n" + time);
                 holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
-                MySQLiteHelper db = new MySQLiteHelper(context);
-                db.setReminderTimeTaken(holder.mReminder);
             }
-        });
 
+            holder.mButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    GregorianCalendar gregorianCalendar = new GregorianCalendar();
+                    holder.mReminder.setTimeTaken(gregorianCalendar);
+                    int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = gregorianCalendar.get(Calendar.MINUTE);
+                    String time = String.format("%02d:%02d", hour, minute);
+                    if (holder.mReminder.getMedicine() == null) {
+                        holder.mButton.setText("✓ Done \n" + time);
+                    }
+                    holder.mButton.setText("✓ Taken \n" + time);
+                    holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+                    MySQLiteHelper db = new MySQLiteHelper(context);
+                    db.setReminderTimeTaken(holder.mReminder);
+                }
+            });
+        } else { //this account does not own the reminders.
+            if (holder.mReminder.getTimeTaken() == null) {
+                if (holder.mReminder.getMedicine() == null) {
+                    holder.mButton.setText("Not done");
+                    holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                } else {
+                    holder.mButton.setText("Not taken");
+                    holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                }
+            } else {
+                Calendar calendar = holder.mReminder.getTimeTaken();
+                int hours = calendar.get(Calendar.HOUR_OF_DAY);
+                int minutes = calendar.get(Calendar.MINUTE);
+                String time = String.format("%02d:%02d", hours, minutes);
+                holder.mButton.setText("✓ Taken \n" + time);
+                holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+            }
+        }
     }
 
     @Override
