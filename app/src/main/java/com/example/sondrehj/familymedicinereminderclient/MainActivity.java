@@ -215,7 +215,7 @@ public class MainActivity
         IntentFilter intentFilter = new IntentFilter("mycyfapp");
         registerReceiver(syncReceiver, intentFilter);
     }
-    
+
     /**
      * Unregister the activity from the bus.
      * Unregister the receiver so that intents aren't received when the application is paused.
