@@ -60,8 +60,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        reminders.addAll(new MySQLiteHelper(getActivity()).getReminders());
-        System.out.println(new MySQLiteHelper(getActivity()).getReminders());
+        reminders = new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity)getActivity()).getCurrentUser().getUserId());
     }
 
     @Override
@@ -72,7 +71,6 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
 
         // Set listener for swipe refresh
         swipeContainer.setOnRefreshListener(this);
-
 
         // Set the adapter
         if (recView != null) {

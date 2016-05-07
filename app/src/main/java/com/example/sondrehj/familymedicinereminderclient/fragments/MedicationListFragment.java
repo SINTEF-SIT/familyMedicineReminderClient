@@ -41,8 +41,7 @@ import butterknife.OnClick;
  */
 public class MedicationListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
-    //TODO: Get pasient name on the header, f.ex. Sondre's Medication
-
+    //TODO: Get patient name on the header, f.ex. Sondre's Medication
     //TODO: Create a warning when trying to delete a medication
 
     private Boolean busIsRegistered = false;
@@ -57,7 +56,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     public MedicationListFragment() {
     }
 
-    // TODO: Customize parameter initialization
     public static MedicationListFragment newInstance() {
         return new MedicationListFragment();
     }
@@ -99,7 +97,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+        medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity)getActivity()).getCurrentUser().getUserId()));
     }
 
     @Override
@@ -203,7 +201,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-
     public interface OnListFragmentInteractionListener {
         void onMedicationListFragmentInteraction(Medication medication);
     }

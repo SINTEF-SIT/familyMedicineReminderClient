@@ -25,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -37,7 +36,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderD
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment;
-import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
+
 import com.example.sondrehj.familymedicinereminderclient.fragments.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationStorageFragment;
@@ -107,7 +106,6 @@ public class MainActivity
      *
      * @param savedInstanceState
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,10 +173,6 @@ public class MainActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Toggles the select user spinner in drawer_header.xml
-        Spinner userSpinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.menu_user_spinner);
-        this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);
-
         //Enforce rotation-lock.
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //TODO: Look more at how database changes can be broadcasted to the system
@@ -200,7 +194,6 @@ public class MainActivity
      *
      * @return
      */
-
     public static Account getAccount(Context context) {
         Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
         if (accountArray.length >= 1) {
@@ -222,9 +215,7 @@ public class MainActivity
         IntentFilter intentFilter = new IntentFilter("mycyfapp");
         registerReceiver(syncReceiver, intentFilter);
     }
-
-
-
+    
     /**
      * Unregister the activity from the bus.
      * Unregister the receiver so that intents aren't received when the application is paused.
@@ -306,8 +297,8 @@ public class MainActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        TextView menuUserTextView = (TextView) menu.findItem(R.id.action_user).getActionView().findViewById(R.id.menu_user_text);
-        userSpinnerToggle.setUserActioBarTextView(menuUserTextView);
+        Spinner userSpinner = (Spinner) menu.findItem(R.id.action_user).getActionView().findViewById(R.id.action_user_spinner);
+        this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);
         userSpinnerToggle.toggle();
         return true;
     }
@@ -317,26 +308,6 @@ public class MainActivity
                 .networkUtil(new ServerStatusChangeReceiver())
                 .build();
         return new JobManager(this, configuration);
-    }
-
-    /**
-     * Handle action bar item clicks here. The action bar will
-     * automatically handle clicks on the Home/Up button, so long
-     * as you specify a parent activity in AndroidManifest.xml.
-     *
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_user) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -430,9 +401,10 @@ public class MainActivity
         return true;
     }
 
-
+    /**
+     * Deletes local application data.
+     */
     public void deleteAllApplicationData(){
-
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
@@ -448,7 +420,6 @@ public class MainActivity
      * @param password
      * @param userRole
      */
-
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole, String jwtToken) {
         Account newAccount = new Account(userId, "com.example.sondrehj.familymedicinereminderclient");
@@ -481,13 +452,13 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-
         changeFragment(new MedicationListFragment());
     }
 
     public void setCurrentUser(User2 user){
         this.currentUser = user;
     }
+
     public User2 getCurrentUser(){
         return this.currentUser;
     }
@@ -552,7 +523,6 @@ public class MainActivity
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -605,19 +575,16 @@ public class MainActivity
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
-
             // Cancel the scheduled reminder
             notificationScheduler.cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
         } else {
-
             // Activate the reminder
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
-
 
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
@@ -641,6 +608,7 @@ public class MainActivity
         }
         new MySQLiteHelper(this).addUser(user);
         userSpinnerToggle.updateSpinnerContent();
+        userSpinnerToggle.toggle();
     }
 
     public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
