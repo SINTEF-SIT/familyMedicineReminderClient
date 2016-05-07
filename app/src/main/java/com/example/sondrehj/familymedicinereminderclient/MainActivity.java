@@ -575,18 +575,17 @@ public class MainActivity
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
-
             // Cancel the scheduled reminder
             notificationScheduler.cancelNotification(reminder.getReminderId());
             reminder.setIsActive(false);
         } else {
-
             // Activate the reminder
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
             System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
+
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
