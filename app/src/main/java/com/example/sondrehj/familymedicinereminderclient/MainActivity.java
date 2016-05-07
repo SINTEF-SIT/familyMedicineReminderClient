@@ -573,6 +573,7 @@ public class MainActivity
         }
         changeFragment(ReminderListFragment.newInstance());
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override

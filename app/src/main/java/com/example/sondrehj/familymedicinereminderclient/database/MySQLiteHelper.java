@@ -368,7 +368,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 }
 
                 // Converting timeTakenString to GregorianCalendar
-                GregorianCalendar timeTaken = new GregorianCalendar();
+                GregorianCalendar timeTaken = null;
                 if (!timeTakenString.equals("0")) {
                     timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
                 }

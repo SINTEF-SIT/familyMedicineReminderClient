@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment.OnDashboardListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
@@ -74,26 +75,23 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
             holder.mDashboardIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.android_appointment_reminder));
         }
 
-        //if reminder is not active
-//        else {
-//            mValues.remove(position);
-//            notifyItemRemoved(position);
-//        }
 
-        //if a medication is attached display "taken button"
-        if (holder.mReminder.getMedicine() != null) {
-            //timeTaken is 0 if it's not taken
-            if (holder.mReminder.getTimeTaken().equals("0")) {
-                Calendar calendar = holder.mReminder.getTimeTaken();
-                int hours = calendar.get(Calendar.HOUR_OF_DAY);
-                int minutes = calendar.get(Calendar.MINUTE);
-                holder.mButton.setText("✓ Taken \n" + hours + ":" + minutes);
+        //timeTaken is null if it's not taken
+        if (holder.mReminder.getTimeTaken() == null) {
+            if (holder.mReminder.getMedicine() == null) {
+                holder.mButton.setText("Mark as done");
             } else {
                 holder.mButton.setText("Mark as taken");
                 holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                System.out.println("not taken");
             }
         } else {
-            holder.mButton.setVisibility(View.GONE);
+            System.out.println("taken");
+            Calendar calendar = holder.mReminder.getTimeTaken();
+            int hours = calendar.get(Calendar.HOUR_OF_DAY);
+            int minutes = calendar.get(Calendar.MINUTE);
+            String time = String.format("%02d:%02d", hours, minutes);
+            holder.mButton.setText("✓ Taken \n" + time);
         }
 
         holder.mButton.setOnClickListener(new View.OnClickListener() {
@@ -102,8 +100,11 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
                 holder.mReminder.setTimeTaken(gregorianCalendar);
                 int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
                 int minute = gregorianCalendar.get(Calendar.MINUTE);
-                holder.mButton.setText("✓ Taken \n" + hour + ":" + minute);
+                String time = String.format("%02d:%02d", hour, minute);
+                holder.mButton.setText("✓ Taken \n" + time);
                 holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+                MySQLiteHelper db = new MySQLiteHelper(context);
+                db.setReminderTimeTaken(holder.mReminder);
             }
         });
 
