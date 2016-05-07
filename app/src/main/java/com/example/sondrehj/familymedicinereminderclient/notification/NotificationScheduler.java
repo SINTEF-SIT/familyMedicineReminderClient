@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.notification;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -10,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -79,6 +82,11 @@ public class NotificationScheduler {
      */
     public Notification getNotification(String content, Reminder reminder) {
 
+
+        if(!reminder.getOwnerId().equals(AccountManager.get(activity).getUserData(MainActivity.getAccount(activity), "userId"))) {
+            return getGuardianNotification(content, reminder);
+        }
+
         // Defines the Intent of the notification
         Intent intent = new Intent(activity, activity.getClass());
         intent.putExtra("notification-reminder", reminder);
@@ -108,6 +116,31 @@ public class NotificationScheduler {
 
         return notification;
     }
+
+    public Notification getGuardianNotification(String content, Reminder reminder) {
+
+        // Defines the Intent of the notification
+        Intent intent = new Intent(activity, activity.getClass());
+        intent.putExtra("notification-reminder", reminder);
+        intent.putExtra("notification-action", "notificationGuardian");
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+
+        // Constructs the notification
+        Notification notification = new Notification.Builder(activity)
+                .setContentTitle("MYCYFAPP (Guardian)")
+                .setContentText("Your child has a reminder: " + reminder.getName())
+                .setSmallIcon(R.drawable.ic_sidebar_pill)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pIntent)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        return notification;
+    }
+
+
 
     /**
      * Snoozes/Reschedules a notification with a given snooze time. A simplified version of

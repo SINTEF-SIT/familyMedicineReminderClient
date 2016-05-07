@@ -99,7 +99,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
+        medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity)getActivity()).getCurrentUser().getUserId()));
     }
 
     @Override

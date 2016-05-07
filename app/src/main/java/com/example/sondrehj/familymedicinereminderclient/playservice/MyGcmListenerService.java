@@ -39,7 +39,6 @@ public class MyGcmListenerService extends GcmListenerService {
 
         sendBroadcast(notificationIntent);
 
-
         Bundle extras = new Bundle();
         extras.putString("notificationType", notificationType);
         extras.putString("optionalData", optionalData);
