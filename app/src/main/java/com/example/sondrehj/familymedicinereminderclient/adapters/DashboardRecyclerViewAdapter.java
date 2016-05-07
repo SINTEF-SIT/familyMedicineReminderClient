@@ -28,7 +28,10 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
     private final OnDashboardListFragmentInteractionListener mListener;
     private final Context context;
 
-    public DashboardRecyclerViewAdapter(Context context, List<Reminder> mValues, OnDashboardListFragmentInteractionListener mListener) {
+    public DashboardRecyclerViewAdapter(
+            Context context,
+            List<Reminder> mValues,
+            OnDashboardListFragmentInteractionListener mListener) {
         this.mValues = mValues;
         this.mListener = mListener;
         this.context = context;
@@ -36,7 +39,9 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_dashboard_item, parent, false);
+        View view = LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.fragment_dashboard_item, parent, false);
         return new ViewHolder(view);
     }
 

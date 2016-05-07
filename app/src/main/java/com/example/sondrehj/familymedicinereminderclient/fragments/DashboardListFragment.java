@@ -30,46 +30,45 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
+
 public class DashboardListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
     private List<Reminder> todaysReminders = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
-    private SwipeRefreshLayout swipeContainer;
+    @Bind(R.id.dashboard_list) RecyclerView recView;
+    @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
-        System.out.println(new MySQLiteHelper(getActivity()).getReminders());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard_list, container, false);
-        RecyclerView recView = (RecyclerView) view.findViewById(R.id.dashboard_list);
-        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.reminder_refresh_layout);
-
-        //testing, slettes
-//        CoordinatorLayout list = (CoordinatorLayout) view.findViewById(R.id.dashboard_list_view);
-//        Button button = new Button(getActivity());
-//        button.setText("Hallo");
-//        list.addView(button);
-
 
         // Set listener for swipe refresh
         //swipeContainer.setOnRefreshListener(this);
-
 
         // Set the adapter
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
 
-            //TODO: add field for Last Online
 
-            //TODO: hent ut alle reminders med getTodaysReminders() og sorter etter ownerID. Problem at itemsInGroup er i intervaller atm
+            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
+            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
+            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
+            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
+            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
+            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
+            //TODO: hent ut alle reminders med getTodaysReminders() og sorter etter ownerID.
+            //TODO: Problem at itemsInGroup er i intervaller atm
+
             //splits the recyclerview into sections
             RecyclerView.ItemDecoration recViewItemDecoration = new RecyclerView.ItemDecoration() {
 
