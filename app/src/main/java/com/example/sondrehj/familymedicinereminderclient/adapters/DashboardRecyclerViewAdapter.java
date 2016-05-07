@@ -101,6 +101,9 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<Dashboard
                 int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
                 int minute = gregorianCalendar.get(Calendar.MINUTE);
                 String time = String.format("%02d:%02d", hour, minute);
+                if (holder.mReminder.getMedicine() == null) {
+                    holder.mButton.setText("✓ Done \n" + time);
+                }
                 holder.mButton.setText("✓ Taken \n" + time);
                 holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
                 MySQLiteHelper db = new MySQLiteHelper(context);
