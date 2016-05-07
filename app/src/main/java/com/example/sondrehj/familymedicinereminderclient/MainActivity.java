@@ -204,7 +204,6 @@ public class MainActivity
      *
      * @return
      */
-
     public static Account getAccount(Context context) {
         Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
         if (accountArray.length >= 1) {
@@ -322,27 +321,7 @@ public class MainActivity
                 .build();
         return new JobManager(this, configuration);
     }
-
-    /**
-     * Handle action bar item clicks here. The action bar will
-     * automatically handle clicks on the Home/Up button, so long
-     * as you specify a parent activity in AndroidManifest.xml.
-     *
-     * @param item
-     * @return
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_user) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
+    
     /**
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
