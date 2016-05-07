@@ -1,15 +1,21 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
+import android.accounts.Account;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
@@ -45,6 +51,13 @@ public class DashboardListFragment extends android.app.Fragment implements Title
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.dashboard_list);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.reminder_refresh_layout);
 
+        //testing, slettes
+//        CoordinatorLayout list = (CoordinatorLayout) view.findViewById(R.id.dashboard_list_view);
+//        Button button = new Button(getActivity());
+//        button.setText("Hallo");
+//        list.addView(button);
+
+
         // Set listener for swipe refresh
         //swipeContainer.setOnRefreshListener(this);
 
@@ -53,6 +66,52 @@ public class DashboardListFragment extends android.app.Fragment implements Title
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
+
+            //TODO: add field for Last Online
+
+            //TODO: hent ut alle reminders med getTodaysReminders() og sorter etter ownerID. Problem at itemsInGroup er i intervaller atm
+            //splits the recyclerview into sections
+            RecyclerView.ItemDecoration recViewItemDecoration = new RecyclerView.ItemDecoration() {
+
+                private int textSize = 50;
+                private int groupSpacing = 100;
+                private int itemsInGroup = 1;
+
+                private Paint paint = new Paint();
+                {
+                    paint.setTextSize(textSize);
+                }
+
+                @Override
+                public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
+
+                    Account account = MainActivity.getAccount(context);
+                    String accountName = account.name;
+
+                    //c.drawText("Kid", 0, 0 ,paint);
+
+                    for (int i = 0; i < parent.getChildCount(); i++) {
+                        //System.out.println(parent.getChildCount());
+                        System.out.println(i);
+                        View view = parent.getChildAt(i);
+                        int position = parent.getChildAdapterPosition(view);
+                        if (position % itemsInGroup == 0) {
+                            c.drawText("Kid " + (position / itemsInGroup + 1), view.getLeft(),
+                                    view.getTop() - groupSpacing / 2 + textSize / 3, paint);
+                        }
+                    }
+                }
+
+                //this method creates the space between the groups
+                @Override
+                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    if (parent.getChildAdapterPosition(view) % itemsInGroup == 0) {
+                        outRect.set(0, groupSpacing, 0, 0);
+                    }
+                }
+            };
+
+            recView.addItemDecoration(recViewItemDecoration);
             recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysReminders, mListener));
         }
 
