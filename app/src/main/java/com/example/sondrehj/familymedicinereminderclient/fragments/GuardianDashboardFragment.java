@@ -61,7 +61,7 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         addDefaultReminderIcon(pasientLayout);
         addDefaultReminderIcon(pasientLayout);
         addDefaultReminderIcon(pasientLayout);
-        
+
         return view;
     }
 
@@ -97,7 +97,6 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
         gridLayout.setColumnCount(5);
         gridLayout.setRowCount(2);
         pasientLayout.addView(gridLayout);
-
 
         return pasientLayout;
     }
@@ -170,6 +169,6 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
 
     @Override
     public String getTitle() {
-        return "Guardian Dashboard";
+        return "Dashboard";
     }
 }
