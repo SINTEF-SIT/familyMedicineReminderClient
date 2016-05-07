@@ -22,13 +22,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
-import android.view.View;
 import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -39,7 +35,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicatio
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.fragments.GuardianDashboardFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationStorageFragment;
@@ -68,10 +64,7 @@ import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.squareup.otto.Subscribe;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.GregorianCalendar;
 
 public class MainActivity
@@ -527,7 +520,7 @@ public class MainActivity
         } else if (id == R.id.nav_settings) {
             changeFragment(AccountAdministrationFragment.newInstance());
         } else if (id == R.id.nav_guardian_dashboard) {
-            changeFragment(GuardianDashboardFragment.newInstance());
+            changeFragment(DashboardFragment.newInstance());
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
         }

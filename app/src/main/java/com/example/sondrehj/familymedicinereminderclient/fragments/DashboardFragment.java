@@ -19,17 +19,17 @@ import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * Use the {@link GuardianDashboardFragment#newInstance} factory method to
+ * Use the {@link DashboardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GuardianDashboardFragment extends android.app.Fragment implements TitleSupplier {
+public class DashboardFragment extends android.app.Fragment implements TitleSupplier {
 
     private LinearLayout guardianDashboardLayout;
 
     //TODO: Refactor this
     //TODO: Implement the logic for this fragment!
 
-    public GuardianDashboardFragment() {
+    public DashboardFragment() {
         // Required empty public constructor
     }
 
@@ -37,10 +37,10 @@ public class GuardianDashboardFragment extends android.app.Fragment implements T
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment GuardianDashboardFragment.
+     * @return A new instance of fragment DashboardFragment.
      */
-    public static GuardianDashboardFragment newInstance() {
-        GuardianDashboardFragment fragment = new GuardianDashboardFragment();
+    public static DashboardFragment newInstance() {
+        DashboardFragment fragment = new DashboardFragment();
         return fragment;
     }
 
