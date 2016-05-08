@@ -75,7 +75,8 @@
                     android:hint="ex. 42d8a"
                     android:enabled="true"
                     android:layout_marginLeft="20dp"
-                    android:maxLength="5" />
+                    android:maxLength="5"
+                    android:singleLine="true" />
 
                 <Button
                     android:layout_width="wrap_content"
