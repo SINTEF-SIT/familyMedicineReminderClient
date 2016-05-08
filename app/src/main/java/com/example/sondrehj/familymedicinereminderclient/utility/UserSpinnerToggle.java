@@ -68,7 +68,7 @@ public class UserSpinnerToggle {
                 }
             });
         }
-        if(users.size() == 1 || users.size() == 0) {
+        if(users.size() == 1 || users.size() == 0){
             userSpinner.setEnabled(false);
         }
         if(users.size() > 1){
