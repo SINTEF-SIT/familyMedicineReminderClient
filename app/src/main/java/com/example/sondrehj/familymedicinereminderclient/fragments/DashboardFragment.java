@@ -61,7 +61,7 @@ public class DashboardFragment extends android.app.Fragment implements TitleSupp
         addDefaultReminderIcon(pasientLayout);
         addDefaultReminderIcon(pasientLayout);
         addDefaultReminderIcon(pasientLayout);
-
+        
         return view;
     }
 

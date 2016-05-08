@@ -35,6 +35,7 @@ public class MyGcmListenerService extends GcmListenerService {
         notificationIntent.setAction("mycyfapp");
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         notificationIntent.putExtra("notification-action", notificationType);
+        notificationIntent.putExtra("currentUserId", optionalData);
 
         sendBroadcast(notificationIntent);
 

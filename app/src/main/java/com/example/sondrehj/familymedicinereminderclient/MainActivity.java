@@ -354,6 +354,7 @@ public class MainActivity
 
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
+        //String currentUserId = intent.getStringExtra("currentUserId");
 
         if(notificationAction != null) {
             switch (notificationAction) {
@@ -366,8 +367,10 @@ public class MainActivity
                 case "medicationChanged":
                     Bundle extras = new Bundle();
                     extras.putString("notificationType", notificationAction);
+                    //extras.putString("currentUserId", currentUserId);
                     extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
                     extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+                    extras.putString("currentUserId", intent.getStringExtra("currentUserId"));
 
                     ContentResolver.requestSync(
                             MainActivity.getAccount(getApplicationContext()),
