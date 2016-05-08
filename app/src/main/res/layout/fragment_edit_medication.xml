@@ -9,7 +9,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#eaeaea">
+        android:background="#eaeaea"
+        android:layout_gravity="center_horizontal|bottom">
 
         <View
             android:layout_width="match_parent"

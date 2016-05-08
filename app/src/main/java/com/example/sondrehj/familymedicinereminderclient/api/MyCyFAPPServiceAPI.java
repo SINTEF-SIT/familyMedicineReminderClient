@@ -74,6 +74,9 @@ public interface MyCyFAPPServiceAPI {
     @PUT("user/{userID}/settings/{gracePeriod}")
     Call<User> setGracePeriod(@Path("userID") String userID, @Path("gracePeriod") String gracePeriod);
 
+    @GET("user/{userID}/lastSeen")
+    Call<String> getLastSeenStatus(@Path("userID") String userID);
+
 
     /**
      * LINKING REQUESTS

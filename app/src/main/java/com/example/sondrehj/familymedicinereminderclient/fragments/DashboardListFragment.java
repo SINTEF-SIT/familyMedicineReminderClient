@@ -1,22 +1,15 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.sondrehj.familymedicinereminderclient.HeaderItem;
 import com.example.sondrehj.familymedicinereminderclient.ListItem;
@@ -28,7 +21,6 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.squareup.otto.Subscribe;
 
@@ -38,8 +30,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import butterknife.Bind;
 
@@ -51,7 +41,6 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     private LinkedHashMap<String,List<Reminder>> todaysRemindersSortedByUser = new LinkedHashMap<>();
     private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
-    @Bind(R.id.dashboard_list) RecyclerView recView;
     @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
 
     @Override
@@ -72,7 +61,6 @@ public class DashboardListFragment extends android.app.Fragment implements Title
             recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysRemindersForAdapter, mListener, new MySQLiteHelper(getActivity()).getUsers()));
         }
-
         return view;
     }
 

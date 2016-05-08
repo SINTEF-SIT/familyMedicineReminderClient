@@ -3,7 +3,9 @@ package com.example.sondrehj.familymedicinereminderclient.sync;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
@@ -36,6 +38,8 @@ public class Synchronizer {
     private final String userToSync;
     private final MySQLiteHelper db;
     private final Context context;
+
+    private final String TAG = "Synchronizer";
 
     public Synchronizer(String userToSync, MyCyFAPPServiceAPI restApi, MySQLiteHelper db, Context context) {
         this.restApi = restApi;
@@ -115,12 +119,14 @@ public class Synchronizer {
     }
 
     public Boolean syncMedications() {
+        Log.d(TAG, "UserToSync: " + userToSync);
         Call<List<Medication>> call = restApi.getUserMedicationList(userToSync);
         call.enqueue(new Callback<List<Medication>>() {
             @Override
             public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
                 System.out.println("In sync medications");
                 ArrayList<Medication> clientMedications = db.getMedications();
+                Log.d(TAG, response.raw().toString());
                 for (Medication serverMedication : response.body()) {
                     boolean updated = false;
                     for (Medication clientMedication : clientMedications) {
