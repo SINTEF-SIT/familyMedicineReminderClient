@@ -39,7 +39,7 @@ import retrofit2.Response;
  */
 
 // TODO: Remove welcomeFragment from the back stack after first-time use to deny the user navigating back to it
-public class WelcomeFragment extends android.app.Fragment implements TitleSupplier {
+public class WelcomeFragment extends android.support.v4.app.Fragment implements TitleSupplier {
 
     private final String TAG = "WelcomeFragment";
     private OnWelcomeListener mListener;
@@ -54,7 +54,7 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
      *
      * @return A new instance of fragment WelcomeFragment.
      */
-    public static WelcomeFragment newInstance(Account newAccount) {
+    public static WelcomeFragment newInstance() {
         WelcomeFragment fragment = new WelcomeFragment();
         return fragment;
     }

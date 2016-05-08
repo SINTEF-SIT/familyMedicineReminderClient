@@ -1,28 +1,22 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.sondrehj.familymedicinereminderclient.HeaderItem;
-import com.example.sondrehj.familymedicinereminderclient.ListItem;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.ReminderItem;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment.OnDashboardListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -131,10 +125,10 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 if (holder.mReminder.getTimeTaken() == null) {
                     if (holder.mReminder.getMedicine() == null) {
                         holder.mButton.setText("Mark as \n done");
-                        holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                        holder.mButton.setBackgroundColor(Color.parseColor("#FFEE58"));
                     } else {
                         holder.mButton.setText("Mark as taken");
-                        holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                        holder.mButton.setBackgroundColor(Color.parseColor("#FFEE58"));
                     }
                 } else {
                     System.out.println("taken");
@@ -143,7 +137,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                     int minutes = calendar.get(Calendar.MINUTE);
                     String time = String.format("%02d:%02d", hours, minutes);
                     holder.mButton.setText("✓ Taken \n" + time);
-                    holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+                    holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
                 }
 
                 holder.mButton.setOnClickListener(new View.OnClickListener() {
@@ -157,7 +151,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                             holder.mButton.setText("✓ Done \n" + time);
                         }
                         holder.mButton.setText("✓ Taken \n" + time);
-                        holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+                        holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
                         MySQLiteHelper db = new MySQLiteHelper(context);
                         db.setReminderTimeTaken(holder.mReminder);
                     }
@@ -166,10 +160,10 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                 if (holder.mReminder.getTimeTaken() == null) {
                     if (holder.mReminder.getMedicine() == null) {
                         holder.mButton.setText("Not done");
-                        holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                        holder.mButton.setBackgroundColor(Color.parseColor("#FFEE58"));
                     } else {
                         holder.mButton.setText("Not taken");
-                        holder.mButton.setBackgroundResource(R.drawable.mark_as_taken_button_shape);
+                        holder.mButton.setBackgroundColor(Color.parseColor("#FFEE58"));
                     }
                 } else {
                     Calendar calendar = holder.mReminder.getTimeTaken();
@@ -177,11 +171,15 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                     int minutes = calendar.get(Calendar.MINUTE);
                     String time = String.format("%02d:%02d", hours, minutes);
                     holder.mButton.setText("✓ Taken \n" + time);
-                    holder.mButton.setBackgroundResource(R.drawable.taken_button_shape);
+                    holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
                 }
             }
         }
     }
+
+    //USE MATERIAL 400 RED: #EF5350 for Reminder NOT DONE and SHOULD BE DONE
+    //USE MATERIAL 400 YELLOW: #FFEE58 for reminder NOT DONE and NOT SHOULD BE DONE
+    //USE MATERIAL 400 LIGHT GREEN: #9CCC65 for reminder TAKEN and SHOULD BE TAKEN
 
     @Override
     public int getItemCount() {

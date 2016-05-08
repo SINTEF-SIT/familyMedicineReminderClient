@@ -47,7 +47,7 @@ import retrofit2.Response;
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LinkingFragment extends android.app.Fragment implements TitleSupplier {
+public class LinkingFragment extends android.support.v4.app.Fragment implements TitleSupplier {
 
     private boolean busIsRegistered;
     private static String TAG = "LinkingFragment";

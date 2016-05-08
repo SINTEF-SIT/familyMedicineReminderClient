@@ -33,7 +33,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.
  */
-public class ReminderListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class ReminderListFragment extends android.support.v4.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Animation is not triggering when you go to reminder view
 

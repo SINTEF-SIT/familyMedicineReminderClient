@@ -3,8 +3,6 @@ package com.example.sondrehj.familymedicinereminderclient;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentResolver;
@@ -15,7 +13,9 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -121,7 +121,7 @@ public class MainActivity
 
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
-            changeFragment(new WelcomeFragment());
+            changeFragment(WelcomeFragment.newInstance());
             //disables drawer and navigation in welcomeFragment.
             drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
@@ -129,7 +129,7 @@ public class MainActivity
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
-            changeFragment(new DashboardListFragment());
+            changeFragment(DashboardListFragment.newInstance());
             //Enables drawer and menu-button
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             toggle.setDrawerIndicatorEnabled(true);
@@ -318,14 +318,13 @@ public class MainActivity
      */
     public void changeFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
-        System.out.println("Navigated to: " + fragment.getClass().getSimpleName());
+        Log.d(TAG, "Navigated to: " + fragment.getClass().getSimpleName());
 
-        boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
+        boolean fragmentPopped = getSupportFragmentManager().popBackStackImmediate(backStateName, 0);
 
         if (!fragmentPopped) { //fragment not in back stack, create it.
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            //Animation
-            transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter, R.anim.exit);
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack if needed
@@ -468,19 +467,19 @@ public class MainActivity
 
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
-        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment nrf = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setDaysOnLayout(selectedDays);
     }
 
     @Override
     public void onPositiveMedicationPickerDialogResult(Medication med) {
-        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment nrf = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setMedicationOnLayout(med);
     }
 
     @Override
     public void setTime(int hourOfDay, int minute) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setTimeOnLayout(hourOfDay, minute);
     }
 
@@ -493,13 +492,13 @@ public class MainActivity
      */
     @Override
     public void setDate(int year, int month, int day) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
     @Override
     public void setEndDate(int year, int month, int day) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setEndDateOnLayout(year, month, day);
     }
 
@@ -552,7 +551,7 @@ public class MainActivity
     @Override
     public void onPositiveUnitDialogResult(int unit) {
         String[] units = getResources().getStringArray(R.array.unit_items);
-        MedicationStorageFragment sf = (MedicationStorageFragment) getFragmentManager().findFragmentByTag("MedicationStorageFragment");
+        MedicationStorageFragment sf = (MedicationStorageFragment) getSupportFragmentManager().findFragmentByTag("MedicationStorageFragment");
         sf.setUnitText(units[unit]);
     }
 
@@ -616,7 +615,7 @@ public class MainActivity
 
     public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
         new MySQLiteHelper(this).deleteMedication(medication);
-        MedicationListFragment medicationListFragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
+        MedicationListFragment medicationListFragment = (MedicationListFragment) getSupportFragmentManager().findFragmentByTag("MedicationListFragment");
         medicationListFragment.deleteMedcation(medication, position);
 
         //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
@@ -630,7 +629,7 @@ public class MainActivity
             notificationScheduler.cancelNotification(reminder.getReminderId());
         }
         new MySQLiteHelper(this).deleteReminder(reminder);
-        ReminderListFragment reminderListFragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
+        ReminderListFragment reminderListFragment = (ReminderListFragment) getSupportFragmentManager().findFragmentByTag("ReminderListFragment");
         reminderListFragment.deleteReminder(reminder, position);
     }
 

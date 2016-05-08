@@ -36,7 +36,7 @@ import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.sync.PutSettingsJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
-public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
+public class AccountAdministrationFragment extends android.support.v4.app.Fragment implements TitleSupplier {
 
     //private boolean busIsRegistered;
     private static String TAG = "AccountAdministrationFragment";

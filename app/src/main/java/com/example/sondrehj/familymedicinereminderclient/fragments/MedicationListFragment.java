@@ -39,7 +39,7 @@ import butterknife.OnClick;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MedicationListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class MedicationListFragment extends android.support.v4.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Get patient name on the header, f.ex. Sondre's Medication
     //TODO: Create a warning when trying to delete a medication
@@ -57,7 +57,8 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
     }
 
     public static MedicationListFragment newInstance() {
-        return new MedicationListFragment();
+        MedicationListFragment fragment = new MedicationListFragment();
+        return fragment;
     }
 
     @Subscribe
@@ -128,7 +129,7 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
 
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
-        ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());
+        ((MainActivity) getActivity()).changeFragment(MedicationStorageFragment.newInstance(null));
     }
 
     @Override

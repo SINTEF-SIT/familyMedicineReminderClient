@@ -35,7 +35,7 @@ import butterknife.OnClick;
  * Use the {@link MedicationStorageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MedicationStorageFragment extends android.app.Fragment implements TitleSupplier {
+public class MedicationStorageFragment extends android.support.v4.app.Fragment implements TitleSupplier {
 
     //TODO: Not really clear for the user that this is a cabinet where you list how many pills you possess in total
 

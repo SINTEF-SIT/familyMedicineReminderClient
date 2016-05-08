@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sondrehj.familymedicinereminderclient.HeaderItem;
-import com.example.sondrehj.familymedicinereminderclient.ListItem;
+import com.example.sondrehj.familymedicinereminderclient.adapters.HeaderItem;
+import com.example.sondrehj.familymedicinereminderclient.adapters.ListItem;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.ReminderItem;
+import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderItem;
 import com.example.sondrehj.familymedicinereminderclient.adapters.DashboardRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -33,7 +33,7 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class DashboardListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class DashboardListFragment extends android.support.v4.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
 
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
@@ -42,6 +42,21 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
     @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
+
+    public DashboardListFragment() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment WelcomeFragment.
+     */
+    public static DashboardListFragment newInstance() {
+        DashboardListFragment fragment = new DashboardListFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
