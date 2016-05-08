@@ -10,7 +10,7 @@ public class DataChangedEvent {
     public static String MEDICATIONS_BY_OWNERID = "medicationsByOwnerId";
     public static String MEDICATIONSENT = "medicationSent";
     public static String REMINDERSENT = "reminderSent";
-
+    public static String DASHBOARDCHANGED = "dashboardChanged";
     public String type;
     public Object data;
 

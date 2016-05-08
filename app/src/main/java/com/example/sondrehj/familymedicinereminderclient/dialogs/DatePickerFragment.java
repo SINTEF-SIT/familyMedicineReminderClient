@@ -10,7 +10,7 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
-
+    //FIXME When you open DatePicker on a new reminder, it opens with the values set for the previous reminder bleh..
     private DatePickerListener mListener;
     private static int yearAlreadySet;
     private static int monthAlreadySet;

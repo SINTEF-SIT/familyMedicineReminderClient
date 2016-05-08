@@ -19,10 +19,4 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:src="@drawable/mycyfapplogo" />
 
-    <Spinner
-        android:id="@+id/menu_user_spinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/dummy_users"/>
-
 </LinearLayout>

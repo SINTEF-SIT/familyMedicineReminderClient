@@ -9,13 +9,14 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#eaeaea">
+        android:background="#eaeaea"
+        android:layout_gravity="center_horizontal|bottom">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#DBDBDB"
-            android:layout_marginTop="7dp" />
+            android:layout_marginTop="20dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -41,7 +42,7 @@
                 android:inputType="text"
                 android:layout_marginRight="10dp"
                 android:textAlignment="textEnd"
-                android:maxLength="18"/>
+                android:maxLength="21"/>
 
         </LinearLayout>
 
