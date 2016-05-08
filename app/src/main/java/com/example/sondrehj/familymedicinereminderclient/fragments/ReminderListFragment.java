@@ -8,9 +8,11 @@ import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
@@ -26,6 +28,9 @@ import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * A fragment representing a list of Items.
@@ -43,6 +48,9 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     private Boolean busIsRegistered = false;
     private List<Reminder> reminders = new ArrayList<>();
     private SwipeRefreshLayout swipeContainer;
+
+    @Bind(R.id.reminder_empty)
+    TextView emptyView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -68,6 +76,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.reminder_refresh_layout);
+        ButterKnife.bind(this, view);
 
         // Set listener for swipe refresh
         swipeContainer.setOnRefreshListener(this);
@@ -77,6 +86,15 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new ReminderListRecyclerViewAdapter(context, reminders, mListener));
+
+            if(reminders.size() == 0) {
+                emptyView.setVisibility(View.VISIBLE);
+                recView.setVisibility(View.GONE);
+            }
+            else{
+                emptyView.setVisibility(View.GONE);
+                recView.setVisibility(View.VISIBLE);
+            }
         }
 
         view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->
@@ -88,7 +106,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     public void deleteReminder(Reminder reminder, int position){
         reminders.remove(reminder);
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
-        recView.getAdapter().notifyItemRemoved(position);
+        notifyChanged();
     }
 
     @Subscribe
@@ -110,6 +128,15 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
     public void notifyChanged() {
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
         if (recView != null) {
+            if(reminders.size() == 0) {
+                Log.d("MedicationListFragment", "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
             System.out.println(reminders);
             recView.getAdapter().notifyDataSetChanged();
             System.out.println("notifychanged called");

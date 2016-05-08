@@ -55,7 +55,6 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         String notificationType = extras.getString("notificationType");
         String optionalData = extras.getString("optionalData");
         String currentUserId = extras.getString("currentUserId");
-        Log.d(TAG, currentUserId);
 
         MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         MySQLiteHelper db = new MySQLiteHelper(getContext());

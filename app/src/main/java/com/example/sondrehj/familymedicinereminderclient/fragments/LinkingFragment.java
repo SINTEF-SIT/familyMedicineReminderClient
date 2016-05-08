@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -116,6 +117,8 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
             int color = Color.parseColor("#FFEB3B");
             statusIcon.setColorFilter(color);
             linkWithAccount(idInput.getText().toString()); //Start linking progress.
+            InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         } else {
             statusText.setText("Enter a 5-digit ID. Try again...");
             clearStatusTextAfterSeconds(3);
