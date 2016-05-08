@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -237,6 +238,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
         ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+
+        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         mListener.onSaveNewReminder(reminder);
     }
 
@@ -262,6 +266,8 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
         manager.addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 
+        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         mListener.onSaveNewReminder(reminder);
     }
 

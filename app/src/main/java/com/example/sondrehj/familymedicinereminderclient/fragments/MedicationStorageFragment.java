@@ -2,11 +2,13 @@ package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.AccountManager;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -114,6 +116,8 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
                 updateMedication();
             }
             //Return to MedicationCabinet
+            InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
             ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
         }
     }
