@@ -35,7 +35,8 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicatio
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
-import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardFragment;
+import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment;
+
 import com.example.sondrehj.familymedicinereminderclient.fragments.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationStorageFragment;
@@ -83,7 +84,8 @@ public class MainActivity
         AttachReminderDialogFragment.AttachReminderDialogListener,
         SetAliasDialog.OnSetAliasDialogListener,
         DeleteMedicationDialogFragment.DeleteMedicationDialogListener,
-        DeleteReminderDialogFragment.DeleteReminderDialogListener {
+        DeleteReminderDialogFragment.DeleteReminderDialogListener,
+        DashboardListFragment.OnDashboardListFragmentInteractionListener {
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
@@ -104,7 +106,6 @@ public class MainActivity
      *
      * @param savedInstanceState
      */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,7 +129,7 @@ public class MainActivity
         } else {
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
-            changeFragment(new MedicationListFragment());
+            changeFragment(new DashboardListFragment());
             //Enables drawer and menu-button
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             toggle.setDrawerIndicatorEnabled(true);
@@ -214,8 +215,6 @@ public class MainActivity
         IntentFilter intentFilter = new IntentFilter("mycyfapp");
         registerReceiver(syncReceiver, intentFilter);
     }
-
-
 
     /**
      * Unregister the activity from the bus.
@@ -522,8 +521,8 @@ public class MainActivity
             changeFragment(MedicationListFragment.newInstance());
         } else if (id == R.id.nav_settings) {
             changeFragment(AccountAdministrationFragment.newInstance());
-        } else if (id == R.id.nav_guardian_dashboard) {
-            changeFragment(DashboardFragment.newInstance());
+        } else if (id == R.id.nav_dashboard) {
+            changeFragment(new DashboardListFragment());
         } else if (id == R.id.nav_linking) {
             changeFragment(LinkingFragment.newInstance());
         }
@@ -547,6 +546,7 @@ public class MainActivity
         }
         changeFragment(ReminderListFragment.newInstance());
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override
@@ -592,6 +592,7 @@ public class MainActivity
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override
@@ -632,4 +633,6 @@ public class MainActivity
         ReminderListFragment reminderListFragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
         reminderListFragment.deleteReminder(reminder, position);
     }
+
+
 }

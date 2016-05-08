@@ -132,10 +132,9 @@ public class LinkingFragment extends android.app.Fragment implements TitleSuppli
 
         Log.d(TAG, "sendlinkingrequest userID: " + account.name);
 
-
-
         Call<Message> call = api.sendLinkingRequest(account.name, idToLinkWith);
         call.enqueue(new Callback<Message>() {
+
             /**
              * Callback function when there is a valid response from the server.
              * Validiation is done here, not in onFailure.

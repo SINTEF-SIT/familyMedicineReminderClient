@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:text="REMINDER"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="20dp"/>
 
     <View
         android:layout_width="match_parent"
@@ -68,7 +68,7 @@
             android:id="@+id/reminder_edit_name_input"
             android:inputType="text"
             android:layout_marginRight="10dp"
-            android:maxLength="18"/>
+            android:maxLength="21"/>
 
     </LinearLayout>
 
@@ -76,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#DBDBDB"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="25dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -319,7 +319,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#DBDBDB"
-        android:layout_marginBottom="30dp" />
+        android:layout_marginBottom="25dp" />
 
     <TextView
         android:layout_width="wrap_content"
