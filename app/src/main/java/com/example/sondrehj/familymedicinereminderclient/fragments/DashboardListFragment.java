@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,18 +18,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.sondrehj.familymedicinereminderclient.HeaderItem;
+import com.example.sondrehj.familymedicinereminderclient.ListItem;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
+import com.example.sondrehj.familymedicinereminderclient.ReminderItem;
 import com.example.sondrehj.familymedicinereminderclient.adapters.DashboardRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import butterknife.Bind;
 
@@ -37,6 +48,8 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
     private List<Reminder> todaysReminders = new ArrayList<>();
+    private LinkedHashMap<String,List<Reminder>> todaysRemindersSortedByUser = new LinkedHashMap<>();
+    private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
     @Bind(R.id.dashboard_list) RecyclerView recView;
     @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
@@ -45,73 +58,19 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
+        todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
+        todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard_list, container, false);
+        RecyclerView recView = (RecyclerView) view.findViewById(R.id.dashboard_list);
 
-        // Set listener for swipe refresh
-        //swipeContainer.setOnRefreshListener(this);
-
-        // Set the adapter
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
-
-
-            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
-            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
-            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
-            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
-            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
-            //http://stackoverflow.com/questions/34848401/divide-elements-on-groups-in-recyclerview
-            //TODO: hent ut alle reminders med getTodaysReminders() og sorter etter ownerID.
-            //TODO: Problem at itemsInGroup er i intervaller atm
-
-            //splits the recyclerview into sections
-            RecyclerView.ItemDecoration recViewItemDecoration = new RecyclerView.ItemDecoration() {
-
-                private int textSize = 50;
-                private int groupSpacing = 100;
-                private int itemsInGroup = 1;
-
-                private Paint paint = new Paint();
-                {
-                    paint.setTextSize(textSize);
-                }
-
-                @Override
-                public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-
-                    Account account = MainActivity.getAccount(context);
-                    String accountName = account.name;
-
-                    //c.drawText("Kid", 0, 0 ,paint);
-
-                    for (int i = 0; i < parent.getChildCount(); i++) {
-                        //System.out.println(parent.getChildCount());
-                        System.out.println(i);
-                        View view = parent.getChildAt(i);
-                        int position = parent.getChildAdapterPosition(view);
-                        if (position % itemsInGroup == 0) {
-                            c.drawText("Kid " + (position / itemsInGroup + 1), view.getLeft(),
-                                    view.getTop() - groupSpacing / 2 + textSize / 3, paint);
-                        }
-                    }
-                }
-
-                //this method creates the space between the groups
-                @Override
-                public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                    if (parent.getChildAdapterPosition(view) % itemsInGroup == 0) {
-                        outRect.set(0, groupSpacing, 0, 0);
-                    }
-                }
-            };
-
-            recView.addItemDecoration(recViewItemDecoration);
-            recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysReminders, mListener));
+            recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysRemindersForAdapter, mListener, new MySQLiteHelper(getActivity()).getUsers()));
         }
 
         return view;
@@ -121,10 +80,13 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
         if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+            todaysRemindersForAdapter.clear();
             todaysReminders.clear();
-            //medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
-            todaysReminders.addAll((new MySQLiteHelper(getActivity()).getTodaysReminders()));
-            System.out.println();
+            todaysRemindersSortedByUser.clear();
+
+            todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
+            todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
+            todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
             if (fragment != null) {
                 fragment.notifyChanged();
@@ -138,6 +100,51 @@ public class DashboardListFragment extends android.app.Fragment implements Title
             recView.getAdapter().notifyDataSetChanged();
             System.out.println("notifychanged called");
         }
+    }
+
+    private List<ListItem> createTodaysRemindersFromTreeMap(LinkedHashMap<String, List<Reminder>> todaysRemindersSortedByUser){
+        List<ListItem> mItems;
+
+        mItems = new ArrayList<>();
+        for (String userId : todaysRemindersSortedByUser.keySet()) {
+            HeaderItem header = new HeaderItem();
+            header.setOwnerID(userId);
+            mItems.add(header);
+            for (Reminder reminder : todaysRemindersSortedByUser.get(userId)) {
+                ReminderItem item = new ReminderItem();
+                item.setReminder(reminder);
+                mItems.add(item);
+            }
+        }
+        return mItems;
+    }
+
+    private LinkedHashMap<String, List<Reminder>> setTodaysRemindersSortedByUser(List<Reminder> todaysReminders) {
+        LinkedHashMap<String, List<Reminder>> mItems = new LinkedHashMap<>();
+        String userId = MainActivity.getAccount(getActivity()).name;
+
+        ArrayList<String> users = new ArrayList<>();
+        for (Reminder reminder:todaysReminders) {
+            if(!users.contains(reminder.getOwnerId())){
+                if(reminder.getOwnerId().equals(userId)){
+                    users.add(0, reminder.getOwnerId());
+                } else {
+                    users.add(reminder.getOwnerId());
+                }
+            }
+        }
+
+        for (String user : users){
+            ArrayList<Reminder> userReminders = new ArrayList<>();
+            for (Reminder reminder : todaysReminders){
+                if(reminder.getOwnerId().equals(user)){
+                    userReminders.add(reminder);
+                }
+            }
+            Collections.sort(userReminders, new CustomComparator());
+            mItems.put(user, userReminders);
+        }
+        return mItems;
     }
 
     //API Level >= 23
@@ -205,4 +212,14 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     public interface OnDashboardListFragmentInteractionListener {
 
     }
+
+    public class CustomComparator implements Comparator<Reminder> {
+        @Override
+        public int compare(Reminder o1, Reminder o2) {
+            int time1 = o1.getDate().get(Calendar.HOUR_OF_DAY) + o1.getDate().get(Calendar.MINUTE);
+            int time2 = o2.getDate().get(Calendar.HOUR_OF_DAY) + o2.getDate().get(Calendar.MINUTE);
+            return time1 - time2;
+        }
+    }
+
 }
