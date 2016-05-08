@@ -35,6 +35,7 @@ import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputValidator;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.example.sondrehj.familymedicinereminderclient.utility.NewReminderInputConverter;
+import com.path.android.jobqueue.JobManager;
 
 
 import java.util.ArrayList;
@@ -257,7 +258,9 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        JobManager manager = ((MainActivity) getActivity()).getJobManager();
+
+        manager.addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 
         mListener.onSaveNewReminder(reminder);
     }
