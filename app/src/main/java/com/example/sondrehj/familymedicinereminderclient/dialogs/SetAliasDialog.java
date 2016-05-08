@@ -62,7 +62,7 @@ public class SetAliasDialog extends DialogFragment {
                 })
                 .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onPositiveSetAliasDialog(alias_edit_text.getText().toString(), userId);
+                        mListener.onPositiveSetAliasDialog(userId, userId);
                         InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                         mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                     }
