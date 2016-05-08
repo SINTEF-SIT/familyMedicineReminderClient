@@ -26,6 +26,16 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/reminder_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:text="@string/no_reminders"
+        android:layout_marginTop="50dp"
+        android:textAlignment="center"
+        android:textSize="30dp" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/reminder_fab"
         android:layout_width="wrap_content"
