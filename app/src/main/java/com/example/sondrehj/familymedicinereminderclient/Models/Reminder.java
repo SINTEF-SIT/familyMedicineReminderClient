@@ -48,6 +48,19 @@ public class Reminder implements Serializable {
             setMedicine(med);
             setDosage(transportReminder.getDosage());
         }
+
+        if(transportReminder.endDate.equals("0")){
+            setEndDate(null);
+        } else {
+            setEndDate(Converter.databaseDateStringToCalendar(transportReminder.getEndDate()));
+        }
+
+        if(transportReminder.timeTaken.equals("0")) {
+            setTimeTaken(null);
+        } else {
+            setTimeTaken(Converter.databaseDateStringToCalendar(transportReminder.timeTaken));
+        }
+
     }
 
     public int getReminderId(){
@@ -125,8 +138,6 @@ public class Reminder implements Serializable {
     public void setTimeTaken(GregorianCalendar timeTaken) {
         this.timeTaken = timeTaken;
     }
-
-
 
     public String getDateString(){
         System.out.println(date);

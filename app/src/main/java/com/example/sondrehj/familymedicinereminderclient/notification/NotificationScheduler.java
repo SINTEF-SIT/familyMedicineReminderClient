@@ -18,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
@@ -303,6 +304,11 @@ public class NotificationScheduler {
             System.out.println(currentTime.getTime().toString());
             // Display toaster
             Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();
+            // update server side
+            String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+            String userId = ((MainActivity) context).getCurrentUser().getUserId();
+            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+
         }
     }
 
@@ -313,10 +319,18 @@ public class NotificationScheduler {
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(context);
         db.setReminderTimeTaken(reminder);
+        reminder = db.getReminderByLocalId(reminder.getReminderId());
+
+        System.out.println(reminder);
+
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
         // Display toaster
         System.out.println("TAKEN CLICKED: " + reminder.getReminderId());
         this.removeNotification(reminder.getReminderId());
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
+        String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+        String userId = ((MainActivity) context).getCurrentUser().getUserId();
+        ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+
     }
 }
