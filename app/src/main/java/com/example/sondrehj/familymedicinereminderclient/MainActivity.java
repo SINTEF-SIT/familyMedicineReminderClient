@@ -50,6 +50,8 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPicke
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
@@ -582,7 +584,6 @@ public class MainActivity
 
     @Override
     public void onReminderDeleteButtonClicked(Reminder reminder) {
-
         // Cancel notification if set
         if (reminder.getIsActive()) {
             notificationScheduler.cancelNotification(reminder.getReminderId());
@@ -629,23 +630,31 @@ public class MainActivity
     }
 
     public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
-        new MySQLiteHelper(this).deleteMedication(medication);
-        MedicationListFragment medicationListFragment = (MedicationListFragment) getSupportFragmentManager().findFragmentByTag("MedicationListFragment");
-        medicationListFragment.deleteMedication(medication, position);
-
-        //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+        if(medication.getServerId() != -1) {
+            String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
+            new MySQLiteHelper(this).deleteMedication(medication);
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+            getJobManager().addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
+        }
+        else {
+            Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onPositiveDeleteReminderDialogResult(Reminder reminder, int position) {
-
-        // Cancel the notification if the reminder is active upon deletion
-        if (reminder.getIsActive()) {
-            notificationScheduler.cancelNotification(reminder.getReminderId());
+        if(reminder.getServerId() != -1) {
+            if(reminder.getIsActive()){
+                notificationScheduler.cancelNotification(reminder.getReminderId());
+            }
+            String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
+            AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
+            new MySQLiteHelper(this).deleteReminder(reminder);
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+            getJobManager().addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
+        } else {
+            Toast.makeText(this, "This reminder is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
         }
-        new MySQLiteHelper(this).deleteReminder(reminder);
-        ReminderListFragment reminderListFragment = (ReminderListFragment) getSupportFragmentManager().findFragmentByTag("ReminderListFragment");
-        reminderListFragment.deleteReminder(reminder, position);
     }
 
     @Override

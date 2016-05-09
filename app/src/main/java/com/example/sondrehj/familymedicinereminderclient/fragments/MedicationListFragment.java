@@ -148,12 +148,6 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
         return view;
     }
 
-    public void deleteMedication(Medication med, int position){
-        medications.remove(med);
-        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
-        notifyChanged();
-    }
-
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
         ((MainActivity) getActivity()).changeFragment(MedicationStorageFragment.newInstance(null));
