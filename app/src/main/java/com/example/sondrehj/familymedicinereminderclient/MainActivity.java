@@ -68,6 +68,8 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+import butterknife.Bind;
+
 public class MainActivity
         extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -89,10 +91,11 @@ public class MainActivity
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
-    NotificationManager manager;
+    public NotificationManager manager;
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+    @Bind(R.id.drawer_layout) DrawerLayout drawer;
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -277,11 +280,12 @@ public class MainActivity
     //TODO: Make the application quit after the last fragment is popped from the fragmentStack, instead of showing the activity's content
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
+        } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            if(!getSupportFragmentManager().popBackStackImmediate()){
+                supportFinishAfterTransition();
+            };
         } else {
             super.onBackPressed();
         }
