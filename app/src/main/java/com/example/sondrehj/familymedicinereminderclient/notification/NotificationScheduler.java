@@ -191,8 +191,6 @@ public class NotificationScheduler {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
         return notification;
-
-
     }
 
     /**
@@ -302,7 +300,6 @@ public class NotificationScheduler {
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             this.removeNotification(reminder.getReminderId());
-
             System.out.println(currentTime.getTime().toString());
             // Display toaster
             Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();

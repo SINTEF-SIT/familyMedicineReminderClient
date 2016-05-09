@@ -8,6 +8,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -23,6 +24,7 @@ import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -56,6 +58,12 @@ public class Synchronizer {
             public void onResponse(Call<List<TransportReminder>> call, Response<List<TransportReminder>> response) {
                 System.out.println("In syncreminders");
                 ArrayList<Reminder> dbReminders = db.getReminders();
+
+
+                int[] array = new int[dbReminders.size()];
+                Arrays.fill(array, 0);
+
+                outerloop:
                 for (TransportReminder serverReminder : response.body()) {
 
                     //If a reminder is attached to an unsynced medication, we request that the user sync medications first
@@ -68,8 +76,8 @@ public class Synchronizer {
                         //We do not return, but merely continue to the next reminder
                         continue;
                     }
+                    boolean updated = false;
 
-                    Boolean updated = false;
                     for (Reminder dbReminder : dbReminders) {
                         System.out.println("DBReminder serverID: " + dbReminder.getServerId());
                         System.out.println("Server reminder ID: " + serverReminder.getServerId());
@@ -97,15 +105,14 @@ public class Synchronizer {
                             intent.putExtra("action", "scheduleReminder");
                             intent.putExtra("reminder", reminder);
                             context.sendBroadcast(intent);
+
+                            array[dbReminders.indexOf(dbReminder)] = 1;
+                            db.updateReminder(dbReminder);
                             updated = true;
                         }
                     }
                     if(!updated) {
-                        System.out.println("not updated");
-                        System.out.println("SCHEDULING NOTIFICATION");
-                        Reminder reminder = new Reminder(serverReminder, medDependency);
-                        reminder = db.addReminder(new Reminder(serverReminder, medDependency));
-                        System.out.println("REMINDER ID: " + reminder.getReminderId());
+                        Reminder reminder = db.addReminder(new Reminder(serverReminder, medDependency));
                         Intent intent = new Intent();
                         intent.setAction("mycyfapp");
                         intent.putExtra("action", "scheduleReminder");
@@ -113,6 +120,14 @@ public class Synchronizer {
                         context.sendBroadcast(intent);
                     }
                 }
+
+                MySQLiteHelper helper = new MySQLiteHelper(context);
+                for(int i = 0; i < array.length; i++) {
+                    if(array[i] == 0) {
+                        helper.deleteReminder(dbReminders.get(i));
+                    }
+                }
+
 
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
                 System.out.println("Finished db, sending intent");
@@ -140,8 +155,12 @@ public class Synchronizer {
                 System.out.println("In sync medications");
                 ArrayList<Medication> clientMedications = db.getMedications();
                 Log.d(TAG, response.raw().toString());
+
+                int[] array = new int[clientMedications.size()];
+                Arrays.fill(array, 0);
+
+                outerloop:
                 for (Medication serverMedication : response.body()) {
-                    boolean updated = false;
                     for (Medication clientMedication : clientMedications) {
                         if(serverMedication.getServerId() == clientMedication.getServerId()) {
                             System.out.println("Updated med with id " + clientMedication.getServerId());
@@ -150,11 +169,18 @@ public class Synchronizer {
                             clientMedication.setUnit(serverMedication.getUnit());
                             clientMedication.setCount(serverMedication.getCount());
                             db.updateMedication(clientMedication);
-                            updated = true;
+                            array[clientMedications.indexOf(clientMedication)] = 1;
+                            continue outerloop;
                         }
+
                     }
-                    if(!updated) {
-                        db.addMedication(serverMedication);
+                    db.addMedication(serverMedication);
+                }
+
+                MySQLiteHelper helper = new MySQLiteHelper(context);
+                for(int i = 0; i < array.length; i++) {
+                    if(array[i] == 0) {
+                        helper.deleteMedication(clientMedications.get(i));
                     }
                 }
 

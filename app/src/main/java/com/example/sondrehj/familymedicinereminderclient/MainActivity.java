@@ -3,8 +3,6 @@ package com.example.sondrehj.familymedicinereminderclient;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlarmManager;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ClipData;
@@ -17,7 +15,9 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -55,6 +55,8 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPicke
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
@@ -95,7 +97,7 @@ public class MainActivity
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
-    NotificationManager manager;
+    public NotificationManager manager;
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
@@ -129,20 +131,21 @@ public class MainActivity
 
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
-            changeFragment(new WelcomeFragment());
+            changeFragment(WelcomeFragment.newInstance());
             //disables drawer and navigation in welcomeFragment.
             drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
             toggle.setDrawerIndicatorEnabled(false);
         } else {
+            changeFragment(DashboardListFragment.newInstance());
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
-            changeFragment(new DashboardListFragment());
             //Enables drawer and menu-button
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             toggle.setDrawerIndicatorEnabled(true);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
+
             //TODO: get main account from database
             String id = AccountManager.get(this).getUserData(getAccount(this), "userId");
             currentUser = new User2(id, "User");
@@ -198,20 +201,6 @@ public class MainActivity
     }
 
     /**
-     * Gets the instantiazed account of the system, used with the SyncAdapter and
-     * ContentResolver, might have to be moved sometime.
-     *
-     * @return
-     */
-    public static Account getAccount(Context context) {
-        Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
-        if (accountArray.length >= 1) {
-            return accountArray[0];
-        }
-        return null;
-    }
-
-    /**
      * Registering the SyncReceiver to receive intents from the SyncAdapter, we need this
      * because the Bus cannot register to the SyncAdapter (it is another process altogether).
      * Registering the activity to the event bus.
@@ -228,7 +217,6 @@ public class MainActivity
     /**
      * Unregister the activity from the bus.
      * Unregister the receiver so that intents aren't received when the application is paused.
-     *
      */
     @Override
     public void onPause() {
@@ -237,10 +225,31 @@ public class MainActivity
         unregisterReceiver(syncReceiver);
     }
 
+    public JobManager getJobManager() {
+        Configuration configuration = new Configuration.Builder(this)
+                .networkUtil(new ServerStatusChangeReceiver())
+                .build();
+        return new JobManager(this, configuration);
+    }
+
+    /**
+     * Gets the instantiazed account of the system, used with the SyncAdapter and
+     * ContentResolver, might have to be moved sometime.
+     *
+     * @return
+     */
+    public static Account getAccount(Context context) {
+        Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
+        if (accountArray.length >= 1) {
+            return accountArray[0];
+        }
+        return null;
+    }
+
     /**
      * Handle a LinkingRequest sent to the patient on the bus. Opens a LinkingDialogFragment
      * which asks the patient wether it wants to link itself with a guardian account upon request.
-     *
+     * <p>
      * Flow:
      * 1. Guardian presses link
      * 2. Guardian sends rest call to the server
@@ -292,16 +301,16 @@ public class MainActivity
     }
 
     /**
-     * Closes the drawer when the back button is pressed.
+     * If the drawer is open it will be closed when pressing the back button, elsewise it will pop
+     * backstates so that you can navigate backwards.
      */
-    //TODO: Make the application quit after the last fragment is popped from the fragmentStack, instead of showing the activity's content
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
+        } else if (getSupportFragmentManager().getBackStackEntryCount() == 1) { //close app before empty container is shown
+            supportFinishAfterTransition();
         } else {
             super.onBackPressed();
         }
@@ -336,13 +345,6 @@ public class MainActivity
         return true;
     }
 
-    public JobManager getJobManager() {
-        Configuration configuration = new Configuration.Builder(this)
-                .networkUtil(new ServerStatusChangeReceiver())
-                .build();
-        return new JobManager(this, configuration);
-    }
-
     /**
      * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
@@ -351,26 +353,18 @@ public class MainActivity
      */
     public void changeFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
-        System.out.println("Navigated to: " + fragment.getClass().getSimpleName());
+        Log.d(TAG, "Navigated to: " + fragment.getClass().getSimpleName());
 
-        boolean fragmentPopped = getFragmentManager().popBackStackImmediate(backStateName, 0);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
 
-        if (!fragmentPopped) { //fragment not in back stack, create it.
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            //Animation
-            transaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_left, 0, 0);
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack if needed
+        transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+        transaction.addToBackStack(backStateName);
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack if needed
-            transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-            transaction.addToBackStack(backStateName);
-
-            //Commit the transaction
-            transaction.commit();
-        }
-        //change the header to which fragment you are on
-        TitleSupplier titleSupplier = (TitleSupplier) fragment;
-        setTitle(titleSupplier.getTitle());
+        //Commit the transaction
+        transaction.commit();
     }
 
     /**
@@ -389,7 +383,7 @@ public class MainActivity
         System.out.println(reminder);
         //String currentUserId = intent.getStringExtra("currentUserId");
 
-        if(notificationAction != null) {
+        if (notificationAction != null) {
             switch (notificationAction) {
                 case "notificationStandard":
                     //notificationScheduler.handleNotificationStandardClick(reminder);
@@ -421,32 +415,9 @@ public class MainActivity
     }
 
     /**
-     * Check the device to make sure it has the Google Play Services APK. If
-     * it doesn't, display a dialog that allows users to download the APK from
-     * the Google Play Store or enable it in the device's system settings.
-     *
-     * TODO: Disallow usage of the application before the user fixes this error.
-     */
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, 9000)
-                        .show();
-            } else {
-                Log.i(TAG, "This device is not supported.");
-                finish();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Deletes local application data and accounts.
      */
-    public void deleteAllApplicationData(){
+    public void deleteAllApplicationData() {
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
@@ -481,6 +452,7 @@ public class MainActivity
     /**
      * Function called by WelcomeFragment to save/add account to the AccountManager and
      * fetch a gcm token which is sent to the server and associated with the user.
+     *
      * @param userId
      * @param password
      * @param userRole
@@ -520,29 +492,52 @@ public class MainActivity
         changeFragment(new MedicationListFragment());
     }
 
-    public void setCurrentUser(User2 user){
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     * <p>
+     * TODO: Disallow usage of the application before the user fixes this error.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, 9000)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public void setCurrentUser(User2 user) {
         this.currentUser = user;
     }
 
-    public User2 getCurrentUser(){
+    public User2 getCurrentUser() {
         return this.currentUser;
     }
 
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
-        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment nrf = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setDaysOnLayout(selectedDays);
     }
 
     @Override
     public void onPositiveMedicationPickerDialogResult(Medication med) {
-        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment nrf = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setMedicationOnLayout(med);
     }
 
     @Override
     public void setTime(int hourOfDay, int minute) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setTimeOnLayout(hourOfDay, minute);
     }
 
@@ -555,13 +550,13 @@ public class MainActivity
      */
     @Override
     public void setDate(int year, int month, int day) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
     @Override
     public void setEndDate(int year, int month, int day) {
-        NewReminderFragment newReminderFragment = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+        NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         newReminderFragment.setEndDateOnLayout(year, month, day);
     }
 
@@ -614,7 +609,7 @@ public class MainActivity
     @Override
     public void onPositiveUnitDialogResult(int unit) {
         String[] units = getResources().getStringArray(R.array.unit_items);
-        MedicationStorageFragment sf = (MedicationStorageFragment) getFragmentManager().findFragmentByTag("MedicationStorageFragment");
+        MedicationStorageFragment sf = (MedicationStorageFragment) getSupportFragmentManager().findFragmentByTag("MedicationStorageFragment");
         sf.setUnitText(units[unit]);
     }
 
@@ -625,7 +620,6 @@ public class MainActivity
 
     @Override
     public void onReminderDeleteButtonClicked(Reminder reminder) {
-
         // Cancel notification if set
         if (reminder.getIsActive()) {
             notificationScheduler.cancelNotification(reminder.getReminderId());
@@ -672,30 +666,37 @@ public class MainActivity
     }
 
     public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
-        new MySQLiteHelper(this).deleteMedication(medication);
-        MedicationListFragment medicationListFragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-        medicationListFragment.deleteMedcation(medication, position);
-
-        //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+        if(medication.getServerId() != -1) {
+            String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
+            new MySQLiteHelper(this).deleteMedication(medication);
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+            getJobManager().addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
+        }
+        else {
+            Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onPositiveDeleteReminderDialogResult(Reminder reminder, int position) {
-
-        // Cancel the notification if the reminder is active upon deletion
-        if(reminder.getIsActive()){
-            notificationScheduler.cancelNotification(reminder.getReminderId());
+        if(reminder.getServerId() != -1) {
+            if(reminder.getIsActive()){
+                notificationScheduler.cancelNotification(reminder.getReminderId());
+            }
+            String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
+            AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
+            new MySQLiteHelper(this).deleteReminder(reminder);
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+            getJobManager().addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
+        } else {
+            Toast.makeText(this, "This reminder is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
         }
-        new MySQLiteHelper(this).deleteReminder(reminder);
-        ReminderListFragment reminderListFragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
-        reminderListFragment.deleteReminder(reminder, position);
     }
-
 
     @Override
     public void onPositiveCreateReminderForMedicationDialogResult(Medication medication) {
 
-        Fragment fragment = getFragmentManager().findFragmentByTag("NewReminderFragment");
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         if(fragment != null) {
             getFragmentManager().popBackStackImmediate(fragment.getClass().getName(), 0);
         }

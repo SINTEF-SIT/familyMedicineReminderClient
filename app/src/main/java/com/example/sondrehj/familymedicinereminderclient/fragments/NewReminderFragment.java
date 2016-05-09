@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +57,7 @@ import butterknife.OnClick;
  * Use the {@link NewReminderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewReminderFragment extends android.app.Fragment implements TitleSupplier {
+public class NewReminderFragment extends android.support.v4.app.Fragment {
 
     //TODO: Suggestion: If a medication is attached, put name of medication as name. Name is not needed if it's a reminder to take the medicine
     //TODO: When you get sent to NewReminder from the dialog after creating a medicine, the medicine should be attached
@@ -165,7 +166,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 endDatePickerGroup.setVisibility(View.VISIBLE);
                 endDatePickerGroup.setOnClickListener((View v) -> {
                     EndDatePickerFragment endDate = EndDatePickerFragment.newInstance(currentStartDate);
-                    endDate.show(getFragmentManager(), "endDatePicker");
+                    endDate.show(getActivity().getSupportFragmentManager(), "endDatePicker");
                 });
                 chooseDaysPickerGroup.setVisibility(View.VISIBLE);
                 chooseDaysPickerGroup.setOnClickListener((View v) -> {
@@ -176,10 +177,10 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
 
                         // Creates a new SelectDaysDialogFragment where the selected days are checked.
                         SelectDaysDialogFragment selectDaysDialogFragment = SelectDaysDialogFragment.newInstance(selectedItems);
-                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                        selectDaysDialogFragment.show(getActivity().getSupportFragmentManager(), "selectdayslist");
                     } else {
                         SelectDaysDialogFragment selectDaysDialogFragment = new SelectDaysDialogFragment();
-                        selectDaysDialogFragment.show(getFragmentManager(), "selectdayslist");
+                        selectDaysDialogFragment.show(getActivity().getSupportFragmentManager(), "selectdayslist");
                     }
                 });
             } else {
@@ -207,20 +208,22 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         fillFields();
         if (reminder != null) {
             getActivity().setTitle("Edit reminder");
+        } else {
+            getActivity().setTitle("New reminder");
         }
         return view;
     }
 
     @OnClick(R.id.reminder_edit_group_date)
     public void onChooseDateGroupClick() {
-        DialogFragment datePickerFragment = new DatePickerFragment();
-        datePickerFragment.show(getFragmentManager(), "datePicker");
+        DatePickerFragment datePickerFragment = new DatePickerFragment();
+        datePickerFragment.show(getActivity().getSupportFragmentManager(), "datePicker");
     }
 
     @OnClick(R.id.reminder_edit_group_time)
     public void onChooseTimeGroupClick() {
-        DialogFragment timePickerFragment = new TimePickerFragment();
-        timePickerFragment.show(getFragmentManager(), "timePicker");
+        TimePickerFragment timePickerFragment = new TimePickerFragment();
+        timePickerFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
     }
 
     @OnClick(R.id.reminder_edit_save_button)
@@ -421,7 +424,7 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
                 @Override
                 public void onClick(View v) {
                     MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
-                    medicationPickerFragment.show(getFragmentManager(), "medicationPickerFragment");
+                    medicationPickerFragment.show(getActivity().getSupportFragmentManager(), "medicationPickerFragment");
                 }
             });
         } else {
@@ -498,11 +501,6 @@ public class NewReminderFragment extends android.app.Fragment implements TitleSu
         super.onDetach();
         ButterKnife.unbind(this);
         mListener = null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "New reminder";
     }
 
     public interface OnNewReminderInteractionListener {

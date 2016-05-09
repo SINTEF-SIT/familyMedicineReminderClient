@@ -13,6 +13,9 @@ import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+
+import java.util.ArrayList;
 
 /**
  * Created by nikolai on 20/04/16.

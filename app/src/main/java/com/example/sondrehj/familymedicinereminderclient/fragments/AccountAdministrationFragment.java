@@ -36,7 +36,7 @@ import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.sync.PutSettingsJob;
 import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
-public class AccountAdministrationFragment extends android.app.Fragment implements TitleSupplier {
+public class AccountAdministrationFragment extends android.support.v4.app.Fragment {
 
     //private boolean busIsRegistered;
     private static String TAG = "AccountAdministrationFragment";
@@ -81,6 +81,7 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account_administration, container, false);
         ButterKnife.bind(this, view);
+        getActivity().setTitle("Settings");
 
         Account account = MainActivity.getAccount(context); //Gets a reference to the account.
         String userRole = AccountManager.get(context)
@@ -247,10 +248,5 @@ public class AccountAdministrationFragment extends android.app.Fragment implemen
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Settings";
     }
 }
