@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
+import android.util.Log;
+
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
@@ -60,6 +62,7 @@ public class Reminder implements Serializable {
         } else {
             setTimeTaken(Converter.databaseDateStringToCalendar(transportReminder.timeTaken));
         }
+        Log.d("Reminder", transportReminder.toString());
 
     }
 

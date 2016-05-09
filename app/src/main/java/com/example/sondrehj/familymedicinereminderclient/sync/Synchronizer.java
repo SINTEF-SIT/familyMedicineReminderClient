@@ -96,6 +96,11 @@ public class Synchronizer {
                             } else {
                                 dbReminder.setEndDate(null);
                             }
+                            if(! serverReminder.getTimeTaken().equals("0")) {
+                                dbReminder.setTimeTaken(Converter.databaseDateStringToCalendar(serverReminder.getTimeTaken()));
+                            } else {
+                                dbReminder.setTimeTaken(null);
+                            }
                             dbReminder.setDosage(serverReminder.getDosage());
                             dbReminder.setIsActive(serverReminder.getActive());
                             dbReminder.setDays(Converter.serverDayStringToDayArray(serverReminder.getDays()));

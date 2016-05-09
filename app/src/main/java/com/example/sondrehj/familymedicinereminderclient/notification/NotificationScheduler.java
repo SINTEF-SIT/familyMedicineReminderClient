@@ -18,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
@@ -181,7 +182,7 @@ public class NotificationScheduler {
         // Constructs the notification
         Notification notification = new Notification.Builder(context)
                 .setContentTitle("MYCYFAPP")
-                .setContentText("Your child has a reminder: " + reminder.getName())
+                .setContentText(reminder.getName())
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
@@ -298,6 +299,7 @@ public class NotificationScheduler {
             MySQLiteHelper db = new MySQLiteHelper(context);
             db.updateAmountMedication(reminder.getMedicine());
             db.setReminderTimeTaken(reminder);
+            reminder = db.getReminderByLocalId(reminder.getReminderId());
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             this.removeNotification(reminder.getReminderId());
@@ -308,6 +310,7 @@ public class NotificationScheduler {
             String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
             String userId = ((MainActivity) context).getCurrentUser().getUserId();
             ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
 
         }
     }
