@@ -502,8 +502,15 @@ public class MainActivity
 
     @Override
     public void onPositiveMedicationPickerDialogResult(Medication med) {
-        NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
-        nrf.setMedicationOnLayout(med);
+        if(med.getServerId() != -1) {
+            NewReminderFragment nrf = (NewReminderFragment) getFragmentManager().findFragmentByTag("NewReminderFragment");
+            nrf.setMedicationOnLayout(med);
+        } else {
+            Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before attaching it.", Toast.LENGTH_SHORT).show();
+            return;
+
+        }
+
     }
 
     @Override
