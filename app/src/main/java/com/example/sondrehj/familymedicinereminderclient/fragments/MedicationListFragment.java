@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -31,6 +32,7 @@ import java.util.List;
 
 import javax.sql.RowSetEvent;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -49,6 +51,9 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
     private List<Medication> medications = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
     private SwipeRefreshLayout swipeContainer;
+
+    @Bind(R.id.medication_empty)
+    TextView emptyView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -91,7 +96,18 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
+
             Log.d(TAG,"Notify changed called");
+
+            if(medications.size() == 0) {
+                Log.d("MedicationListFragment", "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -118,6 +134,16 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new MedicationRecyclerViewAdapter(getActivity(), medications, mListener));
+
+            if(medications.size() == 0) {
+                Log.d("MedicationListFragment", "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
         }
         return view;
     }
@@ -125,7 +151,7 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
     public void deleteMedication(Medication med, int position){
         medications.remove(med);
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
-        recView.getAdapter().notifyItemRemoved(position);
+        notifyChanged();
     }
 
     @OnClick(R.id.new_medication_fab)

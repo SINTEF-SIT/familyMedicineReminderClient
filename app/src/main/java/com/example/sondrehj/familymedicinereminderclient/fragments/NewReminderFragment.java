@@ -102,6 +102,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REMINDER_ARGS = "reminder";
+    private static final String MEDICATION_ARGS = "medication";
     private OnNewReminderInteractionListener mListener;
 
     public NewReminderFragment() {
@@ -126,12 +127,28 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         return fragment;
     }
 
+    public static NewReminderFragment newInstance(Medication medication) {
+        NewReminderFragment fragment = new NewReminderFragment();
+        if (medication != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(MEDICATION_ARGS, medication);
+            fragment.setArguments(bundle);
+        }
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            reminder = (Reminder) getArguments().getSerializable(REMINDER_ARGS);
-            setReminder(reminder);
+            if(getArguments().getSerializable(REMINDER_ARGS) != null) {
+                reminder = (Reminder) getArguments().getSerializable(REMINDER_ARGS);
+                setReminder(reminder);
+            }
+            if(getArguments().getSerializable(MEDICATION_ARGS) != null) {
+                medication = (Medication) getArguments().getSerializable(MEDICATION_ARGS);
+                reminder = null;
+            }
         }
     }
 
@@ -295,7 +312,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public void fillFields() {
         final Calendar c;
         // Checks if a reminder is passed to the fragment
-        if (getArguments() != null) {
+        if (reminder != null) {
             activeSwitch.setChecked(reminder.getIsActive());
             nameInput.setText(reminder.getName());
             c = reminder.getDate();
@@ -335,7 +352,14 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
                 dosageUnit.setText(reminder.getMedicine().getUnit());
                 enableDosageField(true);
             }
-        } else { // Set today's date and time as default if a reminder is not provided
+        }
+
+        else { // Set today's date and time as default if a reminder is not provided
+            if(medication != null){
+                attachMedicationSwitch.setChecked(true);
+                attachedMedicationInput.setText(medication.getName());
+                enableDosageField(true);
+            }
             c = Calendar.getInstance();
             selectedDays = new int[]{0, 1, 2, 3, 4, 5, 6};
             setBoldOnSelectedDays(selectedDays);

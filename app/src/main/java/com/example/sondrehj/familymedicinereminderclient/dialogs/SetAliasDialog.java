@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -55,11 +56,15 @@ public class SetAliasDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         mListener.onPositiveSetAliasDialog(alias_edit_text.getText().toString(), userId);
+                        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                     }
                 })
                 .setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onPositiveSetAliasDialog(alias_edit_text.getText().toString(), userId);
+                        mListener.onPositiveSetAliasDialog(userId, userId);
+                        InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                     }
                 });
         return builder.create();

@@ -147,7 +147,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
                     userReminders.add(reminder);
                 }
             }
-            Collections.sort(userReminders, new CustomComparator());
             mItems.put(user, userReminders);
         }
         return mItems;
@@ -211,14 +210,4 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     public interface OnDashboardListFragmentInteractionListener {
 
     }
-
-    public class CustomComparator implements Comparator<Reminder> {
-        @Override
-        public int compare(Reminder o1, Reminder o2) {
-            int time1 = o1.getDate().get(Calendar.HOUR_OF_DAY) + o1.getDate().get(Calendar.MINUTE);
-            int time2 = o2.getDate().get(Calendar.HOUR_OF_DAY) + o2.getDate().get(Calendar.MINUTE);
-            return time1 - time2;
-        }
-    }
-
 }

@@ -18,6 +18,8 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 
+import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.LinkingDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
@@ -109,13 +111,19 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         } else {
             if (mMedication == null) {
                 createNewMedication();
+                //CreateReminderForMedicationDialogFragment crm = CreateReminderForMedicationDialogFragment.newInstance(newMedication);
+                //crm.show(getFragmentManager(), "create_reminder_for_medication");
+                //Return to MedicationCabinet
+                InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
             } else {
                 updateMedication();
+                //Return to MedicationCabinet
+                InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
             }
-            //Return to MedicationCabinet
-            InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-            ((MainActivity) getActivity()).changeFragment(new MedicationListFragment());
         }
     }
 
@@ -131,7 +139,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         medicationUnitInput.setText(mMedication.getUnit());
     }
 
-    public void createNewMedication() {
+    public Medication createNewMedication() {
 
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
@@ -153,11 +161,10 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
 
         ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-        //((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, userId, authToken));
-        //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-        
+
         System.out.println("---------Medication Created---------" + "\n" + medication);
         System.out.println("------------------------------------");
+        return medication;
 
     }
 
