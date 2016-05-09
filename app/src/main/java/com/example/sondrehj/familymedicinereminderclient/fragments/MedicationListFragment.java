@@ -145,12 +145,6 @@ public class MedicationListFragment extends android.app.Fragment implements Titl
         return view;
     }
 
-    public void deleteMedcation(Medication med, int position){
-        medications.remove(med);
-        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
-        notifyChanged();
-    }
-
     @OnClick(R.id.new_medication_fab)
     public void onFloatingActionButtonClick() {
         ((MainActivity) getActivity()).changeFragment(new MedicationStorageFragment());

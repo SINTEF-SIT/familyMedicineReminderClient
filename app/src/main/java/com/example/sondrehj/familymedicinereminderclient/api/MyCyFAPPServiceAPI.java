@@ -40,7 +40,7 @@ public interface MyCyFAPPServiceAPI {
     Call<TransportReminder> updateReminder(@Path("userID") String userID, @Path("reminderID") String reminderID, @Body TransportReminder reminder);
 
     @DELETE("user/{userID}/reminder/{reminderID}")
-    Call<TransportReminder> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
+    Call<Boolean> deleteReminder(@Path("userID") String userID, @Path("reminderID") String reminderID);
 
 
     /**
@@ -56,7 +56,7 @@ public interface MyCyFAPPServiceAPI {
     Call<Medication> updateMedication(@Path("userID") String userID, @Path("medicationID") String medicationID, @Body Medication medication);
 
     @DELETE("user/{userID}/medication/{medicationID}")
-    Call<Medication> deleteMedication(@Path("userID") String userID, @Path("medicationID") String medicationID);
+    Call<Boolean> deleteMedication(@Path("userID") String userID, @Path("medicationID") String medicationID);
 
 
     /**
