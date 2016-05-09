@@ -98,7 +98,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         }
 
         view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->
-            ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null))
+            ((MainActivity) getActivity()).changeFragment(new NewReminderFragment())
         );
         return view;
     }
