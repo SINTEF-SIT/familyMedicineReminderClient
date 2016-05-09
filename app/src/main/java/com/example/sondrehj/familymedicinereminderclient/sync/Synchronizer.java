@@ -17,6 +17,7 @@ import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
+import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.sql.SQLOutput;
@@ -90,13 +91,26 @@ public class Synchronizer {
                             dbReminder.setDosage(serverReminder.getDosage());
                             dbReminder.setIsActive(serverReminder.getActive());
                             dbReminder.setDays(Converter.serverDayStringToDayArray(serverReminder.getDays()));
-                            db.updateReminder(dbReminder);
+                            Reminder reminder = db.updateReminder(dbReminder);
+                            Intent intent = new Intent();
+                            intent.setAction("mycyfapp");
+                            intent.putExtra("action", "scheduleReminder");
+                            intent.putExtra("reminder", reminder);
+                            context.sendBroadcast(intent);
                             updated = true;
                         }
                     }
                     if(!updated) {
-                        System.out.println("not updated ");
-                        db.addReminder(new Reminder(serverReminder, medDependency));
+                        System.out.println("not updated");
+                        System.out.println("SCHEDULING NOTIFICATION");
+                        Reminder reminder = new Reminder(serverReminder, medDependency);
+                        reminder = db.addReminder(new Reminder(serverReminder, medDependency));
+                        System.out.println("REMINDER ID: " + reminder.getReminderId());
+                        Intent intent = new Intent();
+                        intent.setAction("mycyfapp");
+                        intent.putExtra("action", "scheduleReminder");
+                        intent.putExtra("reminder", reminder);
+                        context.sendBroadcast(intent);
                     }
                 }
 
@@ -106,7 +120,6 @@ public class Synchronizer {
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncReminders");
                 context.sendBroadcast(intent);
-
                 Toast.makeText(context, "Reminders synchronized!", Toast.LENGTH_SHORT).show();
             }
 

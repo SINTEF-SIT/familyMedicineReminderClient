@@ -63,6 +63,10 @@ public class SyncReceiver extends BroadcastReceiver {
                 System.out.println("posted medication");
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT));
             }
+            if (action.equals("scheduleReminder")) {
+                System.out.println("Scheduling reminder");
+                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.SCHEDULE_REMINDER, intent.getSerializableExtra("reminder")));
+            }
         }
     }
 }

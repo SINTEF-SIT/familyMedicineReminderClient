@@ -20,6 +20,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -30,10 +31,10 @@ import java.util.List;
  */
 public class NotificationScheduler {
 
-    public Activity activity;
+    public Context context;
 
-    public NotificationScheduler(Activity activity) {
-        this.activity = activity;
+    public NotificationScheduler(Context context) {
+        this.context = context;
     }
 
     /**
@@ -50,7 +51,7 @@ public class NotificationScheduler {
 
         // Defines the Intent of the notification. The NotificationPublisher class uses this
         // object to retrieve additional information about the notification.
-        Intent notificationIntent = new Intent(activity, NotificationPublisher.class);
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
         // Adds the given notification object to the Intent object.
         // Used to publish the given notification.
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
@@ -59,8 +60,8 @@ public class NotificationScheduler {
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TYPE, "regular");
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
         System.out.println("Scheduling: " + reminder);
         // Schedules a repeating notification on the user specified days.
@@ -82,7 +83,7 @@ public class NotificationScheduler {
      */
     public Notification getNotification(String content, Reminder reminder) {
 
-        if (!reminder.getOwnerId().equals(AccountManager.get(activity).getUserData(MainActivity.getAccount(activity), "userId"))) {
+        if(!reminder.getOwnerId().equals(AccountManager.get(context).getUserData(MainActivity.getAccount(context), "userId"))) {
             return getGuardianNotification(content, reminder);
         }
         if (reminder.getMedicine() == null) {
@@ -96,14 +97,14 @@ public class NotificationScheduler {
     public Notification getGuardianNotification(String content, Reminder reminder) {
 
         // Defines the Intent of the notification
-        Intent intent = new Intent(activity, activity.getClass());
+        Intent intent = new Intent(context, context.getClass());
         intent.putExtra("notification-reminder", reminder);
         intent.putExtra("notification-action", "notificationGuardian");
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
 
         // Constructs the notification
-        Notification notification = new Notification.Builder(activity)
+        Notification notification = new Notification.Builder(context)
                 .setContentTitle("MYCYFAPP (Guardian)")
                 .setContentText("Your child has a reminder: " + reminder.getName())
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
@@ -119,33 +120,33 @@ public class NotificationScheduler {
     public Notification getStandardNotification(String content, Reminder reminder) {
 
         // Defines the Intent of the notification
-        Intent intent = new Intent(activity, activity.getClass());
+        Intent intent = new Intent(context, context.getClass());
         intent.putExtra("notification-reminder", reminder);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
 
         // Snooze intent
-        Intent snoozeIntent = new Intent(activity, activity.getClass());
+        Intent snoozeIntent = new Intent(context, context.getClass());
         snoozeIntent.putExtra("notification-reminder", reminder);
         snoozeIntent.putExtra("notification-action", "notificationSnooze");
         snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), snoozeIntent, 0);
+        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), snoozeIntent, 0);
 
         // Mark as done intent
-        Intent markAsDoneIntent = new Intent(activity, activity.getClass());
+        Intent markAsDoneIntent = new Intent(context, context.getClass());
         markAsDoneIntent.putExtra("notification-reminder", reminder);
         markAsDoneIntent.putExtra("notification-action", "notificationMarkAsDone");
         markAsDoneIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingMarkAsDoneIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), markAsDoneIntent, 0);
+        PendingIntent pendingMarkAsDoneIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), markAsDoneIntent, 0);
 
         // Constructs the notification
-        Notification notification = new Notification.Builder(activity)
+        Notification notification = new Notification.Builder(context)
                 .setContentTitle("MYCYFAPP")
                 .setContentText(reminder.getName())
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
-                .addAction(R.drawable.green_checkmark, "Mark as done", pendingMarkAsDoneIntent)
+                .addAction(R.drawable.checkmark, "Done", pendingMarkAsDoneIntent)
                 .addAction(R.drawable.ic_sidebar_alarm, "Snooze", pendingSnoozeIntent)
                 .setContentIntent(pIntent)
                 .build();
@@ -157,29 +158,29 @@ public class NotificationScheduler {
     public Notification getMedicationNotification(String content, Reminder reminder) {
 
         // Defines the Intent of the notification
-        Intent intent = new Intent(activity, activity.getClass());
+        Intent intent = new Intent(context, context.getClass());
         intent.putExtra("notification-reminder", reminder);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
 
         // Snooze intent
-        Intent snoozeIntent = new Intent(activity, activity.getClass());
+        Intent snoozeIntent = new Intent(context, context.getClass());
         snoozeIntent.putExtra("notification-reminder", reminder);
         snoozeIntent.putExtra("notification-action", "notificationSnooze");
         snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), snoozeIntent, 0);
+        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), snoozeIntent, 0);
 
         // Taken intent
-        Intent takeIntent = new Intent(activity, activity.getClass());
+        Intent takeIntent = new Intent(context, context.getClass());
         takeIntent.putExtra("notification-reminder", reminder);
         takeIntent.putExtra("notification-action", "notificationTake");
         takeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingTakeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), takeIntent, 0);
+        PendingIntent pendingTakeIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), takeIntent, 0);
 
         // Constructs the notification
-        Notification notification = new Notification.Builder(activity)
+        Notification notification = new Notification.Builder(context)
                 .setContentTitle("MYCYFAPP")
-                .setContentText(reminder.getName())
+                .setContentText("Your child has a reminder: " + reminder.getName())
                 .setSmallIcon(R.drawable.ic_sidebar_pill)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setAutoCancel(true)
@@ -209,14 +210,14 @@ public class NotificationScheduler {
 
         System.out.println(snoozeTime);
         Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
-        Intent notificationIntent = new Intent(activity, NotificationPublisher.class);
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
 
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TYPE, "snooze");
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, -2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, -2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
     }
 
@@ -227,10 +228,10 @@ public class NotificationScheduler {
      */
     public void cancelNotification(int id) {
         //Cancel the scheduled reminder
-        AlarmManager alarmManager = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(activity,
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 id,
-                new Intent(activity, NotificationPublisher.class),
+                new Intent(context, NotificationPublisher.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingIntent);
         System.out.println("Reminder: " + id + " was deactivated");
@@ -243,7 +244,7 @@ public class NotificationScheduler {
      */
     public void removeNotification(int notificationId) {
         //Cancel the scheduled reminder
-        NotificationManager nm = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(notificationId);
     }
 
@@ -259,7 +260,7 @@ public class NotificationScheduler {
     public void handleNotificationSnoozeClick(Reminder reminder) {
 
         // Get user specified snoozeTime from account settings
-        SharedPreferences prefs = activity.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
         int snoozeTime = prefs.getInt("snoozeDelay", 5);
 
         // Schedule a "new" notification with the given snooze time
@@ -273,7 +274,7 @@ public class NotificationScheduler {
         String toastText = "Snoozing for " + snoozeTime + " minutes";
         if (snoozeTime == 1)
             toastText = "Snoozing for " + snoozeTime + " minute";
-        Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, toastText, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -295,7 +296,7 @@ public class NotificationScheduler {
             reminder.setTimeTaken(currentTime);
 
             // Updates the DB
-            MySQLiteHelper db = new MySQLiteHelper(activity);
+            MySQLiteHelper db = new MySQLiteHelper(context);
             db.updateAmountMedication(reminder.getMedicine());
             db.setReminderTimeTaken(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
@@ -304,7 +305,7 @@ public class NotificationScheduler {
 
             System.out.println(currentTime.getTime().toString());
             // Display toaster
-            Toast.makeText(activity, "Registered as taken", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -313,11 +314,12 @@ public class NotificationScheduler {
         GregorianCalendar currentTime = new GregorianCalendar();
         reminder.setTimeTaken(currentTime);
         // Updates the DB
-        MySQLiteHelper db = new MySQLiteHelper(activity);
+        MySQLiteHelper db = new MySQLiteHelper(context);
         db.setReminderTimeTaken(reminder);
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
         // Display toaster
-        Toast.makeText(activity, "Marked as done", Toast.LENGTH_LONG).show();
+        System.out.println("TAKEN CLICKED: " + reminder.getReminderId());
         this.removeNotification(reminder.getReminderId());
+        Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
     }
 }

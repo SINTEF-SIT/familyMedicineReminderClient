@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -25,11 +26,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
-import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
@@ -81,11 +83,11 @@ public class MainActivity
         SelectDaysDialogFragment.OnDaysDialogResultListener,
         EndDatePickerFragment.EndDatePickerListener,
         MedicationPickerFragment.OnMedicationPickerDialogResultListener,
-        AttachReminderDialogFragment.AttachReminderDialogListener,
         SetAliasDialog.OnSetAliasDialogListener,
         DeleteMedicationDialogFragment.DeleteMedicationDialogListener,
         DeleteReminderDialogFragment.DeleteReminderDialogListener,
-        DashboardListFragment.OnDashboardListFragmentInteractionListener {
+        DashboardListFragment.OnDashboardListFragmentInteractionListener,
+        CreateReminderForMedicationDialogFragment.CreateReminderForMedicationDialogListener{
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
@@ -93,6 +95,8 @@ public class MainActivity
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+    // Global Variables
+    public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient";
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -271,6 +275,17 @@ public class MainActivity
         }
     }
 
+    @Subscribe
+    public void handleScheduleRequest(DataChangedEvent event) {
+        if(event.type.equals(DataChangedEvent.SCHEDULE_REMINDER)) {
+            Reminder reminder = (Reminder) event.data;
+            if(reminder.getIsActive()) {
+                NotificationScheduler ns = new NotificationScheduler(this);
+                ns.scheduleNotification(ns.getNotification("", reminder), reminder);
+            }
+        }
+    }
+
     /**
      * Closes the drawer when the back button is pressed.
      */
@@ -350,9 +365,10 @@ public class MainActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-
+        System.out.println("in on newintent");
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
+        System.out.println(reminder);
         //String currentUserId = intent.getStringExtra("currentUserId");
 
         if(notificationAction != null) {
@@ -410,15 +426,38 @@ public class MainActivity
     }
 
     /**
-     * Deletes local application data.
+     * Deletes local application data and accounts.
      */
     public void deleteAllApplicationData(){
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
+        // Wipe all accounts in AccountManager
+        AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
+        Account[] accounts = accountManager.getAccounts();
+        for (Account account : accounts) {
+            if (account.type.intern().equals(AUTHORITY))
+                accountManager.removeAccount(account, null, null);
+        }
+        // Update currentUser and user spinner
+        currentUser = null;
+        userSpinnerToggle.toggle();
+
         // TODO: clear all pendingIntents in AlarmManager
-        // TODO: wipe server data & account manager
+        // TODO: wipe server data
+
+        // Change fragment to WelcomeFragment
+        Toast.makeText(this, "Data was deleted", Toast.LENGTH_SHORT).show();
+        changeFragment(new WelcomeFragment());
+        //disables drawer and navigation in welcomeFragment.
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+        //hides ActionBarDrawerToggle
+        toggle.setDrawerIndicatorEnabled(false);
     }
 
     /**
@@ -601,11 +640,6 @@ public class MainActivity
     }
 
     @Override
-    public void onPositiveAttachReminderDialogResult() {
-        changeFragment(NewReminderFragment.newInstance(null));
-    }
-
-    @Override
     public void onPositiveSetAliasDialog(String alias, String userId) {
 
         User2 user;
@@ -640,4 +674,13 @@ public class MainActivity
     }
 
 
+    @Override
+    public void onPositiveCreateReminderForMedicationDialogResult(Medication medication) {
+
+        Fragment fragment = getFragmentManager().findFragmentByTag("NewReminderFragment");
+        if(fragment != null) {
+            getFragmentManager().popBackStackImmediate(fragment.getClass().getName(), 0);
+        }
+        changeFragment(NewReminderFragment.newInstance(medication));
+    }
 }

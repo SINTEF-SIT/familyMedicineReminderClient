@@ -98,7 +98,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         }
 
         view.findViewById(R.id.reminder_fab).setOnClickListener( (View v) ->
-            ((MainActivity) getActivity()).changeFragment(NewReminderFragment.newInstance(null))
+            ((MainActivity) getActivity()).changeFragment(new NewReminderFragment())
         );
         return view;
     }
@@ -116,6 +116,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             reminders.clear();
             reminders.addAll(new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
                     fragment.notifyChanged();

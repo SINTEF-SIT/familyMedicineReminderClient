@@ -243,7 +243,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- REMINDERS ----- //
 
-    public void addReminder(Reminder reminder) {
+    public Reminder addReminder(Reminder reminder) {
         // Add new reminder
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -285,9 +285,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         long insertId = db.insert(TABLE_REMINDER, null, values);
         reminder.setReminderId(safeLongToInt(insertId));
         db.close(); // Closing database connection
+        return reminder;
     }
 
-    public void updateReminder(Reminder reminder) {
+    public Reminder updateReminder(Reminder reminder) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -329,7 +330,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Executes the query
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
-        db.close(); // Closing database connection
+        db.close(); // Closing database
+        return reminder;
     }
 
     public ArrayList<Reminder> getReminders() {
