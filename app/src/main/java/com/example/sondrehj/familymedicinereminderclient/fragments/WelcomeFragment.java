@@ -39,7 +39,7 @@ import retrofit2.Response;
  */
 
 // TODO: Remove welcomeFragment from the back stack after first-time use to deny the user navigating back to it
-public class WelcomeFragment extends android.support.v4.app.Fragment implements TitleSupplier {
+public class WelcomeFragment extends android.support.v4.app.Fragment {
 
     private final String TAG = "WelcomeFragment";
     private OnWelcomeListener mListener;
@@ -67,6 +67,7 @@ public class WelcomeFragment extends android.support.v4.app.Fragment implements 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_welcome, container, false);
+        getActivity().setTitle("Welcome");
         ButterKnife.bind(this, view);
         return view;
     }
@@ -166,11 +167,6 @@ public class WelcomeFragment extends android.support.v4.app.Fragment implements 
         super.onDetach();
         mListener = null;
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Welcome!";
     }
 
     /**

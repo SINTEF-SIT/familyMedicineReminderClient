@@ -9,6 +9,7 @@ import android.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +40,11 @@ import butterknife.OnClick;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class MedicationListFragment extends android.support.v4.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class MedicationListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Get patient name on the header, f.ex. Sondre's Medication
     //TODO: Create a warning when trying to delete a medication
-
+    private static String TAG = "MedicationListFragment";
     private Boolean busIsRegistered = false;
     private List<Medication> medications = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
@@ -89,9 +90,8 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
     public void notifyChanged() {
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
         if (recView != null) {
-            System.out.println(medications);
             recView.getAdapter().notifyDataSetChanged();
-            System.out.println("notifychanged called");
+            Log.d(TAG,"Notify changed called");
         }
     }
 
@@ -107,6 +107,7 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
         View view = inflater.inflate(R.layout.fragment_medication_list, container, false);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.medication_refresh_layout);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.medication_list);
+        getActivity().setTitle("Medications");
         ButterKnife.bind(this, view);
 
         // Set listener for swipe refresh
@@ -121,7 +122,7 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
         return view;
     }
 
-    public void deleteMedcation(Medication med, int position){
+    public void deleteMedication(Medication med, int position){
         medications.remove(med);
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.medication_list);
         recView.getAdapter().notifyItemRemoved(position);
@@ -170,11 +171,6 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
             busIsRegistered = false;
         }
         mListener = null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Medications";
     }
 
     @Override

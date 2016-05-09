@@ -33,7 +33,7 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class DashboardListFragment extends android.support.v4.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class DashboardListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
@@ -72,6 +72,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.dashboard_list);
+        getActivity().setTitle("Dashboard");
 
         if (recView != null) {
             Context context = view.getContext();
@@ -193,12 +194,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     }
 
     @Override
-    public String getTitle() {
-        return "Today's reminders";
-    }
-
-
-    @Override
     public void onRefresh() {
         Bundle extras = new Bundle();
         extras.putString("notificationType", "remindersChanged");
@@ -212,7 +207,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
 
         swipeContainer.setRefreshing(false);
     }
-
 
     public interface OnDashboardListFragmentInteractionListener {
 

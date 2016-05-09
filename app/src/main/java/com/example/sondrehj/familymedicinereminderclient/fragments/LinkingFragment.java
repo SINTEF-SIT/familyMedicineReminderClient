@@ -47,7 +47,7 @@ import retrofit2.Response;
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LinkingFragment extends android.support.v4.app.Fragment implements TitleSupplier {
+public class LinkingFragment extends android.support.v4.app.Fragment {
 
     private boolean busIsRegistered;
     private static String TAG = "LinkingFragment";
@@ -85,7 +85,7 @@ public class LinkingFragment extends android.support.v4.app.Fragment implements 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_linking, container, false);
-
+        getActivity().setTitle("Linking");
         ButterKnife.bind(this, view); //Binds references to the items in the inflated view.
 
         Account account = MainActivity.getAccount(context); //Gets a reference to the account
@@ -256,10 +256,5 @@ public class LinkingFragment extends android.support.v4.app.Fragment implements 
     @Override public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Settings";
     }
 }

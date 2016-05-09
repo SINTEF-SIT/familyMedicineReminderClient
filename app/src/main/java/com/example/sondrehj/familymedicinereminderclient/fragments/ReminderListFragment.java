@@ -33,7 +33,7 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.
  */
-public class ReminderListFragment extends android.support.v4.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class ReminderListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Animation is not triggering when you go to reminder view
 
@@ -68,6 +68,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.reminder_refresh_layout);
+        getActivity().setTitle("Reminders");
 
         // Set listener for swipe refresh
         swipeContainer.setOnRefreshListener(this);
@@ -154,11 +155,6 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
             busIsRegistered = false;
         }
         mListener = null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Reminders";
     }
 
     @Override

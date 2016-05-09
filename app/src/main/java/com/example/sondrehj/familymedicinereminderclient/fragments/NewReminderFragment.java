@@ -57,7 +57,7 @@ import butterknife.OnClick;
  * Use the {@link NewReminderFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewReminderFragment extends android.support.v4.app.Fragment implements TitleSupplier {
+public class NewReminderFragment extends android.support.v4.app.Fragment {
 
     //TODO: Suggestion: If a medication is attached, put name of medication as name. Name is not needed if it's a reminder to take the medicine
     //TODO: When you get sent to NewReminder from the dialog after creating a medicine, the medicine should be attached
@@ -191,6 +191,8 @@ public class NewReminderFragment extends android.support.v4.app.Fragment impleme
         fillFields();
         if (reminder != null) {
             getActivity().setTitle("Edit reminder");
+        } else {
+            getActivity().setTitle("New reminder");
         }
         return view;
     }
@@ -475,11 +477,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment impleme
         super.onDetach();
         ButterKnife.unbind(this);
         mListener = null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "New reminder";
     }
 
     public interface OnNewReminderInteractionListener {
