@@ -40,7 +40,7 @@ public class NotificationScheduler {
      * Schedules a repeating or non-repeating local notification based on the given reminder.
      *
      * @param notification the notification to be published.
-     * @param reminder provides date, time and days (schedule) for when to publish the notification.
+     * @param reminder     provides date, time and days (schedule) for when to publish the notification.
      */
     public void scheduleNotification(Notification notification, Reminder reminder) {
 
@@ -82,39 +82,15 @@ public class NotificationScheduler {
      */
     public Notification getNotification(String content, Reminder reminder) {
 
-
-        if(!reminder.getOwnerId().equals(AccountManager.get(activity).getUserData(MainActivity.getAccount(activity), "userId"))) {
+        if (!reminder.getOwnerId().equals(AccountManager.get(activity).getUserData(MainActivity.getAccount(activity), "userId"))) {
             return getGuardianNotification(content, reminder);
         }
+        if (reminder.getMedicine() == null) {
+            return getStandardNotification(content, reminder);
+        } else {
+            return getMedicationNotification(content, reminder);
+        }
 
-        // Defines the Intent of the notification
-        Intent intent = new Intent(activity, activity.getClass());
-        intent.putExtra("notification-reminder", reminder);
-        intent.putExtra("notification-action", "notificationRegular");
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
-
-        // Snooze intent
-        Intent snoozeIntent = new Intent(activity, activity.getClass());
-        snoozeIntent.putExtra("notification-reminder", reminder);
-        snoozeIntent.putExtra("notification-action", "notificationSnooze");
-        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), snoozeIntent, 0);
-
-        // Constructs the notification
-        Notification notification = new Notification.Builder(activity)
-                .setContentTitle("MYCYFAPP")
-                .setContentText(reminder.getName())
-                .setSmallIcon(R.drawable.ic_sidebar_pill)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .setAutoCancel(true)
-                .setContentIntent(pIntent)
-                .addAction(R.drawable.ic_sidebar_pill, "Take", pIntent)
-                .addAction(R.drawable.ic_sidebar_alarm, "Snooze", pendingSnoozeIntent)
-                .build();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        return notification;
     }
 
     public Notification getGuardianNotification(String content, Reminder reminder) {
@@ -140,16 +116,92 @@ public class NotificationScheduler {
         return notification;
     }
 
+    public Notification getStandardNotification(String content, Reminder reminder) {
 
+        // Defines the Intent of the notification
+        Intent intent = new Intent(activity, activity.getClass());
+        intent.putExtra("notification-reminder", reminder);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+
+        // Snooze intent
+        Intent snoozeIntent = new Intent(activity, activity.getClass());
+        snoozeIntent.putExtra("notification-reminder", reminder);
+        snoozeIntent.putExtra("notification-action", "notificationSnooze");
+        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), snoozeIntent, 0);
+
+        // Mark as done intent
+        Intent markAsDoneIntent = new Intent(activity, activity.getClass());
+        markAsDoneIntent.putExtra("notification-reminder", reminder);
+        markAsDoneIntent.putExtra("notification-action", "notificationMarkAsDone");
+        markAsDoneIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingMarkAsDoneIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), markAsDoneIntent, 0);
+
+        // Constructs the notification
+        Notification notification = new Notification.Builder(activity)
+                .setContentTitle("MYCYFAPP")
+                .setContentText(reminder.getName())
+                .setSmallIcon(R.drawable.ic_sidebar_pill)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .addAction(R.drawable.green_checkmark, "Mark as done", pendingMarkAsDoneIntent)
+                .addAction(R.drawable.ic_sidebar_alarm, "Snooze", pendingSnoozeIntent)
+                .setContentIntent(pIntent)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        return notification;
+    }
+
+    public Notification getMedicationNotification(String content, Reminder reminder) {
+
+        // Defines the Intent of the notification
+        Intent intent = new Intent(activity, activity.getClass());
+        intent.putExtra("notification-reminder", reminder);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), intent, 0);
+
+        // Snooze intent
+        Intent snoozeIntent = new Intent(activity, activity.getClass());
+        snoozeIntent.putExtra("notification-reminder", reminder);
+        snoozeIntent.putExtra("notification-action", "notificationSnooze");
+        snoozeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingSnoozeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), snoozeIntent, 0);
+
+        // Taken intent
+        Intent takeIntent = new Intent(activity, activity.getClass());
+        takeIntent.putExtra("notification-reminder", reminder);
+        takeIntent.putExtra("notification-action", "notificationTake");
+        takeIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingTakeIntent = PendingIntent.getActivity(activity, (int) System.currentTimeMillis(), takeIntent, 0);
+
+        // Constructs the notification
+        Notification notification = new Notification.Builder(activity)
+                .setContentTitle("MYCYFAPP")
+                .setContentText(reminder.getName())
+                .setSmallIcon(R.drawable.ic_sidebar_pill)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pIntent)
+                .addAction(R.drawable.ic_sidebar_pill, "Take", pendingTakeIntent)
+                .addAction(R.drawable.ic_sidebar_alarm, "Snooze", pendingSnoozeIntent)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        return notification;
+
+
+    }
 
     /**
      * Snoozes/Reschedules a notification with a given snooze time. A simplified version of
      * {@link #scheduleNotification(Notification, Reminder)}.
      *
      * @param notification the notification to be published.
-     * @param reminder the reminder attached to the notification. Passed to NotificationPublisher
-     *                 with scheduling information
-     * @param snoozeTime The amount of time in milliseconds the notification should be delayed
+     * @param reminder     the reminder attached to the notification. Passed to NotificationPublisher
+     *                     with scheduling information
+     * @param snoozeTime   The amount of time in milliseconds the notification should be delayed
      */
     public void snoozeNotification(Notification notification, Reminder reminder, int snoozeTime) {
 
@@ -219,7 +271,7 @@ public class NotificationScheduler {
 
         // Display toaster
         String toastText = "Snoozing for " + snoozeTime + " minutes";
-        if(snoozeTime == 1)
+        if (snoozeTime == 1)
             toastText = "Snoozing for " + snoozeTime + " minute";
         Toast.makeText(activity, toastText, Toast.LENGTH_LONG).show();
     }
@@ -232,7 +284,7 @@ public class NotificationScheduler {
      *
      * @param reminder the instance of reminder provided by the notification.
      */
-    public void handleNotificationMainClick(Reminder reminder) {
+    public void handleNotificationTakenClick(Reminder reminder) {
 
         // Check if the reminder got a medication "attached"
         if (reminder.getMedicine() != null) {
@@ -247,10 +299,25 @@ public class NotificationScheduler {
             db.updateAmountMedication(reminder.getMedicine());
             db.setReminderTimeTaken(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+            this.removeNotification(reminder.getReminderId());
 
             System.out.println(currentTime.getTime().toString());
             // Display toaster
             Toast.makeText(activity, "Registered as taken", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void handleNotificationMarkAsDoneClick(Reminder reminder) {
+
+        GregorianCalendar currentTime = new GregorianCalendar();
+        reminder.setTimeTaken(currentTime);
+        // Updates the DB
+        MySQLiteHelper db = new MySQLiteHelper(activity);
+        db.setReminderTimeTaken(reminder);
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+        // Display toaster
+        Toast.makeText(activity, "Marked as done", Toast.LENGTH_LONG).show();
+        this.removeNotification(reminder.getReminderId());
     }
 }

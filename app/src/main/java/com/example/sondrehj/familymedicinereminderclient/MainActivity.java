@@ -357,12 +357,17 @@ public class MainActivity
 
         if(notificationAction != null) {
             switch (notificationAction) {
-                case "notificationRegular":
-                    notificationScheduler.handleNotificationMainClick(reminder);
+                case "notificationStandard":
+                    //notificationScheduler.handleNotificationStandardClick(reminder);
+                    break;
+                case "notificationTake":
+                    notificationScheduler.handleNotificationTakenClick(reminder);
                     break;
                 case "notificationSnooze":
                     notificationScheduler.handleNotificationSnoozeClick(reminder);
                     break;
+                case "notificationMarkAsDone":
+                    notificationScheduler.handleNotificationMarkAsDoneClick(reminder);
                 case "medicationChanged":
                     Bundle extras = new Bundle();
                     extras.putString("notificationType", notificationAction);
