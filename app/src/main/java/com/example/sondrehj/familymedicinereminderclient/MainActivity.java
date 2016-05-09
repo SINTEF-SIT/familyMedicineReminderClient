@@ -30,7 +30,7 @@ import android.widget.Toast;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
-import com.example.sondrehj.familymedicinereminderclient.dialogs.AttachReminderDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
@@ -82,11 +82,11 @@ public class MainActivity
         SelectDaysDialogFragment.OnDaysDialogResultListener,
         EndDatePickerFragment.EndDatePickerListener,
         MedicationPickerFragment.OnMedicationPickerDialogResultListener,
-        AttachReminderDialogFragment.AttachReminderDialogListener,
         SetAliasDialog.OnSetAliasDialogListener,
         DeleteMedicationDialogFragment.DeleteMedicationDialogListener,
         DeleteReminderDialogFragment.DeleteReminderDialogListener,
-        DashboardListFragment.OnDashboardListFragmentInteractionListener {
+        DashboardListFragment.OnDashboardListFragmentInteractionListener,
+        CreateReminderForMedicationDialogFragment.CreateReminderForMedicationDialogListener{
 
     private static String TAG = "MainActivity";
     private SyncReceiver syncReceiver;
@@ -622,11 +622,6 @@ public class MainActivity
     }
 
     @Override
-    public void onPositiveAttachReminderDialogResult() {
-        changeFragment(NewReminderFragment.newInstance(null));
-    }
-
-    @Override
     public void onPositiveSetAliasDialog(String alias, String userId) {
 
         User2 user;
@@ -661,4 +656,13 @@ public class MainActivity
     }
 
 
+    @Override
+    public void onPositiveCreateReminderForMedicationDialogResult(Medication medication) {
+
+        Fragment fragment = getFragmentManager().findFragmentByTag("NewReminderFragment");
+        if(fragment != null) {
+            getFragmentManager().popBackStackImmediate(fragment.getClass().getName(), 0);
+        }
+        changeFragment(NewReminderFragment.newInstance(medication));
+    }
 }
