@@ -39,7 +39,7 @@ import retrofit2.Response;
  */
 
 // TODO: Remove welcomeFragment from the back stack after first-time use to deny the user navigating back to it
-public class WelcomeFragment extends android.app.Fragment implements TitleSupplier {
+public class WelcomeFragment extends android.support.v4.app.Fragment {
 
     private final String TAG = "WelcomeFragment";
     private OnWelcomeListener mListener;
@@ -54,7 +54,7 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
      *
      * @return A new instance of fragment WelcomeFragment.
      */
-    public static WelcomeFragment newInstance(Account newAccount) {
+    public static WelcomeFragment newInstance() {
         WelcomeFragment fragment = new WelcomeFragment();
         return fragment;
     }
@@ -67,6 +67,7 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_welcome, container, false);
+        getActivity().setTitle("Welcome");
         ButterKnife.bind(this, view);
         return view;
     }
@@ -122,6 +123,9 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
                 ((MainActivity) getActivity()).setCurrentUser(dbUser);
                 ((MainActivity) getActivity()).userSpinnerToggle.toggle();
                 ((MainActivity) getActivity()).userSpinnerToggle.updateSpinnerContent();
+                if(userRole.equals("guardian")){
+                    ((MainActivity) getActivity()).userSpinnerToggle.showUserActionBar(true);
+                }
 
                 //TODO: Update with password != null as well
                 if (mListener != null) {
@@ -166,11 +170,6 @@ public class WelcomeFragment extends android.app.Fragment implements TitleSuppli
         super.onDetach();
         mListener = null;
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public String getTitle() {
-        return "Welcome!";
     }
 
     /**

@@ -2,11 +2,13 @@ package com.example.sondrehj.familymedicinereminderclient.utility;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.media.Image;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -34,7 +36,8 @@ public class UserSpinnerToggle {
     private Toolbar toolbar;
     private boolean initialized;
     private LinearLayout drawerHeader;
-    public static String[] barColors = new String[] {"#30cbff", "#009688", "#4CAF50", "#FF9800", "#9C27B0"};
+    private ImageView userIcon;
+    public static String[] barColors = new String[]{"#30cbff", "#009688", "#4CAF50", "#FF9800", "#9C27B0"};
 
     public UserSpinnerToggle(Activity activity, Spinner userSpinner) {
         MySQLiteHelper db = new MySQLiteHelper(activity);
@@ -62,16 +65,17 @@ public class UserSpinnerToggle {
                     BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
                     BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
                 }
+
                 @Override
                 public void onNothingSelected(AdapterView<?> parentView) {
 
                 }
             });
         }
-        if(users.size() == 1 || users.size() == 0){
+        if (users.size() == 1 || users.size() == 0) {
             userSpinner.setEnabled(false);
         }
-        if(users.size() > 1){
+        if (users.size() > 1) {
             userSpinner.setEnabled(true);
         }
     }
@@ -88,9 +92,21 @@ public class UserSpinnerToggle {
                 R.layout.simple_spinner_item, usersAlias);
         adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
         userSpinner.setAdapter(adapter);
+    }
 
+    public void setUserIcon(ImageView userIcon) {
+        this.userIcon = userIcon;
+    }
 
+    public void showUserActionBar(Boolean flag) {
 
+        if (flag) {
+            userSpinner.setVisibility(View.VISIBLE);
+            userIcon.setVisibility(View.VISIBLE);
+        } else {
+            userSpinner.setVisibility(View.INVISIBLE);
+            userIcon.setVisibility(View.INVISIBLE);
+        }
     }
 
     public User2 getSelectedUser() {

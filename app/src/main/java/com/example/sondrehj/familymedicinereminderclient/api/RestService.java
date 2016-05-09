@@ -13,9 +13,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class RestService {
 
-
     private static final String BASE_URL = "http://10.22.47.44:1337";
-
+    
     private static OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder()
         .readTimeout(5, TimeUnit.SECONDS)
         .connectTimeout(5, TimeUnit.SECONDS);

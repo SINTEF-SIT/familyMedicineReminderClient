@@ -3,15 +3,13 @@ package com.example.sondrehj.familymedicinereminderclient.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
-import com.example.sondrehj.familymedicinereminderclient.database.MedicationListContent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import java.util.List;

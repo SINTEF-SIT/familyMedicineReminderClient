@@ -38,7 +38,7 @@ import butterknife.ButterKnife;
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.
  */
-public class ReminderListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class ReminderListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     //TODO: Animation is not triggering when you go to reminder view
 
@@ -76,6 +76,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
         View view = inflater.inflate(R.layout.fragment_reminder_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.reminder_list);
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.reminder_refresh_layout);
+        getActivity().setTitle("Reminders");
         ButterKnife.bind(this, view);
 
         // Set listener for swipe refresh
@@ -116,6 +117,7 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             reminders.clear();
             reminders.addAll(new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
                     fragment.notifyChanged();
@@ -181,11 +183,6 @@ public class ReminderListFragment extends android.app.Fragment implements TitleS
             busIsRegistered = false;
         }
         mListener = null;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Reminders";
     }
 
     @Override

@@ -63,7 +63,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_REMINDER_SERVER_ID = "reminder_server_id";
     public static final String COLUMN_REM_MEDICATION_ID = "reminder_medication_id";
     public static final String COLUMN_REM_MEDICATION_DOSAGE = "medication_dosage";
-    public static final String COLUMN_REMINDER_TIME_TAKEN= "time_taken";
+    public static final String COLUMN_REMINDER_TIME_TAKEN = "time_taken";
     // Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
@@ -243,7 +243,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- REMINDERS ----- //
 
-    public void addReminder(Reminder reminder) {
+    public Reminder addReminder(Reminder reminder) {
         // Add new reminder
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -258,7 +258,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
         String timeTakenString = "0";
-        if(reminder.getTimeTaken() != null){
+        if (reminder.getTimeTaken() != null) {
             timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
@@ -285,9 +285,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         long insertId = db.insert(TABLE_REMINDER, null, values);
         reminder.setReminderId(safeLongToInt(insertId));
         db.close(); // Closing database connection
+        return reminder;
     }
 
-    public void updateReminder(Reminder reminder) {
+    public Reminder updateReminder(Reminder reminder) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -305,7 +306,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
         String timeTakenString = "0";
-        if(reminder.getTimeTaken() != null){
+        if (reminder.getTimeTaken() != null) {
             timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
@@ -329,7 +330,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Executes the query
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
-        db.close(); // Closing database connection
+        db.close(); // Closing database
+        return reminder;
     }
 
     public ArrayList<Reminder> getReminders() {
@@ -473,6 +475,77 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public Reminder getReminderByLocalId(int localId) {
+
+        // Retrieve Reminders
+        String selectQuery =
+                "SELECT  *" +
+                        " FROM " + TABLE_REMINDER +
+                        " WHERE " + COLUMN_REMINDER_ID + "=" + localId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Loop through the retrieved data. Generates instances of the the reminder class.
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String owner = cursor.getString(1);
+            String name = cursor.getString(2);
+            String dateString = cursor.getString(3);
+            boolean isActive = cursor.getInt(4) > 0;
+            String dayString = cursor.getString(5);
+            String endDateString = cursor.getString(6);
+            int serverId = cursor.getInt(7);
+            int medicationId = cursor.getInt(8);
+            Double dosage = cursor.getDouble(9);
+            String timeTakenString = cursor.getString(10);
+
+            // Converting daysString to an int[] containing all the days.
+            int[] days = Converter.databaseDayStringToArray(dayString);
+
+            // Converting dateString to GregorianCalendar
+            GregorianCalendar date = Converter.databaseDateStringToCalendar(dateString);
+
+            // Converting endDateString to GregorianCalendar
+            GregorianCalendar endCal = new GregorianCalendar();
+            if (!endDateString.equals("0")) {
+                endCal = Converter.databaseDateStringToCalendar(endDateString);
+            }
+
+            // Converting timeTakenString to GregorianCalendar
+            GregorianCalendar timeTaken = new GregorianCalendar();
+            if (!timeTakenString.equals("0")) {
+                timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
+            }
+
+            Reminder reminder = new Reminder();
+            reminder.setReminderId(id);
+            reminder.setOwnerId(owner);
+            reminder.setName(name);
+            reminder.setDate(date);
+            reminder.setIsActive(isActive);
+            reminder.setDays(days);
+            reminder.setEndDate(endCal);
+            reminder.setServerId(serverId);
+            reminder.setTimeTaken(timeTaken);
+            // Attaches a referenced medication to the reminder object if set.
+            // "Join"-operation
+            if (medicationId != 0) {
+                for (Medication med : getMedications())//MedicationListFragment.medications){
+                    if (med.getMedId() == medicationId) {
+                        reminder.setMedicine(med);
+                        reminder.setDosage(dosage);
+                    }
+            }
+            cursor.close();
+            db.close();
+            return reminder;
+        }
+        cursor.close();
+        db.close();
+        return null;
+    }
+
+
     public void setReminderTimeTaken(Reminder reminder) {
 
         // Update existing medication
@@ -480,7 +553,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
         String timeTakenString = "0";
-        if(reminder.getTimeTaken() != null){
+        if (reminder.getTimeTaken() != null) {
             timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
@@ -500,8 +573,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ArrayList<Reminder> activeReminders = new ArrayList<>();
         ArrayList<Reminder> todaysReminders = new ArrayList<>();
 
-        for(Reminder r : allReminders){
-            if(r.getIsActive()){
+        for (Reminder r : allReminders) {
+            if (r.getIsActive()) {
                 activeReminders.add(r);
             }
         }
