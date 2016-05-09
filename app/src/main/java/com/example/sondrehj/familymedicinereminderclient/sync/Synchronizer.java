@@ -96,28 +96,33 @@ public class Synchronizer {
                             } else {
                                 dbReminder.setEndDate(null);
                             }
+                            if(! serverReminder.getTimeTaken().equals("0")) {
+                                dbReminder.setTimeTaken(Converter.databaseDateStringToCalendar(serverReminder.getTimeTaken()));
+                            } else {
+                                dbReminder.setTimeTaken(null);
+                            }
                             dbReminder.setDosage(serverReminder.getDosage());
                             dbReminder.setIsActive(serverReminder.getActive());
                             dbReminder.setDays(Converter.serverDayStringToDayArray(serverReminder.getDays()));
+                            Reminder reminder = db.updateReminder(dbReminder);
+                            Intent intent = new Intent();
+                            intent.setAction("mycyfapp");
+                            intent.putExtra("action", "scheduleReminder");
+                            intent.putExtra("reminder", reminder);
+                            context.sendBroadcast(intent);
+
                             array[dbReminders.indexOf(dbReminder)] = 1;
                             db.updateReminder(dbReminder);
-                            if(dbReminder.getIsActive()) {
-                                NotificationScheduler ns = new NotificationScheduler(context);
-                                ns.scheduleNotification(ns.getNotification("", dbReminder), dbReminder);
-                            }
                             updated = true;
-                            //continue outerloop;
                         }
                     }
                     if(!updated) {
-                        System.out.println("not updated");
-                        System.out.println("SCHEDULING NOTIFICATION");
-                        Reminder reminder = new Reminder(serverReminder, medDependency);
-                        db.addReminder(new Reminder(serverReminder, medDependency));
-                        if(reminder.getIsActive()) {
-                            NotificationScheduler ns = new NotificationScheduler(context);
-                            ns.scheduleNotification(ns.getNotification("", reminder), reminder);
-                        }
+                        Reminder reminder = db.addReminder(new Reminder(serverReminder, medDependency));
+                        Intent intent = new Intent();
+                        intent.setAction("mycyfapp");
+                        intent.putExtra("action", "scheduleReminder");
+                        intent.putExtra("reminder", reminder);
+                        context.sendBroadcast(intent);
                     }
                 }
 

@@ -19,6 +19,7 @@
         android:paddingLeft="5dp"
         android:paddingRight="2dp"
         android:layout_marginTop="9dp"
+        android:id="@+id/user_icon"
         android:layout_marginRight="10dp"
         android:gravity="center_vertical|center_horizontal"
         android:tint="#fff"

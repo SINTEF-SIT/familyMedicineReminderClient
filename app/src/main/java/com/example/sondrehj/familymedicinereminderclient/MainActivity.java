@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,6 +26,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -171,6 +176,7 @@ public class MainActivity
             editor.putInt("gracePeriod", 30);// 30 minutes
             editor.putBoolean("reminderSwitch", true);
             editor.putBoolean("notificationSwitch", true);
+            editor.putString("accountType", "patient");
             editor.putString("create_user_secret", "createSecretToChangeLater");
             editor.apply();
         }
@@ -283,6 +289,17 @@ public class MainActivity
         }
     }
 
+    @Subscribe
+    public void handleScheduleRequest(DataChangedEvent event) {
+        if(event.type.equals(DataChangedEvent.SCHEDULE_REMINDER)) {
+            Reminder reminder = (Reminder) event.data;
+            if(reminder.getIsActive()) {
+                NotificationScheduler ns = new NotificationScheduler(this);
+                ns.scheduleNotification(ns.getNotification("", reminder), reminder);
+            }
+        }
+    }
+
     /**
      * If the drawer is open it will be closed when pressing the back button, elsewise it will pop
      * backstates so that you can navigate backwards.
@@ -309,9 +326,22 @@ public class MainActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        Spinner userSpinner = (Spinner) menu.findItem(R.id.action_user).getActionView().findViewById(R.id.action_user_spinner);
+
+        View view = menu.findItem(R.id.action_user).getActionView();
+        ImageView userIcon = (ImageView) view.findViewById(R.id.user_icon);
+        Spinner userSpinner = (Spinner) view.findViewById(R.id.action_user_spinner);
         this.userSpinnerToggle = new UserSpinnerToggle(this, userSpinner);
+        userSpinnerToggle.setUserIcon(userIcon);
         userSpinnerToggle.toggle();
+        if(getAccount(this) != null) {
+            String userRole = AccountManager.get(this).getUserData(getAccount(this), "userRole");
+            if(userRole.equals("patient")){
+                userSpinnerToggle.showUserActionBar(false);
+            }
+        }
+        if(getAccount(this) == null) {
+            userSpinnerToggle.showUserActionBar(false);
+        }
         return true;
     }
 
@@ -347,19 +377,25 @@ public class MainActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-
+        System.out.println("in on newintent");
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
+        System.out.println(reminder);
         //String currentUserId = intent.getStringExtra("currentUserId");
 
         if (notificationAction != null) {
             switch (notificationAction) {
-                case "notificationRegular":
-                    notificationScheduler.handleNotificationMainClick(reminder);
+                case "notificationStandard":
+                    //notificationScheduler.handleNotificationStandardClick(reminder);
+                    break;
+                case "notificationTake":
+                    notificationScheduler.handleNotificationTakenClick(reminder);
                     break;
                 case "notificationSnooze":
                     notificationScheduler.handleNotificationSnoozeClick(reminder);
                     break;
+                case "notificationMarkAsDone":
+                    notificationScheduler.handleNotificationMarkAsDoneClick(reminder);
                 case "medicationChanged":
                     Bundle extras = new Bundle();
                     extras.putString("notificationType", notificationAction);

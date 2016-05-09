@@ -117,6 +117,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
             reminders.clear();
             reminders.addAll(new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
                     fragment.notifyChanged();

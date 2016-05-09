@@ -123,6 +123,9 @@ public class WelcomeFragment extends android.support.v4.app.Fragment {
                 ((MainActivity) getActivity()).setCurrentUser(dbUser);
                 ((MainActivity) getActivity()).userSpinnerToggle.toggle();
                 ((MainActivity) getActivity()).userSpinnerToggle.updateSpinnerContent();
+                if(userRole.equals("guardian")){
+                    ((MainActivity) getActivity()).userSpinnerToggle.showUserActionBar(true);
+                }
 
                 //TODO: Update with password != null as well
                 if (mListener != null) {
