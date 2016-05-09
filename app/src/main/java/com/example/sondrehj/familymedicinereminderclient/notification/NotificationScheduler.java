@@ -142,7 +142,6 @@ public class NotificationScheduler {
     }
 
 
-
     /**
      * Snoozes/Reschedules a notification with a given snooze time. A simplified version of
      * {@link #scheduleNotification(Notification, Reminder)}.
@@ -248,6 +247,7 @@ public class NotificationScheduler {
             db.updateAmountMedication(reminder.getMedicine());
             db.setReminderTimeTaken(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
 
             System.out.println(currentTime.getTime().toString());
             // Display toaster

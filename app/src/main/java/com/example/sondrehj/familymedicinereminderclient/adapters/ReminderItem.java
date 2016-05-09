@@ -1,4 +1,4 @@
-package com.example.sondrehj.familymedicinereminderclient;
+package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 

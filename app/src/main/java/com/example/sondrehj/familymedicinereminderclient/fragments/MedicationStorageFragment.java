@@ -37,7 +37,7 @@ import butterknife.OnClick;
  * Use the {@link MedicationStorageFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MedicationStorageFragment extends android.app.Fragment implements TitleSupplier {
+public class MedicationStorageFragment extends android.support.v4.app.Fragment {
 
     //TODO: Not really clear for the user that this is a cabinet where you list how many pills you possess in total
 
@@ -47,12 +47,9 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
     private static final String ARG_MEDICATION = "medication";
     private Medication mMedication;
 
-    @Bind(R.id.medication_storage_medication_input)
-    EditText medicationNameInput;
-    @Bind(R.id.medication_storage_amount_input)
-    EditText medicationAmountInput;
-    @Bind(R.id.medication_storage_unit_input)
-    TextView medicationUnitInput;
+    @Bind(R.id.medication_storage_medication_input) EditText medicationNameInput;
+    @Bind(R.id.medication_storage_amount_input) EditText medicationAmountInput;
+    @Bind(R.id.medication_storage_unit_input) TextView medicationUnitInput;
 
     public MedicationStorageFragment() {
         // Required empty public constructor
@@ -190,10 +187,5 @@ public class MedicationStorageFragment extends android.app.Fragment implements T
 
         System.out.println("---------Medication Updated---------" + "\n" + mMedication);
         System.out.println("------------------------------------");
-    }
-
-    @Override
-    public String getTitle() {
-        return "New medication";
     }
 }

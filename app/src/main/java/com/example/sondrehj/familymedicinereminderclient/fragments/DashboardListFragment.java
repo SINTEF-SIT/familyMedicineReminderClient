@@ -11,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.sondrehj.familymedicinereminderclient.HeaderItem;
-import com.example.sondrehj.familymedicinereminderclient.ListItem;
+import com.example.sondrehj.familymedicinereminderclient.adapters.HeaderItem;
+import com.example.sondrehj.familymedicinereminderclient.adapters.ListItem;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.ReminderItem;
+import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderItem;
 import com.example.sondrehj.familymedicinereminderclient.adapters.DashboardRecyclerViewAdapter;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
@@ -33,7 +33,7 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class DashboardListFragment extends android.app.Fragment implements TitleSupplier, SwipeRefreshLayout.OnRefreshListener {
+public class DashboardListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
@@ -42,6 +42,23 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
     @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
+
+    public DashboardListFragment() {
+        // Required empty public constructor
+    }
+
+    //TODO: NO REMINDERS PLACEHOLDER WHEN NO DATA; LOOK AT MEDICATIONS.
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment WelcomeFragment.
+     */
+    public static DashboardListFragment newInstance() {
+        DashboardListFragment fragment = new DashboardListFragment();
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +72,7 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard_list, container, false);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.dashboard_list);
+        getActivity().setTitle("Dashboard");
 
         if (recView != null) {
             Context context = view.getContext();
@@ -129,7 +147,6 @@ public class DashboardListFragment extends android.app.Fragment implements Title
                     userReminders.add(reminder);
                 }
             }
-            Collections.sort(userReminders, new CustomComparator());
             mItems.put(user, userReminders);
         }
         return mItems;
@@ -176,12 +193,6 @@ public class DashboardListFragment extends android.app.Fragment implements Title
     }
 
     @Override
-    public String getTitle() {
-        return "Today's reminders";
-    }
-
-
-    @Override
     public void onRefresh() {
         Bundle extras = new Bundle();
         extras.putString("notificationType", "remindersChanged");
@@ -196,18 +207,7 @@ public class DashboardListFragment extends android.app.Fragment implements Title
         swipeContainer.setRefreshing(false);
     }
 
-
     public interface OnDashboardListFragmentInteractionListener {
 
     }
-
-    public class CustomComparator implements Comparator<Reminder> {
-        @Override
-        public int compare(Reminder o1, Reminder o2) {
-            int time1 = o1.getDate().get(Calendar.HOUR_OF_DAY) + o1.getDate().get(Calendar.MINUTE);
-            int time2 = o2.getDate().get(Calendar.HOUR_OF_DAY) + o2.getDate().get(Calendar.MINUTE);
-            return time1 - time2;
-        }
-    }
-
 }
