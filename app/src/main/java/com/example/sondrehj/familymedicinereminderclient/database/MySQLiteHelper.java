@@ -113,10 +113,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    //Queries, flyttes?
-
     // ----- MEDICATIONS ----- //
 
+    /**
+     * Adds a new {@link Medication} to the database.
+     *
+     * @param medication the medication to be added
+     */
     public void addMedication(Medication medication) {
         // Add new medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -135,6 +138,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Updates a {@link Medication} in the database.
+     *
+     * @param medication the medication to be updated.
+     */
     public void updateMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -151,6 +159,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Retrieves all the {@link Medication} contained in the database.
+     *
+     * @return an {@link ArrayList} of {@link Medication}
+     */
     public ArrayList<Medication> getMedications() {
         //Retrieve medications
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION;
@@ -175,6 +188,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Retrieves all the {@link Medication} for a user, given their id.
+     *
+     * @param ownerId the id of the user.
+     * @return an {@link ArrayList} of {@link Medication}
+     */
     public ArrayList<Medication> getMedicationsByOwnerId(String ownerId) {
         //Retrieve medications
         String selectQuery =
@@ -202,6 +221,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Deletes a {@link Medication} from the database.
+     *
+     * @param medication the medication to be deleted.
+     */
     public void deleteMedication(Medication medication) {
         //Deletes a medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -213,6 +237,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Updates the amount of a given {@link Medication}.
+     *
+     * @param medication the medication to be updated.
+     */
     public void updateAmountMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -225,6 +254,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Retrieves a {@link Medication} by the serverId
+     *
+     * @param medId the serverId.
+     */
     public Medication getSingleMedicationByServerID(int medId) {
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -243,6 +277,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- REMINDERS ----- //
 
+    /**
+     * Adds a new {@link Reminder} to the database.
+     *
+     * @param reminder the reminder to be added
+     */
     public Reminder addReminder(Reminder reminder) {
         // Add new reminder
         SQLiteDatabase db = this.getWritableDatabase();
@@ -288,6 +327,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return reminder;
     }
 
+    /**
+     * Updates a {@link Reminder} in the database.
+     *
+     * @param reminder the medication to be updated.
+     */
     public Reminder updateReminder(Reminder reminder) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -334,6 +378,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return reminder;
     }
 
+    /**
+     * Retrieves all the {@link Reminder} contained in the database.
+     *
+     * @return an {@link ArrayList} of {@link Reminder}
+     */
     public ArrayList<Reminder> getReminders() {
 
         // Retrieve Reminders
@@ -403,7 +452,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    // Could be integrated with getReminders()
+    // Could possibly be integrated with getReminders()
+    /**
+     * Retrieves all the {@link Reminder} for a user, given their id.
+     *
+     * @param ownerId the id of the user.
+     * @return an {@link ArrayList} of {@link Reminder}
+     */
     public ArrayList<Reminder> getRemindersByOwnerId(String ownerId) {
 
         // Retrieve Reminders
@@ -475,6 +530,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Retrieves a {@link Reminder} by the localId.
+     *
+     * @param localId the local id of the Reminder
+     * @return the retrieved reminder
+     */
     public Reminder getReminderByLocalId(int localId) {
 
         // Retrieve Reminders
@@ -545,7 +606,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return null;
     }
 
-
+    /**
+     * Sets the timeTaken for a {@link Reminder}.
+     *
+     * @param reminder the reminder to be updated.
+     */
     public void setReminderTimeTaken(Reminder reminder) {
 
         // Update existing medication
@@ -565,6 +630,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Retrieves all the {@link Reminder} that are scheduled for the current date.
+     *
+     * @return an {@link ArrayList} of {@link Reminder}
+     */
     public ArrayList<Reminder> getTodaysReminders() {
 
         GregorianCalendar todaysDate = new GregorianCalendar();
@@ -600,6 +670,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return todaysReminders;
     }
 
+    /**
+     * Deletes a {@link Reminder} from the database.
+     *
+     * @param reminder the reminder to be deleted.
+     */
     public void deleteReminder(Reminder reminder) {
         // Deletes a reminder
         SQLiteDatabase db = this.getWritableDatabase();
@@ -609,6 +684,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- USERS ----- //
 
+    /**
+     * Retrieves all the {@link User2} contained in the database.
+     *
+     * @return an {@link ArrayList} of {@link User2}
+     */
     public ArrayList<User2> getUsers() {
 
         // Retrieve Users
@@ -630,6 +710,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Adds a new {@link User2} to the database.
+     *
+     * @param user the user to be added
+     */
     public void addUser(User2 user) {
         // Add new user
         SQLiteDatabase db = this.getWritableDatabase();
@@ -642,6 +727,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Updates a {@link User2} in the database.
+     *
+     * @param user the user to be updated.
+     */
     public void updateUser(User2 user) {
         SQLiteDatabase db = this.getWritableDatabase();
         // Prepares the statement
@@ -653,6 +743,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Deletes a {@link User2} from the database.
+     *
+     * @param userId the id of the user to be deleted.
+     */
     public void deleteUser(String userId) {
         //Deletes a medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -660,6 +755,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Safely converts a long to an int.
+     *
+     * @param l the long to be converted.
+     * @return an int (The converted long)
+     */
     public static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
