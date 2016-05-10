@@ -68,6 +68,7 @@ public class NotificationScheduler {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
         Log.d(TAG, "Scheduling: " + reminder);
+
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -219,7 +220,6 @@ public class NotificationScheduler {
     public void snoozeNotification(Notification notification, Reminder reminder, int snoozeTime) {
 
         Calendar currentTime = new GregorianCalendar();
-
         Log.d(TAG, snoozeTime+"");
         Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
@@ -337,11 +337,12 @@ public class NotificationScheduler {
         db.setReminderTimeTaken(reminder);
         reminder = db.getReminderByLocalId(reminder.getReminderId());
 
-        Log.d(TAG, reminder.toString());
 
+        Log.d(TAG, reminder.toString());
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
         // Display toaster
         Log.d(TAG, "TAKEN CLICKED: " + reminder.getReminderId());
+
         this.removeNotification(reminder.getReminderId());
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");

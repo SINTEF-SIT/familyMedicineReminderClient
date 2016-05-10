@@ -273,7 +273,6 @@ public class MainActivity
     public void handleMedicationPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
             Medication medication = (Medication) event.data;
-            System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         }
@@ -283,7 +282,6 @@ public class MainActivity
     public void handleReminderPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.REMINDERSENT)) {
             Reminder reminder = (Reminder) event.data;
-            System.out.println("Reminder about to be saved: " + reminder);
             new MySQLiteHelper(this).updateReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         }
@@ -377,10 +375,8 @@ public class MainActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        System.out.println("in on newintent");
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
-        System.out.println(reminder);
         //String currentUserId = intent.getStringExtra("currentUserId");
 
         if (notificationAction != null) {
@@ -649,7 +645,6 @@ public class MainActivity
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
 
         // Updates the DB

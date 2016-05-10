@@ -267,7 +267,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public void updateReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
-        System.out.println("In newreminder update: " + reminder);
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         reminder = vr.UpdateReminderFromInput(
@@ -275,9 +274,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
                 medication, attachMedicationSwitch,
                 dosageInput, repeatSwitch, selectedDays,
                 endDateInput, activeSwitch, reminder, ((MainActivity) getActivity()).getCurrentUser());
-
-        System.out.println("In newreminder update (after converter): " + reminder);
-
 
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
@@ -441,7 +437,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
             selectedDays[i] = ((Integer) selectedItems.get(i) + 1) % 7;
         }
         Arrays.sort(selectedDays);
-        System.out.println("Hello: " + Arrays.toString(selectedDays));
         setBoldOnSelectedDays(selectedDays);
     }
 

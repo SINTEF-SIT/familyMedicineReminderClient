@@ -18,6 +18,7 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment.OnDashboardListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
+import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
@@ -177,7 +178,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                                 if (holder.mReminder.getMedicine().getCount() < 5) {
                                     ns.publishInstantNotification(ns.getLowOnMedicationNotification(holder.mReminder.getMedicine()));
                                 }
-                                ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
+                                ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(holder.mReminder.getMedicine(), userId, authToken));
                                 ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
                             }
                             ns.cancelNotification(holder.mReminder.getReminderId());

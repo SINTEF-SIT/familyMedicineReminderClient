@@ -71,23 +71,15 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
     public void handleMedicationsChangedEvent(DataChangedEvent event) {
 
         if(event.type.equals(DataChangedEvent.MEDICATIONS)) {
-            medications.clear();
-            //medications.addAll(new MySQLiteHelper(getActivity()).getMedications());
-            medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
+            List<Medication> medicationsToAdd = new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId());
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
+                    medications.clear();
+                    medications.addAll(medicationsToAdd);
                     fragment.notifyChanged();
                     swipeContainer.setRefreshing(false);
                 });
-            }
-        }
-        if (event.type.equals(DataChangedEvent.MEDICATIONS_BY_OWNERID)) {
-            medications.clear();
-            medications.addAll(new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
-            MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
-            if (fragment != null) {
-                fragment.notifyChanged();
             }
         }
     }
@@ -195,7 +187,6 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
 
     @Override
     public void onRefresh() {
-        System.out.println("Called onRefresh");
         Bundle extras = new Bundle();
         extras.putString("notificationType", "medicationsChanged");
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);

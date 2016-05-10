@@ -67,8 +67,6 @@ public class NewReminderInputConverter {
         }
         reminder.setIsActive(activeSwitch.isChecked());
         reminder.setServerId(-1);
-        System.out.println("----------Reminder Created----------" + "\n" + reminder);
-        System.out.println("------------------------------------");
         return reminder;
     }
 
@@ -128,10 +126,6 @@ public class NewReminderInputConverter {
             reminder.setMedicine(null);
             reminder.setDosage(null);
         }
-
-        System.out.println("----------Reminder Updated----------" + "\n" + reminder);
-        System.out.println("------------------------------------");
-
         return reminder;
     }
 }

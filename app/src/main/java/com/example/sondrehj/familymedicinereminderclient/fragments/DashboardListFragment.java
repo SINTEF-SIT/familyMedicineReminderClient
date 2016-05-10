@@ -88,18 +88,22 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
 
         if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
             Log.d("DashboardListFragment", "in Dashboardchanged");
-            todaysRemindersForAdapter.clear();
-            todaysReminders.clear();
-            todaysRemindersSortedByUser.clear();
-
-            todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
-            todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
-            todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
+            List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getTodaysReminders();
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
+                    todaysRemindersForAdapter.clear();
+                    todaysReminders.clear();
+                    todaysRemindersSortedByUser.clear();
+
+                    todaysReminders.addAll(remindersToAdd);
+                    todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
+                    todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
+
                     fragment.notifyChanged();
-                    //swipeContainer.setRefreshing(false);
+
+
+
                 });
             }
         }
@@ -109,7 +113,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.dashboard_list);
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
-            System.out.println("notifychanged called");
         }
     }
 
