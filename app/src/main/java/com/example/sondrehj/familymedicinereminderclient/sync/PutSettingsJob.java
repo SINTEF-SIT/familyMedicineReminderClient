@@ -4,10 +4,7 @@ import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
-import com.example.sondrehj.familymedicinereminderclient.models.Medication;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportUser;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
@@ -45,7 +42,7 @@ public class PutSettingsJob extends Job {
         Log.d(TAG, Thread.currentThread().toString());
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Call<User> call = api.setGracePeriod(userId, gracePeriod);
+        Call<TransportUser> call = api.setGracePeriod(userId, gracePeriod);
         call.execute(); //synchronous call
     }
 

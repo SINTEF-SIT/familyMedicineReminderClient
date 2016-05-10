@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_MEDICATION = "medication";
+    private final String TAG = "MedicationStorageFrgmnt";
     private Medication mMedication;
 
     @Bind(R.id.medication_storage_medication_input) EditText medicationNameInput;
@@ -144,7 +146,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
 
-        System.out.println("USERID: " + userId);
+        Log.d(TAG, "USERID: " + userId);
 
         Medication medication = new Medication(
                 0,
@@ -162,8 +164,8 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MainActivity.getJobManager(getContext()).addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
-        System.out.println("---------Medication Created---------" + "\n" + medication);
-        System.out.println("------------------------------------");
+        Log.d(TAG, "---------Medication Created---------" + "\n" + medication);
+        Log.d(TAG, "------------------------------------");
         return medication;
 
     }
@@ -185,7 +187,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MainActivity.getJobManager(getActivity()).addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
-        System.out.println("---------Medication Updated---------" + "\n" + mMedication);
-        System.out.println("------------------------------------");
+        Log.d(TAG, "---------Medication Updated---------" + "\n" + mMedication);
+        Log.d(TAG, "------------------------------------");
     }
 }

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,8 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public static final String REMINDER_UPDATE = "reminder-update";
     public static final String REMINDER_INSERT = "reminder-insert";
     private static final String CONTINUOUS_END_DATE = "Continuous";
+
+    private final String TAG = "NewReminderFragment";
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String REMINDER_ARGS = "reminder";
@@ -266,7 +269,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public void updateReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
-        System.out.println("In newreminder update: " + reminder);
+        Log.d(TAG, "In newreminder update: " + reminder);
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         reminder = vr.UpdateReminderFromInput(
@@ -275,7 +278,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
                 dosageInput, repeatSwitch, selectedDays,
                 endDateInput, activeSwitch, reminder, ((MainActivity) getActivity()).getCurrentUser());
 
-        System.out.println("In newreminder update (after converter): " + reminder);
+        Log.d(TAG, "In newreminder update (after converter): " + reminder);
 
 
         // Update existing reminder in database
@@ -440,7 +443,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
             selectedDays[i] = ((Integer) selectedItems.get(i) + 1) % 7;
         }
         Arrays.sort(selectedDays);
-        System.out.println("Hello: " + Arrays.toString(selectedDays));
+        Log.d(TAG, "Hello: " + Arrays.toString(selectedDays));
         setBoldOnSelectedDays(selectedDays);
     }
 

@@ -43,6 +43,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     private LinkedHashMap<String,List<Reminder>> todaysRemindersSortedByUser = new LinkedHashMap<>();
     private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
+    private final String TAG = " DashboardListFragment";
     @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
 
     public DashboardListFragment() {
@@ -110,7 +111,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.dashboard_list);
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
-            System.out.println("notifychanged called");
+            Log.d(TAG, "notifychanged called");
         }
     }
 

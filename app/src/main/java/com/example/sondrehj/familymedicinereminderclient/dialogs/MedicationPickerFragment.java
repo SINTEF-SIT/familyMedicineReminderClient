@@ -7,6 +7,7 @@ import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -17,6 +18,7 @@ import java.util.List;
 public class MedicationPickerFragment extends DialogFragment {
 
     private OnMedicationPickerDialogResultListener mListener;
+    private static String TAG = "MedicationPickerFragment";
     int selectedItem;
 
     @Override
@@ -44,9 +46,9 @@ public class MedicationPickerFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         // Set unit TextView to the selected list item
-                        System.out.println(selectedItem);
+                        Log.d(TAG, selectedItem + "");
                         mListener.onPositiveMedicationPickerDialogResult(medications.get(selectedItem));
-                        System.out.println(medications.get(selectedItem).getName());
+                        Log.d(TAG, medications.get(selectedItem).getName());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

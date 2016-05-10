@@ -12,7 +12,7 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportUser;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
@@ -75,21 +75,21 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token, String userID, String authToken) {
         MyCyFAPPServiceAPI apiService = RestService.createRestService(authToken);
-        Call<User> call = apiService.associateToken(userID, token);
-        call.enqueue(new Callback<User>() {
+        Call<TransportUser> call = apiService.associateToken(userID, token);
+        call.enqueue(new Callback<TransportUser>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+            public void onResponse(Call<TransportUser> call, Response<TransportUser> response) {
                 if (response.isSuccessful()) {
                     int statusCode = response.code();
-                    User user = response.body();
-                    Log.d(TAG, statusCode + " : " + user.toString());
+                    TransportUser transportUser = response.body();
+                    Log.d(TAG, statusCode + " : " + transportUser.toString());
                 } else {
                     Log.d(TAG, "error in associateToken call.");
                 }
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<TransportUser> call, Throwable t) {
                 Log.d(TAG, "failure in token registration.");
             }
         });

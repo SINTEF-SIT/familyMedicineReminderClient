@@ -1,76 +1,41 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
- * Created by nikolai on 24/02/16.
+ * Created by sondre on 01/05/2016.
  */
-public class User {
-    String userID; //6 digit alphanumerical
-    String username; //optional
-    String password;
-    String userRole;
-    List<User> guardians;
-    List<User> children;
+public class User implements Serializable {
 
-    public User() {
+    String userId; //6 digit alphanumerical
+    String alias;
+
+    public User(String userId, String alias){
+        this.userId = userId;
+        this.alias = alias;
     }
 
-    public User(String userRole) {
-        this.userRole = userRole;
+    public String getUserId() {
+        return userId;
     }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getAlias() {
+        return alias;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUserRole(String userRole) { this.userRole = userRole; }
-
-    public String getUserRole() { return userRole; }
-
-    public List<User> getGuardians() {
-        return guardians;
-    }
-
-    public void setGuardians(List<User> guardians) {
-        this.guardians = guardians;
-    }
-
-    public List<User> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<User> children) {
-        this.children = children;
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String toString(){
-        return "userID: " + userID + ", username: " + username + ", password: " + password +
-                ", guardians: " + guardians + ", children: " + children +".";
+        return "UserID: " + getUserId() + " | Alias: " + getAlias();
     }
+
 }
+
+
+

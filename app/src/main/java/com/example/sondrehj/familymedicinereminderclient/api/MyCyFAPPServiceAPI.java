@@ -2,13 +2,9 @@ package com.example.sondrehj.familymedicinereminderclient.api;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
-import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportUser;
 
-import org.json.JSONArray;
-
-import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -63,16 +59,16 @@ public interface MyCyFAPPServiceAPI {
      * USER REQUESTS
      **/
     @GET("user/{userID}/children")
-    Call<User> getChildren(@Path("userID") String userID);
+    Call<TransportUser> getChildren(@Path("userID") String userID);
 
-    @POST("user")
-    Call<User> createUser(@Header("create_secret") String createSecret, @Body User user);
+    @POST("transportUser")
+    Call<TransportUser> createUser(@Header("create_secret") String createSecret, @Body TransportUser transportUser);
 
     @PUT("user/{userID}/token/{token}")
-    Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);
+    Call<TransportUser> associateToken(@Path("userID") String userID, @Path("token") String token);
 
     @PUT("user/{userID}/settings/{gracePeriod}")
-    Call<User> setGracePeriod(@Path("userID") String userID, @Path("gracePeriod") String gracePeriod);
+    Call<TransportUser> setGracePeriod(@Path("userID") String userID, @Path("gracePeriod") String gracePeriod);
 
     @GET("user/{userID}/lastSeen")
     Call<String> getLastSeenStatus(@Path("userID") String userID);

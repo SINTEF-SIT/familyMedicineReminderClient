@@ -3,10 +3,8 @@ package com.example.sondrehj.familymedicinereminderclient.fragments;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
@@ -26,12 +24,8 @@ import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
-import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
-import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
 

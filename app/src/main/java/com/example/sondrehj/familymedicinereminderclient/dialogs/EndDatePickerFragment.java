@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.DatePicker;
 
 import java.util.Calendar;
@@ -17,6 +18,7 @@ public class EndDatePickerFragment extends DialogFragment implements DatePickerD
     private static int monthAlreadySet;
     private static int dayAlreadySet;
     public String startDate;
+    private final String TAG = "EndDatePickerFragment";
 
     private static final String START_DATE_ARGS = "reminder";
 
@@ -44,7 +46,7 @@ public class EndDatePickerFragment extends DialogFragment implements DatePickerD
             setStartDate(startDate);
         }
 
-        System.out.println(startDate);
+        Log.d(TAG, startDate);
         if (yearAlreadySet == 0 && monthAlreadySet == 0 && dayAlreadySet == 0) {
             // Use today's date as the default date in the picker
 

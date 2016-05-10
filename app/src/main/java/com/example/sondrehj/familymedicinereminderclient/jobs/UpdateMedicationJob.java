@@ -28,23 +28,18 @@ public class UpdateMedicationJob extends Job {
             super(new Params(PRIORITY)
                     .requireNetwork()
                     .persist());
-            System.out.println("New medication job posted");
             this.medication = medication;
             this.userId = userId;
             this.authToken = authToken;
         }
         @Override
         public void onAdded() {
-            System.out.println("In medication job's onAdded");
-
             // Job has been saved to disk.
             // This is a good place to dispatch a UI event to indicate the job will eventually run.
             // In this example, it would be good to update the UI with the newly posted tweet.
         }
         @Override
         public void onRun() throws Throwable {
-            System.out.println("In medication onRun!");
-
             MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
             Call<Medication> call = api.updateMedication(userId, String.valueOf(medication.getServerId()), medication);
             Medication med = call.execute().body(); //medication retrieved from server

@@ -34,7 +34,6 @@ public class UpdateReminderJob extends Job {
         super(new Params(PRIORITY)
                 .requireNetwork()
                 .persist());
-        System.out.println("New reminder job posted");
         this.reminder = reminder;
         this.userId = userId;
         this.preSendTransportReminder = new TransportReminder(reminder);
@@ -45,7 +44,6 @@ public class UpdateReminderJob extends Job {
 
     @Override
     public void onAdded() {
-        System.out.println("In reminder job's onAdded");
         // Job has been saved to disk. This means that the job is persisted and the application can fail without
         // consequence for the job queue.
     }
@@ -54,17 +52,12 @@ public class UpdateReminderJob extends Job {
     public void onRun() throws Throwable {
 
         MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
-        System.out.println("Transreminder before sending: " + preSendTransportReminder);
         Call<TransportReminder> call = api.updateReminder(userId, String.valueOf(preSendTransportReminder.getServerId()), preSendTransportReminder);
         TransportReminder transportReminder = call.execute().body();
         if(transportReminder != null) {
-            System.out.println("Received transportreminder: " + transportReminder);
             reminder.updateFromTransportReminder(transportReminder);
             System.out.println(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERSENT, reminder));
-        }
-        else {
-            System.out.println("reminder returned from server was null");
         }
     }
 

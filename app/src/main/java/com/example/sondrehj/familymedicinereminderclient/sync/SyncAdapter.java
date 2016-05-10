@@ -14,7 +14,6 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
 /**
  * Created by nikolai on 07/04/16.
