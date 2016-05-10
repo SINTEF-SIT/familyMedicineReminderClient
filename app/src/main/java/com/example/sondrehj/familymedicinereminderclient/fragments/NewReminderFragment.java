@@ -245,7 +245,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     }
 
     public void createReminder() {
-        String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
@@ -257,7 +256,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
 
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        MainActivity.getJobManager(getContext()).addJobInBackground(new PostReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 
         InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
@@ -282,7 +281,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
 
-        JobManager manager = ((MainActivity) getActivity()).getJobManager();
+        JobManager manager = MainActivity.getJobManager(getContext());
 
         manager.addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 

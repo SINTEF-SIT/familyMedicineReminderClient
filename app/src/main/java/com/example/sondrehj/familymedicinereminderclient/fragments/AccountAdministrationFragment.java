@@ -174,8 +174,8 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
         if (!(guardianGroup.getVisibility() == View.GONE)){
             Account account = MainActivity.getAccount(getActivity());
             editor.putInt("gracePeriod", Integer.parseInt(graceMinuteValue.getText().toString()));
-            ((MainActivity) getActivity())
-                    .getJobManager()
+            MainActivity
+                    .getJobManager(getContext())
                     .addJobInBackground( //guarantees that this job will be done sometime when there is internet.
                             new PutSettingsJob(account.name, graceMinuteValue.getText().toString())
                     );

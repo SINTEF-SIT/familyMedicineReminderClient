@@ -63,12 +63,11 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
 
         if(currentServerStatus &&  !previousServerStatus) {
             Log.d(TAG, "currentServerStatus:TRUE & previousServerStatus:FALSE");
-            Configuration configuration = new Configuration.Builder(context)
-                    .networkUtil(this)
-                    .build();
-            JobManager jobManager = new JobManager(context, configuration);
+            JobManager jobManager = MainActivity.getJobManager(context);
 
-            listener.onNetworkChange(currentServerStatus);
+            if(listener != null) {
+                listener.onNetworkChange(currentServerStatus);
+            }
         }
         previousServerStatus = currentServerStatus;
     }

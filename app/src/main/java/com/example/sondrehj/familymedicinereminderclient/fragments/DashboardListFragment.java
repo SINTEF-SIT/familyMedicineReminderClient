@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -86,20 +87,20 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     @Subscribe
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
-        if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+        if (event.type.equals(DataChangedEvent.REMINDERS) || event.type.equals(DataChangedEvent.MEDICATIONS)) {
             Log.d("DashboardListFragment", "in Dashboardchanged");
-            todaysRemindersForAdapter.clear();
-            todaysReminders.clear();
-            todaysRemindersSortedByUser.clear();
-
-            todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
-            todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
-            todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
+            List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getTodaysReminders();
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
+                    todaysRemindersForAdapter.clear();
+                    todaysReminders.clear();
+                    todaysRemindersSortedByUser.clear();
+
+                    todaysReminders.addAll(remindersToAdd);
+                    todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
+                    todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
                     fragment.notifyChanged();
-                    //swipeContainer.setRefreshing(false);
                 });
             }
         }

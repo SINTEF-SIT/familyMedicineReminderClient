@@ -309,9 +309,8 @@ public class NotificationScheduler {
             // update server side
             String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
             String userId = ((MainActivity) context).getCurrentUser().getUserId();
-            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
-            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
-
+            MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+            MainActivity.getJobManager(context).addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
         }
     }
 
@@ -333,7 +332,7 @@ public class NotificationScheduler {
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
         String userId = ((MainActivity) context).getCurrentUser().getUserId();
-        ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+        MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
 
     }
 }

@@ -103,6 +103,7 @@ public class MainActivity
     public UserSpinnerToggle userSpinnerToggle;
     // Global Variables
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient";
+    private static JobManager jobManager;
 
     /**
      * Main entry point of the application. When onCreate is run, view is filled with the
@@ -225,11 +226,14 @@ public class MainActivity
         unregisterReceiver(syncReceiver);
     }
 
-    public JobManager getJobManager() {
-        Configuration configuration = new Configuration.Builder(this)
-                .networkUtil(new ServerStatusChangeReceiver())
-                .build();
-        return new JobManager(this, configuration);
+    public static JobManager getJobManager(Context context) {
+        if(jobManager == null) {
+            Configuration configuration = new Configuration.Builder(context)
+                    .networkUtil(new ServerStatusChangeReceiver())
+                    .build();
+            jobManager = new JobManager(context, configuration);
+        }
+        return jobManager;
     }
 
     /**
@@ -507,7 +511,7 @@ public class MainActivity
                 apiAvailability.getErrorDialog(this, resultCode, 9000)
                         .show();
             } else {
-                Log.i(TAG, "This device is not supported.");
+                Log.i(TAG, "This device is not supported. Please install Google Play Services.");
                 finish();
             }
             return false;
@@ -610,7 +614,6 @@ public class MainActivity
         }
         changeFragment(ReminderListFragment.newInstance());
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override
@@ -677,7 +680,7 @@ public class MainActivity
             String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
             new MySQLiteHelper(this).deleteMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-            getJobManager().addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
+            getJobManager(this).addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
         }
         else {
             Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
@@ -694,7 +697,7 @@ public class MainActivity
             AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
             new MySQLiteHelper(this).deleteReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-            getJobManager().addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
+            getJobManager(this).addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
         } else {
             Toast.makeText(this, "This reminder is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
         }

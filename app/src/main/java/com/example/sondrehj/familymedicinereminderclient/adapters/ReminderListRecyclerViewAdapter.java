@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<ReminderListRecyclerViewAdapter.ViewHolder> {
 
+    private final String TAG = "ReminderAdapter";
     private final List<Reminder> mValues;
     private final OnReminderListFragmentInteractionListener mListener;
     private final Context context;
@@ -46,6 +48,9 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        Log.d(TAG, "In BindViewHolder \n");
+        Log.d(TAG, "Reminders size: " + mValues.size());
+        Log.d(TAG, "Current pos: " + position);
         holder.mReminder = mValues.get(position);
         holder.mNameView.setText(mValues.get(position).getName());
         holder.mSwitch.setChecked(mValues.get(position).getIsActive());

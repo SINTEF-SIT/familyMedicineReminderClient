@@ -159,7 +159,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        MainActivity.getJobManager(getContext()).addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
         System.out.println("---------Medication Created---------" + "\n" + medication);
@@ -182,7 +182,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.updateMedication(mMedication);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        MainActivity.getJobManager(getActivity()).addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
 
         System.out.println("---------Medication Updated---------" + "\n" + mMedication);
