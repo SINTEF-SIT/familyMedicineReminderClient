@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -15,8 +16,11 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment.OnDashboardListFragmentInteractionListener;
+import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
+import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,12 +69,12 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
 
 
-            for(User2 user : users){
-                if(header.getOwnerID().equals(user.getUserId())){
+            for (User2 user : users) {
+                if (header.getOwnerID().equals(user.getUserId())) {
                     holder.mHeaderText.setText(user.getAlias());
                     break;
                 }
-                if(header.getOwnerID().equals(user.getUserId())){
+                if (header.getOwnerID().equals(user.getUserId())) {
                     holder.mHeaderText.setText(user.getAlias());
                     break;
                 }
@@ -131,29 +135,51 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                         holder.mButton.setBackgroundColor(Color.parseColor("#FFEE58"));
                     }
                 } else {
-                    System.out.println("taken");
                     Calendar calendar = holder.mReminder.getTimeTaken();
                     int hours = calendar.get(Calendar.HOUR_OF_DAY);
                     int minutes = calendar.get(Calendar.MINUTE);
                     String time = String.format("%02d:%02d", hours, minutes);
-                    holder.mButton.setText("✓ Taken \n" + time);
                     holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
+                    if(holder.mReminder.getMedicine() != null)
+                        holder.mButton.setText("✓ Taken \n" + time);
+                    else
+                        holder.mButton.setText("✓ Done \n" + time);
                 }
 
                 holder.mButton.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
-                        GregorianCalendar gregorianCalendar = new GregorianCalendar();
-                        holder.mReminder.setTimeTaken(gregorianCalendar);
-                        int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
-                        int minute = gregorianCalendar.get(Calendar.MINUTE);
-                        String time = String.format("%02d:%02d", hour, minute);
-                        if (holder.mReminder.getMedicine() == null) {
-                            holder.mButton.setText("✓ Done \n" + time);
+                        System.out.println(holder.mReminder.getMedicine());
+                        if (holder.mReminder.getTimeTaken() == null) {
+                            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+                            holder.mReminder.setTimeTaken(gregorianCalendar);
+
+                            int hour = gregorianCalendar.get(Calendar.HOUR_OF_DAY);
+                            int minute = gregorianCalendar.get(Calendar.MINUTE);
+
+                            String time = String.format("%02d:%02d", hour, minute);
+                            String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
+                            String userId = ((MainActivity) context).getCurrentUser().getUserId();
+
+                            if (holder.mReminder.getMedicine() == null) {
+                                holder.mButton.setText("✓ Done \n" + time);
+                                holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
+                                MySQLiteHelper db = new MySQLiteHelper(context);
+                                db.setReminderTimeTaken(holder.mReminder);
+                                MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
+                            } else {
+                                holder.mButton.setText("✓ Taken \n" + time);
+                                holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
+                                // Update database and server
+                                MySQLiteHelper db = new MySQLiteHelper(context);
+                                db.setReminderTimeTaken(holder.mReminder);
+                                holder.mReminder.getMedicine().setCount(holder.mReminder.getMedicine().getCount() - holder.mReminder.getDosage());
+                                db.updateAmountMedication(holder.mReminder.getMedicine());
+                                MainActivity.getJobManager(context).addJobInBackground(new UpdateMedicationJob(holder.mReminder.getMedicine(), userId, authToken));
+                                MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
+                            }
+                            NotificationScheduler ns = new NotificationScheduler(context);
+                            ns.cancelNotification(holder.mReminder.getReminderId());
                         }
-                        holder.mButton.setText("✓ Taken \n" + time);
-                        holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
-                        MySQLiteHelper db = new MySQLiteHelper(context);
-                        db.setReminderTimeTaken(holder.mReminder);
                     }
                 });
             } else { //this account does not own the reminders.
@@ -170,8 +196,11 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                     int hours = calendar.get(Calendar.HOUR_OF_DAY);
                     int minutes = calendar.get(Calendar.MINUTE);
                     String time = String.format("%02d:%02d", hours, minutes);
-                    holder.mButton.setText("✓ Taken \n" + time);
                     holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
+                    if(holder.mReminder.getMedicine() != null)
+                        holder.mButton.setText("✓ Taken \n" + time);
+                    else
+                        holder.mButton.setText("✓ Done \n" + time);
                 }
             }
         }
