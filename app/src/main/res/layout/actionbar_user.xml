@@ -20,6 +20,7 @@
         android:paddingRight="2dp"
         android:layout_marginTop="9dp"
         android:layout_marginRight="5dp"
+        android:id="@+id/user_icon"
         android:gravity="center_vertical|center_horizontal"
         android:tint="#fff"
         android:src="@drawable/ic_person_black_48dp"/>

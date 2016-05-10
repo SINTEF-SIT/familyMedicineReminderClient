@@ -100,6 +100,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
         if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+            Log.d("DashboardListFragment", "in Dashboardchanged");
             todaysRemindersForAdapter.clear();
             todaysReminders.clear();
             todaysRemindersSortedByUser.clear();
@@ -109,7 +110,10 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
             todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
             if (fragment != null) {
-                fragment.notifyChanged();
+                getActivity().runOnUiThread(() -> {
+                    fragment.notifyChanged();
+                    //swipeContainer.setRefreshing(false);
+                });
             }
         }
     }

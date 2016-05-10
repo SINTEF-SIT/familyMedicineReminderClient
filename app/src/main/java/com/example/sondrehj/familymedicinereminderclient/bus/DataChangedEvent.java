@@ -12,6 +12,7 @@ public class DataChangedEvent {
     public static String MEDICATIONSENT = "medicationSent";
     public static String REMINDERSENT = "reminderSent";
     public static String DASHBOARDCHANGED = "dashboardChanged";
+    public static String SCHEDULE_REMINDER = "scheduleReminder";
     public String type;
     public Object data;
 

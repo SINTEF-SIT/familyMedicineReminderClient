@@ -16,6 +16,7 @@ public class TransportReminder implements Serializable {
     Double dosage;
     Boolean isActive;
     String days;
+    String timeTaken;
 
     public TransportReminder(Reminder reminder) {
         this.reminderId = reminder.getReminderId();
@@ -29,6 +30,13 @@ public class TransportReminder implements Serializable {
             this.endDate = Converter.calendarToDatabaseString(reminder.getEndDate());
         } else {
             this.endDate = "0";
+        }
+
+        //End date may be null if the reminder is one-time or continuous
+        if(reminder.timeTaken != null) {
+            this.timeTaken = Converter.calendarToDatabaseString(reminder.timeTaken);
+        } else {
+            this.timeTaken = "0";
         }
 
         //Medicine may be null if the reminder is for a doctor's appointment or other stuff!
@@ -81,8 +89,9 @@ public class TransportReminder implements Serializable {
 
     public void setDays(String days) { this.days = days; }
 
+    public String getTimeTaken() { return timeTaken; }
 
-
+    public void setTimeTaken(String timeTaken) { this.timeTaken = timeTaken; }
 
     public String toString() {
         return  " Transportreminder: " + "\n" +
@@ -93,6 +102,7 @@ public class TransportReminder implements Serializable {
                 " Days: " + days + "\n" +
                 " Active: " + isActive + "\n" +
                 " Medication: " + medicine + "\n" +
-                " Dosage: " + dosage + "\n";
+                " Dosage: " + dosage + "\n" +
+                " Timetaken: " + timeTaken + "\n";
     }
 }

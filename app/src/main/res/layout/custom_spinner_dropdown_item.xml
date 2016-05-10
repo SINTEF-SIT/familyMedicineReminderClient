@@ -9,5 +9,8 @@
     android:textColor="#9E9E9E"
     android:background="#ffffff"
     android:ellipsize="marquee"
-    android:padding="7dp"
-    android:gravity="right" />
+    android:gravity="right"
+    android:paddingRight="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:paddingLeft="5dp" />

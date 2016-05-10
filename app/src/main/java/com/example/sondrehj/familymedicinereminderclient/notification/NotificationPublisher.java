@@ -22,6 +22,14 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static String NOTIFICATION_TYPE = "notification-type";
     public Context context;
 
+    /**
+     * Publishes the notification when it is received by {@link AlarmManager}.
+     * The method makes sure that the notification is only published at the scheduled days,
+     * as well as canceling outdated reminders.
+     *
+     * @param context {@link com.example.sondrehj.familymedicinereminderclient.MainActivity}.
+     * @param intent data provided by the notification.
+     */
     public void onReceive(Context context, Intent intent) {
 
         this.context = context;
@@ -41,8 +49,8 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // Snooze notification
         if (notificationType.equals("snooze")) {
-            System.out.println("Publishing snooze notification: " + id);
             notificationManager.notify(id, notification);
+            System.out.println("Publishing snooze notification: " + id);
             return;
         }
         // Checks if the user has specified days for the reminder
@@ -71,6 +79,12 @@ public class NotificationPublisher extends BroadcastReceiver {
         }
     }
 
+    /**
+     * Cancel/Removes a notification from {@link AlarmManager} given the ID of the notification.
+     * The id of the notification is equal to the id of the attached reminder.
+     *
+     * @param id The id of the notification to be canceled.
+     */
     public void cancelNotification(int id) {
         //Cancel the scheduled reminder
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);

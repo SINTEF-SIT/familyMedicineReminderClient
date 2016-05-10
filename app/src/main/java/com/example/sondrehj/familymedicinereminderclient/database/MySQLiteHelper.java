@@ -63,7 +63,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_REMINDER_SERVER_ID = "reminder_server_id";
     public static final String COLUMN_REM_MEDICATION_ID = "reminder_medication_id";
     public static final String COLUMN_REM_MEDICATION_DOSAGE = "medication_dosage";
-    public static final String COLUMN_REMINDER_TIME_TAKEN= "time_taken";
+    public static final String COLUMN_REMINDER_TIME_TAKEN = "time_taken";
     // Reminder table creation statement
     private static final String CREATE_TABLE_REMINDER = "create table "
             + TABLE_REMINDER + "(" + COLUMN_REMINDER_ID
@@ -113,10 +113,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    //Queries, flyttes?
-
     // ----- MEDICATIONS ----- //
 
+    /**
+     * Adds a new {@link Medication} to the database.
+     *
+     * @param medication the medication to be added
+     */
     public void addMedication(Medication medication) {
         // Add new medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -135,6 +138,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Updates a {@link Medication} in the database.
+     *
+     * @param medication the medication to be updated.
+     */
     public void updateMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -151,6 +159,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Retrieves all the {@link Medication} contained in the database.
+     *
+     * @return an {@link ArrayList} of {@link Medication}
+     */
     public ArrayList<Medication> getMedications() {
         //Retrieve medications
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION;
@@ -175,6 +188,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Retrieves all the {@link Medication} for a user, given their id.
+     *
+     * @param ownerId the id of the user.
+     * @return an {@link ArrayList} of {@link Medication}
+     */
     public ArrayList<Medication> getMedicationsByOwnerId(String ownerId) {
         //Retrieve medications
         String selectQuery =
@@ -202,6 +221,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Deletes a {@link Medication} from the database.
+     *
+     * @param medication the medication to be deleted.
+     */
     public void deleteMedication(Medication medication) {
         //Deletes a medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -213,6 +237,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Updates the amount of a given {@link Medication}.
+     *
+     * @param medication the medication to be updated.
+     */
     public void updateAmountMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -225,6 +254,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Retrieves a {@link Medication} by the serverId
+     *
+     * @param medId the serverId.
+     */
     public Medication getSingleMedicationByServerID(int medId) {
         String selectQuery = "SELECT  * FROM " + TABLE_MEDICATION + " WHERE " + COLUMN_MED_SERVER_ID + " = " + medId;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -243,7 +277,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- REMINDERS ----- //
 
-    public void addReminder(Reminder reminder) {
+    /**
+     * Adds a new {@link Reminder} to the database.
+     *
+     * @param reminder the reminder to be added
+     */
+    public Reminder addReminder(Reminder reminder) {
         // Add new reminder
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -258,7 +297,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
         String timeTakenString = "0";
-        if(reminder.getTimeTaken() != null){
+        if (reminder.getTimeTaken() != null) {
             timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
@@ -285,9 +324,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         long insertId = db.insert(TABLE_REMINDER, null, values);
         reminder.setReminderId(safeLongToInt(insertId));
         db.close(); // Closing database connection
+        return reminder;
     }
 
-    public void updateReminder(Reminder reminder) {
+    /**
+     * Updates a {@link Reminder} in the database.
+     *
+     * @param reminder the medication to be updated.
+     */
+    public Reminder updateReminder(Reminder reminder) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -305,7 +350,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
         String timeTakenString = "0";
-        if(reminder.getTimeTaken() != null){
+        if (reminder.getTimeTaken() != null) {
             timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
@@ -329,9 +374,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Executes the query
         db.update(TABLE_REMINDER, values, "reminder_id=" + reminder.getReminderId(), null);
-        db.close(); // Closing database connection
+        db.close(); // Closing database
+        return reminder;
     }
 
+    /**
+     * Retrieves all the {@link Reminder} contained in the database.
+     *
+     * @return an {@link ArrayList} of {@link Reminder}
+     */
     public ArrayList<Reminder> getReminders() {
 
         // Retrieve Reminders
@@ -401,7 +452,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    // Could be integrated with getReminders()
+    // Could possibly be integrated with getReminders()
+    /**
+     * Retrieves all the {@link Reminder} for a user, given their id.
+     *
+     * @param ownerId the id of the user.
+     * @return an {@link ArrayList} of {@link Reminder}
+     */
     public ArrayList<Reminder> getRemindersByOwnerId(String ownerId) {
 
         // Retrieve Reminders
@@ -473,6 +530,87 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Retrieves a {@link Reminder} by the localId.
+     *
+     * @param localId the local id of the Reminder
+     * @return the retrieved reminder
+     */
+    public Reminder getReminderByLocalId(int localId) {
+
+        // Retrieve Reminders
+        String selectQuery =
+                "SELECT  *" +
+                        " FROM " + TABLE_REMINDER +
+                        " WHERE " + COLUMN_REMINDER_ID + "=" + localId;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // Loop through the retrieved data. Generates instances of the the reminder class.
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(0);
+            String owner = cursor.getString(1);
+            String name = cursor.getString(2);
+            String dateString = cursor.getString(3);
+            boolean isActive = cursor.getInt(4) > 0;
+            String dayString = cursor.getString(5);
+            String endDateString = cursor.getString(6);
+            int serverId = cursor.getInt(7);
+            int medicationId = cursor.getInt(8);
+            Double dosage = cursor.getDouble(9);
+            String timeTakenString = cursor.getString(10);
+
+            // Converting daysString to an int[] containing all the days.
+            int[] days = Converter.databaseDayStringToArray(dayString);
+
+            // Converting dateString to GregorianCalendar
+            GregorianCalendar date = Converter.databaseDateStringToCalendar(dateString);
+
+            // Converting endDateString to GregorianCalendar
+            GregorianCalendar endCal = new GregorianCalendar();
+            if (!endDateString.equals("0")) {
+                endCal = Converter.databaseDateStringToCalendar(endDateString);
+            }
+
+            // Converting timeTakenString to GregorianCalendar
+            GregorianCalendar timeTaken = new GregorianCalendar();
+            if (!timeTakenString.equals("0")) {
+                timeTaken = Converter.databaseDateStringToCalendar(timeTakenString);
+            }
+
+            Reminder reminder = new Reminder();
+            reminder.setReminderId(id);
+            reminder.setOwnerId(owner);
+            reminder.setName(name);
+            reminder.setDate(date);
+            reminder.setIsActive(isActive);
+            reminder.setDays(days);
+            reminder.setEndDate(endCal);
+            reminder.setServerId(serverId);
+            reminder.setTimeTaken(timeTaken);
+            // Attaches a referenced medication to the reminder object if set.
+            // "Join"-operation
+            if (medicationId != 0) {
+                for (Medication med : getMedications())//MedicationListFragment.medications){
+                    if (med.getMedId() == medicationId) {
+                        reminder.setMedicine(med);
+                        reminder.setDosage(dosage);
+                    }
+            }
+            cursor.close();
+            db.close();
+            return reminder;
+        }
+        cursor.close();
+        db.close();
+        return null;
+    }
+
+    /**
+     * Sets the timeTaken for a {@link Reminder}.
+     *
+     * @param reminder the reminder to be updated.
+     */
     public void setReminderTimeTaken(Reminder reminder) {
 
         // Update existing medication
@@ -480,7 +618,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         // Converts the reminder timeTaken to a string on the format year;month;day;hour;min
         String timeTakenString = "0";
-        if(reminder.getTimeTaken() != null){
+        if (reminder.getTimeTaken() != null) {
             timeTakenString = Converter.calendarToDatabaseString(reminder.getTimeTaken());
         }
 
@@ -492,6 +630,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Retrieves all the {@link Reminder} that are scheduled for the current date.
+     *
+     * @return an {@link ArrayList} of {@link Reminder}
+     */
     public ArrayList<Reminder> getTodaysReminders() {
 
         GregorianCalendar todaysDate = new GregorianCalendar();
@@ -500,8 +643,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         ArrayList<Reminder> activeReminders = new ArrayList<>();
         ArrayList<Reminder> todaysReminders = new ArrayList<>();
 
-        for(Reminder r : allReminders){
-            if(r.getIsActive()){
+        for (Reminder r : allReminders) {
+            if (r.getIsActive()) {
                 activeReminders.add(r);
             }
         }
@@ -527,6 +670,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return todaysReminders;
     }
 
+    /**
+     * Deletes a {@link Reminder} from the database.
+     *
+     * @param reminder the reminder to be deleted.
+     */
     public void deleteReminder(Reminder reminder) {
         // Deletes a reminder
         SQLiteDatabase db = this.getWritableDatabase();
@@ -536,6 +684,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- USERS ----- //
 
+    /**
+     * Retrieves all the {@link User2} contained in the database.
+     *
+     * @return an {@link ArrayList} of {@link User2}
+     */
     public ArrayList<User2> getUsers() {
 
         // Retrieve Users
@@ -557,6 +710,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /**
+     * Adds a new {@link User2} to the database.
+     *
+     * @param user the user to be added
+     */
     public void addUser(User2 user) {
         // Add new user
         SQLiteDatabase db = this.getWritableDatabase();
@@ -569,6 +727,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Updates a {@link User2} in the database.
+     *
+     * @param user the user to be updated.
+     */
     public void updateUser(User2 user) {
         SQLiteDatabase db = this.getWritableDatabase();
         // Prepares the statement
@@ -580,6 +743,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    /**
+     * Deletes a {@link User2} from the database.
+     *
+     * @param userId the id of the user to be deleted.
+     */
     public void deleteUser(String userId) {
         //Deletes a medication
         SQLiteDatabase db = this.getWritableDatabase();
@@ -587,6 +755,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Safely converts a long to an int.
+     *
+     * @param l the long to be converted.
+     * @return an int (The converted long)
+     */
     public static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
