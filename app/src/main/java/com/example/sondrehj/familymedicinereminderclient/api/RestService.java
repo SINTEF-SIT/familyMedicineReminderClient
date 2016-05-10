@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RestService {
 
     private static final String BASE_URL = "http://10.22.42.62:1337";
-    
+
     private static OkHttpClient.Builder httpBuilder = new OkHttpClient.Builder()
         .readTimeout(5, TimeUnit.SECONDS)
         .connectTimeout(5, TimeUnit.SECONDS);
@@ -31,7 +31,6 @@ public class RestService {
      * token to its
      *
      * @param authToken             The access token to be used for authenticating the user on the server.
-     *
      * @return MyCyFAPPServiceAPI   A retrofit instance built from the MyCyFAPPServiceAPI
      */
     public static MyCyFAPPServiceAPI createRestService(final String authToken) {
