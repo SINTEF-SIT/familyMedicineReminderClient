@@ -39,7 +39,6 @@
         </activity>
 
         <receiver android:name=".notification.NotificationPublisher" />
-        <receiver android:name=".sync.DataPublisher" />
 
         <!-- Network connectivity requirement -->
 
@@ -51,11 +50,6 @@
         </receiver>
 
         <!-- SyncAdapter requirements -->
-        <provider
-            android:name=".sync.DummyProvider"
-            android:authorities="com.example.sondrehj.familymedicinereminderclient.content"
-            android:syncable="true"
-            android:label="DummyProvider" />
         <service
             android:name="com.example.sondrehj.familymedicinereminderclient.sync.AuthenticatorService">
             <intent-filter>

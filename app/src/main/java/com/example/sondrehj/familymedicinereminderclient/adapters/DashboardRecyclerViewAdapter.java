@@ -19,8 +19,8 @@ import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardList
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,13 +32,13 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
     private final List<ListItem> mValues;
     private final OnDashboardListFragmentInteractionListener mListener;
     private final Context context;
-    private ArrayList<User2> users;
+    private ArrayList<User> users;
 
     public DashboardRecyclerViewAdapter(
             Context context,
             List<ListItem> mValues,
             OnDashboardListFragmentInteractionListener mListener,
-            ArrayList<User2> users) {
+            ArrayList<User> users) {
         this.mValues = mValues;
         this.mListener = mListener;
         this.context = context;
@@ -67,10 +67,8 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
         if (type == ListItem.TYPE_HEADER) {
             HeaderItem header = (HeaderItem) mValues.get(position);
             HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
-
-
-            for (User2 user : users) {
-                if (header.getOwnerID().equals(user.getUserId())) {
+            for(User user : users){
+                if(header.getOwnerID().equals(user.getUserId())){
                     holder.mHeaderText.setText(user.getAlias());
                     break;
                 }

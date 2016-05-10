@@ -1,10 +1,8 @@
 package com.example.sondrehj.familymedicinereminderclient.fragments;
 
-import android.accounts.Account;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,10 +16,9 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.models.TransportUser;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServiceManager;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -86,8 +83,8 @@ public class WelcomeFragment extends android.support.v4.app.Fragment {
         Context context = getActivity();
 
         final ProgressDialog progress = new ProgressDialog(context);
-        progress.setTitle("Creating user");
-        progress.setMessage("Please wait while a user is created...");
+        progress.setTitle("Creating transportUser");
+        progress.setMessage("Please wait while a transportUser is created...");
 
         final Toast failureToast = Toast.makeText(context,
                 "An internet connection is required to create an account. Please try again once " +
@@ -99,14 +96,14 @@ public class WelcomeFragment extends android.support.v4.app.Fragment {
         }
 
         MyCyFAPPServiceAPI service = RestService.createRestService();
-        User user = new User(role);
-        Call<User> call = service.createUser("myfirstsecret", user);
+        TransportUser transportUser = new TransportUser(role);
+        Call<TransportUser> call = service.createUser("myfirstsecret", transportUser);
         Log.d(TAG, call.request().toString());
         progress.show();
 
-        call.enqueue(new Callback<User>() {
+        call.enqueue(new Callback<TransportUser>() {
             @Override
-            public void onResponse(Call<User> call, Response<User> user) {
+            public void onResponse(Call<TransportUser> call, Response<TransportUser> user) {
                 String userId = user.body().getUserID();
                 String password = user.body().getPassword();
                 String userRole = user.body().getUserRole();
@@ -118,7 +115,7 @@ public class WelcomeFragment extends android.support.v4.app.Fragment {
                 Log.d(TAG, "response: accessToken: " + jwtToken);
 
                 progress.dismiss();
-                User2 dbUser = new User2(userId, "Me");
+                User dbUser = new User(userId, "Me");
                 new MySQLiteHelper(getActivity()).addUser(dbUser);
                 ((MainActivity) getActivity()).setCurrentUser(dbUser);
                 ((MainActivity) getActivity()).userSpinnerToggle.toggle();
@@ -136,10 +133,10 @@ public class WelcomeFragment extends android.support.v4.app.Fragment {
             }
 
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onFailure(Call<TransportUser> call, Throwable t) {
                 progress.dismiss();
                 failureToast.show();
-                System.out.println("Could not create user: " + t.getMessage());
+                Log.d(TAG, "Could not create transportUser: " + t.getMessage());
             }
         });
         return true;

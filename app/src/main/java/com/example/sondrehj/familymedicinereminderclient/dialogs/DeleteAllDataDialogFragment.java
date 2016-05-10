@@ -25,7 +25,7 @@ public class DeleteAllDataDialogFragment extends DialogFragment {
                 })
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
+                        // TransportUser cancelled the dialog
                     }
                 });
         // Create the AlertDialog object and return it

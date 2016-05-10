@@ -2,7 +2,6 @@ package com.example.sondrehj.familymedicinereminderclient.utility;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.media.Image;
 import android.support.design.widget.NavigationView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
@@ -19,7 +17,7 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import java.util.ArrayList;
 
@@ -30,9 +28,9 @@ public class UserSpinnerToggle {
 
     Activity activity;
     Spinner userSpinner;
-    ArrayList<User2> users;
+    ArrayList<User> users;
     private String[] usersAlias;
-    private User2 selectedUser;
+    private User selectedUser;
     private Toolbar toolbar;
     private boolean initialized;
     private LinearLayout drawerHeader;
@@ -59,7 +57,7 @@ public class UserSpinnerToggle {
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                     selectedUser = users.get(position);
                     ((MainActivity) activity).setCurrentUser(selectedUser);
-                    Toast.makeText(activity, "User changed to " + selectedUser.getAlias(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "TransportUser changed to " + selectedUser.getAlias(), Toast.LENGTH_SHORT).show();
                     toolbar.setBackgroundColor(Color.parseColor(barColors[position % 4]));
                     drawerHeader.setBackgroundColor(Color.parseColor(barColors[position % 4]));
                     BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
@@ -109,7 +107,7 @@ public class UserSpinnerToggle {
         }
     }
 
-    public User2 getSelectedUser() {
+    public User getSelectedUser() {
         return this.selectedUser;
     }
 

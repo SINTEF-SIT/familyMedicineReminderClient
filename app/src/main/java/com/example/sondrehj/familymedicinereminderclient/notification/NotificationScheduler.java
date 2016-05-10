@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
@@ -34,6 +35,7 @@ import java.util.List;
 public class NotificationScheduler {
 
     public Context context;
+    private final String TAG = "NotificationScheduler";
 
     public NotificationScheduler(Context context) {
         this.context = context;
@@ -65,7 +67,7 @@ public class NotificationScheduler {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
-        System.out.println("Scheduling: " + reminder);
+        Log.d(TAG, "Scheduling: " + reminder);
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -208,7 +210,7 @@ public class NotificationScheduler {
 
         Calendar currentTime = new GregorianCalendar();
 
-        System.out.println(snoozeTime);
+        Log.d(TAG, snoozeTime+"");
         Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
 
@@ -234,7 +236,7 @@ public class NotificationScheduler {
                 new Intent(context, NotificationPublisher.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingIntent);
-        System.out.println("Reminder: " + id + " was deactivated");
+        Log.d(TAG, "Reminder: " + id + " was deactivated");
     }
 
     /**
@@ -303,7 +305,6 @@ public class NotificationScheduler {
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             this.removeNotification(reminder.getReminderId());
-            System.out.println(currentTime.getTime().toString());
             // Display toaster
             Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();
             // update server side
@@ -323,11 +324,11 @@ public class NotificationScheduler {
         db.setReminderTimeTaken(reminder);
         reminder = db.getReminderByLocalId(reminder.getReminderId());
 
-        System.out.println(reminder);
+        Log.d(TAG, reminder.toString());
 
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
         // Display toaster
-        System.out.println("TAKEN CLICKED: " + reminder.getReminderId());
+        Log.d(TAG, "TAKEN CLICKED: " + reminder.getReminderId());
         this.removeNotification(reminder.getReminderId());
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");

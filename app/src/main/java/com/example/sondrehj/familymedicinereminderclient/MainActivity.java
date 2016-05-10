@@ -5,7 +5,6 @@ import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,7 +26,6 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -59,13 +56,12 @@ import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJo
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.example.sondrehj.familymedicinereminderclient.utility.UserSpinnerToggle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -99,7 +95,7 @@ public class MainActivity
     private SyncReceiver syncReceiver;
     public NotificationManager manager;
     private NotificationScheduler notificationScheduler;
-    private User2 currentUser;
+    private User currentUser;
     public UserSpinnerToggle userSpinnerToggle;
     // Global Variables
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient";
@@ -149,7 +145,7 @@ public class MainActivity
 
             //TODO: get main account from database
             String id = AccountManager.get(this).getUserData(getAccount(this), "userId");
-            currentUser = new User2(id, "User");
+            currentUser = new User(id, "TransportUser");
         }
 
         //Sets repeating creation of a Job Manager that will check for upload jobs
@@ -277,7 +273,6 @@ public class MainActivity
     public void handleMedicationPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
             Medication medication = (Medication) event.data;
-            System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         }
@@ -287,7 +282,6 @@ public class MainActivity
     public void handleReminderPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.REMINDERSENT)) {
             Reminder reminder = (Reminder) event.data;
-            System.out.println("Reminder about to be saved: " + reminder);
             new MySQLiteHelper(this).updateReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         }
@@ -381,11 +375,8 @@ public class MainActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        System.out.println("in on newintent");
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
-        System.out.println(reminder);
-        //String currentUserId = intent.getStringExtra("currentUserId");
 
         if (notificationAction != null) {
             switch (notificationAction) {
@@ -519,11 +510,11 @@ public class MainActivity
         return true;
     }
 
-    public void setCurrentUser(User2 user) {
+    public void setCurrentUser(User user) {
         this.currentUser = user;
     }
 
-    public User2 getCurrentUser() {
+    public User getCurrentUser() {
         return this.currentUser;
     }
 
@@ -652,7 +643,6 @@ public class MainActivity
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
 
         // Updates the DB
@@ -664,11 +654,11 @@ public class MainActivity
     @Override
     public void onPositiveSetAliasDialog(String alias, String userId) {
 
-        User2 user;
+        User user;
         if (!alias.equals("")) {
-            user = new User2(userId, alias);
+            user = new User(userId, alias);
         } else {
-            user = new User2(userId, userId);
+            user = new User(userId, userId);
         }
         new MySQLiteHelper(this).addUser(user);
         userSpinnerToggle.updateSpinnerContent();

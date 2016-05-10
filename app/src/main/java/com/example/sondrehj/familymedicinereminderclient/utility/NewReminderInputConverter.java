@@ -4,14 +4,10 @@ import android.app.Activity;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.sondrehj.familymedicinereminderclient.MainActivity;
-import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.fragments.NewReminderFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 
 import java.util.GregorianCalendar;
 
@@ -30,7 +26,7 @@ public class NewReminderInputConverter {
     public Reminder CreateReminderFromInput(EditText nameInput, TextView dateInput, TextView timeInput,
                                             Medication medication, Switch attachMedicationSwitch,
                                             EditText dosageInput, Switch repeatSwitch, int[] selectedDays,
-                                            TextView endDateInput, Switch activeSwitch, User2 currentUser) {
+                                            TextView endDateInput, Switch activeSwitch, User currentUser) {
 
         Reminder reminder = new Reminder();
         reminder.setOwnerId(currentUser.getUserId());
@@ -76,7 +72,7 @@ public class NewReminderInputConverter {
     public Reminder UpdateReminderFromInput(EditText nameInput, TextView dateInput, TextView timeInput,
                                             Medication medication, Switch attachMedicationSwitch,
                                             EditText dosageInput, Switch repeatSwitch, int[] selectedDays,
-                                            TextView endDateInput, Switch activeSwitch, Reminder reminder, User2 currentUser) {
+                                            TextView endDateInput, Switch activeSwitch, Reminder reminder, User currentUser) {
 
         //Updates an existing Reminder object
         reminder.setName(nameInput.getText().toString());

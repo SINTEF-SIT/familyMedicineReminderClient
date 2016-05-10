@@ -143,7 +143,6 @@ public class Reminder implements Serializable {
     }
 
     public String getDateString(){
-        System.out.println(date);
         int hour = date.get(Calendar.HOUR_OF_DAY);
         int minute = date.get(Calendar.MINUTE);
         int year = date.get(Calendar.YEAR);

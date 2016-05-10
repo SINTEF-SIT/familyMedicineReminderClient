@@ -7,13 +7,10 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -22,19 +19,12 @@ import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
 
-import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.sync.PutSettingsJob;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 
 public class AccountAdministrationFragment extends android.support.v4.app.Fragment {
 

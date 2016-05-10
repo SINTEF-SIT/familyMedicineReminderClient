@@ -14,11 +14,9 @@ import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 import com.example.sondrehj.familymedicinereminderclient.utility.ReminderComparator;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -79,7 +77,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " real, " + COLUMN_REMINDER_TIME_TAKEN
             + " string);";
 
-    // User table
+    // TransportUser table
     public static final String TABLE_USER = "user";
     public static final String COLUMN_USER_USER_ID = "user_id";
     public static final String COLUMN_USER_ALIAS = "alias";
@@ -609,19 +607,19 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // ----- USERS ----- //
 
-    public ArrayList<User2> getUsers() {
+    public ArrayList<User> getUsers() {
 
         // Retrieve Users
         String selectQuery = "SELECT  * FROM " + TABLE_USER;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        ArrayList<User2> data = new ArrayList<>();
+        ArrayList<User> data = new ArrayList<>();
         // Loop through the retrieved data. Generates instances of the the user class.
         if (cursor.moveToFirst()) {
             do {
                 String userId = cursor.getString(0);
                 String alias = cursor.getString(1);
-                User2 user = new User2(userId, alias);
+                User user = new User(userId, alias);
                 data.add(user);
             } while (cursor.moveToNext());
         }
@@ -630,7 +628,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         return data;
     }
 
-    public void addUser(User2 user) {
+    public void addUser(User user) {
         // Add new user
         SQLiteDatabase db = this.getWritableDatabase();
         // Prepares the statement
@@ -642,7 +640,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public void updateUser(User2 user) {
+    public void updateUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         // Prepares the statement
         ContentValues values = new ContentValues();

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,10 +19,7 @@ import com.example.sondrehj.familymedicinereminderclient.adapters.ReminderListRe
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.database.ReminderListContent;
-import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -48,6 +44,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
     private Boolean busIsRegistered = false;
     private List<Reminder> reminders = new ArrayList<>();
     private SwipeRefreshLayout swipeContainer;
+    private final String TAG = "ReminderListFragment";
 
     @Bind(R.id.reminder_empty)
     TextView emptyView;
@@ -107,7 +104,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
     @Subscribe
     public void handleRemindersChangedEvent(DataChangedEvent event) {
         if(event.type.equals(DataChangedEvent.REMINDERS)) {
-            System.out.println("In handle data changed event");
+            Log.d(TAG, "In handle data changed event");
             List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId());
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
@@ -134,9 +131,9 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
                 recView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
             }
-            System.out.println(reminders);
+            Log.d(TAG, reminders.toString());
             recView.getAdapter().notifyDataSetChanged();
-            System.out.println("notifychanged called");
+            Log.d(TAG, "notifychanged called");
         }
     }
 

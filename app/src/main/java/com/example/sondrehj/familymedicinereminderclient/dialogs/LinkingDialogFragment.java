@@ -47,7 +47,7 @@ public class LinkingDialogFragment extends DialogFragment {
                     });
                 })
                 .setNegativeButton("No", (DialogInterface dialog, int id) -> {
-                    // User cancelled the dialog
+                    // TransportUser cancelled the dialog
                     Call<Message> call = api.responseToLinkingRequest(account.name, "deny");
                     call.enqueue(new Callback<Message>() {
                         @Override

@@ -49,7 +49,7 @@ public class PostMedicationJob extends Job {
         Call<Medication> call = api.createMedication(userId, medication);
         Medication med = call.execute().body(); //medication retrieved from server
         if(med != null) {
-            System.out.println(med.getServerId());
+            Log.d(TAG, med.getServerId()+"");
             medication.setServerId(med.getServerId());  //To retain the reference to this medication, we add the server id to it
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
         }

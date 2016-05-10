@@ -186,7 +186,7 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
 
     @Override
     public void onRefresh() {
-        System.out.println("Called onRefresh");
+        Log.d(TAG, "Called onRefresh");
         Bundle extras = new Bundle();
         extras.putString("notificationType", "medicationsChanged");
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
