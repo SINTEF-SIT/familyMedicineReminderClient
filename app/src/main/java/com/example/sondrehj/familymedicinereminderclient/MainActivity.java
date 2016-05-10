@@ -101,6 +101,8 @@ public class MainActivity
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+    private String currentFragmentName;
+
     // Global Variables
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient";
 
@@ -132,12 +134,15 @@ public class MainActivity
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
             changeFragment(WelcomeFragment.newInstance());
+            currentFragmentName = WelcomeFragment.class.getSimpleName();
+
             //disables drawer and navigation in welcomeFragment.
             drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
             toggle.setDrawerIndicatorEnabled(false);
         } else {
             changeFragment(DashboardListFragment.newInstance());
+            currentFragmentName = DashboardListFragment.class.getSimpleName();
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
             //Enables drawer and menu-button
@@ -353,16 +358,19 @@ public class MainActivity
         String backStateName = fragment.getClass().getName();
         Log.d(TAG, "Navigated to: " + fragment.getClass().getSimpleName());
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        if(backStateName.equals(currentFragmentName))   return;
 
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-        transaction.addToBackStack(backStateName);
+        boolean fragmentPopped = getSupportFragmentManager().popBackStackImmediate(backStateName, 0);
+        if(!fragmentPopped) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+            transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            transaction.addToBackStack(backStateName);
 
-        //Commit the transaction
-        transaction.commit();
+            //Commit the transaction
+            currentFragmentName = backStateName;
+            transaction.commit();
+        }
     }
 
     /**
@@ -485,7 +493,10 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-        changeFragment(new MedicationListFragment());
+        getSupportFragmentManager().popBackStackImmediate(currentFragmentName, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        changeFragment(new DashboardListFragment());
+        currentFragmentName = DashboardListFragment.class.getSimpleName();
+
     }
 
     /**

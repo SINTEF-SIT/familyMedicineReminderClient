@@ -101,9 +101,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
                     todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
 
                     fragment.notifyChanged();
-
-
-
                 });
             }
         }
