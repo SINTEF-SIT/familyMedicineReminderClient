@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
@@ -20,6 +21,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static String NOTIFICATION = "notification";
     public static String NOTIFICATION_REMINDER = "notification-reminder";
     public static String NOTIFICATION_TYPE = "notification-type";
+    private final String TAG = "NotificationPublisher";
     public Context context;
 
     public void onReceive(Context context, Intent intent) {
@@ -41,31 +43,29 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // Snooze notification
         if (notificationType.equals("snooze")) {
-            System.out.println("Publishing snooze notification: " + id);
+            Log.d(TAG, "Publishing snooze notification: " + id);
             notificationManager.notify(id, notification);
             return;
         }
         // Checks if the user has specified days for the reminder
         if (days.length == 0) {
             notificationManager.notify(id, notification);
-            System.out.println("Publishing non-repeating Notification with ID: " + id);
+            Log.d(TAG, "Publishing non-repeating Notification with ID: " + id);
             return;
         }
         // Checks if the reminder should be canceled. End date is before current date.
         if (!cal.before(endCal)) {
             notificationManager.notify(id, notification);
             cancelNotification(id);
-            System.out.println("Notification was canceled. Reminder end date is before current date.");
+            Log.d(TAG, "Notification was canceled. Reminder end date is before current date.");
             return;
         }
         // If the user has specified days, we check if today is one of the days.
         // The notification is published if true.
-        System.out.println(currentDay);
-        System.out.println(Arrays.toString(days));
         for (int day : days) {
             if (day == currentDay) {
                 notificationManager.notify(id, notification);
-                System.out.println("Publishing repeating Notification with ID: " + id);
+                Log.d(TAG, "Publishing repeating Notification with ID: " + id);
                 break;
             }
         }
@@ -79,6 +79,5 @@ public class NotificationPublisher extends BroadcastReceiver {
                 new Intent(),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingIntent);
-        System.out.println("Reminder: " + id + " was deactivated");
     }
 }

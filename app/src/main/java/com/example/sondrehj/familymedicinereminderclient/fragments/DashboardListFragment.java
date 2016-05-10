@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -87,7 +86,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     @Subscribe
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
-        if (event.type.equals(DataChangedEvent.REMINDERS) || event.type.equals(DataChangedEvent.MEDICATIONS)) {
+        if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
             Log.d("DashboardListFragment", "in Dashboardchanged");
             List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getTodaysReminders();
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
@@ -100,7 +99,11 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
                     todaysReminders.addAll(remindersToAdd);
                     todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
                     todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
+
                     fragment.notifyChanged();
+
+
+
                 });
             }
         }
@@ -110,7 +113,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.dashboard_list);
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
-            System.out.println("notifychanged called");
         }
     }
 

@@ -69,6 +69,7 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
 
     @Subscribe
     public void handleMedicationsChangedEvent(DataChangedEvent event) {
+
         if(event.type.equals(DataChangedEvent.MEDICATIONS)) {
             List<Medication> medicationsToAdd = new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId());
             MedicationListFragment fragment = (MedicationListFragment) getFragmentManager().findFragmentByTag("MedicationListFragment");
@@ -186,7 +187,6 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
 
     @Override
     public void onRefresh() {
-        System.out.println("Called onRefresh");
         Bundle extras = new Bundle();
         extras.putString("notificationType", "medicationsChanged");
         extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);

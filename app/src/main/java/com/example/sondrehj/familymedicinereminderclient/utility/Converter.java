@@ -16,9 +16,6 @@ public final class Converter {
         String[] dateArray = date.split("\\W+");
         String[] timeArray = time.split(":");
 
-        System.out.println(Arrays.toString(dateArray));
-        System.out.println(Arrays.toString(timeArray));
-
         // Set start date and time
         GregorianCalendar cal = new GregorianCalendar(
                 Integer.parseInt(dateArray[2]),      //Year
@@ -32,9 +29,7 @@ public final class Converter {
 
     public static GregorianCalendar databaseDateStringToCalendar(String dateString) {
 
-        System.out.println(dateString);
         String[] dateArray = dateString.split(";");
-        System.out.println(Arrays.toString(dateArray));
         GregorianCalendar cal = new GregorianCalendar(
                 Integer.parseInt(dateArray[0]), //Year
                 Integer.parseInt(dateArray[1]), //Month
@@ -93,7 +88,6 @@ public final class Converter {
         StringBuilder stringBuilder = new StringBuilder("0000000");
         for (int i : dayArray) {
             stringBuilder.replace(i,i+1,"1");
-            System.out.println(stringBuilder.toString());
         }
         return stringBuilder.toString();
     }

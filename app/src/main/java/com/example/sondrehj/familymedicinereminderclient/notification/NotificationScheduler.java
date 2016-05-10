@@ -65,7 +65,6 @@ public class NotificationScheduler {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
-        System.out.println("Scheduling: " + reminder);
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -207,8 +206,6 @@ public class NotificationScheduler {
     public void snoozeNotification(Notification notification, Reminder reminder, int snoozeTime) {
 
         Calendar currentTime = new GregorianCalendar();
-
-        System.out.println(snoozeTime);
         Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
 
@@ -234,7 +231,6 @@ public class NotificationScheduler {
                 new Intent(context, NotificationPublisher.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingIntent);
-        System.out.println("Reminder: " + id + " was deactivated");
     }
 
     /**
@@ -303,14 +299,14 @@ public class NotificationScheduler {
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             this.removeNotification(reminder.getReminderId());
-            System.out.println(currentTime.getTime().toString());
             // Display toaster
             Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();
             // update server side
             String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
             String userId = ((MainActivity) context).getCurrentUser().getUserId();
-            MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
-            MainActivity.getJobManager(context).addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
+            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
+
         }
     }
 
@@ -323,16 +319,13 @@ public class NotificationScheduler {
         db.setReminderTimeTaken(reminder);
         reminder = db.getReminderByLocalId(reminder.getReminderId());
 
-        System.out.println(reminder);
-
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
         // Display toaster
-        System.out.println("TAKEN CLICKED: " + reminder.getReminderId());
         this.removeNotification(reminder.getReminderId());
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
         String userId = ((MainActivity) context).getCurrentUser().getUserId();
-        MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+        ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
 
     }
 }

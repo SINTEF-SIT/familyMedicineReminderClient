@@ -143,9 +143,6 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
 
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
-
-        System.out.println("USERID: " + userId);
-
         Medication medication = new Medication(
                 0,
                 -1,
@@ -159,11 +156,8 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
 
-        MainActivity.getJobManager(getContext()).addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-
-        System.out.println("---------Medication Created---------" + "\n" + medication);
-        System.out.println("------------------------------------");
         return medication;
 
     }
@@ -182,10 +176,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.updateMedication(mMedication);
 
-        MainActivity.getJobManager(getActivity()).addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-
-        System.out.println("---------Medication Updated---------" + "\n" + mMedication);
-        System.out.println("------------------------------------");
     }
 }

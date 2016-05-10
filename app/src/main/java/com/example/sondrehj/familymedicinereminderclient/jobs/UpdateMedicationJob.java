@@ -1,5 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.jobs;
 
+import android.util.Log;
+
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
@@ -20,22 +22,22 @@ public class UpdateMedicationJob extends Job {
         private Medication medication;
         private String userId;
         private String authToken;
+        private final String TAG = "UpdateœReminerJob";
 
-        public UpdateMedicationJob(Medication medication, String userId, String authToken) {
+
+    public UpdateMedicationJob(Medication medication, String userId, String authToken) {
             // This job requires network connectivity,
             // and should be persisted in case the application exits before job is completed.
 
             super(new Params(PRIORITY)
                     .requireNetwork()
                     .persist());
-            System.out.println("New medication job posted");
             this.medication = medication;
             this.userId = userId;
             this.authToken = authToken;
         }
         @Override
         public void onAdded() {
-            System.out.println("In medication job's onAdded");
 
             // Job has been saved to disk.
             // This is a good place to dispatch a UI event to indicate the job will eventually run.
@@ -43,20 +45,17 @@ public class UpdateMedicationJob extends Job {
         }
         @Override
         public void onRun() throws Throwable {
-            System.out.println("In medication onRun!");
-
             MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
             Call<Medication> call = api.updateMedication(userId, String.valueOf(medication.getServerId()), medication);
             Medication med = call.execute().body(); //medication retrieved from server
             if(med != null) {
-                System.out.println(med);
                 medication.setName(med.getName());
                 medication.setCount(med.getCount());
                 medication.setUnit(med.getUnit());
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
             }
             else {
-                System.out.println("med returned from server was null");
+                Log.d(TAG, "med returned from server was null");
             }
         }
 

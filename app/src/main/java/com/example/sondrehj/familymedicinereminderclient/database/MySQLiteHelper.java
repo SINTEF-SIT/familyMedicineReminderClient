@@ -99,7 +99,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(CREATE_TABLE_MEDICATION);
         database.execSQL(CREATE_TABLE_REMINDER);
         database.execSQL(CREATE_TABLE_USER);
-        System.out.println("DATABASE CREATED");
+        Log.d("MySQLiteHelper", "DATABASE CREATED");
     }
 
     @Override
@@ -138,7 +138,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public void updateMedication(Medication medication) {
         // Update existing medication
         SQLiteDatabase db = this.getWritableDatabase();
-        System.out.println("In update medication SQL " + medication);
 
         //Prepares the statement
         ContentValues values = new ContentValues();

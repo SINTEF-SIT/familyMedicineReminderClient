@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.jobs;
 
 import android.renderscript.RenderScript;
+import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
@@ -24,6 +25,7 @@ public class PostReminderJob extends Job {
     private Reminder reminder;
     private String userId;
     private String authToken;
+    private final String TAG = "PostReminerJob";
 
     public PostReminderJob(Reminder reminder, String userId, String authToken) {
         // This job requires network connectivity,
@@ -32,7 +34,6 @@ public class PostReminderJob extends Job {
         super(new Params(PRIORITY)
                 .requireNetwork()
                 .persist());
-        System.out.println("New reminder job posted");
         this.reminder = reminder;
         this.userId = userId;
         this.authToken = authToken;
@@ -40,8 +41,6 @@ public class PostReminderJob extends Job {
 
     @Override
     public void onAdded() {
-        System.out.println("In reminder job's onAdded");
-        System.out.println(reminder);
         // Job has been saved to disk. This means that the job is persisted and the application can fail without
         // consequence for the job queue.
     }
@@ -51,16 +50,14 @@ public class PostReminderJob extends Job {
 
         MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
         TransportReminder transReminder = new TransportReminder(reminder);
-        System.out.println(transReminder);
         Call<TransportReminder> call = api.createReminder(userId, transReminder);
         TransportReminder transportReminder = call.execute().body();
         if(transportReminder != null) {
             reminder.updateFromTransportReminder(transportReminder);
-            System.out.println(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERSENT, reminder));
         }
         else {
-            System.out.println("reminder returned from server was null");
+            Log.e(TAG, "Transportreminder was null");
         }
     }
 
@@ -74,7 +71,7 @@ public class PostReminderJob extends Job {
 
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {
-        System.out.println("Exception in reminder job: ");
+        Log.e(TAG, "Exception in reminder job: ");
         throwable.printStackTrace();
         return true;
     }

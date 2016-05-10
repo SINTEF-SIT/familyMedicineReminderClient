@@ -56,7 +56,6 @@ public class Synchronizer {
         call.enqueue(new Callback<List<TransportReminder>>() {
             @Override
             public void onResponse(Call<List<TransportReminder>> call, Response<List<TransportReminder>> response) {
-                System.out.println("In syncreminders");
                 ArrayList<Reminder> dbReminders = db.getReminders();
 
 
@@ -67,9 +66,7 @@ public class Synchronizer {
                 for (TransportReminder serverReminder : response.body()) {
 
                     //If a reminder is attached to an unsynced medication, we request that the user sync medications first
-                    System.out.println("Getting med dependency: " + serverReminder.getMedicine());
                     Medication medDependency = new MySQLiteHelper(context).getSingleMedicationByServerID(serverReminder.getMedicine());
-                    System.out.println("Got med dependency: " + medDependency);
                     if(medDependency == null && serverReminder.getDosage() != 0) {
                         Toast.makeText(context, "Some of the reminders need medications that are not yet synchronized. " +
                                 "Please synchronize medcations first", Toast.LENGTH_SHORT).show();
@@ -79,18 +76,13 @@ public class Synchronizer {
                     boolean updated = false;
 
                     for (Reminder dbReminder : dbReminders) {
-                        System.out.println("DBReminder serverID: " + dbReminder.getServerId());
-                        System.out.println("Server reminder ID: " + serverReminder.getServerId());
-
                         // If the two have the same server ID, we know they are the same, and we request
                         // an update. If we made a change, we want to move on to the next serverReminder.
                         if (serverReminder.getServerId() == dbReminder.getServerId()) {
                             dbReminder.setMedicine(medDependency);
-                            System.out.println("Comparing" + serverReminder.getServerId() + " : " + dbReminder.getServerId());
                             dbReminder.updateFromTransportReminder(serverReminder);
                             dbReminder.setName(serverReminder.getName());
                             dbReminder.setDate(Converter.databaseDateStringToCalendar(serverReminder.getDate()));
-                            System.out.println("ENd date: " + serverReminder.getEndDate());
                             if(! serverReminder.getEndDate().equals("0")) {
                                 dbReminder.setEndDate(Converter.databaseDateStringToCalendar(serverReminder.getEndDate()));
                             } else {
@@ -135,7 +127,6 @@ public class Synchronizer {
 
 
                 BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-                System.out.println("Finished db, sending intent");
                 Intent intent = new Intent();
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncReminders");
@@ -145,19 +136,17 @@ public class Synchronizer {
 
             @Override
             public void onFailure(Call<List<TransportReminder>> call, Throwable t) {
-                System.out.println("Could not retrieve reminders: " + t.getMessage());
+                Log.d(TAG, "Failure");
             }
         });
         return true;
     }
 
     public Boolean syncMedications() {
-        Log.d(TAG, "UserToSync: " + userToSync);
         Call<List<Medication>> call = restApi.getUserMedicationList(userToSync);
         call.enqueue(new Callback<List<Medication>>() {
             @Override
             public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
-                System.out.println("In sync medications");
                 ArrayList<Medication> clientMedications = db.getMedications();
                 Log.d(TAG, response.raw().toString());
 
@@ -168,7 +157,6 @@ public class Synchronizer {
                 for (Medication serverMedication : response.body()) {
                     for (Medication clientMedication : clientMedications) {
                         if(serverMedication.getServerId() == clientMedication.getServerId()) {
-                            System.out.println("Updated med with id " + clientMedication.getServerId());
                             clientMedication.setServerId(serverMedication.getServerId());
                             clientMedication.setName(serverMedication.getName());
                             clientMedication.setUnit(serverMedication.getUnit());
@@ -189,7 +177,6 @@ public class Synchronizer {
                     }
                 }
 
-                System.out.println("Finished db, sending intent");
                 Intent intent = new Intent();
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncMedications");
@@ -200,7 +187,7 @@ public class Synchronizer {
 
             @Override
             public void onFailure(Call<List<Medication>> call, Throwable t) {
-                System.out.println("Could not retrieve medications: " + t.getMessage());
+                Log.e(TAG, "Could not retrieve medications: " + t.getMessage());
             }
         });
         return true;
