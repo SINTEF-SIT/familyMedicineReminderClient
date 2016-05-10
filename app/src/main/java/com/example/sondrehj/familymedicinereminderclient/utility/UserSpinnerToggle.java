@@ -89,8 +89,8 @@ public class UserSpinnerToggle {
             usersAlias[userIndex] = users.get(userIndex).getAlias();
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-                R.layout.simple_spinner_item, usersAlias);
-        adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item);
+                R.layout.custom_spinner_item, usersAlias);
+        adapter.setDropDownViewResource(R.layout.custom_spinner_dropdown_item);
         userSpinner.setAdapter(adapter);
     }
 
@@ -112,5 +112,4 @@ public class UserSpinnerToggle {
     public User2 getSelectedUser() {
         return this.selectedUser;
     }
-
 }
