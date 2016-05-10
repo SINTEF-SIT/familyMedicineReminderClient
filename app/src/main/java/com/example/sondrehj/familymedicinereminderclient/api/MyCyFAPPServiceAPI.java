@@ -61,7 +61,7 @@ public interface MyCyFAPPServiceAPI {
     @GET("user/{userID}/children")
     Call<TransportUser> getChildren(@Path("userID") String userID);
 
-    @POST("transportUser")
+    @POST("user")
     Call<TransportUser> createUser(@Header("create_secret") String createSecret, @Body TransportUser transportUser);
 
     @PUT("user/{userID}/token/{token}")

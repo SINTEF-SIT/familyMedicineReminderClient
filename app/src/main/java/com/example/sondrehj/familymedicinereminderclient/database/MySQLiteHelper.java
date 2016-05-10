@@ -217,7 +217,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         //Prepares the statement
         ContentValues values = new ContentValues();
-        values.put(COLUMN_MED_COUNT, medication.getCount());
+        if(medication.getCount() < 0){
+            values.put(COLUMN_MED_COUNT, 0);
+        } else {
+            values.put(COLUMN_MED_COUNT, medication.getCount());
+        }
 
         db.update(TABLE_MEDICATION, values, "med_id=" + medication.getMedId(), null);
         db.close(); // Closing database connection

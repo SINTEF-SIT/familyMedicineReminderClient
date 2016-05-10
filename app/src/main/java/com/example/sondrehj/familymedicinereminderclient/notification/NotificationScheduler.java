@@ -81,6 +81,16 @@ public class NotificationScheduler {
     }
 
     /**
+     * Publishes a given notification instantly.
+     *
+     * @param notification the notification to be published.
+     */
+    public void publishInstantNotification(Notification notification) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(-100, notification);
+    }
+
+    /**
      * Creates an instance of Notification given a reminder.
      *
      * @param reminder provides information such as name and content for the reminder.
@@ -300,6 +310,9 @@ public class NotificationScheduler {
             // Updates the DB
             MySQLiteHelper db = new MySQLiteHelper(context);
             db.updateAmountMedication(reminder.getMedicine());
+            if(reminder.getMedicine().getCount() < 5){
+                publishInstantNotification(getLowOnMedicationNotification(reminder.getMedicine()));
+            }
             db.setReminderTimeTaken(reminder);
             reminder = db.getReminderByLocalId(reminder.getReminderId());
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
@@ -334,6 +347,25 @@ public class NotificationScheduler {
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
         String userId = ((MainActivity) context).getCurrentUser().getUserId();
         MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+    }
 
+    public Notification getLowOnMedicationNotification(Medication medication) {
+
+        // Defines the Intent of the notification
+        Intent intent = new Intent(context, context.getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
+
+        // Constructs the notification
+        Notification notification = new Notification.Builder(context)
+                .setContentTitle("MYCYFAPP")
+                .setContentText("You're running out of " + medication.getName())
+                .setSmallIcon(R.drawable.ic_sidebar_pill)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pIntent)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        return notification;
     }
 }

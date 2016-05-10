@@ -148,6 +148,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                     public void onClick(View v) {
                         System.out.println(holder.mReminder.getMedicine());
                         if (holder.mReminder.getTimeTaken() == null) {
+                            NotificationScheduler ns = new NotificationScheduler(context);
                             GregorianCalendar gregorianCalendar = new GregorianCalendar();
                             holder.mReminder.setTimeTaken(gregorianCalendar);
 
@@ -172,10 +173,12 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                                 db.setReminderTimeTaken(holder.mReminder);
                                 holder.mReminder.getMedicine().setCount(holder.mReminder.getMedicine().getCount() - holder.mReminder.getDosage());
                                 db.updateAmountMedication(holder.mReminder.getMedicine());
+                                if(holder.mReminder.getMedicine().getCount() < 5){
+                                    ns.publishInstantNotification(ns.getLowOnMedicationNotification(holder.mReminder.getMedicine()));
+                                }
                                 MainActivity.getJobManager(context).addJobInBackground(new UpdateMedicationJob(holder.mReminder.getMedicine(), userId, authToken));
                                 MainActivity.getJobManager(context).addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
                             }
-                            NotificationScheduler ns = new NotificationScheduler(context);
                             ns.cancelNotification(holder.mReminder.getReminderId());
                         }
                     }
