@@ -64,6 +64,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     //TODO: Crash if you attach a medicine and there is no medicines to choose from, and press OK
     //TODO: Remove one of the "reminder is active" switches. There's one in Reminder and one in NewReminder
 
+    @Bind(R.id.reminder_edit_group_active) LinearLayout activeGroup;
     @Bind(R.id.reminder_edit_group_end_date) LinearLayout endDatePickerGroup;
     @Bind(R.id.reminder_edit_group_choose_days) LinearLayout chooseDaysPickerGroup;
     @Bind(R.id.reminder_edit_group_choose_medication) LinearLayout chooseMedicationGroup;
@@ -156,6 +157,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
         ButterKnife.bind(this, view);
+        activeGroup.setVisibility(view.GONE); //set active visibility to GONE, we don't want to show this.
         weekDayTextViewArray = new TextView[]{Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
 
         // Hide layouts which are opened with switches.
@@ -373,7 +375,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH) + 1; //month is 0-indexed
         final int day = c.get(Calendar.DAY_OF_MONTH);
-        String time = String.format("%02d:%02d", hour, minute);
+        String time = String.format("%02d:%02d", hour, minute+5); //set time 5 minutes past time
         String date = String.format("%02d.%02d.%4d", day, month, year);
         currentStartDate = date;
         dateInput.setText(date);

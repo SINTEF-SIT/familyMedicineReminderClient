@@ -52,8 +52,7 @@ public class MedicationListFragment extends android.support.v4.app.Fragment impl
     private OnListFragmentInteractionListener mListener;
     private SwipeRefreshLayout swipeContainer;
 
-    @Bind(R.id.medication_empty)
-    TextView emptyView;
+    @Bind(R.id.medication_empty) TextView emptyView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
