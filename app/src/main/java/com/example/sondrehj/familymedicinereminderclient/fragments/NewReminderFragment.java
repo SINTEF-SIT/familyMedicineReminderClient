@@ -425,8 +425,14 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
             chooseMedicationGroup.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
-                    medicationPickerFragment.show(getActivity().getSupportFragmentManager(), "medicationPickerFragment");
+                    String userId = ((MainActivity)getActivity()).getCurrentUser().getUserId();
+                    int numMed = new MySQLiteHelper(getActivity()).getMedicationsByOwnerId(userId).size();
+                    if(numMed > 0) {
+                        MedicationPickerFragment medicationPickerFragment = new MedicationPickerFragment();
+                        medicationPickerFragment.show(getActivity().getSupportFragmentManager(), "medicationPickerFragment");
+                    } else {
+                        Toast.makeText(getActivity(), "Please create a medication before you use this function.", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         } else {
