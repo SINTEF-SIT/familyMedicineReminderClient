@@ -28,7 +28,7 @@ public class SyncReceiver extends BroadcastReceiver {
      * wanted to post in the SyncAdapter here instead. It works here because the bus is
      * registered to the process already (in MainActivity). You cannot register the bus to the
      * SyncAdapter.
-     *
+     * <p>
      * http://stackoverflow.com/questions/5268536/how-does-one-listen-for-progress-from-android-syncadapter
      *
      * @param context
@@ -40,31 +40,32 @@ public class SyncReceiver extends BroadcastReceiver {
         if (extras != null) {
             Log.d(TAG, extras.getString("action"));
             String action = extras.getString("action");
-
-            if (action.equals("open_dialog")) {
-                BusService.getBus().post(new LinkingRequestEvent());
-            }
-            if (action.equals("notifyPositiveResultToLinkingFragment")) {
-                String patientID = extras.getString("patientID");
-                BusService.getBus().post(new LinkingResponseEvent("positiveResponse", patientID));
-            }
-            if (action.equals("notifyNegativeResultToLinkingFragment")) {
-                BusService.getBus().post(new LinkingResponseEvent("negativeResponse"));
-
-            }
-            if (action.equals("syncMedications")) {
-                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-            }
-
-            if (action.equals("syncReminders")) {
-                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-            }
-            if (action.equals("medicationSent")) {
-                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT));
-            }
-            if (action.equals("scheduleReminder")) {
-                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.SCHEDULE_REMINDER, intent.getSerializableExtra("reminder")));
+            switch (action) {
+                case "open_dialog":
+                    BusService.getBus().post(new LinkingRequestEvent());
+                    break;
+                case "notifyPositiveResultToLinkingFragment":
+                    BusService.getBus().post(new LinkingResponseEvent("positiveResponse", extras.getString("patientID")));
+                    break;
+                case "notifyNegativeResultToLinkingFragment":
+                    BusService.getBus().post(new LinkingResponseEvent("negativeResponse"));
+                    break;
+                case "syncMedications":
+                    BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
+                    break;
+                case "syncReminders":
+                    BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+                    break;
+                case "medicationSent":
+                    BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT));
+                    break;
+                case "scheduleReminder":
+                    BusService.getBus().post(new DataChangedEvent(DataChangedEvent.SCHEDULE_REMINDER, intent.getSerializableExtra("reminder")));
+                    break;
+                default:
+                    break;
             }
         }
+        return;
     }
 }

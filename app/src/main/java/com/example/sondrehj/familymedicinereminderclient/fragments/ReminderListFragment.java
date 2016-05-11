@@ -48,6 +48,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
     private Boolean busIsRegistered = false;
     private List<Reminder> reminders = new ArrayList<>();
     private SwipeRefreshLayout swipeContainer;
+    private final String TAG = "ReminderListFragment";
 
     @Bind(R.id.reminder_empty)
     TextView emptyView;
@@ -104,18 +105,12 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
         return view;
     }
 
-    public void deleteReminder(Reminder reminder, int position){
-        reminders.remove(reminder);
-        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
-        notifyChanged();
-    }
-
     @Subscribe
     public void handleRemindersChangedEvent(DataChangedEvent event) {
         if(event.type.equals(DataChangedEvent.REMINDERS)) {
+            Log.d(TAG, "Handled remindersChanged event");
             List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId());
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
-            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
                     reminders.clear();

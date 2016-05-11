@@ -620,7 +620,7 @@ public class MainActivity
         }
         changeFragment(ReminderListFragment.newInstance());
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+       // BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override
@@ -664,7 +664,7 @@ public class MainActivity
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+        //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override

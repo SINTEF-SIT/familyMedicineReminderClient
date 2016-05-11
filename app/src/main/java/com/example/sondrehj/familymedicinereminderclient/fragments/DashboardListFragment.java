@@ -99,7 +99,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     @Subscribe
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
-        if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+        if (event.type.equals(DataChangedEvent.REMINDERS) || event.type.equals(DataChangedEvent.MEDICATIONS)) {
             Log.d("DashboardListFragment", "in Dashboardchanged");
             List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getTodaysReminders();
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
@@ -124,16 +124,16 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
             Log.d(TAG,"Notify changed called");
-        }
 
-        if(todaysReminders.size() == 0) {
-            Log.d(TAG, "size was 0");
-            recView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }
-        else {
-            recView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
+            if(todaysReminders.size() == 0) {
+                Log.d(TAG, "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
         }
     }
 
