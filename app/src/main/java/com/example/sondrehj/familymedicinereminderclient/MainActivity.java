@@ -35,6 +35,7 @@ import android.widget.Toast;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
+import com.example.sondrehj.familymedicinereminderclient.database.DatabaseReceiver;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
@@ -74,6 +75,7 @@ import com.path.android.jobqueue.config.Configuration;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class MainActivity
@@ -167,6 +169,17 @@ public class MainActivity
         Intent intent = new Intent(this, ServerStatusChangeReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, -2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, pendingIntent);
+
+        // Creates a service to reset the TIME_TAKEN_COLUMN for REMINDER in the database every day at 00:00.
+        Intent resetTimeTakenIntent = new Intent(this, DatabaseReceiver.class);
+        PendingIntent pendingResetTimeTakenIntent = PendingIntent.getBroadcast(this, -3, resetTimeTakenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // Set the database to be updated at 00:00
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                alarmManager.INTERVAL_DAY, pendingResetTimeTakenIntent);
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);

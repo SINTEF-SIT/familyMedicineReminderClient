@@ -629,6 +629,23 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
+    public void resetTimeTaken(){
+
+        // Update existing medication
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //Prepares the statement
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_REMINDER_TIME_TAKEN, "0");
+
+        db.update(TABLE_REMINDER, values, COLUMN_REMINDER_TIME_TAKEN, null);
+        db.close(); // Closing database connection
+
+    }
+
+
+
+
     /**
      * Retrieves all the {@link Reminder} that are scheduled for the current date.
      *
