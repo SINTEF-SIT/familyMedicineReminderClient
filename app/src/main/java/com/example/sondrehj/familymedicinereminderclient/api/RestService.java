@@ -31,7 +31,6 @@ public class RestService {
      * token to its
      *
      * @param authToken             The access token to be used for authenticating the user on the server.
-     *
      * @return MyCyFAPPServiceAPI   A retrofit instance built from the MyCyFAPPServiceAPI
      */
     public static MyCyFAPPServiceAPI createRestService(final String authToken) {

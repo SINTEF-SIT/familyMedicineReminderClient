@@ -346,7 +346,7 @@ public class NotificationScheduler {
             db.setReminderTimeTaken(reminder);
             reminder = db.getReminderByLocalId(reminder.getReminderId());
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
             this.removeNotification(reminder.getReminderId());
             // Display toaster
             Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();
@@ -374,13 +374,9 @@ public class NotificationScheduler {
         MySQLiteHelper db = new MySQLiteHelper(context);
         db.setReminderTimeTaken(reminder);
         reminder = db.getReminderByLocalId(reminder.getReminderId());
-
-
-        Log.d(TAG, reminder.toString());
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
-        // Display toaster
-        Log.d(TAG, "TAKEN CLICKED: " + reminder.getReminderId());
-
+        // Notify change/update in reminders
+        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+        // Remove the notification from the drop-down menu
         this.removeNotification(reminder.getReminderId());
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");

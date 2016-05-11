@@ -28,5 +28,14 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/today_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        android:text="@string/no_todays_reminders"
+        android:textAlignment="center"
+        android:textSize="30dp"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

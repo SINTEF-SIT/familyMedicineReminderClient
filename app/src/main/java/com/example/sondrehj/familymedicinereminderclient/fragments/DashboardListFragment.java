@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.sondrehj.familymedicinereminderclient.adapters.HeaderItem;
 import com.example.sondrehj.familymedicinereminderclient.adapters.ListItem;
@@ -33,22 +34,23 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class DashboardListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
+    private static String TAG = "DashboardListFragment";
     private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
     private List<Reminder> todaysReminders = new ArrayList<>();
     private LinkedHashMap<String,List<Reminder>> todaysRemindersSortedByUser = new LinkedHashMap<>();
     private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
     private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
-    @Bind(R.id.reminder_refresh_layout) SwipeRefreshLayout swipeContainer;
+    @Bind(R.id.today_empty) TextView emptyView;
+
 
     public DashboardListFragment() {
         // Required empty public constructor
     }
-
-    //TODO: NO REMINDERS PLACEHOLDER WHEN NO DATA; LOOK AT MEDICATIONS.
 
     /**
      * Use this factory method to create a new instance of
@@ -72,6 +74,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_dashboard_list, container, false);
+        ButterKnife.bind(this, view);
         RecyclerView recView = (RecyclerView) view.findViewById(R.id.dashboard_list);
         getActivity().setTitle("Dashboard");
 
@@ -80,13 +83,23 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
             recView.setLayoutManager(new LinearLayoutManager(context));
             recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysRemindersForAdapter, mListener, new MySQLiteHelper(getActivity()).getUsers()));
         }
+
+        if(todaysReminders.size() == 0) {
+            Log.d(TAG, "size was 0");
+            recView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else {
+            recView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
         return view;
     }
 
     @Subscribe
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
-        if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+        if (event.type.equals(DataChangedEvent.REMINDERS) || event.type.equals(DataChangedEvent.MEDICATIONS)) {
             Log.d("DashboardListFragment", "in Dashboardchanged");
             List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getTodaysReminders();
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
@@ -101,9 +114,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
                     todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
 
                     fragment.notifyChanged();
-
-
-
                 });
             }
         }
@@ -113,6 +123,17 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.dashboard_list);
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
+            Log.d(TAG,"Notify changed called");
+
+            if(todaysReminders.size() == 0) {
+                Log.d(TAG, "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -211,8 +232,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
                 MainActivity.getAccount(getActivity()),
                 "com.example.sondrehj.familymedicinereminderclient.content",
                 extras);
-
-        swipeContainer.setRefreshing(false);
     }
 
     public interface OnDashboardListFragmentInteractionListener {

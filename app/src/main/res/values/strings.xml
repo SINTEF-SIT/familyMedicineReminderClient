@@ -12,4 +12,6 @@
 
     <string name="no_reminders">No reminders</string>
 
+    <string name="no_todays_reminders">No reminders for today</string>
+
 </resources>

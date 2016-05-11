@@ -5,13 +5,10 @@ package com.example.sondrehj.familymedicinereminderclient.bus;
  */
 public class DataChangedEvent {
 
-    public static String DELETEMEDICATIONS = "deleteMedications";
     public static String REMINDERS = "reminders";
     public static String MEDICATIONS = "medications";
-    public static String MEDICATIONS_BY_OWNERID = "medicationsByOwnerId";
     public static String MEDICATIONSENT = "medicationSent";
     public static String REMINDERSENT = "reminderSent";
-    public static String DASHBOARDCHANGED = "dashboardChanged";
     public static String SCHEDULE_REMINDER = "scheduleReminder";
     public String type;
     public Object data;

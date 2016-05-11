@@ -51,8 +51,8 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // Snooze notification
         if (notificationType.equals("snooze")) {
-            notificationManager.notify(id, notification);
             Log.d(TAG, "Publishing snooze notification: " + id);
+            notificationManager.notify(id, notification);
             return;
         }
         // Checks if the user has specified days for the reminder

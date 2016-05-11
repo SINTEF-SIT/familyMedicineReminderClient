@@ -1,6 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.nfc.Tag;
@@ -125,12 +126,12 @@ public class Synchronizer {
                     }
                 }
 
-
-                BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+                //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
                 Intent intent = new Intent();
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncReminders");
                 context.sendBroadcast(intent);
+
                 Toast.makeText(context, "Reminders synchronized!", Toast.LENGTH_SHORT).show();
             }
 
@@ -181,7 +182,7 @@ public class Synchronizer {
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncMedications");
                 context.sendBroadcast(intent);
-
+                //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
                 Toast.makeText(context, "Medications synchronized!", Toast.LENGTH_SHORT).show();
             }
 
