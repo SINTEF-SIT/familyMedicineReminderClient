@@ -8,25 +8,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dashboard_list_view">
 
-
-    <android.support.v4.widget.SwipeRefreshLayout
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/dashboard_list"
+        android:name="com.example.sondrehj.familymedicinereminderclient.DashboardListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/dashboard_refresh_layout">
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".fragments.DashboardListFragment"
+        tools:listitem="@layout/fragment_dashboard_item" />
 
-        <android.support.v7.widget.RecyclerView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/dashboard_list"
-            android:name="com.example.sondrehj.familymedicinereminderclient.DashboardListFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layoutManager="LinearLayoutManager"
-            tools:context=".fragments.DashboardListFragment"
-            tools:listitem="@layout/fragment_dashboard_item" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
 
     <TextView
         android:id="@+id/today_empty"

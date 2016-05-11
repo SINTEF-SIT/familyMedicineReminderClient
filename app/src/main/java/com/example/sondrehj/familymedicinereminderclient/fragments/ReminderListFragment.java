@@ -207,7 +207,6 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
     public interface OnReminderListFragmentInteractionListener {
 
         void onReminderListItemClicked(Reminder reminder);
-        void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
     }
 }

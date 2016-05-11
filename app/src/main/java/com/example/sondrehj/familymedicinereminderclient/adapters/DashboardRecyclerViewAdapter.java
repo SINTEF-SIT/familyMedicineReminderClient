@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment.OnDashboardListFragmentInteractionListener;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
@@ -26,17 +25,14 @@ import java.util.List;
 public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<ListItem> mValues;
-    private final OnDashboardListFragmentInteractionListener mListener;
     private final Context context;
     private ArrayList<User2> users;
 
     public DashboardRecyclerViewAdapter(
             Context context,
             List<ListItem> mValues,
-            OnDashboardListFragmentInteractionListener mListener,
             ArrayList<User2> users) {
         this.mValues = mValues;
-        this.mListener = mListener;
         this.context = context;
         this.users = users;
     }
@@ -55,7 +51,6 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
             return new ViewHolder(view);
         }
     }
-
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {

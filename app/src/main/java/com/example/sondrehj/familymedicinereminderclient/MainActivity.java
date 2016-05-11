@@ -92,7 +92,6 @@ public class MainActivity
         SetAliasDialog.OnSetAliasDialogListener,
         DeleteMedicationDialogFragment.DeleteMedicationDialogListener,
         DeleteReminderDialogFragment.DeleteReminderDialogListener,
-        DashboardListFragment.OnDashboardListFragmentInteractionListener,
         CreateReminderForMedicationDialogFragment.CreateReminderForMedicationDialogListener{
 
     private static String TAG = "MainActivity";
@@ -633,18 +632,6 @@ public class MainActivity
     @Override
     public void onReminderListItemClicked(Reminder reminder) {
         changeFragment(NewReminderFragment.newInstance(reminder));
-    }
-
-    @Override
-    public void onReminderDeleteButtonClicked(Reminder reminder) {
-        // Cancel notification if set
-        if (reminder.getIsActive()) {
-            notificationScheduler.cancelNotification(reminder.getReminderId());
-        }
-
-        // Delete reminder from local database
-        MySQLiteHelper db = new MySQLiteHelper(this);
-        db.deleteReminder(reminder);
     }
 
     @Override
