@@ -101,6 +101,11 @@ public class MainActivity
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+
+    public String getCurrentFragmentName() {
+        return currentFragmentName;
+    }
+
     private String currentFragmentName;
 
     // Global Variables
@@ -134,15 +139,12 @@ public class MainActivity
         //Checks if there are accounts on the device. If there aren't, the user is redirected to the welcomeFragment.
         if (account == null) {
             changeFragment(WelcomeFragment.newInstance());
-            currentFragmentName = WelcomeFragment.class.getSimpleName();
-
             //disables drawer and navigation in welcomeFragment.
             drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
             toggle.setDrawerIndicatorEnabled(false);
         } else {
             changeFragment(DashboardListFragment.newInstance());
-            currentFragmentName = DashboardListFragment.class.getSimpleName();
             ContentResolver.setIsSyncable(account, "com.example.sondrehj.familymedicinereminderclient.content", 1);
             ContentResolver.setSyncAutomatically(account, "com.example.sondrehj.familymedicinereminderclient.content", true);
             //Enables drawer and menu-button
@@ -368,9 +370,9 @@ public class MainActivity
             transaction.addToBackStack(backStateName);
 
             //Commit the transaction
-            currentFragmentName = backStateName;
             transaction.commit();
         }
+        currentFragmentName = backStateName;
     }
 
     /**
@@ -431,7 +433,7 @@ public class MainActivity
         Account[] accounts = accountManager.getAccounts();
         for (Account account : accounts) {
             if (account.type.intern().equals(AUTHORITY))
-                accountManager.removeAccount(account, null, null);
+                accountManager.removeAccount(account, null, null);  //TODO: Find alternative to this, deprecated
         }
         // Update currentUser and user spinner
         currentUser = null;
@@ -442,6 +444,8 @@ public class MainActivity
 
         // Change fragment to WelcomeFragment
         Toast.makeText(this, "Data was deleted", Toast.LENGTH_SHORT).show();
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        currentFragmentName = null;
         changeFragment(new WelcomeFragment());
         //disables drawer and navigation in welcomeFragment.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -493,10 +497,8 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-        getSupportFragmentManager().popBackStackImmediate(currentFragmentName, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         changeFragment(new DashboardListFragment());
-        currentFragmentName = DashboardListFragment.class.getSimpleName();
-
     }
 
     /**
