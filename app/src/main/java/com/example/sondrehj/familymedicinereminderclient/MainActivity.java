@@ -57,6 +57,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialo
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
@@ -92,7 +93,6 @@ public class MainActivity
         SetAliasDialog.OnSetAliasDialogListener,
         DeleteMedicationDialogFragment.DeleteMedicationDialogListener,
         DeleteReminderDialogFragment.DeleteReminderDialogListener,
-        DashboardListFragment.OnDashboardListFragmentInteractionListener,
         CreateReminderForMedicationDialogFragment.CreateReminderForMedicationDialogListener{
 
     private static String TAG = "MainActivity";
@@ -101,6 +101,14 @@ public class MainActivity
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+
+
+    public String getCurrentFragmentName() {
+        return currentFragmentName;
+    }
+
+    private String currentFragmentName;
+
     // Global Variables
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient";
 
@@ -225,13 +233,6 @@ public class MainActivity
         unregisterReceiver(syncReceiver);
     }
 
-    public JobManager getJobManager() {
-        Configuration configuration = new Configuration.Builder(this)
-                .networkUtil(new ServerStatusChangeReceiver())
-                .build();
-        return new JobManager(this, configuration);
-    }
-
     /**
      * Gets the instantiazed account of the system, used with the SyncAdapter and
      * ContentResolver, might have to be moved sometime.
@@ -273,7 +274,6 @@ public class MainActivity
     public void handleMedicationPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
             Medication medication = (Medication) event.data;
-            System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         }
@@ -283,7 +283,6 @@ public class MainActivity
     public void handleReminderPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.REMINDERSENT)) {
             Reminder reminder = (Reminder) event.data;
-            System.out.println("Reminder about to be saved: " + reminder);
             new MySQLiteHelper(this).updateReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         }
@@ -355,16 +354,19 @@ public class MainActivity
         String backStateName = fragment.getClass().getName();
         Log.d(TAG, "Navigated to: " + fragment.getClass().getSimpleName());
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        if(backStateName.equals(currentFragmentName))   return;
 
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-        transaction.addToBackStack(backStateName);
+        boolean fragmentPopped = getSupportFragmentManager().popBackStackImmediate(backStateName, 0);
+        if(!fragmentPopped) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+            transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            transaction.addToBackStack(backStateName);
 
-        //Commit the transaction
-        transaction.commit();
+            //Commit the transaction
+            transaction.commit();
+        }
+        currentFragmentName = backStateName;
     }
 
     /**
@@ -377,10 +379,8 @@ public class MainActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        System.out.println("in on newintent");
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
-        System.out.println(reminder);
         //String currentUserId = intent.getStringExtra("currentUserId");
 
         if (notificationAction != null) {
@@ -427,7 +427,7 @@ public class MainActivity
         Account[] accounts = accountManager.getAccounts();
         for (Account account : accounts) {
             if (account.type.intern().equals(AUTHORITY))
-                accountManager.removeAccount(account, null, null);
+                accountManager.removeAccount(account, null, null);  //TODO: Find alternative to this, deprecated
         }
         // Update currentUser and user spinner
         currentUser = null;
@@ -438,6 +438,8 @@ public class MainActivity
 
         // Change fragment to WelcomeFragment
         Toast.makeText(this, "Data was deleted", Toast.LENGTH_SHORT).show();
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        currentFragmentName = null;
         changeFragment(new WelcomeFragment());
         //disables drawer and navigation in welcomeFragment.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -490,7 +492,8 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-        changeFragment(new MedicationListFragment());
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        changeFragment(new DashboardListFragment());
     }
 
     /**
@@ -611,7 +614,7 @@ public class MainActivity
         }
         changeFragment(ReminderListFragment.newInstance());
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+       // BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override
@@ -627,18 +630,6 @@ public class MainActivity
     }
 
     @Override
-    public void onReminderDeleteButtonClicked(Reminder reminder) {
-        // Cancel notification if set
-        if (reminder.getIsActive()) {
-            notificationScheduler.cancelNotification(reminder.getReminderId());
-        }
-
-        // Delete reminder from local database
-        MySQLiteHelper db = new MySQLiteHelper(this);
-        db.deleteReminder(reminder);
-    }
-
-    @Override
     public void onReminderListSwitchClicked(Reminder reminder) {
 
         if (reminder.getIsActive()) {
@@ -650,13 +641,12 @@ public class MainActivity
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
 
         // Updates the DB
         MySQLiteHelper db = new MySQLiteHelper(this);
         db.updateReminder(reminder);
-        BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
+        //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
     @Override
@@ -678,7 +668,7 @@ public class MainActivity
             String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
             new MySQLiteHelper(this).deleteMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-            getJobManager().addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
+            JobManagerService.getJobManager(this).addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
         }
         else {
             Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
@@ -695,7 +685,7 @@ public class MainActivity
             AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
             new MySQLiteHelper(this).deleteReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-            getJobManager().addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
+            JobManagerService.getJobManager(this).addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
         } else {
             Toast.makeText(this, "This reminder is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
         }

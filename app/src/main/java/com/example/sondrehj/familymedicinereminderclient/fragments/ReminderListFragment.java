@@ -48,6 +48,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
     private Boolean busIsRegistered = false;
     private List<Reminder> reminders = new ArrayList<>();
     private SwipeRefreshLayout swipeContainer;
+    private final String TAG = "ReminderListFragment";
 
     @Bind(R.id.reminder_empty)
     TextView emptyView;
@@ -104,22 +105,16 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
         return view;
     }
 
-    public void deleteReminder(Reminder reminder, int position){
-        reminders.remove(reminder);
-        RecyclerView recView = (RecyclerView) getActivity().findViewById(R.id.reminder_list);
-        notifyChanged();
-    }
-
     @Subscribe
     public void handleRemindersChangedEvent(DataChangedEvent event) {
         if(event.type.equals(DataChangedEvent.REMINDERS)) {
-            System.out.println("In handle data changed event");
-            reminders.clear();
-            reminders.addAll(new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId()));
+            Log.d(TAG, "Handled remindersChanged event");
+            List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getRemindersByOwnerId(((MainActivity) getActivity()).getCurrentUser().getUserId());
             ReminderListFragment fragment = (ReminderListFragment) getFragmentManager().findFragmentByTag("ReminderListFragment");
-            BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
+                    reminders.clear();
+                    reminders.addAll(remindersToAdd);
                     fragment.notifyChanged();
                     swipeContainer.setRefreshing(false);
                 });
@@ -139,9 +134,7 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
                 recView.setVisibility(View.VISIBLE);
                 emptyView.setVisibility(View.GONE);
             }
-            System.out.println(reminders);
             recView.getAdapter().notifyDataSetChanged();
-            System.out.println("notifychanged called");
         }
     }
 
@@ -214,7 +207,6 @@ public class ReminderListFragment extends android.support.v4.app.Fragment implem
     public interface OnReminderListFragmentInteractionListener {
 
         void onReminderListItemClicked(Reminder reminder);
-        void onReminderDeleteButtonClicked(Reminder reminder);
         void onReminderListSwitchClicked(Reminder reminder);
     }
 }

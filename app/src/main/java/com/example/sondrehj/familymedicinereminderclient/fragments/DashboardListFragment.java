@@ -36,15 +36,13 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DashboardListFragment extends android.support.v4.app.Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class DashboardListFragment extends android.support.v4.app.Fragment {
 
     private static String TAG = "DashboardListFragment";
-    private OnDashboardListFragmentInteractionListener mListener;
     private Boolean busIsRegistered = false;
     private List<Reminder> todaysReminders = new ArrayList<>();
     private LinkedHashMap<String,List<Reminder>> todaysRemindersSortedByUser = new LinkedHashMap<>();
     private List<ListItem> todaysRemindersForAdapter = new ArrayList<>();
-    private SwipeRefreshLayout.OnRefreshListener refreshListener = this;
     @Bind(R.id.today_empty) TextView emptyView;
 
 
@@ -81,17 +79,17 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         if (recView != null) {
             Context context = view.getContext();
             recView.setLayoutManager(new LinearLayoutManager(context));
-            recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysRemindersForAdapter, mListener, new MySQLiteHelper(getActivity()).getUsers()));
-        }
+            recView.setAdapter(new DashboardRecyclerViewAdapter(context, todaysRemindersForAdapter, new MySQLiteHelper(getActivity()).getUsers()));
 
-        if(todaysReminders.size() == 0) {
-            Log.d(TAG, "size was 0");
-            recView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }
-        else {
-            recView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
+            if(todaysReminders.size() == 0) {
+                Log.d(TAG, "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
         }
         return view;
     }
@@ -99,20 +97,21 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
     @Subscribe
     public void handleDashboardChangedEvent(DataChangedEvent event) {
 
-        if (event.type.equals(DataChangedEvent.DASHBOARDCHANGED)) {
+        if (event.type.equals(DataChangedEvent.REMINDERS) || event.type.equals(DataChangedEvent.MEDICATIONS)) {
             Log.d("DashboardListFragment", "in Dashboardchanged");
-            todaysRemindersForAdapter.clear();
-            todaysReminders.clear();
-            todaysRemindersSortedByUser.clear();
-
-            todaysReminders.addAll(new MySQLiteHelper(getActivity()).getTodaysReminders());
-            todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
-            todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
+            List<Reminder> remindersToAdd = new MySQLiteHelper(getActivity()).getTodaysReminders();
             DashboardListFragment fragment = (DashboardListFragment) getFragmentManager().findFragmentByTag("DashboardListFragment");
             if (fragment != null) {
                 getActivity().runOnUiThread(() -> {
+                    todaysRemindersForAdapter.clear();
+                    todaysReminders.clear();
+                    todaysRemindersSortedByUser.clear();
+
+                    todaysReminders.addAll(remindersToAdd);
+                    todaysRemindersSortedByUser = setTodaysRemindersSortedByUser(todaysReminders);
+                    todaysRemindersForAdapter.addAll(createTodaysRemindersFromTreeMap(todaysRemindersSortedByUser));
+
                     fragment.notifyChanged();
-                    //swipeContainer.setRefreshing(false);
                 });
             }
         }
@@ -123,16 +122,16 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
         if (recView != null) {
             recView.getAdapter().notifyDataSetChanged();
             Log.d(TAG,"Notify changed called");
-        }
 
-        if(todaysReminders.size() == 0) {
-            Log.d(TAG, "size was 0");
-            recView.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }
-        else {
-            recView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
+            if(todaysReminders.size() == 0) {
+                Log.d(TAG, "size was 0");
+                recView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+            else {
+                recView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -188,11 +187,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
             BusService.getBus().register(this);
             busIsRegistered = true;
         }
-        if (context instanceof OnDashboardListFragmentInteractionListener) {
-            mListener = (OnDashboardListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnDashboardListFragmentInteractionListener");
-        }
     }
 
     //API Level < 23
@@ -203,11 +197,6 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
             BusService.getBus().register(this);
             busIsRegistered = true;
         }
-        if (activity instanceof OnDashboardListFragmentInteractionListener) {
-            mListener = (OnDashboardListFragmentInteractionListener) activity;
-        } else {
-            throw new RuntimeException(activity.toString() + " must implement OnDashboardListFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -217,23 +206,5 @@ public class DashboardListFragment extends android.support.v4.app.Fragment imple
             BusService.getBus().unregister(this);
             busIsRegistered = false;
         }
-        mListener = null;
-    }
-
-    @Override
-    public void onRefresh() {
-        Bundle extras = new Bundle();
-        extras.putString("notificationType", "remindersChanged");
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        extras.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-
-        ContentResolver.requestSync(
-                MainActivity.getAccount(getActivity()),
-                "com.example.sondrehj.familymedicinereminderclient.content",
-                extras);
-    }
-
-    public interface OnDashboardListFragmentInteractionListener {
-
     }
 }

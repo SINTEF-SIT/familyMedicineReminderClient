@@ -44,9 +44,7 @@ public class MedicationPickerFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         // Set unit TextView to the selected list item
-                        System.out.println(selectedItem);
                         mListener.onPositiveMedicationPickerDialogResult(medications.get(selectedItem));
-                        System.out.println(medications.get(selectedItem).getName());
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

@@ -7,13 +7,10 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -22,19 +19,13 @@ import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
-import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
 
-import com.example.sondrehj.familymedicinereminderclient.models.User;
-import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
-import com.example.sondrehj.familymedicinereminderclient.sync.PutSettingsJob;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PutSettingsJob;
 
 public class AccountAdministrationFragment extends android.support.v4.app.Fragment {
 
@@ -174,8 +165,8 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
         if (!(guardianGroup.getVisibility() == View.GONE)){
             Account account = MainActivity.getAccount(getActivity());
             editor.putInt("gracePeriod", Integer.parseInt(graceMinuteValue.getText().toString()));
-            ((MainActivity) getActivity())
-                    .getJobManager()
+            JobManagerService
+                    .getJobManager(getActivity())
                     .addJobInBackground( //guarantees that this job will be done sometime when there is internet.
                             new PutSettingsJob(account.name, graceMinuteValue.getText().toString())
                     );

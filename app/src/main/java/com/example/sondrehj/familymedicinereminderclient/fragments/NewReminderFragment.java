@@ -27,6 +27,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragm
 import com.example.sondrehj.familymedicinereminderclient.dialogs.EndDatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.MedicationPickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectDaysDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.jobs.PostMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.PostReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
@@ -259,7 +260,9 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
 
         //Add reminder to database
         executeDatabaseReminderAction(reminder, REMINDER_INSERT);
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        JobManagerService
+                .getJobManager(getActivity())
+                .addJobInBackground(new PostReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 
         InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
@@ -269,7 +272,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public void updateReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
-        System.out.println("In newreminder update: " + reminder);
 
         NewReminderInputConverter vr = new NewReminderInputConverter(getActivity());
         reminder = vr.UpdateReminderFromInput(
@@ -278,13 +280,10 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
                 dosageInput, repeatSwitch, selectedDays,
                 endDateInput, activeSwitch, reminder, ((MainActivity) getActivity()).getCurrentUser());
 
-        System.out.println("In newreminder update (after converter): " + reminder);
-
-
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
 
-        JobManager manager = ((MainActivity) getActivity()).getJobManager();
+        JobManager manager = JobManagerService.getJobManager(getActivity());
 
         manager.addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
 
@@ -449,7 +448,6 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
             selectedDays[i] = ((Integer) selectedItems.get(i) + 1) % 7;
         }
         Arrays.sort(selectedDays);
-        System.out.println("Hello: " + Arrays.toString(selectedDays));
         setBoldOnSelectedDays(selectedDays);
     }
 
