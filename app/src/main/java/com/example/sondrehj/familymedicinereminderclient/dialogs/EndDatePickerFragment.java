@@ -44,7 +44,6 @@ public class EndDatePickerFragment extends DialogFragment implements DatePickerD
             setStartDate(startDate);
         }
 
-        System.out.println(startDate);
         if (yearAlreadySet == 0 && monthAlreadySet == 0 && dayAlreadySet == 0) {
             // Use today's date as the default date in the picker
 

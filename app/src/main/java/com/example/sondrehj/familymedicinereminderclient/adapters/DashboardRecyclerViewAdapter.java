@@ -131,7 +131,6 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                         holder.mButton.setBackgroundColor(Color.parseColor("#FFEE58"));
                     }
                 } else {
-                    System.out.println("taken");
                     Calendar calendar = holder.mReminder.getTimeTaken();
                     int hours = calendar.get(Calendar.HOUR_OF_DAY);
                     int minutes = calendar.get(Calendar.MINUTE);

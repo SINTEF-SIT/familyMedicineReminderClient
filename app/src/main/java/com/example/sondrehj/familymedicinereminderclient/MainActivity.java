@@ -101,6 +101,13 @@ public class MainActivity
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+
+    public String getCurrentFragmentName() {
+        return currentFragmentName;
+    }
+
+    private String currentFragmentName;
+
     // Global Variables
     public static final String AUTHORITY = "com.example.sondrehj.familymedicinereminderclient";
 
@@ -273,7 +280,6 @@ public class MainActivity
     public void handleMedicationPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.MEDICATIONSENT)) {
             Medication medication = (Medication) event.data;
-            System.out.println("Medication about to be saved: " + medication);
             new MySQLiteHelper(this).updateMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         }
@@ -283,7 +289,6 @@ public class MainActivity
     public void handleReminderPostedRequest(DataChangedEvent event) {
         if (event.type.equals(DataChangedEvent.REMINDERSENT)) {
             Reminder reminder = (Reminder) event.data;
-            System.out.println("Reminder about to be saved: " + reminder);
             new MySQLiteHelper(this).updateReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         }
@@ -355,16 +360,19 @@ public class MainActivity
         String backStateName = fragment.getClass().getName();
         Log.d(TAG, "Navigated to: " + fragment.getClass().getSimpleName());
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+        if(backStateName.equals(currentFragmentName))   return;
 
-        // Replace whatever is in the fragment_container view with this fragment,
-        // and add the transaction to the back stack if needed
-        transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
-        transaction.addToBackStack(backStateName);
+        boolean fragmentPopped = getSupportFragmentManager().popBackStackImmediate(backStateName, 0);
+        if(!fragmentPopped) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.pop_enter, R.anim.pop_exit);
+            transaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
+            transaction.addToBackStack(backStateName);
 
-        //Commit the transaction
-        transaction.commit();
+            //Commit the transaction
+            transaction.commit();
+        }
+        currentFragmentName = backStateName;
     }
 
     /**
@@ -377,10 +385,8 @@ public class MainActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        System.out.println("in on newintent");
         Reminder reminder = (Reminder) intent.getSerializableExtra("notification-reminder");
         String notificationAction = intent.getStringExtra("notification-action");
-        System.out.println(reminder);
         //String currentUserId = intent.getStringExtra("currentUserId");
 
         if (notificationAction != null) {
@@ -427,7 +433,7 @@ public class MainActivity
         Account[] accounts = accountManager.getAccounts();
         for (Account account : accounts) {
             if (account.type.intern().equals(AUTHORITY))
-                accountManager.removeAccount(account, null, null);
+                accountManager.removeAccount(account, null, null);  //TODO: Find alternative to this, deprecated
         }
         // Update currentUser and user spinner
         currentUser = null;
@@ -438,6 +444,8 @@ public class MainActivity
 
         // Change fragment to WelcomeFragment
         Toast.makeText(this, "Data was deleted", Toast.LENGTH_SHORT).show();
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        currentFragmentName = null;
         changeFragment(new WelcomeFragment());
         //disables drawer and navigation in welcomeFragment.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -490,7 +498,8 @@ public class MainActivity
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-        changeFragment(new MedicationListFragment());
+        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        changeFragment(new DashboardListFragment());
     }
 
     /**
@@ -650,7 +659,6 @@ public class MainActivity
             notificationScheduler.scheduleNotification(
                     notificationScheduler.getNotification("Take your medication", reminder), reminder);
             reminder.setIsActive(true);
-            System.out.println("Reminder: " + reminder.getReminderId() + " was activated");
         }
 
         // Updates the DB

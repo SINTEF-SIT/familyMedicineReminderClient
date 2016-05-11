@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -139,7 +140,6 @@ public class WelcomeFragment extends android.support.v4.app.Fragment {
             public void onFailure(Call<User> call, Throwable t) {
                 progress.dismiss();
                 failureToast.show();
-                System.out.println("Could not create user: " + t.getMessage());
             }
         });
         return true;
