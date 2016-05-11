@@ -10,6 +10,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
@@ -34,6 +35,7 @@ import java.util.List;
 public class NotificationScheduler {
 
     public Context context;
+    private final String TAG = "NotificationScheduler";
 
     public NotificationScheduler(Context context) {
         this.context = context;
@@ -65,6 +67,8 @@ public class NotificationScheduler {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, reminder.getReminderId(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
+        Log.d(TAG, "Scheduling: " + reminder);
+
         // Schedules a repeating notification on the user specified days.
         if (reminder.getDays().length > 0 && !reminder.getDate().before(cal)) {
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
@@ -78,14 +82,23 @@ public class NotificationScheduler {
     }
 
     /**
-     * Creates an instance of Notification given a reminder. The type of notifications
-     * is decided by the content of the reminder.
+     * Publishes a given notification instantly.
+     *
+     * @param notification the notification to be published.
+     */
+    public void publishInstantNotification(Notification notification) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(-100, notification);
+    }
+
+    /**
+     * Creates an instance of Notification given a reminder.
      *
      * @param reminder provides information such as name and content for the reminder.
      */
     public Notification getNotification(String content, Reminder reminder) {
 
-        if(!reminder.getOwnerId().equals(AccountManager.get(context).getUserData(MainActivity.getAccount(context), "userId"))) {
+        if (!reminder.getOwnerId().equals(AccountManager.get(context).getUserData(MainActivity.getAccount(context), "userId"))) {
             return getGuardianNotification(content, reminder);
         }
         if (reminder.getMedicine() == null) {
@@ -101,7 +114,7 @@ public class NotificationScheduler {
      * reminder scheduled for the child. The notification has no actions, and is just used to
      * remind the guardian that their child got a reminder.
      *
-     * @param content content of the reminder (reminder.getName() currently overrides this)
+     * @param content  content of the reminder (reminder.getName() currently overrides this)
      * @param reminder reminder of the notification. The child's reminder.
      */
     public Notification getGuardianNotification(String content, Reminder reminder) {
@@ -127,6 +140,7 @@ public class NotificationScheduler {
         return notification;
     }
 
+
     /**
      * Creates a standard Notification. The notification has "Mark as done"
      * and "Snooze" actions. The "Mark as done" action marks the reminder as done, while the "Snooze"
@@ -134,8 +148,8 @@ public class NotificationScheduler {
      * {@link com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment}.
      * This method differs from {@link #getMedicationNotification(String, Reminder)}, as the reminder
      * has no attached medication.
-
-     * @param content content of the reminder (reminder.getName() currently overrides this)
+     *
+     * @param content  content of the reminder (reminder.getName() currently overrides this)
      * @param reminder reminder of the notification.
      */
     public Notification getStandardNotification(String content, Reminder reminder) {
@@ -176,14 +190,13 @@ public class NotificationScheduler {
         return notification;
     }
 
-
     /**
      * Creates a Notification for reminders with a medication. The notification has "Take"
      * and "Snooze" actions. The "Take" action marks the reminder as done, while the "Snooze"
      * action snoozes the reminder for the amount of time set by the user in
      * {@link com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment}
      *
-     * @param content content of the reminder (reminder.getName() currently overrides this)
+     * @param content  content of the reminder (reminder.getName() currently overrides this)
      * @param reminder reminder of the notification
      */
     public Notification getMedicationNotification(String content, Reminder reminder) {
@@ -236,11 +249,14 @@ public class NotificationScheduler {
     public void snoozeNotification(Notification notification, Reminder reminder, int snoozeTime) {
 
         Calendar currentTime = new GregorianCalendar();
+        Log.d(TAG, snoozeTime + "");
         Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_REMINDER, reminder);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TYPE, "snooze");
+
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, -2, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
@@ -253,13 +269,14 @@ public class NotificationScheduler {
      * @param id The id of the notification to be canceled.
      */
     public void cancelNotification(int id) {
-        // Cancel the scheduled reminder
+        //Cancel the scheduled reminder
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 id,
                 new Intent(context, NotificationPublisher.class),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.cancel(pendingIntent);
+        Log.d(TAG, "Reminder: " + id + " was deactivated");
     }
 
     /**
@@ -287,13 +304,14 @@ public class NotificationScheduler {
         // Get user specified snoozeTime from account settings
         SharedPreferences prefs = context.getSharedPreferences("AccountSettings", Context.MODE_PRIVATE);
         int snoozeTime = prefs.getInt("snoozeDelay", 5);
+
         // Schedule a "new" notification with the given snooze time
         this.snoozeNotification(
                 this.getNotification("", reminder),
                 reminder,
                 snoozeTime);
-        // Remove the notification from the drop-down menu
         this.removeNotification(reminder.getReminderId());
+
         // Display toaster
         String toastText = "Snoozing for " + snoozeTime + " minutes";
         if (snoozeTime == 1)
@@ -304,7 +322,7 @@ public class NotificationScheduler {
     /**
      * The functionality of the notification's taken button
      * Called from {@link com.example.sondrehj.familymedicinereminderclient.MainActivity#onNewIntent(Intent)}
-     * when the taken button is clicked. Reduces the amount of the medication provided by the
+     *  when the taken button is clicked. Reduces the amount of the medication provided by the
      * given reminder, and marks it as taken.
      *
      * @param reminder the instance of reminder provided by the notification.
@@ -317,22 +335,25 @@ public class NotificationScheduler {
             // We reduce the amount of the medication by the given dosage.
             reminder.getMedicine().setCount(reminder.getMedicine().getCount() - reminder.getDosage());
             GregorianCalendar currentTime = new GregorianCalendar();
-            // Updates the DB
             reminder.setTimeTaken(currentTime);
+
+            // Updates the DB
             MySQLiteHelper db = new MySQLiteHelper(context);
             db.updateAmountMedication(reminder.getMedicine());
+            if (reminder.getMedicine().getCount() < 5) {
+                publishInstantNotification(getLowOnMedicationNotification(reminder.getMedicine()));
+            }
             db.setReminderTimeTaken(reminder);
             reminder = db.getReminderByLocalId(reminder.getReminderId());
-            // Notify change/update in reminders
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-            // Remove the notification from the drop-down menu
             this.removeNotification(reminder.getReminderId());
             // Display toaster
             Toast.makeText(context, "Registered as taken", Toast.LENGTH_LONG).show();
-            // Queue the changes for server update
+            // update server side
             String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
             String userId = ((MainActivity) context).getCurrentUser().getUserId();
+            // Queue the changes for server update
             ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
             ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
         }
@@ -357,12 +378,30 @@ public class NotificationScheduler {
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
         // Remove the notification from the drop-down menu
         this.removeNotification(reminder.getReminderId());
-        // Display toaster
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
-        // Queue the changes for server update
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
         String userId = ((MainActivity) context).getCurrentUser().getUserId();
+        // Queue the changes for server update
         ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+    }
 
+    public Notification getLowOnMedicationNotification(Medication medication) {
+
+        // Defines the Intent of the notification
+        Intent intent = new Intent(context, context.getClass());
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, 0);
+
+        // Constructs the notification
+        Notification notification = new Notification.Builder(context)
+                .setContentTitle("MYCYFAPP")
+                .setContentText("You're running out of " + medication.getName())
+                .setSmallIcon(R.drawable.ic_sidebar_pill)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setAutoCancel(true)
+                .setContentIntent(pIntent)
+                .build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        return notification;
     }
 }

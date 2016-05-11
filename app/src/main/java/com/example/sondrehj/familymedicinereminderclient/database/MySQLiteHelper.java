@@ -248,7 +248,6 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         //Prepares the statement
         ContentValues values = new ContentValues();
         values.put(COLUMN_MED_COUNT, medication.getCount());
-
         db.update(TABLE_MEDICATION, values, "med_id=" + medication.getMedId(), null);
         db.close(); // Closing database connection
     }
@@ -452,6 +451,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     }
 
     // Could possibly be integrated with getReminders()
+
     /**
      * Retrieves all the {@link Reminder} for a user, given their id.
      *
