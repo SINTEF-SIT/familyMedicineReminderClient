@@ -21,6 +21,7 @@ import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.LinkingDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
@@ -156,7 +157,9 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.addMedication(medication);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        JobManagerService
+                .getJobManager(getActivity())
+                .addJobInBackground(new PostMedicationJob(medication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
         return medication;
 
@@ -176,7 +179,7 @@ public class MedicationStorageFragment extends android.support.v4.app.Fragment {
         MySQLiteHelper db = new MySQLiteHelper(getActivity());
         db.updateMedication(mMedication);
 
-        ((MainActivity) getActivity()).getJobManager().addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
+        JobManagerService.getJobManager(getActivity()).addJobInBackground(new UpdateMedicationJob(mMedication, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
         BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
     }
 }

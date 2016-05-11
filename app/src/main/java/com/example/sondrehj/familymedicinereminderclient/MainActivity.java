@@ -57,6 +57,7 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.SelectUnitDialo
 import com.example.sondrehj.familymedicinereminderclient.dialogs.TimePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
@@ -100,6 +101,7 @@ public class MainActivity
     private NotificationScheduler notificationScheduler;
     private User2 currentUser;
     public UserSpinnerToggle userSpinnerToggle;
+
 
     public String getCurrentFragmentName() {
         return currentFragmentName;
@@ -229,13 +231,6 @@ public class MainActivity
         super.onPause();
         BusService.getBus().unregister(this);
         unregisterReceiver(syncReceiver);
-    }
-
-    public JobManager getJobManager() {
-        Configuration configuration = new Configuration.Builder(this)
-                .networkUtil(new ServerStatusChangeReceiver())
-                .build();
-        return new JobManager(this, configuration);
     }
 
     /**
@@ -673,7 +668,7 @@ public class MainActivity
             String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
             new MySQLiteHelper(this).deleteMedication(medication);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
-            getJobManager().addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
+            JobManagerService.getJobManager(this).addJobInBackground(new DeleteMedicationJob(medication, getCurrentUser().getUserId(), authToken));
         }
         else {
             Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
@@ -690,7 +685,7 @@ public class MainActivity
             AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
             new MySQLiteHelper(this).deleteReminder(reminder);
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
-            getJobManager().addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
+            JobManagerService.getJobManager(this).addJobInBackground(new DeleteReminderJob(reminder, getCurrentUser().getUserId(), authToken));
         } else {
             Toast.makeText(this, "This reminder is not synchronized. Please synchronize it with the server before deleting.", Toast.LENGTH_SHORT).show();
         }

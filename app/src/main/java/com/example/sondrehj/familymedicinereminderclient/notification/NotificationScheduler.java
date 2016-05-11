@@ -18,12 +18,12 @@ import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
-import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
-import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
+import com.path.android.jobqueue.JobManager;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -354,8 +354,9 @@ public class NotificationScheduler {
             String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
             String userId = ((MainActivity) context).getCurrentUser().getUserId();
             // Queue the changes for server update
-            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
-            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
+            JobManager jobManager = JobManagerService.getJobManager(context);
+            jobManager.addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+            jobManager.addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
         }
     }
 
@@ -382,7 +383,7 @@ public class NotificationScheduler {
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
         String userId = ((MainActivity) context).getCurrentUser().getUserId();
         // Queue the changes for server update
-        ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+        JobManagerService.getJobManager(context).addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
     }
 
     public Notification getLowOnMedicationNotification(Medication medication) {

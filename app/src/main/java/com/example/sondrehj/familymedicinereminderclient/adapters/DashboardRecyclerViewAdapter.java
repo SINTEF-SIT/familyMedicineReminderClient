@@ -15,12 +15,13 @@ import android.widget.TextView;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
-import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
+import com.path.android.jobqueue.JobManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -161,7 +162,9 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                                 holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
                                 MySQLiteHelper db = new MySQLiteHelper(context);
                                 db.setReminderTimeTaken(holder.mReminder);
-                                ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
+                                JobManagerService
+                                        .getJobManager(((MainActivity) context))
+                                        .addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
                             } else {
                                 holder.mButton.setText("✓ Taken \n" + time);
                                 holder.mButton.setBackgroundColor(Color.parseColor("#9CCC65"));
@@ -173,8 +176,9 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                                 if (holder.mReminder.getMedicine().getCount() < 5) {
                                     ns.publishInstantNotification(ns.getLowOnMedicationNotification(holder.mReminder.getMedicine()));
                                 }
-                                ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(holder.mReminder.getMedicine(), userId, authToken));
-                                ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
+                                JobManager jobManager = JobManagerService.getJobManager(((MainActivity) context));
+                                jobManager.addJobInBackground(new UpdateMedicationJob(holder.mReminder.getMedicine(), userId, authToken));
+                                jobManager.addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
                             }
                             ns.cancelNotification(holder.mReminder.getReminderId());
                         }
