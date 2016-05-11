@@ -98,7 +98,7 @@ public class NotificationScheduler {
      */
     public Notification getNotification(String content, Reminder reminder) {
 
-        if(!reminder.getOwnerId().equals(AccountManager.get(context).getUserData(MainActivity.getAccount(context), "userId"))) {
+        if (!reminder.getOwnerId().equals(AccountManager.get(context).getUserData(MainActivity.getAccount(context), "userId"))) {
             return getGuardianNotification(content, reminder);
         }
         if (reminder.getMedicine() == null) {
@@ -109,6 +109,14 @@ public class NotificationScheduler {
 
     }
 
+    /**
+     * Creates a simple Notification for the guardian. The notification displays the name of the
+     * reminder scheduled for the child. The notification has no actions, and is just used to
+     * remind the guardian that their child got a reminder.
+     *
+     * @param content  content of the reminder (reminder.getName() currently overrides this)
+     * @param reminder reminder of the notification. The child's reminder.
+     */
     public Notification getGuardianNotification(String content, Reminder reminder) {
 
         // Defines the Intent of the notification
@@ -132,6 +140,18 @@ public class NotificationScheduler {
         return notification;
     }
 
+
+    /**
+     * Creates a standard Notification. The notification has "Mark as done"
+     * and "Snooze" actions. The "Mark as done" action marks the reminder as done, while the "Snooze"
+     * action snoozes the reminder for the amount of time set by the user in
+     * {@link com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment}.
+     * This method differs from {@link #getMedicationNotification(String, Reminder)}, as the reminder
+     * has no attached medication.
+     *
+     * @param content  content of the reminder (reminder.getName() currently overrides this)
+     * @param reminder reminder of the notification.
+     */
     public Notification getStandardNotification(String content, Reminder reminder) {
 
         // Defines the Intent of the notification
@@ -170,6 +190,15 @@ public class NotificationScheduler {
         return notification;
     }
 
+    /**
+     * Creates a Notification for reminders with a medication. The notification has "Take"
+     * and "Snooze" actions. The "Take" action marks the reminder as done, while the "Snooze"
+     * action snoozes the reminder for the amount of time set by the user in
+     * {@link com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment}
+     *
+     * @param content  content of the reminder (reminder.getName() currently overrides this)
+     * @param reminder reminder of the notification
+     */
     public Notification getMedicationNotification(String content, Reminder reminder) {
 
         // Defines the Intent of the notification
@@ -220,7 +249,7 @@ public class NotificationScheduler {
     public void snoozeNotification(Notification notification, Reminder reminder, int snoozeTime) {
 
         Calendar currentTime = new GregorianCalendar();
-        Log.d(TAG, snoozeTime+"");
+        Log.d(TAG, snoozeTime + "");
         Long time = currentTime.getTimeInMillis() + (snoozeTime * 60000);
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
 
@@ -235,6 +264,7 @@ public class NotificationScheduler {
 
     /**
      * Cancel/Removes a notification from {@link AlarmManager} given the ID of the notification.
+     * The id of the notification is equal to the id of the attached reminder.
      *
      * @param id The id of the notification to be canceled.
      */
@@ -290,10 +320,10 @@ public class NotificationScheduler {
     }
 
     /**
-     * The functionality of the notification's main button
+     * The functionality of the notification's taken button
      * Called from {@link com.example.sondrehj.familymedicinereminderclient.MainActivity#onNewIntent(Intent)}
-     * when the main notification button is clicked. Reduces the amount of the medication provided by the
-     * given reminder.
+     *  when the taken button is clicked. Reduces the amount of the medication provided by the
+     * given reminder, and marks it as taken.
      *
      * @param reminder the instance of reminder provided by the notification.
      */
@@ -310,7 +340,7 @@ public class NotificationScheduler {
             // Updates the DB
             MySQLiteHelper db = new MySQLiteHelper(context);
             db.updateAmountMedication(reminder.getMedicine());
-            if(reminder.getMedicine().getCount() < 5){
+            if (reminder.getMedicine().getCount() < 5) {
                 publishInstantNotification(getLowOnMedicationNotification(reminder.getMedicine()));
             }
             db.setReminderTimeTaken(reminder);
@@ -323,11 +353,19 @@ public class NotificationScheduler {
             // update server side
             String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
             String userId = ((MainActivity) context).getCurrentUser().getUserId();
-            ((MainActivity)context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
-            ((MainActivity)context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
+            // Queue the changes for server update
+            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+            ((MainActivity) context).getJobManager().addJobInBackground(new UpdateMedicationJob(reminder.getMedicine(), userId, authToken));
         }
     }
 
+    /**
+     * The functionality of a standard notification's mark-as-done button
+     * Called from {@link com.example.sondrehj.familymedicinereminderclient.MainActivity#onNewIntent(Intent)}
+     * when the mark as done button is clicked. Marks the reminder as done and sets the timeTaken variable to current time.
+     *
+     * @param reminder the instance of reminder provided by the notification.
+     */
     public void handleNotificationMarkAsDoneClick(Reminder reminder) {
 
         GregorianCalendar currentTime = new GregorianCalendar();
@@ -347,7 +385,8 @@ public class NotificationScheduler {
         Toast.makeText(context, "Marked as done", Toast.LENGTH_LONG).show();
         String authToken = AccountManager.get(context).getUserData(MainActivity.getAccount(context), "authToken");
         String userId = ((MainActivity) context).getCurrentUser().getUserId();
-        ((MainActivity)context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
+        // Queue the changes for server update
+        ((MainActivity) context).getJobManager().addJobInBackground(new UpdateReminderJob(reminder, userId, authToken));
     }
 
     public Notification getLowOnMedicationNotification(Medication medication) {
