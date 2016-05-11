@@ -453,8 +453,9 @@ public class MainActivity
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
-        //hides ActionBarDrawerToggle
-        toggle.setDrawerIndicatorEnabled(false);
+        toggle.setDrawerIndicatorEnabled(false); //hides ActionBarDrawerToggle
+
+        //System.exit(0); //Kills the application.
     }
 
     /**
