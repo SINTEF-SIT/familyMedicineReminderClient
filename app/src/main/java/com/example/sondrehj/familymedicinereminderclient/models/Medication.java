@@ -59,7 +59,12 @@ public class Medication implements Serializable {
     }
 
     public void setCount(Double count) {
-        this.count = count;
+        if(count < 0){
+            this.count = 0.0;
+        } else {
+            this.count = count;
+        }
+
     }
 
     public int getServerId() {
