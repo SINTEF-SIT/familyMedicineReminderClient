@@ -55,7 +55,7 @@
             android:layout_height="fill_parent"
             android:layout_gravity="right"
             android:text="✓ Taken \n 10:30"
-            android:background="#FFEE58" />
+            android:background="@color/button_material_light" />
 
     </FrameLayout>
 

@@ -26,8 +26,8 @@ GUARDIAN/GUARDEE
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context=".fragments.AccountAdministrationFragment"
     android:fillViewport="true"
     android:focusableInTouchMode="false"
@@ -39,10 +39,7 @@ GUARDIAN/GUARDEE
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".fragments.NewReminderFragment"
-        android:id="@+id/accountAdministrationLayout"
-        android:showDividers="middle"
-        android:dividerPadding="10dp">
-        <!--android:divider="@drawable/horizontal_divider"-->
+        android:id="@+id/accountAdministrationLayout">
 
         <ImageView
             android:id="@+id/account_logo"
@@ -56,7 +53,7 @@ GUARDIAN/GUARDEE
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/account_group_personal"
             android:layout_marginBottom="15dp">
 
@@ -132,7 +129,7 @@ GUARDIAN/GUARDEE
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/account_group_general"
             android:layout_marginBottom="15dp">
 
@@ -219,7 +216,7 @@ GUARDIAN/GUARDEE
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/account_group_guardian"
             android:paddingBottom="10dp">
 
@@ -306,7 +303,7 @@ GUARDIAN/GUARDEE
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/account_group_sync"
             android:layout_marginTop="10dp">
 
