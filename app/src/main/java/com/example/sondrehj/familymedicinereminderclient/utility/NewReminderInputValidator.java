@@ -56,7 +56,7 @@ public class NewReminderInputValidator {
             //TODO: If you want to edit something on a reminder, this validation deny you from saving it, if the date is back in time
             Calendar currentDate = Calendar.getInstance();
             if (setDate.before(currentDate)) {
-                Toast toast = Toast.makeText(activity, "Chosen date and time is before today's date", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(activity, "The selected time and date has already been.", Toast.LENGTH_LONG);
                 toast.show();
                 return false;
             } else {

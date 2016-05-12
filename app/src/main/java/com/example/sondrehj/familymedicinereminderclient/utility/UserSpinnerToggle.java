@@ -59,7 +59,6 @@ public class UserSpinnerToggle {
                 public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                     selectedUser = users.get(position);
                     ((MainActivity) activity).setCurrentUser(selectedUser);
-                    Toast.makeText(activity, "User changed to " + selectedUser.getAlias(), Toast.LENGTH_SHORT).show();
                     toolbar.setBackgroundColor(Color.parseColor(barColors[position % 4]));
                     drawerHeader.setBackgroundColor(Color.parseColor(barColors[position % 4]));
                     BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONS));
