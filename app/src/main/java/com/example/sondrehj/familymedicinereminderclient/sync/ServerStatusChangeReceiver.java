@@ -10,6 +10,7 @@ import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
+import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.path.android.jobqueue.JobManager;
 import com.path.android.jobqueue.config.Configuration;
 import com.path.android.jobqueue.network.NetworkEventProvider;
@@ -44,11 +45,11 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
 
         try {
             Future pollingFuture = Executors.newFixedThreadPool(1).submit(() -> {
-                    MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
-                    Call<Void> call = api.sendPollingRequest();
-                    Boolean result = call.clone().execute().isSuccessful();
-                    Log.d(TAG, "Poll result: " + result);
-                    return result;
+                MyCyFAPPServiceAPI api = RestService.createRestService(authToken);
+                Call<Void> call = api.sendPollingRequest();
+                Boolean result = call.clone().execute().isSuccessful();
+                Log.d(TAG, "Poll result: " + result);
+                return result;
             });
             while (!pollingFuture.isDone());
             Boolean pollingResult = (Boolean) pollingFuture.get();
@@ -63,12 +64,8 @@ public class ServerStatusChangeReceiver extends BroadcastReceiver implements Net
 
         if(currentServerStatus &&  !previousServerStatus) {
             Log.d(TAG, "currentServerStatus:TRUE & previousServerStatus:FALSE");
-            Configuration configuration = new Configuration.Builder(context)
-                    .networkUtil(this)
-                    .build();
-            JobManager jobManager = new JobManager(context, configuration);
-
-            listener.onNetworkChange(currentServerStatus);
+            JobManagerService.getJobManager(context);
+            JobManagerService.changeReceiver.listener.onNetworkChange(currentServerStatus);
         }
         previousServerStatus = currentServerStatus;
     }

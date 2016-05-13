@@ -15,15 +15,19 @@ import com.path.android.jobqueue.JobManager;
 public class JobManagerService {
 
     private static JobManager jobManager;
+    public static ServerStatusChangeReceiver changeReceiver;
     /**
      * Singleton jobManager.
      *
      * @return jobManager
      */
     public synchronized static JobManager getJobManager(Context context) {
+        if(changeReceiver == null) {
+            changeReceiver = new ServerStatusChangeReceiver();
+        }
         if (jobManager == null) {
             Configuration configuration = new Configuration.Builder(context)
-                    .networkUtil(new ServerStatusChangeReceiver())
+                    .networkUtil(changeReceiver)
                     .build();
             jobManager = new JobManager(context, configuration);
         }
