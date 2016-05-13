@@ -374,7 +374,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH) + 1; //month is 0-indexed
         final int day = c.get(Calendar.DAY_OF_MONTH);
-        String time = String.format("%02d:%02d", hour, minute+5); //set time 5 minutes past time
+        String time = String.format("%02d:%02d", hour, minute); //set time 5 minutes past time
         String date = String.format("%02d.%02d.%4d", day, month, year);
         currentStartDate = date;
         dateInput.setText(date);

@@ -5,7 +5,6 @@ import android.accounts.AccountManager;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,7 +26,6 @@ import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -43,7 +40,6 @@ import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderD
 import com.example.sondrehj.familymedicinereminderclient.fragments.AccountAdministrationFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DatePickerFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.DashboardListFragment;
-
 import com.example.sondrehj.familymedicinereminderclient.fragments.LinkingFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationStorageFragment;
@@ -67,12 +63,11 @@ import com.example.sondrehj.familymedicinereminderclient.playservice.Registratio
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.sync.ServerStatusChangeReceiver;
 import com.example.sondrehj.familymedicinereminderclient.sync.SyncReceiver;
-import com.example.sondrehj.familymedicinereminderclient.utility.TitleSupplier;
 import com.example.sondrehj.familymedicinereminderclient.utility.UserSpinnerToggle;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.path.android.jobqueue.JobManager;
-import com.path.android.jobqueue.config.Configuration;
+
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -161,19 +156,23 @@ public class MainActivity
             currentUser = new User2(id, "User");
         }
 
-        //Sets repeating creation of a Job Manager that will check for upload jobs
+        // Sets repeating creation of a Job Manager that will check for upload jobs
         this.manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
-        //Creates a polling service that checks for server health
+        // Creates a polling service that checks for server health
         Intent intent = new Intent(this, ServerStatusChangeReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, -2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(), 60000, pendingIntent);
+        PendingIntent pendingIntent = PendingIntent
+                .getBroadcast(this, -2, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, new GregorianCalendar().getTimeInMillis(),
+                60000, pendingIntent);
 
         // Creates a service to reset the TIME_TAKEN_COLUMN for REMINDER in the database every day at 00:00.
         Intent resetTimeTakenIntent = new Intent(this, DatabaseReceiver.class);
-        PendingIntent pendingResetTimeTakenIntent = PendingIntent.getBroadcast(this, -3, resetTimeTakenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingResetTimeTakenIntent = PendingIntent
+                .getBroadcast(this, -3, resetTimeTakenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         // Set the database to be updated at 00:00
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -185,7 +184,7 @@ public class MainActivity
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);
 
-        //Default account settings
+        // Default account settings
         SharedPreferences sharedPrefs = getSharedPreferences("AccountSettings", MODE_PRIVATE);
         SharedPreferences.Editor editor;
         if (!sharedPrefs.contains("initialized")) {
@@ -250,7 +249,7 @@ public class MainActivity
      * Gets the instantiazed account of the system, used with the SyncAdapter and
      * ContentResolver, might have to be moved sometime.
      *
-     * @return
+     * @return account
      */
     public static Account getAccount(Context context) {
         Account[] accountArray = AccountManager.get(context).getAccountsByType("com.example.sondrehj.familymedicinereminderclient");
@@ -431,6 +430,7 @@ public class MainActivity
      * Deletes local application data and accounts.
      */
     public void deleteAllApplicationData() {
+        boolean deleted = false;
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
@@ -461,8 +461,7 @@ public class MainActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
         toggle.setDrawerIndicatorEnabled(false); //hides ActionBarDrawerToggle
-
-        //System.exit(0); //Kills the application.
+        finish();
     }
 
     /**

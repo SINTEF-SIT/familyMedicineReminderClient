@@ -40,6 +40,7 @@ public class SyncReceiver extends BroadcastReceiver {
         if (extras != null) {
             Log.d(TAG, extras.getString("action"));
             String action = extras.getString("action");
+
             switch (action) {
                 case "open_dialog":
                     BusService.getBus().post(new LinkingRequestEvent());

@@ -157,7 +157,7 @@ public class DashboardListFragment extends android.support.v4.app.Fragment {
         String userId = MainActivity.getAccount(getActivity()).name;
 
         ArrayList<String> users = new ArrayList<>();
-        for (Reminder reminder:todaysReminders) {
+        for (Reminder reminder : todaysReminders) {
             if(!users.contains(reminder.getOwnerId())){
                 if(reminder.getOwnerId().equals(userId)){
                     users.add(0, reminder.getOwnerId());

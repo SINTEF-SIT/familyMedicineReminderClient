@@ -71,11 +71,14 @@ public interface MyCyFAPPServiceAPI {
     @PUT("user/{userID}/token/{token}")
     Call<User> associateToken(@Path("userID") String userID, @Path("token") String token);
 
-    @PUT("user/{userID}/settings/{gracePeriod}")
+    @PUT("user/{userID}/settings/graceperiod/{gracePeriod}")
     Call<User> setGracePeriod(@Path("userID") String userID, @Path("gracePeriod") String gracePeriod);
 
+    @PUT("user/{userID}/settings/receivechange/{bool}")
+    Call<User> setReceiveChangeNotification(@Path("userID") String userID, @Path("bool") String bool);
+
     @GET("user/{userID}/lastSeen")
-    Call<String> getLastSeenStatus(@Path("userID") String userID);
+    Call<User> getLastSeenStatus(@Path("userID") String userID);
 
 
     /**

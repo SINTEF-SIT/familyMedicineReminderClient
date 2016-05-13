@@ -20,12 +20,14 @@ import android.widget.Toast;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteAllDataDialogFragment;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
-import com.example.sondrehj.familymedicinereminderclient.jobs.PutSettingsJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PutGracePeriodJob;
+import com.example.sondrehj.familymedicinereminderclient.jobs.PutReceiveChangeNotificationJob;
 
 public class AccountAdministrationFragment extends android.support.v4.app.Fragment {
 
@@ -33,12 +35,12 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
     private static String TAG = "AccountAdministrationFragment";
     private Context context;
 
-    @Bind(R.id.account_group_personal_year) LinearLayout personalYearGroup;
+    @Bind(R.id.account_group_personal) LinearLayout personalGroup;
     @Bind(R.id.account_group_guardian) LinearLayout guardianGroup;
     @Bind(R.id.account_group_sync) LinearLayout syncGroup;
 
     @Bind(R.id.account_personal_reminder_switch) Switch reminderSwitch;
-    @Bind(R.id.account_general_notification_switch) Switch notificationSwitch;
+    @Bind(R.id.account_general_notification_switch) Switch notificationSwitch; //receiveChangeNotification
 
     @Bind(R.id.account_general_snooze_minutes_value) TextView snoozeMinuteValue;
     @Bind(R.id.account_general_snooze_minutes_text) TextView snoozeMinuteText;
@@ -87,12 +89,12 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
         snoozeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress+1 == 1) {
+                if (progress + 1 == 1) {
                     snoozeMinuteText.setText("min");
                 } else {
                     snoozeMinuteText.setText("mins");
                 }
-                snoozeMinuteValue.setText((progress+1) + "");
+                snoozeMinuteValue.setText((progress + 1) + "");
             }
 
             @Override
@@ -108,12 +110,12 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
         graceSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress+1 == 1) {
+                if (progress + 1 == 1) {
                     graceMinuteText.setText("min");
                 } else {
                     graceMinuteText.setText("mins");
                 }
-                graceMinuteValue.setText((progress+1) + "");
+                graceMinuteValue.setText((progress + 1) + "");
             }
 
             @Override
@@ -127,7 +129,7 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
             }
         });
 
-        personalYearGroup.setVisibility(View.GONE); //hides year input.
+        personalGroup.setVisibility(View.GONE);
         syncGroup.setVisibility(View.GONE); //hides syncing options.
 
         if (userRole.equals("patient")) {
@@ -159,16 +161,29 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
     public boolean updateAccountInformation() {
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("AccountSettings",
                 Context.MODE_PRIVATE).edit();
-        editor.putBoolean("reminderSwitch", reminderSwitch.isChecked()) ;
-        editor.putBoolean("notificationSwitch", notificationSwitch.isChecked());
+        Account account = MainActivity.getAccount(getActivity());
+        //editor.putBoolean("reminderSwitch", reminderSwitch.isChecked()) ;
+        editor.putBoolean("notificationSwitch", notificationSwitch.isChecked()); //receiveChangeNotification
+        if (notificationSwitch.isChecked()) {
+            JobManagerService
+                    .getJobManager(getActivity())
+                    .addJobInBackground(
+                            new PutReceiveChangeNotificationJob(account.name, "true")
+                    );
+        } else {
+            JobManagerService
+                    .getJobManager(getActivity())
+                    .addJobInBackground(
+                            new PutReceiveChangeNotificationJob(account.name, "false")
+                    );
+        }
         editor.putInt("snoozeDelay", Integer.parseInt(snoozeMinuteValue.getText().toString()));
-        if (!(guardianGroup.getVisibility() == View.GONE)){
-            Account account = MainActivity.getAccount(getActivity());
+        if (!(guardianGroup.getVisibility() == View.GONE)) {
             editor.putInt("gracePeriod", Integer.parseInt(graceMinuteValue.getText().toString()));
             JobManagerService
                     .getJobManager(getActivity())
                     .addJobInBackground( //guarantees that this job will be done sometime when there is internet.
-                            new PutSettingsJob(account.name, graceMinuteValue.getText().toString())
+                            new PutGracePeriodJob(account.name, graceMinuteValue.getText().toString())
                     );
         }
         editor.apply(); //save shared preferences
@@ -182,12 +197,12 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
     public void fillTextFields() {
         SharedPreferences prefs = getActivity().getSharedPreferences("AccountSettings",
                 Context.MODE_PRIVATE);
-        reminderSwitch.setChecked(prefs.getBoolean("reminderSwitch", true));
+        //reminderSwitch.setChecked(prefs.getBoolean("reminderSwitch", true));
         notificationSwitch.setChecked(prefs.getBoolean("notificationSwitch", true));
+        snoozeSeekBar.setProgress(prefs.getInt("snoozeDelay", 5) - 1);
         snoozeMinuteValue.setText(prefs.getInt("snoozeDelay", 5) + "");
-        snoozeSeekBar.setProgress(prefs.getInt("snoozeDelay", 4)-1);
+        graceSeekBar.setProgress(prefs.getInt("gracePeriod", 5) - 1);
         graceMinuteValue.setText(prefs.getInt("gracePeriod", 5) + "");
-        graceSeekBar.setProgress(prefs.getInt("gracePeriod", 4)-1);
     }
 
     /**
@@ -236,7 +251,8 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
     /**
      * Unbinds references to objects in the view.
      */
-    @Override public void onDestroyView() {
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }

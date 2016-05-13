@@ -4,22 +4,19 @@ import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
-import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.path.android.jobqueue.Job;
 import com.path.android.jobqueue.Params;
 
 import retrofit2.Call;
 
-public class PutSettingsJob extends Job {
-    private static String TAG = "PutSettingsJob";
+public class PutReceiveChangeNotificationJob extends Job {
+    private static String TAG = "PutReceiveChangeNotificationJob";
     private static final int PRIORITY = 1;
-    private String gracePeriod;
     private String userId;
+    private String bool;
 
-    public PutSettingsJob(String userId, String gracePeriod) {
+    public PutReceiveChangeNotificationJob(String userId, String bool) {
         // This job requires network connectivity,
         // and should be persisted in case the application exits before job is completed.
 
@@ -28,7 +25,7 @@ public class PutSettingsJob extends Job {
                 .persist());
         Log.d(TAG, "New Job posted.");
         this.userId = userId;
-        this.gracePeriod = gracePeriod;
+        this.bool = bool;
     }
 
     @Override
@@ -45,7 +42,7 @@ public class PutSettingsJob extends Job {
         Log.d(TAG, Thread.currentThread().toString());
 
         MyCyFAPPServiceAPI api = RestService.createRestService();
-        Call<User> call = api.setGracePeriod(userId, gracePeriod);
+        Call<User> call = api.setReceiveChangeNotification(userId, bool);
         call.execute(); //synchronous call
     }
 
