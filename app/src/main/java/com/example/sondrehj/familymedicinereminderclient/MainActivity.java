@@ -430,6 +430,7 @@ public class MainActivity
      * Deletes local application data and accounts.
      */
     public void deleteAllApplicationData() {
+        boolean deleted = false;
         // Wipe the local database
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
@@ -460,8 +461,7 @@ public class MainActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
         toggle.setDrawerIndicatorEnabled(false); //hides ActionBarDrawerToggle
-
-        //System.exit(0); //Kills the application.
+        finish();
     }
 
     /**
