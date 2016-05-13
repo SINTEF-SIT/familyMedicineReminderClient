@@ -57,7 +57,7 @@ public class Synchronizer {
         call.enqueue(new Callback<List<TransportReminder>>() {
             @Override
             public void onResponse(Call<List<TransportReminder>> call, Response<List<TransportReminder>> response) {
-                ArrayList<Reminder> dbReminders = db.getReminders();
+                ArrayList<Reminder> dbReminders = db.getRemindersByOwnerId(userToSync);
 
 
                 int[] array = new int[dbReminders.size()];
@@ -148,7 +148,7 @@ public class Synchronizer {
         call.enqueue(new Callback<List<Medication>>() {
             @Override
             public void onResponse(Call<List<Medication>> call, Response<List<Medication>> response) {
-                ArrayList<Medication> clientMedications = db.getMedications();
+                ArrayList<Medication> clientMedications = db.getMedicationsByOwnerId(userToSync);
                 Log.d(TAG, response.raw().toString());
 
                 int[] array = new int[clientMedications.size()];
