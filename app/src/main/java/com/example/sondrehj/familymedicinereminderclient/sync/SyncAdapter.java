@@ -89,6 +89,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                     intent.putExtra("action", "notifyNegativeResultToLinkingFragment");
                     context.sendBroadcast(intent);
                     break;
+                case "childForgotReminder":
+                    Log.d(TAG, "in switch -> childForgotReminder");
             }
         } else {
             Log.d("SyncAdapter", "notificationType == null");

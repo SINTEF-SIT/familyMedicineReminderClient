@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
@@ -34,21 +35,35 @@ public class LinkingDialogFragment extends DialogFragment {
             builder.setMessage("Someone wants to link with your account and become your guardian! " +
                 "Only press yes if you know who this is! \n\n" + "Do you want to link your account?")
                 .setPositiveButton("Yes", (DialogInterface dialog, int id) -> {
+                    Log.d("LinkingDialogFragment", "Positive linking confirmation.");
                     Call<Message> call = api.responseToLinkingRequest(account.name, "accept");
-                    try{
-                        call.execute();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            //empty
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            //empty
+                        }
+                    });
                 })
                 .setNegativeButton("No", (DialogInterface dialog, int id) -> {
                     // User cancelled the dialog
+                    Log.d("LinkingDialogFragment", "Negative linking confirmation.");
                     Call<Message> call = api.responseToLinkingRequest(account.name, "deny");
-                    try{
-                        call.execute();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    call.enqueue(new Callback<Message>() {
+                        @Override
+                        public void onResponse(Call<Message> call, Response<Message> response) {
+                            //empty
+                        }
+
+                        @Override
+                        public void onFailure(Call<Message> call, Throwable t) {
+                            //empty
+                        }
+                    });
                 });
             // Create the AlertDialog object and return it
             return builder.create();
