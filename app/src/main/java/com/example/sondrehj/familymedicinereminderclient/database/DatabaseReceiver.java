@@ -8,9 +8,6 @@ import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
 
-/**
- * Created by sondre on 11/05/2016.
- */
 public class DatabaseReceiver extends BroadcastReceiver {
 
     public Context context;

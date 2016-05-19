@@ -11,7 +11,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 /**
- * Created by nikolai on 24/02/16.
+ * A model for representing a reminder. A reminder object is used for storing necessary information
+ * such as name, ownerId, date, endDate and the localId and serverId.
  */
 public class Reminder implements Serializable {
     int reminderId;

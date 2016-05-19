@@ -331,8 +331,8 @@ public class MainActivity
      * Inflate the options menu. This adds items to the action bar if it is present. The one with
      * the three buttons, which resides physically on Samsung phones.
      *
-     * @param menu
-     * @return
+     * @param menu The application menu
+     * @return success
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -357,10 +357,10 @@ public class MainActivity
     }
 
     /**
-     * Takes in a fragment which is to replace the fragment which is already in the fragmentcontainer
+     * Takes in a {@link Fragment} which is to replace the fragment which is already in the fragmentcontainer
      * of MainActivity.
      *
-     * @param fragment
+     * @param fragment The {@link Fragment} to be shown.
      */
     public void changeFragment(Fragment fragment) {
         String backStateName = fragment.getClass().getName();
@@ -382,10 +382,11 @@ public class MainActivity
     }
 
     /**
-     * Called when a notification is clicked. If the intent contains a reminder with a medication attached,
-     * the amount of "units" decreases by the given dosage.
+     * Executes methods based on the intent received. This method is called when the activity
+     * receives intents from notifications (such as when a user clicks a notification, or an action)
+     * or when the data is updated from a sync.
      *
-     * @param intent the intent instance created by getNotification(String content, Reminder reminder)
+     * @param intent the intent sent to the Activity.
      */
     @Override
     protected void onNewIntent(Intent intent) {
@@ -427,7 +428,8 @@ public class MainActivity
     }
 
     /**
-     * Deletes local application data and accounts.
+     * Deletes local application data and accounts. This function is called when the user
+     * presses the delete data button in {@link AccountAdministrationFragment}.
      */
     public void deleteAllApplicationData() {
         boolean deleted = false;
@@ -465,12 +467,12 @@ public class MainActivity
     }
 
     /**
-     * Function called by WelcomeFragment to save/add account to the AccountManager and
+     * Method called by {@link WelcomeFragment} to save/add account to the AccountManager and
      * fetch a gcm token which is sent to the server and associated with the user.
      *
-     * @param userId
-     * @param password
-     * @param userRole
+     * @param userId the id of the user
+     * @param password the user password
+     * @param userRole role of the user. Guardian or patient
      */
     @Override
     public void OnNewAccountCreated(String userId, String password, String userRole, String jwtToken) {
@@ -531,20 +533,44 @@ public class MainActivity
         return true;
     }
 
+    /**
+     * Set the current user of the application. This called from {@link UserSpinnerToggle#toggle()}
+     * when the guardian changes the user from the drop-down menu.
+     *
+     * @param user The {@link User2} to be set as current user.
+     */
     public void setCurrentUser(User2 user) {
         this.currentUser = user;
     }
 
+    /**
+     * Retrieves the current user of the application.
+     *
+     * @return current user
+     */
     public User2 getCurrentUser() {
         return this.currentUser;
     }
 
+    /**
+     * Set selectedDays in {@link NewReminderFragment} based on the days selected in
+     * {@link SelectDaysDialogFragment}
+     *
+     * @param selectedDays The days selected by the user in {@link SelectDaysDialogFragment}
+     */
     @Override
     public void onPositiveDaysDialogResult(ArrayList selectedDays) {
         NewReminderFragment nrf = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
         nrf.setDaysOnLayout(selectedDays);
     }
 
+    /**
+     * Sets the medication in {@link NewReminderFragment} based on the medication selected by the user
+     * in {@link MedicationPickerFragment}. You can only attach a medication if it's synchronized
+     * with the server.
+     *
+     * @param med The days selected by the user in {@link SelectDaysDialogFragment}
+     */
     @Override
     public void onPositiveMedicationPickerDialogResult(Medication med) {
         if(med.getServerId() != -1) {
@@ -553,11 +579,16 @@ public class MainActivity
         } else {
             Toast.makeText(this, "This medication is not synchronized. Please synchronize it with the server before attaching it.", Toast.LENGTH_SHORT).show();
             return;
-
         }
-
     }
 
+    /**
+     * Sets the time in {@link NewReminderFragment} based on the time selected by the user
+     * in {@link TimePickerFragment}.
+     *
+     * @param hourOfDay selected hour
+     * @param minute selected minute
+     */
     @Override
     public void setTime(int hourOfDay, int minute) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
@@ -565,11 +596,12 @@ public class MainActivity
     }
 
     /**
-     * Called by datepicker in NewReminder
+     * Sets the date in {@link NewReminderFragment} based on the date selected by the user
+     * in {@link DatePickerFragment}.
      *
-     * @param year
-     * @param month
-     * @param day
+     * @param year selected year
+     * @param month selected month
+     * @param day selected day
      */
     @Override
     public void setDate(int year, int month, int day) {
@@ -577,6 +609,14 @@ public class MainActivity
         newReminderFragment.setDateOnLayout(year, month, day);
     }
 
+    /**
+     * Sets the end date in {@link NewReminderFragment} based on the date selected by the user
+     * in {@link DatePickerFragment}.
+     *
+     * @param year selected year
+     * @param month selected month
+     * @param day selected day
+     */
     @Override
     public void setEndDate(int year, int month, int day) {
         NewReminderFragment newReminderFragment = (NewReminderFragment) getSupportFragmentManager().findFragmentByTag("NewReminderFragment");
@@ -587,8 +627,8 @@ public class MainActivity
      * Handles the selection of items in the drawer and replaces the fragment container of
      * MainActivity with the fragment corresponding to the Item selected. The drawer is then closed.
      *
-     * @param item
-     * @return
+     * @param item The selected {@link MenuItem}
+     * @return success
      */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -611,12 +651,25 @@ public class MainActivity
         return true;
     }
 
+    /**
+     * Instantiates {@link MedicationStorageFragment} with a medication for editing purposes.
+     * The method is called when the user clicks an existing medication
+     * in {@link MedicationListFragment}.
+     *
+     * @param medication The {@link Medication} to be edited.
+     */
     @Override
     public void onMedicationListFragmentInteraction(Medication medication) {
         Fragment fragment = MedicationStorageFragment.newInstance(medication);
         changeFragment(fragment);
     }
 
+    /**
+     * Schedules a notification and updates the view when a reminder is
+     * edited or created in {@link NewReminderFragment}.
+     *
+     * @param r The newly edited or created {@link Reminder}
+     */
     @Override
     public void onSaveNewReminder(Reminder r) {
         if (r.getIsActive()) {
@@ -629,6 +682,12 @@ public class MainActivity
        // BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
+    /**
+     * Sets the unit of a medication in {@link MedicationStorageFragment} based on the
+     * selection of the user in {@link SelectUnitDialogFragment}.
+     *
+     * @param unit the index of the selected unit.
+     */
     @Override
     public void onPositiveUnitDialogResult(int unit) {
         String[] units = getResources().getStringArray(R.array.unit_items);
@@ -636,11 +695,26 @@ public class MainActivity
         sf.setUnitText(units[unit]);
     }
 
+    /**
+     * Instantiates {@link NewReminderFragment} with a reminder for editing purposes.
+     * The method is called when the user clicks an existing reminder
+     * in {@link ReminderListFragment}.
+     *
+     * @param reminder The {@link Reminder} to be edited.
+     */
     @Override
     public void onReminderListItemClicked(Reminder reminder) {
         changeFragment(NewReminderFragment.newInstance(reminder));
     }
 
+    /**
+     * Sets the isActive variable of a {@link Reminder} based on the status of the
+     * ReminderSwitch in {@link ReminderListFragment}. A notification is scheduled
+     * if the switch is checked, and unscheduled if the switch is unchecked.
+     * The method is called when the user interacts with the ReminderSwitch.
+     *
+     * @param reminder The {@link Reminder} to be updated.
+     */
     @Override
     public void onReminderListSwitchClicked(Reminder reminder) {
 
@@ -661,6 +735,13 @@ public class MainActivity
         //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.DASHBOARDCHANGED));
     }
 
+    /**
+     * Saves the alias of a linked user based on the given alias in {@link SetAliasDialog}.
+     * If no alias is specified, it will default to the userId of the patient.
+     *
+     * @param alias The alias specified by the user.
+     * @param userId The userId of the newly linked patient.
+     */
     @Override
     public void onPositiveSetAliasDialog(String alias, String userId) {
 
@@ -675,6 +756,15 @@ public class MainActivity
         userSpinnerToggle.toggle();
     }
 
+    /**
+     * Deletes a {@link Medication} from the local database and the server, and updates the view.
+     * The method is called when the user clicks the "x" of a list item in
+     * {@link MedicationListFragment}, and agrees to delete the medication in
+     * {@link DeleteMedicationDialogFragment}.
+     *
+     * @param medication The {@link Medication} to be deleted.
+     * @param position The position of the list item in {@link MedicationListFragment}.
+     */
     public void onPositiveDeleteMedicationDialogResult(Medication medication, int position) {
         if(medication.getServerId() != -1) {
             String authToken = AccountManager.get(this).getUserData(MainActivity.getAccount(this), "authToken");
@@ -687,6 +777,15 @@ public class MainActivity
         }
     }
 
+    /**
+     * Deletes a {@link Reminder} from the local database and the server, and updates the view.
+     * The method is called when the user clicks the "x" of a list item in
+     * {@link ReminderListFragment}, and agrees to delete the reminder in
+     * {@link DeleteReminderDialogFragment}.
+     *
+     * @param reminder The {@link Reminder} to be deleted.
+     * @param position The position of the list item in {@link ReminderListFragment}.
+     */
     @Override
     public void onPositiveDeleteReminderDialogResult(Reminder reminder, int position) {
         if(reminder.getServerId() != -1) {
@@ -703,6 +802,14 @@ public class MainActivity
         }
     }
 
+    /**
+     * NOT CURRENTLY IN USE
+     * Instantiates {@link NewReminderFragment} with a newly created {@link Medication}.
+     * The method is called when the user creates a new medication
+     * in {@link MedicationStorageFragment}
+     *
+     * @param medication The {@link Medication} to be attached to the reminder.
+     */
     @Override
     public void onPositiveCreateReminderForMedicationDialogResult(Medication medication) {
 

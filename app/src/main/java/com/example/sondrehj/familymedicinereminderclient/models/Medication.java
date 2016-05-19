@@ -3,7 +3,8 @@ package com.example.sondrehj.familymedicinereminderclient.models;
 import java.io.Serializable;
 
 /**
- * Created by nikolai on 24/02/16.
+ * A model for representing a medication. A medication object is used for storing necessary information
+ * such as name, ownerId, unit and the localId and serverId.
  */
 public class Medication implements Serializable {
     int medId;
