@@ -29,11 +29,15 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
+import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+import com.example.sondrehj.familymedicinereminderclient.bus.ForgotReminderEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.DatabaseReceiver;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.ForgotReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
@@ -56,7 +60,9 @@ import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJo
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
+import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.playservice.RegistrationIntentService;
@@ -73,6 +79,10 @@ import com.squareup.otto.Subscribe;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity
         extends AppCompatActivity
@@ -311,6 +321,13 @@ public class MainActivity
         }
     }
 
+    @Subscribe
+    public void handleChildrenForgotReminderNotification(ForgotReminderEvent event) {
+        FragmentManager fm = getSupportFragmentManager();
+        ForgotReminderDialogFragment forgotReminderDialogFragment = new ForgotReminderDialogFragment();
+        forgotReminderDialogFragment.show(fm, "forgot_reminder_dialog");
+    }
+
     /**
      * If the drawer is open it will be closed when pressing the back button, elsewise it will pop
      * backstates so that you can navigate backwards.
@@ -435,6 +452,22 @@ public class MainActivity
         this.deleteDatabase("familymedicinereminderclient.db");
         // Wipe account settings stored by SharedPreferences
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
+
+        //remove children from guardian.
+        final MyCyFAPPServiceAPI api = RestService.createRestService();
+        Call<User> call = api.removeChildrenFromGuardian(getAccount(this).name);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                //empty
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                //empty
+            }
+        });
+
         // Wipe all accounts in AccountManager
         AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
         Account[] accounts = accountManager.getAccounts();
@@ -442,25 +475,17 @@ public class MainActivity
             if (account.type.intern().equals(AUTHORITY))
                 accountManager.removeAccount(account, null, null);  //TODO: Find alternative to this, deprecated
         }
-        // Update currentUser and user spinner
-        currentUser = null;
-        userSpinnerToggle.toggle();
+
+
 
         // TODO: clear all pendingIntents in AlarmManager
         // TODO: wipe server data
 
-        // Change fragment to WelcomeFragment
-        Toast.makeText(this, "Data was deleted", Toast.LENGTH_SHORT).show();
-        getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        currentFragmentName = null;
-        changeFragment(new WelcomeFragment());
-        //disables drawer and navigation in welcomeFragment.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
-        toggle.setDrawerIndicatorEnabled(false); //hides ActionBarDrawerToggle
+        try {
+            Thread.sleep(3000, 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         finish();
     }
 
