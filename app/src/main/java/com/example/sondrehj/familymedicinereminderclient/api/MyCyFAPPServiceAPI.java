@@ -80,7 +80,7 @@ public interface MyCyFAPPServiceAPI {
     @GET("user/{userID}/lastSeen")
     Call<User> getLastSeenStatus(@Path("userID") String userID);
 
-    @DELETE("user/{userID}/removechildren")
+    @DELETE("user/{userID}/children")
     Call<User> removeChildrenFromGuardian(@Path("userID") String userID);
 
 
