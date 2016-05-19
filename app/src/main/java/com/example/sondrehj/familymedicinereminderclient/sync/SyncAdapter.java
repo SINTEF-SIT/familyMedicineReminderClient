@@ -61,6 +61,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
         Synchronizer synchronizer = new Synchronizer(currentUserId, api, db, context);
         Intent intent = new Intent();
+        intent.setAction("mycyfapp"); //not action, is a filter
         if (notificationType != null) {
             switch (notificationType) {
                 case "remindersChanged":
@@ -72,25 +73,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 case "linkingRequest":
                     Log.d(TAG, "in switch -> linkingRequest");
                     //incoming linking request from push notification
-                    intent.setAction("mycyfapp"); //not action, but filter.
-                    intent.putExtra("action", "open_dialog");
+                    intent.putExtra("action", "openLinkingRequestDialog");
                     context.sendBroadcast(intent);
                     break;
                 case "positiveLinkingResponse":
                     Log.d(TAG, "in switch -> positiveLinkingResponse");
-                    intent.setAction("mycyfapp");
                     intent.putExtra("action", "notifyPositiveResultToLinkingFragment");
                     intent.putExtra("patientID", optionalData);
                     context.sendBroadcast(intent);
                     break;
                 case "negativeLinkingResponse":
                     Log.d(TAG, "in switch -> negativeLinkingResponse");
-                    intent.setAction("mycyfapp");
                     intent.putExtra("action", "notifyNegativeResultToLinkingFragment");
                     context.sendBroadcast(intent);
                     break;
                 case "childForgotReminder":
                     Log.d(TAG, "in switch -> childForgotReminder");
+                    intent.putExtra("action", "childForgotReminder");
+                    context.sendBroadcast(intent);
+                    break;
             }
         } else {
             Log.d("SyncAdapter", "notificationType == null");

@@ -10,10 +10,12 @@ import android.util.Log;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+import com.example.sondrehj.familymedicinereminderclient.bus.ForgotReminderEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingResponseEvent;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
+import com.squareup.otto.Bus;
 
 import java.util.ArrayList;
 
@@ -42,7 +44,7 @@ public class SyncReceiver extends BroadcastReceiver {
             String action = extras.getString("action");
 
             switch (action) {
-                case "open_dialog":
+                case "openLinkingRequestDialog":
                     BusService.getBus().post(new LinkingRequestEvent());
                     break;
                 case "notifyPositiveResultToLinkingFragment":
@@ -63,6 +65,8 @@ public class SyncReceiver extends BroadcastReceiver {
                 case "scheduleReminder":
                     BusService.getBus().post(new DataChangedEvent(DataChangedEvent.SCHEDULE_REMINDER, intent.getSerializableExtra("reminder")));
                     break;
+                case "childForgotReminder":
+                    BusService.getBus().post(new ForgotReminderEvent());
                 default:
                     break;
             }

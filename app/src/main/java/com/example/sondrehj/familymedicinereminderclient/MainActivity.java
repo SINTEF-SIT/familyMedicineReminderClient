@@ -33,9 +33,11 @@ import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
 import com.example.sondrehj.familymedicinereminderclient.api.RestService;
 import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
 import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
+import com.example.sondrehj.familymedicinereminderclient.bus.ForgotReminderEvent;
 import com.example.sondrehj.familymedicinereminderclient.bus.LinkingRequestEvent;
 import com.example.sondrehj.familymedicinereminderclient.database.DatabaseReceiver;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.CreateReminderForMedicationDialogFragment;
+import com.example.sondrehj.familymedicinereminderclient.dialogs.ForgotReminderDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.SetAliasDialog;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteMedicationDialogFragment;
 import com.example.sondrehj.familymedicinereminderclient.dialogs.DeleteReminderDialogFragment;
@@ -317,6 +319,13 @@ public class MainActivity
                 ns.scheduleNotification(ns.getNotification("", reminder), reminder);
             }
         }
+    }
+
+    @Subscribe
+    public void handleChildrenForgotReminderNotification(ForgotReminderEvent event) {
+        FragmentManager fm = getSupportFragmentManager();
+        ForgotReminderDialogFragment forgotReminderDialogFragment = new ForgotReminderDialogFragment();
+        forgotReminderDialogFragment.show(fm, "forgot_reminder_dialog");
     }
 
     /**
