@@ -60,7 +60,6 @@ import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteMedicationJo
 import com.example.sondrehj.familymedicinereminderclient.jobs.DeleteReminderJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
-import com.example.sondrehj.familymedicinereminderclient.models.Message;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
@@ -453,7 +452,7 @@ public class MainActivity
         // Wipe account settings stored by SharedPreferences
         this.getSharedPreferences("AccountSettings", 0).edit().clear().commit();
 
-        //remove children from guardian.
+        // Remove children from guardian on the server.
         final MyCyFAPPServiceAPI api = RestService.createRestService();
         Call<User> call = api.removeChildrenFromGuardian(getAccount(this).name);
         call.enqueue(new Callback<User>() {
@@ -468,6 +467,9 @@ public class MainActivity
             }
         });
 
+        // TODO: wipe the rest of the server data
+
+
         // Wipe all accounts in AccountManager
         AccountManager accountManager = (AccountManager) this.getSystemService(ACCOUNT_SERVICE);
         Account[] accounts = accountManager.getAccounts();
@@ -476,10 +478,7 @@ public class MainActivity
                 accountManager.removeAccount(account, null, null);  //TODO: Find alternative to this, deprecated
         }
 
-
-
         // TODO: clear all pendingIntents in AlarmManager
-        // TODO: wipe server data
 
         try {
             Thread.sleep(3000, 1);

@@ -201,8 +201,14 @@ public class AccountAdministrationFragment extends android.support.v4.app.Fragme
         notificationSwitch.setChecked(prefs.getBoolean("notificationSwitch", true));
         snoozeSeekBar.setProgress(prefs.getInt("snoozeDelay", 5) - 1);
         snoozeMinuteValue.setText(prefs.getInt("snoozeDelay", 5) + "");
+        if (prefs.getInt("snoozeDelay", 5) == 1){
+            snoozeMinuteText.setText("min");
+        }
         graceSeekBar.setProgress(prefs.getInt("gracePeriod", 5) - 1);
         graceMinuteValue.setText(prefs.getInt("gracePeriod", 5) + "");
+        if (prefs.getInt("gracePeriod", 5) == 1){
+            graceMinuteText.setText("min");
+        }
     }
 
     /**

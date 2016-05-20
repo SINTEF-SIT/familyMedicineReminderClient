@@ -32,7 +32,7 @@ public class LinkingDialogFragment extends DialogFragment {
 
             // Use the Builder class for convenient dialog construction
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage("Someone wants to link with your account and become your guardian! " +
+            builder.setMessage("Someone wants to link with your account and become your guardian!\n\n" +
                 "Only press yes if you know who this is! \n\n" + "Do you want to link your account?")
                 .setPositiveButton("Yes", (DialogInterface dialog, int id) -> {
                     Log.d("LinkingDialogFragment", "Positive linking confirmation.");
