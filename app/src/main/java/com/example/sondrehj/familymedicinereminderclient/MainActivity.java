@@ -313,9 +313,11 @@ public class MainActivity
     public void handleScheduleRequest(DataChangedEvent event) {
         if(event.type.equals(DataChangedEvent.SCHEDULE_REMINDER)) {
             Reminder reminder = (Reminder) event.data;
-            if(reminder.getIsActive()) {
-                NotificationScheduler ns = new NotificationScheduler(this);
-                ns.scheduleNotification(ns.getNotification("", reminder), reminder);
+            if(reminder.getOwnerId().equals(MainActivity.getAccount(this).name)){
+                if(reminder.getIsActive()) {
+                    NotificationScheduler ns = new NotificationScheduler(this);
+                    ns.scheduleNotification(ns.getNotification("", reminder), reminder);
+                }
             }
         }
     }

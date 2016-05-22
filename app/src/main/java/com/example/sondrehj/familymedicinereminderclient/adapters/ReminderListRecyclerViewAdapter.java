@@ -49,7 +49,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         holder.mReminder = mValues.get(position);
         holder.mNameView.setText(mValues.get(position).getName());
         holder.mSwitch.setChecked(mValues.get(position).getIsActive());
-        holder.mServerIdText.setText(mValues.get(position).getServerId()+"");
+        //holder.mServerIdText.setText(mValues.get(position).getServerId()+"");
 
         GregorianCalendar cal = mValues.get(position).getDate();
         int year = cal.get(Calendar.YEAR);
