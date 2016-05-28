@@ -247,6 +247,10 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         this.reminder = reminder;
     }
 
+    /**
+     * Creates a reminder based on the data of the fields. The method adds the new reminder to the
+     * local database and server.
+     */
     public void createReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
@@ -269,6 +273,10 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         mListener.onSaveNewReminder(reminder);
     }
 
+    /**
+     * Updates a reminder with the data of the fields. The method updates the reminder on the local
+     * database and server.
+     */
     public void updateReminder() {
         String userId = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "userId");
         String authToken = AccountManager.get(getActivity()).getUserData(MainActivity.getAccount(getActivity()), "authToken");
@@ -282,16 +290,16 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
 
         // Update existing reminder in database
         executeDatabaseReminderAction(reminder, REMINDER_UPDATE);
-
         JobManager manager = JobManagerService.getJobManager(getActivity());
-
         manager.addJobInBackground(new UpdateReminderJob(reminder, ((MainActivity) getActivity()).getCurrentUser().getUserId(), authToken));
-
         InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         mListener.onSaveNewReminder(reminder);
     }
 
+    /**
+     * Sets a bold font on the days the user has chosen for the reminder to be triggered.
+     */
     public void setBoldOnSelectedDays(int[] selectedDays) {
         for (int i = 0; i < 7; i++) {
             boolean inList = false;
@@ -310,6 +318,10 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    /**
+     * A method for filling the fields based on the provided reminder. If no reminder is
+     * provided (The user creates a new reminder) most fields will be empty with default data.
+     */
     public void fillFields() {
         final Calendar c;
         // Checks if a reminder is passed to the fragment
@@ -401,6 +413,11 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
 
     }
 
+    /**
+     * A method for enabling/disabling the dosageField.
+     *
+     * @param enable A boolean representing the visibility.
+     */
     public void enableDosageField(boolean enable) {
         if (enable) {
             chooseDosageGroup.setVisibility(View.VISIBLE);
@@ -417,6 +434,11 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
         }
     }
 
+    /**
+     * A method for enabling/disabling the medicationField.
+     *
+     * @param enable A boolean representing the visibility.
+     */
     public void enableMedicationField(boolean enable) {
         if (enable) {
             chooseMedicationGroup.setVisibility(View.VISIBLE);

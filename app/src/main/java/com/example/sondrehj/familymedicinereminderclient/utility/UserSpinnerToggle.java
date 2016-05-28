@@ -24,7 +24,8 @@ import com.example.sondrehj.familymedicinereminderclient.models.User2;
 import java.util.ArrayList;
 
 /**
- * Created by sondre on 01/05/2016.
+ * This class contains the functionality of the {@link Spinner} in the action bar. The class got
+ * methods for updating the spinner content, setting the listener and hiding/showing the spinner.
  */
 public class UserSpinnerToggle {
 
@@ -49,6 +50,10 @@ public class UserSpinnerToggle {
         this.drawerHeader = (LinearLayout) nav_view.getHeaderView(0).findViewById(R.id.drawer_header);
     }
 
+    /**
+     * Toggles the user spinner. This include setting the onchangelistener, updating the content of
+     * the spinner and changing the views to show the correct data based on the user selected.
+     */
     public void toggle() {
 
         if (users.size() != 0) {
@@ -79,6 +84,10 @@ public class UserSpinnerToggle {
         }
     }
 
+    /**
+     * Updates the content of the user spinner. The method retrieves all the saved {@link User2}
+     * from the database and append their aliases to the adapter.
+     */
     public void updateSpinnerContent() {
 
         MySQLiteHelper db = new MySQLiteHelper(activity);
@@ -93,10 +102,12 @@ public class UserSpinnerToggle {
         userSpinner.setAdapter(adapter);
     }
 
-    public void setUserIcon(ImageView userIcon) {
-        this.userIcon = userIcon;
-    }
-
+    /**
+     * Hides or shows the user action bar. The bar should be hidden for patients and shown
+     * for the guardians.
+     *
+     * @param flag A boolean representing the visibility.
+     */
     public void showUserActionBar(Boolean flag) {
 
         if (flag) {
@@ -107,6 +118,11 @@ public class UserSpinnerToggle {
             userIcon.setVisibility(View.INVISIBLE);
         }
     }
+
+    public void setUserIcon(ImageView userIcon) {
+        this.userIcon = userIcon;
+    }
+
 
     public User2 getSelectedUser() {
         return this.selectedUser;
