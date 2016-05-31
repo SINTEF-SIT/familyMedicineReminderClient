@@ -3,7 +3,7 @@ package com.example.sondrehj.familymedicinereminderclient.adapters;
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 
 /**
- * Created by nikolai on 08/05/16.
+ * A holder class for {@link DashboardRecyclerViewAdapter}.
  */
 public class ReminderItem extends ListItem {
 

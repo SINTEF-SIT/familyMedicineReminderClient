@@ -27,11 +27,7 @@ import com.path.android.jobqueue.JobManager;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
-/**
- * Created by sondre on 25/04/2016.
- */
 public class NotificationScheduler {
 
     public Context context;
