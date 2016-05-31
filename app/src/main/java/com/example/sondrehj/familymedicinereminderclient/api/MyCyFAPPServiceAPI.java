@@ -2,13 +2,9 @@ package com.example.sondrehj.familymedicinereminderclient.api;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 import com.example.sondrehj.familymedicinereminderclient.models.Message;
-import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
 import com.example.sondrehj.familymedicinereminderclient.models.User;
 
-import org.json.JSONArray;
-
-import java.io.Serializable;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,8 +19,6 @@ import retrofit2.http.Path;
 
 /**
  * API endpoint definitions
- *
- * Created by nikolai on 04/04/16.
  */
 public interface MyCyFAPPServiceAPI {
     /**

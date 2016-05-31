@@ -49,7 +49,6 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         holder.mReminder = mValues.get(position);
         holder.mNameView.setText(mValues.get(position).getName());
         holder.mSwitch.setChecked(mValues.get(position).getIsActive());
-        //holder.mServerIdText.setText(mValues.get(position).getServerId()+"");
 
         GregorianCalendar cal = mValues.get(position).getDate();
         int year = cal.get(Calendar.YEAR);
@@ -59,7 +58,6 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
         int min = cal.get(Calendar.MINUTE);
         int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
 
-        //System.out.println(dayOfWeek);
 
         String timeString = String.format("%02d:%02d", hour, min);
         String dateString = Converter.dayIndexToDayString(dayOfWeek)
@@ -83,7 +81,6 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             holder.mDateText.setText(dateString);
         }
 
-
         holder.mSwitch.setOnClickListener((View v) -> {
             if (null != mListener) {
                 mListener.onReminderListSwitchClicked(holder.mReminder);
@@ -98,7 +95,7 @@ public class ReminderListRecyclerViewAdapter extends RecyclerView.Adapter<Remind
             }
         });
 
-
+        // On click listener for the delete button of the ViewHolder.
         holder.mDeleteWrapper.setOnClickListener((View v) -> {
             Reminder reminder = holder.mReminder;
             FragmentManager fm = ((Activity) context).getFragmentManager();

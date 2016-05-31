@@ -1,7 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 /**
- * Created by nikolai on 08/05/16.
+ * A holder class for {@link DashboardRecyclerViewAdapter}.
  */
 public class HeaderItem extends ListItem {
 

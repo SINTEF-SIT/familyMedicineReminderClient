@@ -86,6 +86,7 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
                 break;
         }
 
+        // On click listener for the ViewHolder. Navigates you to the MedicationStorageFragment.
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,6 +96,7 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
             }
         });
 
+        // On click listener for the delete button. Opens up a WarningDialog that handles the deletion.
         holder.mDeleteWrapper.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,11 +105,6 @@ public class MedicationRecyclerViewAdapter extends RecyclerView.Adapter<Medicati
                     FragmentManager fm = ((Activity) context).getFragmentManager();
                     DeleteMedicationDialogFragment deleteMedicationDialogFragment = DeleteMedicationDialogFragment.newInstance(medication, holder.getAdapterPosition());
                     deleteMedicationDialogFragment.show(fm, "warningdialog");
-
-                    //remove(holder.getAdapterPosition());
-
-                    //TODO: remove medication from database (handle notification conflict if medication is attached to reminder)
-                    //mListener.onMedicationListFragmentInteraction(holder.mItem);
                 }
             }
         });
