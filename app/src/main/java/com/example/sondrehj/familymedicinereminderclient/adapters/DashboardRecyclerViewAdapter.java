@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.R;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
+import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.jobs.JobManagerService;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateMedicationJob;
 import com.example.sondrehj.familymedicinereminderclient.jobs.UpdateReminderJob;
@@ -28,6 +29,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+/**
+ * {@link RecyclerView.Adapter} that can display a {@link com.example.sondrehj.familymedicinereminderclient.models.Reminder}
+ * sorted and categorized by {@link com.example.sondrehj.familymedicinereminderclient.models.User2}
+ *
+ * This {@link RecyclerView.Adapter} differ from the other Adapter classes, since it constructs two different
+ * types of {@link com.example.sondrehj.familymedicinereminderclient.adapters.DashboardRecyclerViewAdapter.ViewHolder}.
+ *
+ */
 public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<ListItem> mValues;
