@@ -1,9 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.database;
 
-/**
- * Created by sondre on 31/03/2016.
- */
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

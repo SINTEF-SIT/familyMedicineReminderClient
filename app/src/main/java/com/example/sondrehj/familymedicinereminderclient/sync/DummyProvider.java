@@ -5,9 +5,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-/**
- * Created by nikolai on 07/04/16.
- */
 public class DummyProvider extends ContentProvider {
 
     @Override

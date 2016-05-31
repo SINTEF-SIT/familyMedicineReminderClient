@@ -43,7 +43,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * Use the {@link LinkingFragment#newInstance} factory method to
  * create an instance of this fragment.

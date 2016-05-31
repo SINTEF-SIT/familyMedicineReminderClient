@@ -1,8 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.models;
 
-/**
- * Created by nikolai on 25/04/16.
- */
 public class Message {
     String message;
 

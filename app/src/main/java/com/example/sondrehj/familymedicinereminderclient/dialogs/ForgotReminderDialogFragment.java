@@ -6,9 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-/**
- * Created by nikolai on 19/05/16.
- */
 public class ForgotReminderDialogFragment extends DialogFragment  {
 
     @Override

@@ -13,9 +13,6 @@ import com.path.android.jobqueue.Params;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * Created by Eirik on 09/05/16.
- */
 public class DeleteMedicationJob extends Job {
 
 

@@ -26,8 +26,6 @@ import retrofit2.Response;
  * This class is used to fetch a token from the Google Play GCM services,
  * the token which identifies the android device should then be sent
  * to the back-end and associated with the same user account made by the application.
- *
- *
  */
 public class RegistrationIntentService extends IntentService {
 

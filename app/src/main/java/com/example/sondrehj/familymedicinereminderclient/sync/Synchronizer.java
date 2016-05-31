@@ -1,11 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 

@@ -21,9 +21,6 @@ import java.net.URL;
 import retrofit2.Call;
 import retrofit2.Response;
 
-/**
- * Created by nikolai on 08/04/16.
- */
 public class ServiceManager extends ContextWrapper {
 
     /**

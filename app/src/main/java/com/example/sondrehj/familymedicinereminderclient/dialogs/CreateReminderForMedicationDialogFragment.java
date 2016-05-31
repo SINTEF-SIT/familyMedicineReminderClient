@@ -12,9 +12,6 @@ import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
-/**
- * Created by sondre on 09/05/2016.
- */
 public class CreateReminderForMedicationDialogFragment extends DialogFragment{
 
     private CreateReminderForMedicationDialogListener mListener;

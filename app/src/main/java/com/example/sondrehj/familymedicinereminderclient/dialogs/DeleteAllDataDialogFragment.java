@@ -8,9 +8,6 @@ import android.os.Bundle;
 
 import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 
-/**
- * Created by sondre on 26/04/2016.
- */
 public class DeleteAllDataDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

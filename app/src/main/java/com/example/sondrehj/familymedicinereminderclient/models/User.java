@@ -2,9 +2,6 @@ package com.example.sondrehj.familymedicinereminderclient.models;
 
 import java.util.List;
 
-/**
- * Created by nikolai on 24/02/16.
- */
 public class User {
     String userID; //6 digit alphanumerical
     String username; //optional

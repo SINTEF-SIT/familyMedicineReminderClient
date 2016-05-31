@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
-
 public class DeleteMedicationDialogFragment extends DialogFragment {
 
     private DeleteMedicationDialogListener mListener;

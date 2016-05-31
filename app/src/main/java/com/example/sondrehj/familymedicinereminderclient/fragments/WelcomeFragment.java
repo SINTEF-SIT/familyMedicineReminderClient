@@ -31,7 +31,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
  * {@link WelcomeFragment.OnWelcomeListener} interface
  * to handle interaction events.
