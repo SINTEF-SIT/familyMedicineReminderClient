@@ -12,9 +12,6 @@ import com.path.android.jobqueue.Params;
 
 import retrofit2.Call;
 
-/**
- * Created by Eirik on 02.05.2016.
- */
 public class UpdateMedicationJob extends Job {
 
         private static final int PRIORITY = 1;

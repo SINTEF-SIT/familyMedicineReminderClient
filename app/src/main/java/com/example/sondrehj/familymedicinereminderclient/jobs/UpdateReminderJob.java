@@ -17,9 +17,6 @@ import com.path.android.jobqueue.Params;
 
 import retrofit2.Call;
 
-/**
- * Created by Eirik on 30.04.2016.
- */
 public class UpdateReminderJob extends Job {
     private static final int PRIORITY = 1;
 

@@ -19,9 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Created by nikolai on 19/04/16.
- *
- * This dialog opens when
+ * This dialog opens when a linking request is received.
  */
 public class LinkingDialogFragment extends DialogFragment {
         @Override

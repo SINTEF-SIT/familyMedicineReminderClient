@@ -1,8 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
-/**
- * Created by nikolai on 07/04/16.
- */
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;

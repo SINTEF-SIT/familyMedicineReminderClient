@@ -17,13 +17,9 @@ import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper
 import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
 /**
- * Created by nikolai on 07/04/16.
- *
- *
  * The SyncAdapter class is part of the Android synchronization framework. This implementation uses
  * a stub ContentProvider, and instantiates a Synchronizer that performs all the logic related to
  * synchronization.
- *
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 

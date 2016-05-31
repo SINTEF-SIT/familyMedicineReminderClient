@@ -1,8 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.bus;
 
-/**
- * Created by nikolai on 25/04/16.
- */
 public class LinkingResponseEvent {
     private String message;
     private String patientID;

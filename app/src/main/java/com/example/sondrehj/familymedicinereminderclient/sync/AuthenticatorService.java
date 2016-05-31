@@ -1,8 +1,5 @@
 package com.example.sondrehj.familymedicinereminderclient.sync;
 
-/**
- * Created by nikolai on 07/04/16.
- */
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;

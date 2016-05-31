@@ -33,7 +33,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of {@link Reminder}.
  * <p>
  * Activities containing this fragment MUST implement the {@link OnReminderListFragmentInteractionListener}
  * interface.

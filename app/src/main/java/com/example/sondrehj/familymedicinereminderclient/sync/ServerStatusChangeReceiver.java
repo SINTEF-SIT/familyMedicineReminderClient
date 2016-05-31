@@ -24,13 +24,11 @@ import java.util.concurrent.FutureTask;
 import retrofit2.Call;
 
 /**
- *
  * This class is used by JobManager to determine the status of the network. If there is network connectivity,
  * it will attempt to poll the server to make sure it is online. The class maintains two static variables to determine
  * whether a change in the serverStatus occurred. If the server status changed from offline to online, the listener's
  * onNetworkChange method is called. The listener in our case is a JobManager, and the JobManager's onNetworkChange
  * propmts running of the queued jobs.
- *
  */
 public class ServerStatusChangeReceiver extends BroadcastReceiver implements NetworkUtil, NetworkEventProvider {
     private static String TAG = "ServerStatusChangeReceiver";

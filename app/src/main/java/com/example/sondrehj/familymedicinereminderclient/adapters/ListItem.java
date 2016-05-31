@@ -1,7 +1,7 @@
 package com.example.sondrehj.familymedicinereminderclient.adapters;
 
 /**
- *
+ * Abstract class extended by {@link HeaderItem} and {@link ListItem}
  */
 public abstract class ListItem {
 

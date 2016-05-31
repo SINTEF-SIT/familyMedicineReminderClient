@@ -51,7 +51,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * A simple {} subclass.
  * Activities that contain this fragment must implement the
  * {@link NewReminderFragment.OnNewReminderInteractionListener} interface
  * to handle interaction events.

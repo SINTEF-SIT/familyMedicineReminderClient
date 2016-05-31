@@ -10,15 +10,10 @@ import com.squareup.otto.ThreadEnforcer;
 import com.path.android.jobqueue.JobManager;
 
 /**
- * Created by Eirik on 11/05/16.
- *
  * Singleton class for instantiation and access of the jobManager instance.
  * The jobManager uses a ServerStatusChangeReceiver to determine whether
  * the network status.
  */
-
-
-
 
 public class JobManagerService {
 
