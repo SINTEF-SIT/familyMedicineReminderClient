@@ -41,6 +41,12 @@ public class PostMedicationJob extends Job {
         // In this example, it would be good to update the UI with the newly posted tweet.
     }
 
+    /*
+    * When this method runs, we attempt to send a request to the server. If an error is thrown,
+    * the method will run again because shouldReRunOnThrowable returns true.
+    *
+    **/
+
     @Override
     public void onRun() throws Throwable {
         Log.d(TAG, "Job is running in background.");
@@ -49,13 +55,14 @@ public class PostMedicationJob extends Job {
         Call<Medication> call = api.createMedication(userId, medication);
         Medication med = call.execute().body(); //medication retrieved from server
         if(med != null) {
-            medication.setServerId(med.getServerId());  //To retain the reference to this medication, we add the server id to it
+            medication.setServerId(med.getServerId());
             BusService.getBus().post(new DataChangedEvent(DataChangedEvent.MEDICATIONSENT, medication));
         }
         else {
             Log.d(TAG, "Medication returned from the server was null.");
         }
     }
+
 
     @Override
     protected boolean shouldReRunOnThrowable(Throwable throwable) {

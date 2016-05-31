@@ -163,7 +163,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                                 MySQLiteHelper db = new MySQLiteHelper(context);
                                 db.setReminderTimeTaken(holder.mReminder);
                                 JobManagerService
-                                        .getJobManager(((MainActivity) context))
+                                        .getJobManager(context)
                                         .addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
                             } else {
                                 holder.mButton.setText("✓ Taken \n" + time);
@@ -176,7 +176,7 @@ public class DashboardRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerV
                                 if (holder.mReminder.getMedicine().getCount() < 5) {
                                     ns.publishInstantNotification(ns.getLowOnMedicationNotification(holder.mReminder.getMedicine()));
                                 }
-                                JobManager jobManager = JobManagerService.getJobManager(((MainActivity) context));
+                                JobManager jobManager = JobManagerService.getJobManager(context);
                                 jobManager.addJobInBackground(new UpdateMedicationJob(holder.mReminder.getMedicine(), userId, authToken));
                                 jobManager.addJobInBackground(new UpdateReminderJob(holder.mReminder, userId, authToken));
                             }

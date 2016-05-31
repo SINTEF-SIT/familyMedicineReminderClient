@@ -9,33 +9,23 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.sondrehj.familymedicinereminderclient.MainActivity;
 import com.example.sondrehj.familymedicinereminderclient.api.MyCyFAPPServiceAPI;
-import com.example.sondrehj.familymedicinereminderclient.bus.BusService;
-import com.example.sondrehj.familymedicinereminderclient.bus.DataChangedEvent;
-import com.example.sondrehj.familymedicinereminderclient.fragments.MedicationListFragment;
 import com.example.sondrehj.familymedicinereminderclient.models.Medication;
 
 import com.example.sondrehj.familymedicinereminderclient.models.Reminder;
 import com.example.sondrehj.familymedicinereminderclient.database.MySQLiteHelper;
 import com.example.sondrehj.familymedicinereminderclient.models.TransportReminder;
-import com.example.sondrehj.familymedicinereminderclient.notification.NotificationScheduler;
 import com.example.sondrehj.familymedicinereminderclient.utility.Converter;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by Eirik on 19.04.2016.
- */
 public class Synchronizer {
 
     private final MyCyFAPPServiceAPI restApi;
@@ -52,17 +42,23 @@ public class Synchronizer {
         this.context = context;
     }
 
+
+    //Method that fetches the reminders from the server and
     public Boolean syncReminders() {
+        //The reminders of userToSync are fetched from the server
         Call<List<TransportReminder>> call = restApi.getUserReminderList(userToSync);
         call.enqueue(new Callback<List<TransportReminder>>() {
             @Override
             public void onResponse(Call<List<TransportReminder>> call, Response<List<TransportReminder>> response) {
                 ArrayList<Reminder> dbReminders = db.getRemindersByOwnerId(userToSync);
 
-
+                //To determine which reminders on the client are not present in the data set received by the server, we
+                //create and array of 0. If there are entries that are still 0 at the end of the method,
+                //we know that the corresponding reminder is deleted on the server
                 int[] array = new int[dbReminders.size()];
                 Arrays.fill(array, 0);
 
+                //A loop comparing the data set received by the server with the one present in the local database
                 outerloop:
                 for (TransportReminder serverReminder : response.body()) {
 
@@ -98,17 +94,23 @@ public class Synchronizer {
                             dbReminder.setIsActive(serverReminder.getActive());
                             dbReminder.setDays(Converter.serverDayStringToDayArray(serverReminder.getDays()));
                             Reminder reminder = db.updateReminder(dbReminder);
+
+                            //If an update was made, we need to reschedule the reminder
                             Intent intent = new Intent();
                             intent.setAction("mycyfapp");
                             intent.putExtra("action", "scheduleReminder");
                             intent.putExtra("reminder", reminder);
                             context.sendBroadcast(intent);
 
+                            //We update the deletion list
                             array[dbReminders.indexOf(dbReminder)] = 1;
                             db.updateReminder(dbReminder);
                             updated = true;
                         }
                     }
+
+                    //If a serverReminder was not updated, we know that this must be a new reminder
+                    //We add it to the local database and schedule it
                     if(!updated) {
                         Reminder reminder = db.addReminder(new Reminder(serverReminder, medDependency));
                         Intent intent = new Intent();
@@ -119,6 +121,8 @@ public class Synchronizer {
                     }
                 }
 
+                //We traverse the deletion list and delete the reminders that were
+                //absent in the server data set.
                 MySQLiteHelper helper = new MySQLiteHelper(context);
                 for(int i = 0; i < array.length; i++) {
                     if(array[i] == 0) {
@@ -126,7 +130,7 @@ public class Synchronizer {
                     }
                 }
 
-                //BusService.getBus().post(new DataChangedEvent(DataChangedEvent.REMINDERS));
+                //We broadcast an intent caught by SyncReceiver to be able to communicate with the main thread
                 Intent intent = new Intent();
                 intent.setAction("mycyfapp");
                 intent.putExtra("action", "syncReminders");
@@ -143,6 +147,7 @@ public class Synchronizer {
         return true;
     }
 
+    //This method works similarly to syncReminders()
     public Boolean syncMedications() {
         Call<List<Medication>> call = restApi.getUserMedicationList(userToSync);
         call.enqueue(new Callback<List<Medication>>() {

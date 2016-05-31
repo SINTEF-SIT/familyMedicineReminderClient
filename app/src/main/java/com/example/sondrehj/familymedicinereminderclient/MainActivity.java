@@ -147,7 +147,7 @@ public class MainActivity
         if (account == null) {
             changeFragment(WelcomeFragment.newInstance());
             //disables drawer and navigation in welcomeFragment.
-            drawer.setDrawerLockMode(drawer.LOCK_MODE_LOCKED_CLOSED);
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             //hides ActionBarDrawerToggle
             toggle.setDrawerIndicatorEnabled(false);
         } else {
@@ -188,7 +188,7 @@ public class MainActivity
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                alarmManager.INTERVAL_DAY, pendingResetTimeTakenIntent);
+                AlarmManager.INTERVAL_DAY, pendingResetTimeTakenIntent);
 
         // NotificationScheduler
         this.notificationScheduler = new NotificationScheduler(this);

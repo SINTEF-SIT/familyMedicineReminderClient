@@ -158,7 +158,7 @@ public class NewReminderFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_edit_reminder, container, false);
         ButterKnife.bind(this, view);
-        activeGroup.setVisibility(view.GONE); //set active visibility to GONE, we don't want to show this.
+        activeGroup.setVisibility(View.GONE); //set active visibility to GONE, we don't want to show this.
         weekDayTextViewArray = new TextView[]{Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday};
 
         // Hide layouts which are opened with switches.

@@ -80,7 +80,7 @@ public class EndDatePickerFragment extends DialogFragment implements DatePickerD
     }
 
     public interface EndDatePickerListener {
-        public void setEndDate(int day, int month, int year);
+        void setEndDate(int day, int month, int year);
     }
 
     //onAttach get called when the fragment gets attached to the activity

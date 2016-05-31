@@ -34,7 +34,7 @@ public class TimePickerFragment extends DialogFragment implements TimePickerDial
     }
 
     public interface TimePickerListener {
-        public void setTime(int hourOfDay, int minute);
+        void setTime(int hourOfDay, int minute);
     }
 
     //onAttach get called when the fragment gets attached to the activity

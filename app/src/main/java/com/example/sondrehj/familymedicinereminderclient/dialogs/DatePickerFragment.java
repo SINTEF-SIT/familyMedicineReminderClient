@@ -45,7 +45,7 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     }
 
     public interface DatePickerListener {
-        public void setDate(int day, int month, int year);
+        void setDate(int day, int month, int year);
     }
 
     //onAttach get called when the fragment gets attached to the activity

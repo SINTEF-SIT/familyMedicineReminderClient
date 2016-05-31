@@ -18,6 +18,12 @@ import com.example.sondrehj.familymedicinereminderclient.models.User2;
 
 /**
  * Created by nikolai on 07/04/16.
+ *
+ *
+ * The SyncAdapter class is part of the Android synchronization framework. This implementation uses
+ * a stub ContentProvider, and instantiates a Synchronizer that performs all the logic related to
+ * synchronization.
+ *
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
@@ -33,6 +39,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
      * This function runs when requestSync is called from anywhere in the
      * android system with the right authority. The functions performs a sync of the content provider.
      * In our use case, the content provider is a stub, and we perform custom syncronization instead.
+     *
      *
      * @param account
      * @param extras
